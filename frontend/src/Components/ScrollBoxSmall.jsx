@@ -1,48 +1,65 @@
 import React, { useState } from 'react';
+import Box from '@mui/material/Box';
 
 function ScrollBoxSmall() {
   // State to handle hover style
   const [hoveredIndex, setHoveredIndex] = useState(-1);
 
-  // Define normal and hover styles
-  const normalStyle = {
-    color: 'white',
-    cursor: 'pointer', // Change the cursor to indicate the text is interactive
-  };
-
-  const hoverStyle = {
-    color: 'gold', // Change the text color to gold on hover
-    cursor: 'pointer',
-  };
-
   return (
-    <div style={{ display: 'flex', alignItems: 'center' }}>
-      <div
-        style={{
-          width: '225px',
-          height: '500px',
+    <Box
+      sx={{
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        height: '100vh',
+      }}
+    >
+      <Box
+        sx={{
+          width: '30vh', // Corrected the unit for width
+          height: '75vh',
           overflowY: 'scroll',
-          marginRight: '2.5rem',
-          marginTop: '-50rem',
-          border: '1px solid black',
-          backgroundColor: 'rgb(34, 19, 170)',
+          mr: '2.5rem',
+          border: 1,
+          borderColor: 'black',
+          bgcolor: 'rgb(34, 19, 170)',
+          color: 'white',
+          position: 'relative',
+          top: '-108vh', // Position adjustment may need review based on your layout
+          '&::-webkit-scrollbar': {
+            width: '0.5em'
+          },
+          '&::-webkit-scrollbar-thumb': {
+            backgroundColor: 'rgba(255,255,255,0.5)',
+            outline: '1px solid slategrey'
+          },
+          '& p': {
+            my: 1,
+            color: 'white', // Default color
+            cursor: 'pointer', // Cursor indicates interactive elements
+            '&:hover': {
+              color: 'gold', // Hover color
+            },
+          },
         }}
       >
         {/* Long content here to enable scrolling */}
-        {Array(100)
-          .fill()
-          .map((_, i) => (
-            <p
-              key={i}
-              style={i === hoveredIndex ? hoverStyle : normalStyle}
-              onMouseEnter={() => setHoveredIndex(i)}
-              onMouseLeave={() => setHoveredIndex(-1)}
-            >
-              Scrollable content line {i + 1}
-            </p>
-          ))}
-      </div>
-    </div>
+        {Array.from({ length: 100 }, (_, i) => (
+          <Box
+            key={i}
+            onMouseEnter={() => setHoveredIndex(i)}
+            onMouseLeave={() => setHoveredIndex(-1)}
+            sx={{
+              p: 1, // Padding inside each p for better readability
+              color: i === hoveredIndex ? 'gold' : 'white', // Dynamic color change
+              cursor: 'pointer',
+            }}
+          >
+            Scrollable content line {i + 1}
+          </Box>
+        ))}
+      </Box>
+    </Box>
   );
 }
 
