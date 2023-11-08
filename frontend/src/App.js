@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import Navbar from './Components/Navbar'; // Make sure to import the Navbar component
+import Navbar from './Components/Navbar'; 
+import DualScrollBoxes from './Components/DualScrollBoxes';
+import TextBox from './Components/Textbox'; // Make sure the import is correct
 import './App.css';
 
 function App() {
@@ -18,6 +20,7 @@ function App() {
       <header className="App-header">
         {data ? <p>{data}</p> : <p>Loading...</p>}
       </header>
+      <DualScrollBoxes />
     </div>
   );
 }
