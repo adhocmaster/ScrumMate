@@ -31,10 +31,10 @@ const releaseSchema = new Schema(
 )
 
 
-storySchema.virtual('taskCount').get(function () {
+releaseSchema.virtual('taskCount').get(function () {
     return this.tasks.length;
 });
 
-const Story = model('Story', storySchema);
+const Release = model('Story', releaseSchema);
 
-module.exports = Story
+module.exports = Release
