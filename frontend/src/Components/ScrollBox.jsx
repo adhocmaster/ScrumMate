@@ -14,7 +14,7 @@ function ScrollBox() {
       <Box
         sx={{
           width: '70vw',
-          height: '65vh',
+          height: '68vh',
           overflowY: 'scroll',
           border: 1,
           borderColor: 'black',
@@ -22,7 +22,7 @@ function ScrollBox() {
           color: 'white',
           p: 2,
           position: 'relative', // Needed to adjust the position of the box
-          top: '-118vh', // Moves the box up by 25% of the viewport height
+          top: '-117vh', // Moves the box up by 25% of the viewport height
           '&::-webkit-scrollbar': {
             width: '0.5em'
           },
