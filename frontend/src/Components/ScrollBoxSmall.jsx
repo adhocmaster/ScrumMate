@@ -17,7 +17,7 @@ function ScrollBoxSmall() {
       <Box
         sx={{
           width: '30vh', // Corrected the unit for width
-          height: '69vh',
+          height: '71.3vh',
           overflowY: 'scroll',
           mr: '2.5rem',
           border: 1,
@@ -25,7 +25,7 @@ function ScrollBoxSmall() {
           bgcolor: 'rgb(34, 19, 170)',
           color: 'white',
           position: 'relative',
-          top: '-118vh', // Position adjustment may need review based on your layout
+          top: '-117vh', // Position adjustment may need review based on your layout
           '&::-webkit-scrollbar': {
             width: '0.5em'
           },
@@ -55,7 +55,7 @@ function ScrollBoxSmall() {
               cursor: 'pointer',
             }}
           >
-            Scrollable content line {i + 1}
+            Clickable content {i + 1}
           </Box>
         ))}
       </Box>
