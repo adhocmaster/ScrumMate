@@ -38,9 +38,8 @@
 }
 
 .App-header h1 {
-  color: #fff; /* or any color you prefer */
+  color: #fff;
   text-align: center;
-  margin-top: 100; /* Adjust margin as needed */
-  
-  padding: 20px 0; /* Adjust padding to give some space around the title */
+  margin-top: 100; 
+  padding: 20px 0; 
 }

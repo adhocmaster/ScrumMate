@@ -8,22 +8,23 @@ function ScrollBox() {
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
-        height: '100vh',
+        height: '100px',
       }}
     >
       <Box
         sx={{
-          width: '70vw',
-          height: '68vh',
+          width: '1450px',
+          height: '713px',
           overflowY: 'scroll',
+          mr: '25px',
           border: 1,
           borderColor: 'black',
           bgcolor: 'rgb(34, 19, 170)',
           color: 'white',
-          p: 2,
-          position: 'relative', // Needed to adjust the position of the box
-          top: '-117vh', // Moves the box up by 25% of the viewport height
-          '&::-webkit-scrollbar': {
+          position: 'relative',
+          top: '288px',
+          boxShadow: '10px 10px 10px rgba(0, 0, 0, 0.7)', // Shadow effect
+          '&::-webkit-scrollbar': { // Scroll bar
             width: '0.5em'
           },
           '&::-webkit-scrollbar-thumb': {
@@ -32,6 +33,8 @@ function ScrollBox() {
           },
           '& p': {
             my: 1,
+            textAlign: 'left',
+            pl: '50px', // Left padding for each paragraph
           },
         }}
       >
