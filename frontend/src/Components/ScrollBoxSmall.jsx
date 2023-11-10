@@ -11,22 +11,23 @@ function ScrollBoxSmall() {
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
-        height: '100vh',
+        height: '100px',
       }}
     >
       <Box
         sx={{
-          width: '30vh', // Corrected the unit for width
-          height: '71.3vh',
+          width: '300px',
+          height: '713px',
           overflowY: 'scroll',
-          mr: '2.5rem',
+          mr: '25px',
           border: 1,
           borderColor: 'black',
           bgcolor: 'rgb(34, 19, 170)',
           color: 'white',
           position: 'relative',
-          top: '-117vh', // Position adjustment may need review based on your layout
-          '&::-webkit-scrollbar': {
+          top: '288px', 
+          boxShadow: '10px 10px 10px rgba(0, 0, 0, 0.7)', // Shadow effect
+          '&::-webkit-scrollbar': { // Scroll bar
             width: '0.5em'
           },
           '&::-webkit-scrollbar-thumb': {
@@ -35,10 +36,10 @@ function ScrollBoxSmall() {
           },
           '& p': {
             my: 1,
-            color: 'white', // Default color
-            cursor: 'pointer', // Cursor indicates interactive elements
+            color: 'white', 
+            cursor: 'pointer', 
             '&:hover': {
-              color: 'gold', // Hover color
+              color: 'gold', // Change text color on hover
             },
           },
         }}

@@ -1,56 +1,57 @@
 import React from 'react';
 import { AppBar, Toolbar, Typography, Button, Box } from '@mui/material';
 
-const Navbar = () => {
+const Navbar = ({ onNavClick }) => {
   return (
-    <AppBar position="static" sx={{ backgroundColor: 'rgb(34, 19, 170)', padding: '0.5rem 1rem' }}>
+    <AppBar position="static" sx={{
+        backgroundColor: 'rgb(34, 19, 170)',
+        padding: '8px 16px',
+        boxShadow: '1px 5px 10px rgba(0, 0, 0, 0.7)' // Navbar shadow
+      }}>
       <Toolbar sx={{ justifyContent: 'space-between', alignItems: 'center' }}>
         <Typography
           variant="h6"
           sx={{
-            color: 'white',
-            fontSize: '1.5rem',
+            color: 'gold',
+            fontSize: '24px',
             fontWeight: 'bold',
-            marginRight: '1rem',
+            marginRight: '16px',
             transition: 'color 0.3s ease',
             '&:hover': {
-              color: 'gold',
+              color: 'white',
             },
-            textDecoration: 'none',
+            cursor: 'pointer',
           }}
-          component="a"
-          href="/"
+          onClick={() => onNavClick('home')}
         >
           ScrumMate
         </Typography>
-        <Box sx={{ marginRight: 'auto', marginTop: '.4rem', display: 'flex' }}>
+        <Box sx={{ marginRight: 'auto', marginTop: '6.4px', display: 'flex' }}>
           <Typography
-            component="a"
-            href="/"
             sx={{
-              color: 'white',
-              marginLeft: '1rem',
+              color: 'gold',
+              marginLeft: '16px',
               transition: 'color 0.3s ease',
-              textDecoration: 'none',
               '&:hover': {
-                color: 'gold',
+                color: 'white',
               },
+              cursor: 'pointer',
             }}
+            onClick={() => onNavClick('releasePlan')}
           >
             Release Plan
           </Typography>
           <Typography
-            component="a"
-            href="/about"
             sx={{
-              color: 'white',
-              marginLeft: '1rem',
+              color: 'gold',
+              marginLeft: '16px',
               transition: 'color 0.3s ease',
-              textDecoration: 'none',
               '&:hover': {
-                color: 'gold',
+                color: 'white',
               },
+              cursor: 'pointer',
             }}
+            onClick={() => onNavClick('sprints')}
           >
             Sprints
           </Typography>
@@ -59,14 +60,15 @@ const Navbar = () => {
           sx={{
             backgroundColor: '#007bff',
             color: 'white',
-            padding: '0.5rem 1rem',
-            borderRadius: '0.25rem',
-            fontSize: '1rem',
+            padding: '8px 16px',
+            borderRadius: '4px',
+            fontSize: '16px',
             transition: 'background-color 0.3s ease, color 0.3s ease',
             '&:hover': {
               backgroundColor: '#7cbbff',
             },
           }}
+          onClick={() => onNavClick('signIn')}
         >
           Sign In
         </Button>
