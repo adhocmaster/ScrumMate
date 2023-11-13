@@ -1,30 +1,45 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import TextField from '@mui/material/TextField';
+import Button from '@mui/material/Button';
 import Link from '@mui/material/Link';
 
-function SignInBox() {
+function SignInBox({ onLogin }) {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+
+  const handleEmailChange = (event) => {
+    setEmail(event.target.value);
+  };
+
+  const handlePasswordChange = (event) => {
+    setPassword(event.target.value);
+  };
+
+  const handleEnterClick = () => {
+    onLogin(email, password);
+  };
+
   return (
     <Box
       sx={{
         display: 'flex',
         flexDirection: 'column',
-        justifyContent: 'flex-start', // Align to the top
+        justifyContent: 'center',
         alignItems: 'center',
-        height: '100vh', // Full viewport height
+        height: '100vh',
         width: '100%',
-        padding: '20px 0', // Added padding to the top and bottom
+        padding: '20px 0',
       }}
     >
       <Box
         sx={{
           width: '90%',
-          maxWidth: '800px', // Increased maximum width
-          height: '250px', // Increased height for the box
-          bgcolor: 'rgb(34, 19, 170)', // Blue background color
+          maxWidth: '800px',
+          bgcolor: 'rgb(34, 19, 170)',
           color: 'white',
-          mt: '50px', // Push box down from the top of the screen
+          mt: '-300px',
           p: 3,
           borderRadius: '10px',
           boxShadow: '10px 10px 10px rgba(0, 0, 0, 0.7)',
@@ -34,41 +49,40 @@ function SignInBox() {
           gap: 2,
           '& .MuiTextField-root': {
             width: '100%', // Full width
-            '& label.Mui-focused': {
-              color: 'white',
-            },
+            '& label': { color: 'white' },
+            '& .MuiInput-underline:before': { borderBottomColor: 'white' },
+            '& .MuiInput-underline:hover:not(.Mui-disabled):before': { borderBottomColor: 'white' },
+            '& .MuiInput-underline:after': { borderBottomColor: 'white' },
             '& .MuiOutlinedInput-root': {
+              color: 'white', // Text color
               '& fieldset': {
-                borderColor: 'white',
+                borderColor: 'white', // Border color
               },
               '&:hover fieldset': {
-                borderColor: 'white',
+                borderColor: 'white', // Border color on hover
               },
               '&.Mui-focused fieldset': {
-                borderColor: 'white',
+                borderColor: 'white', // Border color when focused
               },
-              // Override autofill styles
+              // Override styles for autofilled inputs
               '& input:-webkit-autofill': {
-                WebkitBoxShadow: '0 0 0 100px rgb(34, 19, 170) inset', // Match the blue background color
-                WebkitTextFillColor: 'white', // Keep the text color white
+                WebkitBoxShadow: '0 0 0 100px rgb(34, 19, 170) inset',
+                WebkitTextFillColor: 'white',
+                WebkitBackgroundClip: 'text',
+                caretColor: 'white'
               },
               '& input:-webkit-autofill:hover': {
                 WebkitBoxShadow: '0 0 0 100px rgb(34, 19, 170) inset',
                 WebkitTextFillColor: 'white',
+                WebkitBackgroundClip: 'text',
+                caretColor: 'white'
               },
               '& input:-webkit-autofill:focus': {
                 WebkitBoxShadow: '0 0 0 100px rgb(34, 19, 170) inset',
                 WebkitTextFillColor: 'white',
+                WebkitBackgroundClip: 'text',
+                caretColor: 'white'
               },
-            },
-            '& .MuiInputLabel-root': {
-              color: 'white',
-            },
-            '& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-input': {
-              color: 'white',
-            },
-            '& .MuiOutlinedInput-input': {
-              color: 'white',
             },
           },
         }}
@@ -87,13 +101,35 @@ function SignInBox() {
           label="Email"
           variant="outlined"
           autoComplete="off"
+          value={email}
+          onChange={handleEmailChange}
+          sx={{
+            marginBottom: '20px', // Added space between the text fields
+          }}
         />
         <TextField
           label="Password"
           type="password"
           variant="outlined"
           autoComplete="new-password"
+          value={password}
+          onChange={handlePasswordChange}
         />
+        <Button
+          variant="contained"
+          onClick={handleEnterClick}
+          sx={{
+            mt: 2,
+            bgcolor: 'white',
+            color: 'rgb(34, 19, 170)',
+            '&:hover': {
+              bgcolor: 'white',
+              color: 'rgb(34, 19, 170)',
+            },
+          }}
+        >
+          Enter
+        </Button>
         <Typography sx={{ color: 'white', textAlign: 'center', mt: 2 }}>
           <Link
             href="#" // Replace with your registration page link
