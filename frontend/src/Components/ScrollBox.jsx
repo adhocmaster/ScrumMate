@@ -9,22 +9,23 @@ function ScrollBox() {
         justifyContent: 'center',
         alignItems: 'center',
         height: '100px',
+        width: '100%', // The outer Box takes the full width of its parent
+        padding: '0 25px', // Add padding here instead of margin on the inner Box
       }}
     >
       <Box
         sx={{
-          width: '1450px',
+          width: 'calc(100%)', // Subtract the total padding from the width
           height: '713px',
           overflowY: 'scroll',
-          mr: '25px',
           border: 1,
           borderColor: 'black',
           bgcolor: 'rgb(34, 19, 170)',
           color: 'white',
           position: 'relative',
           top: '288px',
-          boxShadow: '10px 10px 10px rgba(0, 0, 0, 0.7)', // Shadow effect
-          '&::-webkit-scrollbar': { // Scroll bar
+          boxShadow: '10px 10px 10px rgba(0, 0, 0, 0.7)',
+          '&::-webkit-scrollbar': {
             width: '0.5em'
           },
           '&::-webkit-scrollbar-thumb': {
@@ -34,7 +35,7 @@ function ScrollBox() {
           '& p': {
             my: 1,
             textAlign: 'left',
-            pl: '50px', // Left padding for each paragraph
+            pl: '50px',
           },
         }}
       >

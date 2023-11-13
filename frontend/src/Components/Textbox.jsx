@@ -7,7 +7,7 @@ function TextBox({ text }) {
         width: '100%', 
         height: '10%',
         padding: '10px',
-        paddingLeft: '108px',
+        paddingLeft: '130px',
         backgroundColor: 'Transparent',
         color: 'Gold',
         textAlign: 'left',

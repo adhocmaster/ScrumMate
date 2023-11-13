@@ -2,6 +2,12 @@ import React from 'react';
 import { AppBar, Toolbar, Typography, Button, Box } from '@mui/material';
 
 const Navbar = ({ onNavClick }) => {
+  const textOutline = `
+    -1px -1px 0 #000, 
+    1px -1px 0 #000, 
+    -1px 1px 0 #000, 
+    1px 1px 0 #000`; // Black outline shadow
+
   return (
     <AppBar position="static" sx={{
         backgroundColor: 'rgb(34, 19, 170)',
@@ -17,8 +23,10 @@ const Navbar = ({ onNavClick }) => {
             fontWeight: 'bold',
             marginRight: '16px',
             transition: 'color 0.3s ease',
+            textShadow: textOutline, 
             '&:hover': {
               color: 'white',
+              textShadow: 'none', 
             },
             cursor: 'pointer',
           }}
@@ -32,8 +40,10 @@ const Navbar = ({ onNavClick }) => {
               color: 'gold',
               marginLeft: '16px',
               transition: 'color 0.3s ease',
+              textShadow: textOutline, 
               '&:hover': {
                 color: 'white',
+                textShadow: 'none', 
               },
               cursor: 'pointer',
             }}
@@ -46,8 +56,10 @@ const Navbar = ({ onNavClick }) => {
               color: 'gold',
               marginLeft: '16px',
               transition: 'color 0.3s ease',
+              textShadow: textOutline, 
               '&:hover': {
                 color: 'white',
+                textShadow: 'none',
               },
               cursor: 'pointer',
             }}
