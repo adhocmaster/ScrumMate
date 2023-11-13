@@ -20,6 +20,7 @@ function ScrollBoxSmall() {
           height: '713px',
           overflowY: 'scroll',
           mr: '25px',
+          ml: '25px',
           border: 1,
           borderColor: 'black',
           bgcolor: 'rgb(34, 19, 170)',

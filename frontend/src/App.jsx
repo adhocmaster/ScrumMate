@@ -71,7 +71,7 @@ function App() {
           style={{
             position: 'absolute',
             top: '140px', 
-            right: '26px', 
+            right: '45px', 
             boxShadow: buttonShadow
           }}
         >
@@ -91,7 +91,7 @@ function App() {
           style={{
             position: 'absolute',
             top: '140px', 
-            right: '26px', 
+            right: '45px', 
             boxShadow: buttonShadow 
             
           }}
@@ -112,7 +112,7 @@ function App() {
           style={{
             position: 'absolute',
             top: '140px', 
-            right: '230px', 
+            right: '250px', 
             boxShadow: buttonShadow 
           }}
         >
@@ -125,7 +125,7 @@ function App() {
           style={{
             position: 'absolute',
             top: '140px', 
-            right: '26px', 
+            right: '45px', 
             boxShadow: buttonShadow 
           }}
         >
