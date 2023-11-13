@@ -4,12 +4,13 @@ import Navbar from './Components/Navbar';
 import TextBox from './Components/Textbox';
 import DualScrollBoxes from './Components/DualScrollBoxes';
 import './App.css';
+import SignInBox from './Components/SignInBox';
 
 function App() {
   const [data, setData] = useState(null);
   const [textBoxText, setTextBoxText] = useState("Dashboard");
   const [currentPage, setCurrentPage] = useState('home');
-  const [textBoxPadding, setTextBoxPadding] = useState('20px'); // State to track text box padding
+  const [textBoxPadding, setTextBoxPadding] = useState('130px'); // State to track text box padding
 
   useEffect(() => {
     fetch('/')
@@ -25,7 +26,7 @@ function App() {
   const handleNavClick = (page) => {
     setCurrentPage(page);
     let pageText = "";
-    let paddingValue = '20px'; // Default padding
+    let paddingValue = '130px'; // Default padding
     switch (page) {
       case 'home':
         pageText = "Dashboard";
@@ -38,6 +39,10 @@ function App() {
       case 'sprints':
         pageText = "Sprints";
         paddingValue = '153px';
+        break;
+      case 'signIn':
+        pageText = ""
+        paddingValue = '150';
         break;
       default:
         pageText = "Dashboard";
@@ -139,6 +144,13 @@ function App() {
           End of Sprint Report
         </Button>
         <DualScrollBoxes />
+      </>
+    );
+  } else if (currentPage === 'signIn') {
+    content = (
+      <>
+        <TextBox text={textBoxText} style={{ paddingLeft: textBoxPadding }} />
+        <SignInBox />
       </>
     );
   }
