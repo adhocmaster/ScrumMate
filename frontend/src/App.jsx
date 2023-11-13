@@ -1,163 +1,96 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Button } from '@mui/material';
 import Navbar from './Components/Navbar';
 import TextBox from './Components/Textbox';
 import DualScrollBoxes from './Components/DualScrollBoxes';
-import './App.css';
 import SignInBox from './Components/SignInBox';
+import './App.css';
 
 function App() {
-  const [data, setData] = useState(null);
-  const [textBoxText, setTextBoxText] = useState("Dashboard");
-  const [currentPage, setCurrentPage] = useState('home');
-  const [textBoxPadding, setTextBoxPadding] = useState('130px'); // State to track text box padding
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [currentPage, setCurrentPage] = useState('signIn');
 
-  useEffect(() => {
-    fetch('/')
-      .then((res) => res.json())
-      .then((data) => {
-        setData(data.message);
-        setTextBoxText(data.message);
-      })
-      .catch((error) => console.error('Error fetching data:', error));
-  }, []);
-
-  // Change page and padding on navbar click
   const handleNavClick = (page) => {
-    setCurrentPage(page);
-    let pageText = "";
-    let paddingValue = '130px'; // Default padding
-    switch (page) {
-      case 'home':
-        pageText = "Dashboard";
-        paddingValue = '130px';
-        break;
-      case 'releasePlan':
-        pageText = "Release Plan";
-        paddingValue = '120px';
-        break;
-      case 'sprints':
-        pageText = "Sprints";
-        paddingValue = '153px';
-        break;
-      case 'signIn':
-        pageText = ""
-        paddingValue = '150';
-        break;
-      default:
-        pageText = "Dashboard";
-        paddingValue = '130px';
+    // Check if the user is trying to navigate to a restricted page while not logged in
+    const restrictedPages = ['home', 'releasePlan', 'sprints'];
+    if (!isLoggedIn && restrictedPages.includes(page)) {
+      // If not logged in and trying to access a restricted page,
+      // redirect to the signIn page
+      setCurrentPage('signIn');
+    } else if (page === 'signOut') {
+      // Handle sign-out action
+      setIsLoggedIn(false);
+      setCurrentPage('signIn');
+    } else {
+      // If logged in, or navigating to signIn, allow to navigate
+      setCurrentPage(page);
     }
-    setTextBoxText(pageText);
-    setTextBoxPadding(paddingValue); // Update the padding
   };
 
-  // Handle buttons
-  const handleCreateNewProject = () => {
-    console.log('Create new project button clicked');
-  };
-
-  const handleCreateReleasePlan = () => {
-    console.log('Create release plan button clicked');
-  };
-
-  const handlePlanningPoker = () => {
-    console.log('Planning poker button clicked');
-  };
-
-  const handleEndOfSprintReport = () => {
-    console.log('End of sprint report button clicked');
+  const handleSignIn = (email, password) => {
+    if (email === 'test@email.com' && password === 'password123') {
+      setIsLoggedIn(true);
+      setCurrentPage('home');
+    } else {
+      alert('Incorrect email or password.');
+    }
   };
 
   let content;
-  const buttonShadow = '3px 5px 10px rgba(0, 0, 0, 0.7)'; // Button shadow effect
-
-  // Change page content
-  if (currentPage === 'home') {
-    content = (
-      <>
-        <TextBox text={textBoxText} style={{ paddingLeft: textBoxPadding }} />
-        <Button 
-          variant="contained" 
-          color="primary" 
-          onClick={handleCreateNewProject}
-          style={{
-            position: 'absolute',
-            top: '140px', 
-            right: '45px', 
-            boxShadow: buttonShadow
-          }}
-        >
-          Create New Project
-        </Button>
-        <DualScrollBoxes />
-      </>
-    );
-  } else if (currentPage === 'releasePlan') {
-    content = (
-      <>
-        <TextBox text={textBoxText} style={{ paddingLeft: textBoxPadding }} />
-        <Button 
-          variant="contained" 
-          color="primary" 
-          onClick={handleCreateReleasePlan}
-          style={{
-            position: 'absolute',
-            top: '140px', 
-            right: '45px', 
-            boxShadow: buttonShadow
-          }}
-        >
-          Create Release Plan
-        </Button>
-        <DualScrollBoxes />
-      </>
-    );
-  } else if (currentPage === 'sprints') {
-    content = (
-      <>
-        <TextBox text={textBoxText} style={{ paddingLeft: textBoxPadding }} />
-        <Button 
-          variant="contained" 
-          color="primary" 
-          onClick={handlePlanningPoker}
-          style={{
-            position: 'absolute',
-            top: '140px', 
-            right: '250px', 
-            boxShadow: buttonShadow 
-          }}
-        >
-          Planning Poker
-        </Button>
-        <Button 
-          variant="contained" 
-          color="primary" 
-          onClick={handleEndOfSprintReport}
-          style={{
-            position: 'absolute',
-            top: '140px', 
-            right: '45px', 
-            boxShadow: buttonShadow 
-          }}
-        >
-          End of Sprint Report
-        </Button>
-        <DualScrollBoxes />
-      </>
-    );
-  } else if (currentPage === 'signIn') {
-    content = (
-      <>
-        <TextBox text={textBoxText} style={{ paddingLeft: textBoxPadding }} />
-        <SignInBox />
-      </>
-    );
+  switch (currentPage) {
+    case 'home':
+      content = (
+        <>
+          <TextBox text="Dashboard" style={{ paddingLeft: '130px' }} />
+          <Button variant="contained" color="primary" onClick={() => console.log('Create new project button clicked')} style={{ position: 'absolute', top: '140px', right: '45px', boxShadow: '3px 5px 10px rgba(0, 0, 0, 0.7)' }}>
+            Create New Project
+          </Button>
+          <DualScrollBoxes />
+        </>
+      );
+      break;
+    case 'releasePlan':
+      content = (
+        <>
+          <TextBox text="Release Plan" style={{ paddingLeft: '120px' }} />
+          <Button variant="contained" color="primary" onClick={() => console.log('Create release plan button clicked')} style={{ position: 'absolute', top: '140px', right: '45px', boxShadow: '3px 5px 10px rgba(0, 0, 0, 0.7)' }}>
+            Create Release Plan
+          </Button>
+          <DualScrollBoxes />
+        </>
+      );
+      break;
+    case 'sprints':
+      content = (
+        <>
+          <TextBox text="Sprints" style={{ paddingLeft: '153px' }} />
+          <Button variant="contained" color="primary" onClick={() => console.log('Planning poker button clicked')} style={{ position: 'absolute', top: '140px', right: '250px', boxShadow: '3px 5px 10px rgba(0, 0, 0, 0.7)' }}>
+            Planning Poker
+          </Button>
+          <Button variant="contained" color="primary" onClick={() => console.log('End of sprint report button clicked')} style={{ position: 'absolute', top: '140px', right: '45px', boxShadow: '3px 5px 10px rgba(0, 0, 0, 0.7)' }}>
+            End of Sprint Report
+          </Button>
+          <DualScrollBoxes />
+        </>
+      );
+      break;
+    case 'signIn':
+    default:
+      content = !isLoggedIn ? (
+        <SignInBox onLogin={handleSignIn} />
+      ) : (
+        // Redirect to home page if logged in
+        <>
+          <TextBox text="Dashboard" style={{ paddingLeft: '130px' }} />
+          <DualScrollBoxes />
+        </>
+      );
+      break;
   }
 
   return (
     <div className="App">
-      <Navbar onNavClick={handleNavClick} />
+      <Navbar onNavClick={handleNavClick} isLoggedIn={isLoggedIn} />
       {content}
     </div>
   );

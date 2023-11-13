@@ -1,7 +1,7 @@
 import React from 'react';
 import { AppBar, Toolbar, Typography, Button, Box } from '@mui/material';
 
-const Navbar = ({ onNavClick }) => {
+const Navbar = ({ onNavClick, isLoggedIn }) => { // Accept isLoggedIn prop
   const textOutline = `
     -1px -1px 0 #000, 
     1px -1px 0 #000, 
@@ -80,9 +80,9 @@ const Navbar = ({ onNavClick }) => {
               backgroundColor: '#7cbbff',
             },
           }}
-          onClick={() => onNavClick('signIn')}
+          onClick={() => onNavClick(isLoggedIn ? 'signOut' : 'signIn')} // Use the prop to decide the page to navigate to
         >
-          Sign In
+          {isLoggedIn ? 'Sign Out' : 'Sign In'}
         </Button>
       </Toolbar>
     </AppBar>
