@@ -9,6 +9,7 @@ function App() {
   const [data, setData] = useState(null);
   const [textBoxText, setTextBoxText] = useState("Dashboard");
   const [currentPage, setCurrentPage] = useState('home');
+  const [textBoxPadding, setTextBoxPadding] = useState('20px'); // State to track text box padding
 
   useEffect(() => {
     fetch('/')
@@ -20,24 +21,30 @@ function App() {
       .catch((error) => console.error('Error fetching data:', error));
   }, []);
 
-  // Change page on navbar click
+  // Change page and padding on navbar click
   const handleNavClick = (page) => {
     setCurrentPage(page);
     let pageText = "";
+    let paddingValue = '20px'; // Default padding
     switch (page) {
       case 'home':
         pageText = "Dashboard";
+        paddingValue = '130px';
         break;
       case 'releasePlan':
         pageText = "Release Plan";
+        paddingValue = '120px';
         break;
       case 'sprints':
         pageText = "Sprints";
+        paddingValue = '153px';
         break;
       default:
-        pageText = "";
+        pageText = "Dashboard";
+        paddingValue = '130px';
     }
     setTextBoxText(pageText);
+    setTextBoxPadding(paddingValue); // Update the padding
   };
 
   // Handle buttons
@@ -59,11 +66,12 @@ function App() {
 
   let content;
   const buttonShadow = '3px 5px 10px rgba(0, 0, 0, 0.7)'; // Button shadow effect
+
   // Change page content
   if (currentPage === 'home') {
     content = (
       <>
-        <TextBox text={textBoxText} />
+        <TextBox text={textBoxText} style={{ paddingLeft: textBoxPadding }} />
         <Button 
           variant="contained" 
           color="primary" 
@@ -83,7 +91,7 @@ function App() {
   } else if (currentPage === 'releasePlan') {
     content = (
       <>
-        <TextBox text={textBoxText} />
+        <TextBox text={textBoxText} style={{ paddingLeft: textBoxPadding }} />
         <Button 
           variant="contained" 
           color="primary" 
@@ -92,8 +100,7 @@ function App() {
             position: 'absolute',
             top: '140px', 
             right: '45px', 
-            boxShadow: buttonShadow 
-            
+            boxShadow: buttonShadow
           }}
         >
           Create Release Plan
@@ -104,7 +111,7 @@ function App() {
   } else if (currentPage === 'sprints') {
     content = (
       <>
-        <TextBox text={textBoxText} />
+        <TextBox text={textBoxText} style={{ paddingLeft: textBoxPadding }} />
         <Button 
           variant="contained" 
           color="primary" 

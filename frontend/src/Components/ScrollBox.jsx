@@ -9,13 +9,13 @@ function ScrollBox() {
         justifyContent: 'center',
         alignItems: 'center',
         height: '100px',
-        width: '100%', // The outer Box takes the full width of its parent
-        padding: '0 25px', // Add padding here instead of margin on the inner Box
+        width: '100%',
+        padding: '0 25px',
       }}
     >
       <Box
         sx={{
-          width: 'calc(100%)', // Subtract the total padding from the width
+          width: 'calc(100%)', // Scale box with window size
           height: '713px',
           overflowY: 'scroll',
           border: 1,
