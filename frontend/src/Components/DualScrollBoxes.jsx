@@ -5,7 +5,7 @@ import ScrollBoxSmall from './ScrollBoxSmall';
 function DualScrollBoxes() {
   return (
     <div style={{ display: 'flex', padding: '20px' }}>
-      <ScrollBoxSmall />
+      <ScrollBoxSmall />  
       <ScrollBox />
     </div>
   );

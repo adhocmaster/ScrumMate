@@ -26,11 +26,15 @@ function SignInBox({ onLogin }) {
       sx={{
         display: 'flex',
         flexDirection: 'column',
-        justifyContent: 'center',
+        justifyContent: 'flex-start', // Box content aligned to the top, below the navbar
         alignItems: 'center',
-        height: '100vh',
+        height: 'calc(100vh - 60px)', // Adjust the 60px to match your navbar's height
         width: '100%',
-        padding: '20px 0',
+        paddingTop: '20px',
+        '@media (max-width: 600px)': {
+          paddingTop: '10px', // Smaller padding for smaller screens
+        },
+        // Add other responsive adjustments as necessary
       }}
     >
       <Box
@@ -39,7 +43,7 @@ function SignInBox({ onLogin }) {
           maxWidth: '800px',
           bgcolor: 'rgb(34, 19, 170)',
           color: 'white',
-          mt: '-300px',
+          marginTop: '20px', // Adjusted margin to prevent overlap
           p: 3,
           borderRadius: '10px',
           boxShadow: '10px 10px 10px rgba(0, 0, 0, 0.7)',
@@ -48,21 +52,21 @@ function SignInBox({ onLogin }) {
           alignItems: 'center',
           gap: 2,
           '& .MuiTextField-root': {
-            width: '100%', // Full width
+            width: '100%',
             '& label': { color: 'white' },
             '& .MuiInput-underline:before': { borderBottomColor: 'white' },
             '& .MuiInput-underline:hover:not(.Mui-disabled):before': { borderBottomColor: 'white' },
             '& .MuiInput-underline:after': { borderBottomColor: 'white' },
             '& .MuiOutlinedInput-root': {
-              color: 'white', // Text color
+              color: 'white', 
               '& fieldset': {
-                borderColor: 'white', // Border color
+                borderColor: 'white',
               },
               '&:hover fieldset': {
-                borderColor: 'white', // Border color on hover
+                borderColor: 'white', 
               },
               '&.Mui-focused fieldset': {
-                borderColor: 'white', // Border color when focused
+                borderColor: 'white', 
               },
               // Override styles for autofilled inputs
               '& input:-webkit-autofill': {
@@ -104,7 +108,7 @@ function SignInBox({ onLogin }) {
           value={email}
           onChange={handleEmailChange}
           sx={{
-            marginBottom: '20px', // Added space between the text fields
+            marginBottom: '20px', 
           }}
         />
         <TextField
@@ -132,7 +136,7 @@ function SignInBox({ onLogin }) {
         </Button>
         <Typography sx={{ color: 'white', textAlign: 'center', mt: 2 }}>
           <Link
-            href="#" // Replace with your registration page link
+            href="#" // Replace with registration page link
             onClick={() => window.open('/register', '_blank')}
             sx={{ color: 'white', textDecoration: 'none' }}
           >
@@ -140,7 +144,7 @@ function SignInBox({ onLogin }) {
           </Link>
           {' | '}
           <Link
-            href="#" // Replace with your password reset page link
+            href="#" // Replace with password reset page link
             onClick={() => window.open('/forgot-password', '_blank')}
             sx={{ color: 'white', textDecoration: 'none' }}
           >
