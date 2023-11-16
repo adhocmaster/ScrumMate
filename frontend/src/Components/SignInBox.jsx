@@ -20,6 +20,7 @@ function SignInBox({ onLogin }) {
   const handleEnterClick = () => {
     onLogin(email, password);
   };
+  console.log("HIT THE SIGN IN BOX")
 
   return (
     <Box

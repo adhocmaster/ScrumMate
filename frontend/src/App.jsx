@@ -5,6 +5,8 @@ import TextBox from './Components/Textbox';
 import DualScrollBoxes from './Components/DualScrollBoxes';
 import SignInBox from './Components/SignInBox';
 import './App.css';
+import { Routes, Route, Outlet, Link } from "react-router-dom";
+
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -90,8 +92,15 @@ function App() {
 
   return (
     <div className="App">
-      <Navbar onNavClick={handleNavClick} isLoggedIn={isLoggedIn} />
-      {content}
+      {/* <Navbar onNavClick={handleNavClick} isLoggedIn={isLoggedIn} /> */}
+      {/* {content} */}
+      <Routes>
+        <Route path="/" element={<Navbar onNavClick={handleNavClick} isLoggedIn = {isLoggedIn}/>}>
+          <Route index element= {<SignInBox onlogin = {handleSignIn} /> } />
+          <Route path="releases" element={<DualScrollBoxes />} />
+          <Route path = "sprints" element = {<DualScrollBoxes/>} />
+        </Route> 
+      </Routes>
     </div>
   );
 }

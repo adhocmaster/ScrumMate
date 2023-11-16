@@ -1,5 +1,6 @@
 import React from 'react';
 import { AppBar, Toolbar, Typography, Button, Box } from '@mui/material';
+import {Link, Outlet} from 'react-router-dom'
 
 const Navbar = ({ onNavClick, isLoggedIn }) => {
   const textOutline = `
@@ -9,6 +10,7 @@ const Navbar = ({ onNavClick, isLoggedIn }) => {
     1px 1px 0 #000`; // Black outline shadow
 
   return (
+    <div>
     <AppBar position="static" sx={{
         backgroundColor: 'rgb(34, 19, 170)',
         padding: '8px 16px',
@@ -30,9 +32,10 @@ const Navbar = ({ onNavClick, isLoggedIn }) => {
             },
             cursor: 'pointer',
           }}
-          onClick={() => onNavClick('home')}
+          // onClick={() => onNavClick('home')}
         >
-          ScrumMate
+          <Link to = "/">ScrumMate
+          </Link>
         </Typography>
         <Box sx={{ marginRight: 'auto', marginTop: '6.4px', display: 'flex' }}>
           <Typography
@@ -47,9 +50,11 @@ const Navbar = ({ onNavClick, isLoggedIn }) => {
               },
               cursor: 'pointer',
             }}
-            onClick={() => onNavClick('releasePlan')}
+            // onClick={() => onNavClick('releasePlan')}
           >
-            Release Plan
+          <Link to = "/releases">Release Plan
+          </Link>
+            
           </Typography>
           <Typography
             sx={{
@@ -63,9 +68,11 @@ const Navbar = ({ onNavClick, isLoggedIn }) => {
               },
               cursor: 'pointer',
             }}
-            onClick={() => onNavClick('sprints')}
+            // onClick={() => onNavClick('sprints')}
           >
-            Sprints
+            <Link to = "/sprints">
+              Sprints
+            </Link>
           </Typography>
         </Box>
         <Button
@@ -80,12 +87,14 @@ const Navbar = ({ onNavClick, isLoggedIn }) => {
               backgroundColor: '#7cbbff',
             },
           }}
-          onClick={() => onNavClick(isLoggedIn ? 'signOut' : 'signIn')} // Toggle sign in/out
+          // onClick={() => onNavClick(isLoggedIn ? 'signOut' : 'signIn')} // Toggle sign in/out
         >
           {isLoggedIn ? 'Sign Out' : 'Sign In'}
         </Button>
       </Toolbar>
     </AppBar>
+    <Outlet/>
+    </div>
   );
 };
 
