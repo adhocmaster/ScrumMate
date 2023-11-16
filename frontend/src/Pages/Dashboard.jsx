@@ -13,7 +13,6 @@ const Dashboard = ({ isLoggedIn }) => {
 
   return (
     <>
-      <Navbar onNavClick={handleNavClick} isLoggedIn={isLoggedIn} />
       <Box display="flex">
         <Drawer
           sx={{

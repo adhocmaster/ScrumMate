@@ -6,7 +6,9 @@ import DualScrollBoxes from './Components/DualScrollBoxes';
 import SignInBox from './Components/SignInBox';
 import './App.css';
 import { Routes, Route, Outlet, Link } from "react-router-dom";
-
+import ReleasePlan from './Pages/ReleasePlan'
+import Dashboard from './Pages/Dashboard'
+import SprintPlan from './Pages/SprintPage'
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -38,57 +40,57 @@ function App() {
     }
   };
 
-  let content;
-  switch (currentPage) {
-    case 'home':
-      content = (
-        <>
-          <TextBox text="Dashboard" style={{ paddingLeft: '130px' }} />
-          <Button variant="contained" color="primary" onClick={() => console.log('Create new project button clicked')} style={{ position: 'absolute', top: '140px', right: '45px', boxShadow: '3px 5px 10px rgba(0, 0, 0, 0.7)' }}>
-            Create New Project
-          </Button>
-          <DualScrollBoxes />
-        </>
-      );
-      break;
-    case 'releasePlan':
-      content = (
-        <>
-          <TextBox text="Release Plan" style={{ paddingLeft: '120px' }} />
-          <Button variant="contained" color="primary" onClick={() => console.log('Create release plan button clicked')} style={{ position: 'absolute', top: '140px', right: '45px', boxShadow: '3px 5px 10px rgba(0, 0, 0, 0.7)' }}>
-            Create Release Plan
-          </Button>
-          <DualScrollBoxes />
-        </>
-      );
-      break;
-    case 'sprints':
-      content = (
-        <>
-          <TextBox text="Sprints" style={{ paddingLeft: '153px' }} />
-          <Button variant="contained" color="primary" onClick={() => console.log('Planning poker button clicked')} style={{ position: 'absolute', top: '140px', right: '250px', boxShadow: '3px 5px 10px rgba(0, 0, 0, 0.7)' }}>
-            Planning Poker
-          </Button>
-          <Button variant="contained" color="primary" onClick={() => console.log('End of sprint report button clicked')} style={{ position: 'absolute', top: '140px', right: '45px', boxShadow: '3px 5px 10px rgba(0, 0, 0, 0.7)' }}>
-            End of Sprint Report
-          </Button>
-          <DualScrollBoxes />
-        </>
-      );
-      break;
-    case 'signIn':
-    default:
-      content = !isLoggedIn ? (
-        <SignInBox onLogin={handleSignIn} />
-      ) : (
-        // Redirect to home page if logged in
-        <>
-          <TextBox text="Dashboard" style={{ paddingLeft: '130px' }} />
-          <DualScrollBoxes />
-        </>
-      );
-      break;
-  }
+  // let content;
+  // switch (currentPage) {
+  //   case 'home':
+  //     content = (
+  //       <>
+  //         <TextBox text="Dashboard" style={{ paddingLeft: '130px' }} />
+  //         <Button variant="contained" color="primary" onClick={() => console.log('Create new project button clicked')} style={{ position: 'absolute', top: '140px', right: '45px', boxShadow: '3px 5px 10px rgba(0, 0, 0, 0.7)' }}>
+  //           Create New Project
+  //         </Button>
+  //         <DualScrollBoxes />
+  //       </>
+  //     );
+  //     break;
+  //   case 'releasePlan':
+  //     content = (
+  //       <>
+  //         <TextBox text="Release Plan" style={{ paddingLeft: '120px' }} />
+  //         <Button variant="contained" color="primary" onClick={() => console.log('Create release plan button clicked')} style={{ position: 'absolute', top: '140px', right: '45px', boxShadow: '3px 5px 10px rgba(0, 0, 0, 0.7)' }}>
+  //           Create Release Plan
+  //         </Button>
+  //         <DualScrollBoxes />
+  //       </>
+  //     );
+  //     break;
+  //   case 'sprints':
+  //     content = (
+  //       <>
+  //         <TextBox text="Sprints" style={{ paddingLeft: '153px' }} />
+  //         <Button variant="contained" color="primary" onClick={() => console.log('Planning poker button clicked')} style={{ position: 'absolute', top: '140px', right: '250px', boxShadow: '3px 5px 10px rgba(0, 0, 0, 0.7)' }}>
+  //           Planning Poker
+  //         </Button>
+  //         <Button variant="contained" color="primary" onClick={() => console.log('End of sprint report button clicked')} style={{ position: 'absolute', top: '140px', right: '45px', boxShadow: '3px 5px 10px rgba(0, 0, 0, 0.7)' }}>
+  //           End of Sprint Report
+  //         </Button>
+  //         <DualScrollBoxes />
+  //       </>
+  //     );
+  //     break;
+  //   case 'signIn':
+  //   default:
+  //     content = !isLoggedIn ? (
+  //       <SignInBox onLogin={handleSignIn} />
+  //     ) : (
+  //       // Redirect to home page if logged in
+  //       <>
+  //         <TextBox text="Dashboard" style={{ paddingLeft: '130px' }} />
+  //         <DualScrollBoxes />
+  //       </>
+  //     );
+  //     break;
+  // }
 
   return (
     <div className="App">
@@ -96,9 +98,10 @@ function App() {
       {/* {content} */}
       <Routes>
         <Route path="/" element={<Navbar onNavClick={handleNavClick} isLoggedIn = {isLoggedIn}/>}>
-          <Route index element= {<SignInBox onlogin = {handleSignIn} /> } />
-          <Route path="releases" element={<DualScrollBoxes />} />
-          <Route path = "sprints" element = {<DualScrollBoxes/>} />
+          <Route index element= {<SignInBox/>} />
+          <Route path="home" element={<Dashboard />} />
+          <Route path="releases" element={<ReleasePlan />} />
+          <Route path = "sprints" element = {<SprintPlan/>} />
         </Route> 
       </Routes>
     </div>

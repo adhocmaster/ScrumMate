@@ -18,8 +18,25 @@ function SignInBox({ onLogin }) {
   };
 
   const handleEnterClick = () => {
-    onLogin(email, password);
+    try{ 
+      var options = {
+        url:"https://localhost:3001/auth/login/",
+        method:'post',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body:JSON.stringify({email,password})
+      }
+      fetch('http://localhost:3001/auth/login/',options).then((result)=>{
+        console.log(result)
+      })
+
+    }catch(error){
+      console.log(error)
+    }
+
   };
+
   console.log("HIT THE SIGN IN BOX")
 
   return (
