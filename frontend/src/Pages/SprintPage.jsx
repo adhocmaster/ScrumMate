@@ -16,14 +16,6 @@ const SprintPage = () => {
   return (
     <Box sx={{ flexGrow: 1 }}>
       <AppBar position="static" sx={{ backgroundColor: 'navy', marginBottom: 4 }}>
-        <Toolbar>
-          <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-            ScrumMate
-          </Typography>
-          <Button color="inherit">Release Plan</Button>
-          <Button color="inherit">Sprints</Button>
-          <Button color="inherit">Log in</Button>
-        </Toolbar>
       </AppBar>
 
       <Box display="flex" justifyContent="center" p={2}>

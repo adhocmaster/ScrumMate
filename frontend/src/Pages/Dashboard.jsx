@@ -1,6 +1,8 @@
 import React from 'react';
 import { AppBar, Toolbar, Typography, Button, Box, Drawer, List, ListItem, ListItemText, Paper } from '@mui/material';
 import { PieChart } from '@mui/icons-material';
+import Navbar from '../Components/Navbar';
+
 
 const drawerWidth = 240;
 
@@ -21,6 +23,7 @@ const Dashboard = ({ isLoggedIn }) => {
             '& .MuiDrawer-paper': {
               width: drawerWidth,
               boxSizing: 'border-box',
+              marginTop: '150px',
             },
           }}
           variant="permanent"
@@ -42,7 +45,7 @@ const Dashboard = ({ isLoggedIn }) => {
         </Drawer>
         <Box
           component="main"
-          sx={{ flexGrow: 1, bgcolor: 'background.default', padding: 3 }}
+          sx={{ flexGrow: 1, bgcolor: 'background.default', padding: 3, marginTop: '50px' }}
         >
           <Typography variant="h5" gutterBottom>
             Project 2
