@@ -1,7 +1,6 @@
 import React from 'react';
 import { AppBar, Toolbar, Typography, Button, Box, Drawer, List, ListItem, ListItemText, Paper } from '@mui/material';
 import { PieChart } from '@mui/icons-material';
-import Navbar from '../Components/Navbar';
 
 
 const drawerWidth = 240;
