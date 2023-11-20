@@ -17,6 +17,7 @@ function SignInBox({ onLogin }) {
     setPassword(event.target.value);
   };
 
+  // Temporary log in fix for demonstration purposes, can remove once log in is fixed
   const handleEnterClick = () => {
     // Call the onLogin function passed as a prop with email and password
     onLogin(email, password);
