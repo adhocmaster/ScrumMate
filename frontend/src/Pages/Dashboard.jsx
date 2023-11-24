@@ -1,6 +1,8 @@
 import React from 'react';
 import { AppBar, Toolbar, Typography, Button, Box, Drawer, List, ListItem, ListItemText, Paper } from '@mui/material';
 import { PieChart } from '@mui/icons-material';
+import Navbar from '../Components/Navbar';
+import ScrollBox from '../Components/ScrollBox';
 
 
 const drawerWidth = 240;
@@ -14,54 +16,143 @@ const Dashboard = ({ isLoggedIn }) => {
 
   return (
     <>
-      <Box display="flex">
-        <Drawer
-          sx={{
-            width: drawerWidth,
-            flexShrink: 0,
-            '& .MuiDrawer-paper': {
-              width: drawerWidth,
-              boxSizing: 'border-box',
-              marginTop: '150px',
-            },
-          }}
-          variant="permanent"
-          anchor="left"
-        >
-          <Typography variant="h6" sx={{ padding: 2 }}>
-            Dashboard
-          </Typography>
-          <List>
-            {['Scrum Management Tool', 'Project 2', 'Project 3', 'Project 4'].map((text, index) => (
-              <ListItem button key={text}>
-                <ListItemText primary={text} />
-              </ListItem>
-            ))}
-          </List>
-          <Button sx={{ margin: 2 }} variant="contained" color="primary">
+      <div>
+        <Navbar />
+      </div>
+
+      <div>
+        <h1 style={{
+          marginLeft: "25pt",
+          color: 'yellow',
+          textShadow: `
+            -1px -1px 0 #000,  
+            1px -1px 0 #000,
+            -1px  1px 0 #000,
+            1px  1px 0 #000`
+        }}>
+          Dashboard
+        </h1>
+      </div>
+
+      <div style={{
+        display: 'flex',
+        flexDirection: 'row',
+        justifyContent: 'space-around', // This will space out the child divs equally
+        alignItems: 'flex-start', // This aligns items to the start of the cross axis
+        width: '100%', // Set the width to 100% of the parent or adjust as needed
+        // Add additional styling as needed
+      }}>
+          <div style={{
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          backgroundColor: 'blue',
+          //border: '5px solid yellow',
+          borderRadius: '10px',
+          marginRight: '100px',
+          marginLeft: '25px',
+          padding: '20px',
+          width: '300px', // Adjust width as necessary
+          height: '600px', // Adjust height as necessary
+          color: 'white',
+          textAlign: 'center'
+        }}>
+          <h1>Current Projects</h1>
+          <ul style={{ listStyleType: 'none', padding: 0 }}>
+            <li>Scrum Management Tool</li>
+            <li>Project 2</li>
+            <li>Project 3</li>
+            <li>Project 4</li>
+            <li>Project 4</li>
+          </ul>
+          <button style={{
+            backgroundColor: 'navy',
+            color: 'white',
+            padding: '10px 20px',
+            border: 'none',
+            borderRadius: '5px',
+            fontSize: '16px',
+            cursor: 'pointer'
+          }}>
             Create New Project
-          </Button>
-        </Drawer>
-        <Box
-          component="main"
-          sx={{ flexGrow: 1, bgcolor: 'background.default', padding: 3, marginTop: '50px' }}
-        >
-          <Typography variant="h5" gutterBottom>
-            Project 2
-          </Typography>
-          {/* Insert additional layout here similar to the example provided */}
-          <Paper sx={{ padding: 2, margin: '10px 0' }}>
-            {/* This is where you'd render your charts and other content */}
-            <PieChart />
-            <Typography variant="body1">
-              Pie Graph of Completed Tasks vs Incomplete
-            </Typography>
-          </Paper>
-          <Button variant="contained" color="secondary">
-            View Release Plan
-          </Button>
-        </Box>
-      </Box>
+          </button>
+          </div>
+
+          <div style={{
+            display: 'flex',
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            alignItems: 'flex-start',
+            backgroundColor: 'blue',
+            color: 'white',
+            padding: '20px',
+            borderRadius: '10px',
+            fontFamily: 'sans-serif',
+            width: '1000px',
+            height: '600px',
+            marginRight: '25px'
+          }}>
+            <div style={{ flex: 3 }}>
+              <h1>Project 2</h1>
+              <h2>Project 2 Overview:</h2>
+              <h3>Sprint 1 Story Point Completion:</h3>
+              <div>
+                <h4>Completed Tasks:</h4>
+                <p>User Story 1:</p>
+                <ul>
+                  <li>Task 1 (X story points)</li>
+                  <li>Task 2 (X story points)</li>
+                  <li>Task 3 (X story points)</li>
+                </ul>
+                <p>User Story 2:</p>
+                <ul>
+                  <li>Task 2 (X story points)</li>
+                </ul>
+                <p>User Story 3:</p>
+                <ul>
+                  <li>Task 3 (X story points)</li>
+                </ul>
+                <h4>Tasks to do:</h4>
+                <p>User Story 2:</p>
+                <ul>
+                  <li>Task 1 (X story points)</li>
+                  <li>Task 3 (X story points)</li>
+                </ul>
+              </div>
+            </div>
+            <div style={{ flex: 2, textAlign: 'center' }}>
+              <div style={{
+                backgroundColor: 'white',
+                color: 'black',
+                padding: '20px',
+                height: '200px', // Adjust as needed
+                width: '200px', // Adjust as needed
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                flexDirection: 'column',
+              }}>
+                <p>Pie Graph of</p>
+                <p>Completed Tasks vs</p>
+                <p>Incomplete</p>
+              </div>
+              <button style={{
+                backgroundColor: 'navy',
+                color: 'white',
+                padding: '10px 20px',
+                border: 'none',
+                borderRadius: '5px',
+                marginTop: '20px',
+                cursor: 'pointer',
+              }}>
+                View Release Plan
+              </button>
+            </div>
+          </div>
+      </div>
+
+      
+
     </>
   );
 };
