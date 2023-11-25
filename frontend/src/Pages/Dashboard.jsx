@@ -1,17 +1,43 @@
-import React from 'react';
+import React, {useState,useEffect}  from 'react';
 import { AppBar, Toolbar, Typography, Button, Box, Drawer, List, ListItem, ListItemText, Paper } from '@mui/material';
 import { PieChart } from '@mui/icons-material';
 
 
 const drawerWidth = 240;
 
-const Dashboard = ({ isLoggedIn }) => {
+const Dashboard = ({ isLoggedIn,userId }) => {
   // Functionality for navigation clicks will need to be implemented
+  const [projectNames, setProjectNames] = useState([]);
   const handleNavClick = (page) => {
     // Logic to handle navigation
     console.log(`Navigate to ${page}`);
   };
+  useEffect( ()=>{
+     try{
+      var options = {
+        url: `https://localhost:3001/projects`,
+        method:'get',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+        
+      }
+      fetch(`https://localhost:3001/projects`,options).then((result)=>{
+        console.log(result)
+        if(result.status == 200){
+          console.log(result)
+        }
+        result.json().then((response)=>{
+          console.log(response)
+          setProjectNames(response)
+        })
+      })
 
+    }catch(error){
+      console.log(error)
+    }
+
+  })
   return (
     <>
       <Box display="flex">

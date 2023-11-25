@@ -11,8 +11,19 @@ import {
   createRelease,
   deleteRelease,
   changeName,
+  getProjectsByUser
 } from '../db/project';
 
+export const getProjectsFromUser = async(req:express.Request,res:express.Response) =>{
+  try{
+    // const projects = await getProjectsByUser()
+    const projects = await getProjectsByUser(req.userId)
+    return res.status(200).json(projects)
+  }catch(error){
+    console.log(error)
+    res.sendStatus(400)
+  }
+} 
 export const getAllProjects = async (req: express.Request, res: express.Response) => {
   try {
     const projects = await getProjects();
@@ -25,7 +36,8 @@ export const getAllProjects = async (req: express.Request, res: express.Response
 
 export const newProject = async (req: express.Request, res: express.Response) => {
   try {
-    const values = req.params;
+    const userId = req.userId;
+    const values = {...req.body,owner:userId};
     const newProject = await createProject(values);
     return res.json(newProject);
   } catch (error) {
