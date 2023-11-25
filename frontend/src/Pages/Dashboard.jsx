@@ -52,8 +52,8 @@ const Dashboard = ({ isLoggedIn }) => {
           marginRight: '100px',
           marginLeft: '25px',
           padding: '20px',
-          width: '300px', // Adjust width as necessary
-          height: '600px', // Adjust height as necessary
+          width: '20vw', // Adjust width as necessary
+          height: '70vh', // Adjust height as necessary
           color: 'white',
           textAlign: 'center'
         }}>
@@ -88,8 +88,8 @@ const Dashboard = ({ isLoggedIn }) => {
             padding: '20px',
             borderRadius: '10px',
             fontFamily: 'sans-serif',
-            width: '1000px',
-            height: '600px',
+            width: '80vw',
+            height: '70vh',
             marginRight: '25px'
           }}>
             <div style={{ flex: 3 }}>
@@ -125,28 +125,31 @@ const Dashboard = ({ isLoggedIn }) => {
                 backgroundColor: 'white',
                 color: 'black',
                 padding: '20px',
-                height: '200px', // Adjust as needed
-                width: '200px', // Adjust as needed
+                height: '20vh', // Adjust as needed
+                width: '10vm', // Adjust as needed
                 display: 'flex',
                 justifyContent: 'center',
                 alignItems: 'center',
                 flexDirection: 'column',
+                marginTop: '8em',
+                marginLeft: '2em'
               }}>
                 <p>Pie Graph of</p>
                 <p>Completed Tasks vs</p>
                 <p>Incomplete</p>
               </div>
-              <button style={{
+              {/* <button style={{
                 backgroundColor: 'navy',
                 color: 'white',
                 padding: '10px 20px',
                 border: 'none',
                 borderRadius: '5px',
-                marginTop: '20px',
+                marginTop: '10em',
+                marginRight: '10em',
                 cursor: 'pointer',
               }}>
                 View Release Plan
-              </button>
+              </button> */}
             </div>
           </div>
       </div>
