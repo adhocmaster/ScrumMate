@@ -29,7 +29,7 @@ export const isOwner = async (req:express.Request, res: express.Response, next:e
 export const isAuthenticated = async (req:express.Request, res: express.Response, next:express.NextFunction) => {
     try{
         const sessionToken = req.cookies['user-auth'];
-
+        console.log(sessionToken)
         if(!sessionToken){
             return res.sendStatus(403);
         }

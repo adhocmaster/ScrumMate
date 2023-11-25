@@ -17,6 +17,7 @@ import {
 export const getProjectsFromUser = async(req:express.Request,res:express.Response) =>{
   try{
     // const projects = await getProjectsByUser()
+    console.log("HIT")
     const projects = await getProjectsByUser(req.userId)
     return res.status(200).json(projects)
   }catch(error){

@@ -5,7 +5,7 @@ import { PieChart } from '@mui/icons-material';
 
 const drawerWidth = 240;
 
-const Dashboard = ({ isLoggedIn,userId }) => {
+const Dashboard = ({ isLoggedIn }) => {
   // Functionality for navigation clicks will need to be implemented
   const [projectNames, setProjectNames] = useState([]);
   const handleNavClick = (page) => {
@@ -15,14 +15,14 @@ const Dashboard = ({ isLoggedIn,userId }) => {
   useEffect( ()=>{
      try{
       var options = {
-        url: `https://localhost:3001/projects`,
+        url: `http://localhost:3001/projects`,
         method:'get',
-        headers: {
-          'Content-Type': 'application/json'
-        }
-        
+        // headers: {
+        //   'Content-Type': 'application/json'
+        // }
+        credentials:'include'
       }
-      fetch(`https://localhost:3001/projects`,options).then((result)=>{
+      fetch(`http://localhost:3001/projects`,options).then((result)=>{
         console.log(result)
         if(result.status == 200){
           console.log(result)
@@ -37,7 +37,7 @@ const Dashboard = ({ isLoggedIn,userId }) => {
       console.log(error)
     }
 
-  })
+  },[])
   return (
     <>
       <Box display="flex">
@@ -58,9 +58,9 @@ const Dashboard = ({ isLoggedIn,userId }) => {
             Dashboard
           </Typography>
           <List>
-            {['Scrum Management Tool', 'Project 2', 'Project 3', 'Project 4'].map((text, index) => (
-              <ListItem button key={text}>
-                <ListItemText primary={text} />
+            {projectNames.map((text, index) => (
+              <ListItem button key={text.name}>
+                <ListItemText primary={text.name} />
               </ListItem>
             ))}
           </List>
