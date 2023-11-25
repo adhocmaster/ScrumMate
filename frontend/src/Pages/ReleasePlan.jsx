@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { AppBar, Typography, Button, Box, Paper } from '@mui/material';
 import { List, ListItem, ListItemText } from '@mui/material';
 import CreateReleasePlan from '../Components/CreateReleasePlan'; // Adjust the import path as necessary
-import Navbar from '../Components/Navbar';
 
 const ReleasePlan = () => {
   const [showCreateReleasePlan, setShowCreateReleasePlan] = useState(false);
@@ -23,116 +22,70 @@ const ReleasePlan = () => {
   };
 
   return (
-    <>
-    <div>
-    <Navbar />
-    </div>
+    <Box sx={{ flexGrow: 1 }}>
+      <AppBar position="static" sx={{ backgroundColor: 'navy', marginBottom: 4 }}>
+        {/* AppBar content can go here */}
+      </AppBar>
 
-    <div>
-        <h1 style={{
-          marginLeft: "25pt",
-          color: 'yellow',
-          textShadow: `
-            -1px -1px 0 #000,  
-            1px -1px 0 #000,
-            -1px  1px 0 #000,
-            1px  1px 0 #000`
-        }}>
-          Release Plan
-        </h1>
-    </div>
+      <Box display="flex" justifyContent="center" p={2}>
+        <Paper elevation={3} sx={{ width: '80%', padding: 2 }}>
+          <Typography variant="h4" sx={{ textAlign: 'center', marginBottom: 2 }}>
+            Release Plan
+          </Typography>
+          <Box display="flex" justifyContent="space-between" marginBottom={2}>
+            <Button variant="contained" color="primary" onClick={toggleCreateReleasePlan}>
+              {showCreateReleasePlan ? 'Hide Create Form' : 'Create Release Plan'}
+            </Button>
+            <Button variant="contained" color="primary" onClick={toggleViewReleasePlan}>
+              {showReleasePlan ? 'Hide Release Plan' : 'View Release Plan'}
+            </Button>
+          </Box>
 
-    {/* <div style={{ 
-      display: 'flex',
-      flexDirection: 'column',
-      justifyContent: 'center',
-      alignItems: 'center',
-      backgroundColor: 'blue',
-      //border: '5px solid yellow',
-      borderRadius: '10px',
-      padding: '20px',
-      width: '20vm', // Adjust width as necessary
-      height: '70vh', // Adjust height as necessary
-      color: 'white',
-      textAlign: 'center',
-      gap: '10px', // Adjust space between buttons as necessary
-    }}>
-      <button style={{
-        backgroundColor: 'navy',
-        color: 'white',
-        border: '2px solid yellow',
-        borderRadius: '5px',
-        padding: '10px 20px',
-        fontSize: '16px',
-        cursor: 'pointer',
-        fontWeight: 'bold',
-      }}>
-        Create Release Plan
-      </button>
-      <button style={{
-        backgroundColor: 'navy',
-        color: 'white',
-        border: '2px solid yellow',
-        borderRadius: '5px',
-        padding: '10px 20px',
-        fontSize: '16px',
-        cursor: 'pointer',
-        fontWeight: 'bold',
-      }}>
-        View Release Plan
-      </button>
-    </div> */}
+          {/* Conditionally render the CreateReleasePlan component */}
+          {showCreateReleasePlan && <CreateReleasePlan />}
 
-    <div style={{
-      backgroundColor: 'blue',
-      color: 'white',
-      padding: '2vw', // Use viewport width for responsive padding
-      fontFamily: 'sans-serif',
-      width: '80vw',
-      height: '70vh',
-      marginLeft: '10em'
-    }}>
-      <h2 style={{ borderBottom: '0.2vh solid yellow', paddingBottom: '1vw' }}>High level goals</h2>
-      <div>
-        <h3>Sprint 1:</h3>
-        <ul style={{ listStyleType: 'none', paddingLeft: '1vw' }}>
-          <li>User story 1 for sprint 1
-            <ul>
-              <li>Task for user story 1 (Completed)</li>
-              <li>Task for user story 1 (Completed)</li>
-              <li>Task for user story 1 (Completed)</li>
-            </ul>
-          </li>
-          <li>User story 2 for sprint 1
-            <ul>
-              <li>Task for user story 2</li>
-              <li>Task for user story 2 (Completed)</li>
-            </ul>
-          </li>
-          <li>User story 3 for sprint 1
-            <ul>
-              <li>Task for user story 3</li>
-              <li>Task for user story 3 (Completed)</li>
-            </ul>
-          </li>
-        </ul>
-      </div>
-      <div>
-        <h3>Sprint 2:</h3>
-        <ul style={{ listStyleType: 'none', paddingLeft: '1vw' }}>
-          <li>User story 1 for sprint 2
-            <ul>
-              <li>Task for user story 1</li>
-              <li>Task for user story 1</li>
-            </ul>
-          </li>
-        </ul>
-      </div>
-    </div>
+          {/* Conditionally render the release plan text */}
+          {showReleasePlan && (
+            <Paper elevation={2} sx={{ backgroundColor: '#e0e0e0', padding: 2, marginTop: 2 }}>
+              {/* Split the text into lines and apply different styles to the first line and the rest */}
+              {releasePlanText.split('\n').map((line, index) => (
+                <Typography
+                  key={index}
+                  variant="body1"
+                  sx={{
+                    whiteSpace: 'pre-wrap',
+                    textAlign: index === 0 ? 'center' : 'left' // Justify the first line, left-align the rest
+                  }}
+                >
+                  {line}
+                </Typography>
+              ))}
+            </Paper>
+          )}
 
-
-
-    </>
+          <Paper elevation={2} sx={{ backgroundColor: '#f0f0f0', padding: 2 }}>
+            <Typography variant="h5" sx={{ marginBottom: 2 }}>
+              Sprints
+            </Typography>
+            <List>
+              <ListItem>
+                <ListItemText primary="Sprint 1:" />
+              </ListItem>
+              <Typography variant="body1" component="div">
+                User story 1 for sprint 1
+                <List sx={{ marginLeft: 4 }}>
+                  <ListItem>
+                    <ListItemText primary="Task for user story 1 (Completed)" />
+                  </ListItem>
+                  {/* Repeat for other tasks */}
+                </List>
+              </Typography>
+              {/* Repeat for other user stories and sprints */}
+            </List>
+          </Paper>
+        </Paper>
+      </Box>
+    </Box>
   );
 };
 
