@@ -15,6 +15,7 @@ import {
 
 import { createReleasePlan } from '../db/release';
 import {createSprint} from '../db/sprint';
+import { createStory } from '../db/story';
 
 export const getProjectsFromUser = async(req:express.Request,res:express.Response) =>{
   try{
@@ -105,18 +106,7 @@ export const deleteProjectMembers = async (req: express.Request, res: express.Re
       return res.sendStatus(400);
     }
   };
-  
-  // export const createProjectSprint = async (req: express.Request, res: express.Response) => {
-  //   try {
-  //     const projectId = req.params.projectId;
-  //     const sprintData = req.body.sprintData; 
-  //     const updatedProject = await createSprint(projectId, sprintData);
-  //     return res.status(200).json(updatedProject);
-  //   } catch (error) {
-  //     console.log(error);
-  //     return res.sendStatus(400);
-  //   }
-  // };
+
   
   export const deleteProjectSprint = async (req: express.Request, res: express.Response) => {
     try {
@@ -165,3 +155,14 @@ export const deleteProjectMembers = async (req: express.Request, res: express.Re
       return res.sendStatus(400);
     }
   };
+  export const addStoryToSprint = async (req: express.Request, res: express.Response) => {
+    try {
+      const sprintId = req.params.sprintId
+      const addedStory = createStory({...req.body,sprint_id:sprintId})
+      return res.status(200).json(addedStory);
+    } catch(error){
+      console.log(error)
+      return res.sendStatus(400)
+    }
+
+  }

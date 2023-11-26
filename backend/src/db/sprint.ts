@@ -21,6 +21,7 @@ export interface sprintInput {
   stories: string[];
   
 }
+
 export const createSprint = async (sprintInput: sprintInput): Promise<void> =>{
   try{
     const newSprint = new SprintModel({
