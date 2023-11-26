@@ -1,17 +1,21 @@
 import React, {useState,useEffect}  from 'react';
 import { AppBar, Toolbar, Typography, Button, Box, Drawer, List, ListItem, ListItemText, Paper } from '@mui/material';
 import { PieChart } from '@mui/icons-material';
-
+import { Link} from 'react-router-dom';
 
 const drawerWidth = 240;
 
 const Dashboard = ({ isLoggedIn }) => {
   // Functionality for navigation clicks will need to be implemented
   const [projectNames, setProjectNames] = useState([]);
+  const [currentProject, setCurrentProject] = useState({name:"loading"})
   const handleNavClick = (page) => {
     // Logic to handle navigation
     console.log(`Navigate to ${page}`);
   };
+  const handleButtonClick = (project)=>{
+    setCurrentProject(project)
+  }
   useEffect( ()=>{
      try{
       var options = {
@@ -30,6 +34,7 @@ const Dashboard = ({ isLoggedIn }) => {
         result.json().then((response)=>{
           console.log(response)
           setProjectNames(response)
+          setCurrentProject(response[0])
         })
       })
 
@@ -59,7 +64,7 @@ const Dashboard = ({ isLoggedIn }) => {
           </Typography>
           <List>
             {projectNames.map((text, index) => (
-              <ListItem button key={text.name}>
+              <ListItem button key={text.name}  onClick = {()=>handleButtonClick(text)} > 
                 <ListItemText primary={text.name} />
               </ListItem>
             ))}
@@ -73,7 +78,7 @@ const Dashboard = ({ isLoggedIn }) => {
           sx={{ flexGrow: 1, bgcolor: 'background.default', padding: 3, marginTop: '50px' }}
         >
           <Typography variant="h5" gutterBottom>
-            Project 2
+            {currentProject.name}
           </Typography>
           {/* Insert additional layout here similar to the example provided */}
           <Paper sx={{ padding: 2, margin: '10px 0' }}>
@@ -83,9 +88,19 @@ const Dashboard = ({ isLoggedIn }) => {
               Pie Graph of Completed Tasks vs Incomplete
             </Typography>
           </Paper>
-          <Button variant="contained" color="secondary">
-            View Release Plan
-          </Button>
+          {/* <Button variant="contained" color="secondary">
+            <Link to = {{path :'/releases', state:{projectId:currentProject.projectId}}}> View Release Plan </Link>
+          </Button> */}
+
+            <Button
+              variant="contained"
+              color="secondary"
+              component={Link}
+              to="/releases"
+              state={{ currentProject }}
+            >
+              View Release Plan
+            </Button>
         </Box>
       </Box>
     </>

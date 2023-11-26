@@ -30,9 +30,6 @@ export const deleteMembers = (projectId: string, memberIds: string[]) =>
 export const deleteSprint = (projectId: string, sprintId: string) =>
   ProjectModel.findByIdAndUpdate(projectId, { $pull: { sprints: sprintId } }, { new: true });
 
-export const createRelease = (projectId: string, releaseData: Record<string, any>) =>
-  ProjectModel.findByIdAndUpdate(projectId, { $push: { releases: releaseData } }, { new: true });
-
 export const deleteRelease = (projectId: string, releaseId: string) =>
   ProjectModel.findByIdAndUpdate(projectId, { $pull: { releases: releaseId } }, { new: true });
 

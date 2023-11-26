@@ -7,7 +7,6 @@ import {
   addMembers,
   deleteMembers,
   deleteSprint,
-  createRelease,
   deleteRelease,
   changeName,
   getProjectsByUser
@@ -120,17 +119,6 @@ export const deleteProjectMembers = async (req: express.Request, res: express.Re
     }
   };
   
-  export const createProjectRelease = async (req: express.Request, res: express.Response) => {
-    try {
-      const projectId = req.params.projectId;
-      const releaseData = req.body.releaseData; 
-      const updatedProject = await createRelease(projectId, releaseData);
-      return res.status(200).json(updatedProject);
-    } catch (error) {
-      console.log(error);
-      return res.sendStatus(400);
-    }
-  };
   
   export const deleteProjectRelease = async (req: express.Request, res: express.Response) => {
     try {
