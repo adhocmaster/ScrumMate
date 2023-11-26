@@ -6,13 +6,15 @@ import {
   getMembers,
   addMembers,
   deleteMembers,
-  createSprint,
   deleteSprint,
   createRelease,
   deleteRelease,
   changeName,
   getProjectsByUser
 } from '../db/project';
+
+import { createReleasePlan } from '../db/release';
+import {createSprint} from '../db/sprint';
 
 export const getProjectsFromUser = async(req:express.Request,res:express.Response) =>{
   try{
@@ -25,6 +27,28 @@ export const getProjectsFromUser = async(req:express.Request,res:express.Respons
     res.sendStatus(400)
   }
 } 
+export const addSprint = async(req:express.Request,res:express.Response) =>{
+  try{
+    const addedSprint = await createSprint({...req.body,project_id:req.params.projectId,release_id:req.params.release_id})
+    return res.status(200).json(addedSprint)
+
+  }catch(error){
+    console.log(error)
+    res.sendStatus(400)
+  }
+}
+
+export const createReleasePlanForProject = async(req:express.Request,res:express.Response) =>{
+  try{
+    console.log(req.body)
+    
+    const updatedProject = await createReleasePlan({...req.body,projectId:req.params.projectId})
+    return res.status(200).json(updatedProject)
+  }catch(error){
+    console.log(error)
+    res.sendStatus(400)
+  }
+}
 export const getAllProjects = async (req: express.Request, res: express.Response) => {
   try {
     const projects = await getProjects();
@@ -82,17 +106,17 @@ export const deleteProjectMembers = async (req: express.Request, res: express.Re
     }
   };
   
-  export const createProjectSprint = async (req: express.Request, res: express.Response) => {
-    try {
-      const projectId = req.params.projectId;
-      const sprintData = req.body.sprintData; 
-      const updatedProject = await createSprint(projectId, sprintData);
-      return res.status(200).json(updatedProject);
-    } catch (error) {
-      console.log(error);
-      return res.sendStatus(400);
-    }
-  };
+  // export const createProjectSprint = async (req: express.Request, res: express.Response) => {
+  //   try {
+  //     const projectId = req.params.projectId;
+  //     const sprintData = req.body.sprintData; 
+  //     const updatedProject = await createSprint(projectId, sprintData);
+  //     return res.status(200).json(updatedProject);
+  //   } catch (error) {
+  //     console.log(error);
+  //     return res.sendStatus(400);
+  //   }
+  // };
   
   export const deleteProjectSprint = async (req: express.Request, res: express.Response) => {
     try {
