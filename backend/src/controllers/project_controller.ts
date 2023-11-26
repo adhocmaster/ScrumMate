@@ -64,8 +64,8 @@ export const newProject = async (req: express.Request, res: express.Response) =>
   try {
     const userId = req.userId;
     const values = {...req.body,owner:userId};
-    const newProject = await createProject(values);
-    return res.json(newProject);
+    const createdProject = await createProject(values);
+    return res.json(createdProject);
   } catch (error) {
     console.log(error);
     return res.sendStatus(400);
