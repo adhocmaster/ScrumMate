@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useLocation } from "react-router-dom"
 import { AppBar, Typography, Button, Box, Paper } from '@mui/material';
 import { List, ListItem, ListItemText } from '@mui/material';
 import CreateReleasePlan from '../Components/CreateReleasePlan'; // Adjust the import path as necessary
@@ -7,15 +8,21 @@ const ReleasePlan = () => {
   const [showCreateReleasePlan, setShowCreateReleasePlan] = useState(false);
   const [showReleasePlan, setShowReleasePlan] = useState(false);
   const [releasePlanText, setReleasePlanText] = useState('');
-
+  const location = useLocation()
+  const project = location.state.currentProject
+  console.log(project)
   const toggleCreateReleasePlan = () => {
     setShowCreateReleasePlan(!showCreateReleasePlan);
   };
+  useEffect(()=>{
+    // add fetch here
 
+  },[])
   const toggleViewReleasePlan = () => {
     if (!showReleasePlan) {
       // Retrieve the saved release plan from localStorage if we're going to show it
       const savedReleasePlan = localStorage.getItem('releasePlanDocument');
+      
       setReleasePlanText(savedReleasePlan || 'No release plan found.');
     }
     setShowReleasePlan(!showReleasePlan);
@@ -42,7 +49,7 @@ const ReleasePlan = () => {
           </Box>
 
           {/* Conditionally render the CreateReleasePlan component */}
-          {showCreateReleasePlan && <CreateReleasePlan />}
+          {showCreateReleasePlan && <CreateReleasePlan projectId={project._id}/>}
 
           {/* Conditionally render the release plan text */}
           {showReleasePlan && (

@@ -27,14 +27,8 @@ export const addMembers = (projectId: string, memberIds: string[]) =>
 export const deleteMembers = (projectId: string, memberIds: string[]) =>
   ProjectModel.findByIdAndUpdate(projectId, { $pullAll: { members: memberIds } }, { new: true });
 
-export const createSprint = (projectId: string, sprintData: Record<string, any>) =>
-  ProjectModel.findByIdAndUpdate(projectId, { $push: { sprints: sprintData } }, { new: true });
-
 export const deleteSprint = (projectId: string, sprintId: string) =>
   ProjectModel.findByIdAndUpdate(projectId, { $pull: { sprints: sprintId } }, { new: true });
-
-export const createRelease = (projectId: string, releaseData: Record<string, any>) =>
-  ProjectModel.findByIdAndUpdate(projectId, { $push: { releases: releaseData } }, { new: true });
 
 export const deleteRelease = (projectId: string, releaseId: string) =>
   ProjectModel.findByIdAndUpdate(projectId, { $pull: { releases: releaseId } }, { new: true });
@@ -48,5 +42,5 @@ export const getProjectsByUser = (userId: string) => {
       { owner: new mongoose.Types.ObjectId(userId) },
       { members: new mongoose.Types.ObjectId(userId) },
     ],
-  }).exec();
+  }).populate('releases').populate('sprints').exec();
 };

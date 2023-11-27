@@ -2,6 +2,11 @@ import express from 'express';
 import {get, merge} from 'lodash'
 
 import { getUserBySesssionToken } from '../db/user';
+declare module 'express' {
+    export interface Request {
+      userId?: string; // Use the appropriate type for userId
+    }
+  }
 
 export const isOwner = async (req:express.Request, res: express.Response, next:express.NextFunction) => {
     try{
@@ -24,7 +29,7 @@ export const isOwner = async (req:express.Request, res: express.Response, next:e
 export const isAuthenticated = async (req:express.Request, res: express.Response, next:express.NextFunction) => {
     try{
         const sessionToken = req.cookies['user-auth'];
-
+        console.log(sessionToken)
         if(!sessionToken){
             return res.sendStatus(403);
         }
@@ -32,6 +37,7 @@ export const isAuthenticated = async (req:express.Request, res: express.Response
         if(!existingUser){
             return res.sendStatus(403);
         }
+        req.userId = existingUser._id
         merge(req,{identity: existingUser})
         return next();
     }catch(error){

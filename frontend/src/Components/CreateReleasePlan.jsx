@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Box, Button, TextareaAutosize, Typography } from '@mui/material';
 
-const CreateReleasePlan = () => {
+const CreateReleasePlan = ({projectId}) => {
   const [documentText, setDocumentText] = useState('');
 
   const handleTextChange = (event) => {
@@ -10,9 +10,34 @@ const CreateReleasePlan = () => {
 
   const handleSaveDocument = () => {
     // For demonstration purposes, temporarily saving to localStorage until database is set up
-    localStorage.setItem('releasePlanDocument', documentText);
+    // localStorage.setItem('releasePlanDocument', documentText);
+    console.log(projectId)
+    try{
+      var options = {
+        url: `http://localhost:3001/projects/release/${projectId}`,
+        method:'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({documentText}),
+        credentials:'include'
+      }
+      // fetch(`http://localhost:3001/projects/release/${projectId}`,options).then((result)=>{
+      //   console.log(result)
+      //   if(result.status == 200){
+      //     console.log(result)
+      //   }
+      //   result.json().then((response)=>{
+      //     console.log(response)
+      //     setProjectNames(response)
+      //   })
+      // })    
+    
     alert('Document saved!');
-  };
+    }catch(error){
+      console.log(error)
+    }
+  }
 
   return (
     <Box

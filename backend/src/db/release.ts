@@ -36,10 +36,11 @@ export const createReleasePlan = async (releaseInput: ReleaseInput): Promise<voi
       await ProjectModel.findByIdAndUpdate(
         releaseInput.projectId,
         { $push: { releases: savedRelease._id } },
-        { new: true, upsert: false } // upsert:false to avoid creating a new project if it doesn't exist
+        { new: true, upsert: false }// upsert:false to avoid creating a new project if it doesn't exist
+        
       );
-  
-      console.log('Release created and added to the project successfully.');
+      console.log('Release created and added to the project successfully.',savedRelease);
+
     } catch (error) {
       // Handle errors here
       console.error('Error creating the release and adding to the project:', error);

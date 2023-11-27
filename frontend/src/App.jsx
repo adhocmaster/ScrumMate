@@ -9,17 +9,36 @@ import Navbar from './Components/Navbar'; // Make sure the path is correct
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-
   const handleSignIn = (email, password) => {
-    const hardcodedEmail = 'test@email.com';
-    const hardcodedPassword = 'password123';
+    try{ 
+      var options = {
+        url:"https://localhost:3001/auth/login/",
+        method:'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body:JSON.stringify({email,password}),
+        credentials:'include'
+      }
+      fetch('http://localhost:3001/auth/login/',options).then((result)=>{
+        console.log(result)
+        if(result.status == 200){
+          
+        }
+        return result.json()
 
-    if (email === hardcodedEmail && password === hardcodedPassword) {
-      setIsLoggedIn(true);
-    } else {
-      alert('Incorrect email or password.');
+      }).then((response)=>{
+        console.log(response)
+        setIsLoggedIn(true);
+
+      })
+
+    }catch(error){
+      console.log(error)
     }
+
   };
+  
 
   const handleSignOut = () => {
     setIsLoggedIn(false);
