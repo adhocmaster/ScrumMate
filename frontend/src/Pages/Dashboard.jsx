@@ -1,11 +1,38 @@
 import React, {useState,useEffect}  from 'react';
 import { AppBar, Toolbar, Typography, Button, Box, Drawer, List, ListItem, ListItemText, Paper } from '@mui/material';
+import { Dialog, DialogTitle, DialogContent, TextField, DialogActions } from '@mui/material';
 import { PieChart } from '@mui/icons-material';
 import { Link} from 'react-router-dom';
 
 const drawerWidth = 240;
 
 const Dashboard = ({ isLoggedIn }) => {
+
+  //State hooks for create project
+  const [openDialog, setOpenDialog] = useState(false);
+  const [newProjectName, setNewProjectName] = useState('');
+  const [newProjectMembers, setNewProjectMembers] = useState('');
+
+
+  const handleDialogOpen = () => {
+    setOpenDialog(true);
+  };
+  
+  const handleDialogClose = () => {
+    setOpenDialog(false);
+  };
+  
+  const handleSubmit = () => {
+    // Implement the logic to create a new project with the entered data
+    console.log("Creating new project: ", newProjectName, " with members: ", newProjectMembers);
+    handleDialogClose();
+    // Reset form fields if needed
+    setNewProjectName('');
+    setNewProjectMembers('');
+  };
+  
+
+
   // Functionality for navigation clicks will need to be implemented
   const [projectNames, setProjectNames] = useState([]);
   const [currentProject, setCurrentProject] = useState({name:"loading"})
@@ -69,9 +96,10 @@ const Dashboard = ({ isLoggedIn }) => {
               </ListItem>
             ))}
           </List>
-          <Button sx={{ margin: 2 }} variant="contained" color="primary">
+          <Button sx={{ margin: 2 }} variant="contained" color="primary" onClick={handleDialogOpen}>
             Create New Project
           </Button>
+
         </Drawer>
         <Box
           component="main"
@@ -103,6 +131,38 @@ const Dashboard = ({ isLoggedIn }) => {
             </Button>
         </Box>
       </Box>
+
+      <Dialog open={openDialog} onClose={handleDialogClose}>
+      <DialogTitle>Create New Project</DialogTitle>
+      <DialogContent>
+        <TextField
+          autoFocus
+          margin="dense"
+          id="project-name"
+          label="Project Name"
+          type="text"
+          fullWidth
+          variant="standard"
+          value={newProjectName}
+          onChange={(e) => setNewProjectName(e.target.value)}
+        />
+        <TextField
+          margin="dense"
+          id="project-members"
+          label="Add Members"
+          type="text"
+          fullWidth
+          variant="standard"
+          value={newProjectMembers}
+          onChange={(e) => setNewProjectMembers(e.target.value)}
+        />
+      </DialogContent>
+      <DialogActions>
+        <Button onClick={handleDialogClose}>Cancel</Button>
+        <Button onClick={handleSubmit}>Create</Button>
+      </DialogActions>
+    </Dialog>
+
     </>
   );
 };
