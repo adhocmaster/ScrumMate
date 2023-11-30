@@ -37,7 +37,7 @@ const Dashboard = ({ isLoggedIn }) => {
       };
   
       const response = await fetch('http://localhost:3001/projects', options);
-  
+      console.log(response)
       if (response.status === 200) {
         console.log('New project created successfully!');
         // Optionally, you can fetch the updated list of projects after creating a new one.
@@ -45,9 +45,31 @@ const Dashboard = ({ isLoggedIn }) => {
       } else {
         console.error('Failed to create a new project');
       }
+      response.json().then(async (result)=>{
+        console.log(result)
+        const options = {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            memberIds: [newProjectMembers],
+            
+          }),
+          credentials: 'include',
+        };
+    
+        const response = await fetch(`http://localhost:3001/projects/${result._id}/members`, options);
+    
+        if (response.status === 200) {
+          console.log('members added');
+          // Optionally, you can fetch the updated list of projects after creating a new one.
+          // Update the projectNames state or perform any other necessary actions.
+        } else {
+          console.error('members not added');
+        }
 
-      
-  
+      })
       handleDialogClose();
       // Reset form fields if needed
       setNewProjectName('');
@@ -55,27 +77,8 @@ const Dashboard = ({ isLoggedIn }) => {
       console.error('Error creating a new project:', error);
     }
     try {
-      const options = {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          members: newProjectMembers,
-          
-        }),
-        credentials: 'include',
-      };
-  
-      const response = await fetch(`http://localhost:3001/projects/members`, options);
-  
-      if (response.status === 200) {
-        console.log('members added');
-        // Optionally, you can fetch the updated list of projects after creating a new one.
-        // Update the projectNames state or perform any other necessary actions.
-      } else {
-        console.error('members not added');
-      }
+      console.log(newProjectMembers)
+     
 
       
   
