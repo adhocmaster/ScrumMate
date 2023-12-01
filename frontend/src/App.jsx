@@ -6,6 +6,7 @@ import Dashboard from './Pages/Dashboard';
 import ReleasePlan from './Pages/ReleasePlan';
 import SprintPlan from './Pages/SprintPage';
 import Navbar from './Components/Navbar'; // Make sure the path is correct
+import Register from './Pages/Register';
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -76,6 +77,11 @@ function App() {
             isLoggedIn ? <SprintPlan /> : <Navigate replace to="/" />
           }
         />
+        <Route path="/register"
+        element={
+          <Register/>
+        } />
+        <Route path="/registrations" element={<Register />} />
         <Route path="*" element={<Navigate to="/" />} />
       </Routes>
     </div>
