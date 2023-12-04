@@ -122,7 +122,11 @@ const Dashboard = ({ isLoggedIn }) => {
         result.json().then((response)=>{
           console.log(response)
           setProjectNames(response)
-          setCurrentProject(response[0])
+          if(response.length> 0){
+            setCurrentProject(response[0])
+          }else{
+            setCurrentProject({name:"You have no projects yet, click Create New Project to make one. "})
+          }
         })
       })
 

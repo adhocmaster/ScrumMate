@@ -15,7 +15,7 @@ const Register = () => {
     event.preventDefault();
     try {
       // Replace with your API call logic
-      const response = await fetch('api-endpoint-needed', {
+      const response = await fetch('http://localhost:3001/auth/register', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

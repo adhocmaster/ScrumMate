@@ -28,7 +28,23 @@ const CreateReleasePlan = ({ projectId }) => {
     console.log(projectId);
     const today = new Date();
     const formattedToday = today.toISOString().split('T')[0]; // Format: YYYY-MM-DD
+
     setFinalizedDateText(formattedToday);
+    var options = {
+        url: `http://localhost:3001/projects/release/${projectId}`,
+        method:'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        credentials:'include',
+        body:JSON.stringify({high_level_goals:[highLevelGoalsText],status:"incomplete",dateFinalized:finalizedDateText,stories:[]})
+    }
+    fetch(`http://localhost:3001/projects/release/${projectId}`,options).then((result)=>{
+      console.log(result)
+      if(result.status == 200){
+        console.log(result)
+      }
+    })
   }
 
   useEffect(() => {
