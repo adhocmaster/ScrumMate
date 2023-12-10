@@ -8,9 +8,10 @@ export default (router:express.Router)=>{
     router.get('/projects/:projectId', ProjectController.getProjectById);
     router.post('/projects',isAuthenticated, ProjectController.newProject);
     router.post('/projects/release/:projectId',ProjectController.createReleasePlanForProject)
-    router.post('/projects/release/:projectId/sprint/:releaseId',ProjectController.addSprint)
+    router.post('/projects/:projectId/sprint/',ProjectController.addSprint)
     router.put('/projects/:projectId/members',ProjectController.addProjectMembers)
     router.put('/projects/story/:sprintId/',ProjectController.addStoryToSprint)
     router.put('/projects/story/release/:releaseId/',ProjectController.addStoryToRelease)
+    
 
 }

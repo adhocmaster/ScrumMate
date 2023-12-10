@@ -161,6 +161,16 @@ const Dashboard = ({ isLoggedIn }) => {
             >
               View Release Plan
             </Button>
+            <Button
+              sx = {{marginLeft:2}}
+              variant="contained"
+              color="secondary"
+              component={Link}
+              to="/sprints"
+              state={{ currentProject }}
+            >
+              View Sprints
+            </Button>
         </Box>
       </Box>
 

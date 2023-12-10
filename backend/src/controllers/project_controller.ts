@@ -32,7 +32,11 @@ export class ProjectController {
    */
   static async addSprint(req: express.Request, res: express.Response) {
       try {
-          const addedSprint = await createSprint({ ...req.body, project_id: req.params.projectId, release_id: req.params.release_id });
+        //we first need to add all of the stories
+        console.log(req.body);
+        const createdStories = await StoryModel.addStoriesToDatabase(req.body.user_stories)
+        console.log(createdStories)
+          const addedSprint = await createSprint({ spikes:req.body.spikes, stories:createdStories, project_id: req.params.projectId,release_id:null });
           return res.status(200).json(addedSprint);
       } catch (error) {
           console.log(error);

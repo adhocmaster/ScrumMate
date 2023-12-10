@@ -34,6 +34,9 @@ projectSchema.statics.createProject = function (values: Record<string, any>) {
 
 projectSchema.statics.getProjectById = function (projectId: string) {
   return this.findById(projectId).populate('releases').populate('sprints').populate({
+    path:'sprints',
+    populate:{path:'stories'}
+  }).populate({
     path:'releases',
     populate:{
       path:'stories'
