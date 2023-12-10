@@ -1,14 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import { Box, Button, TextareaAutosize, Typography, TextField, Paper} from '@mui/material';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
 
-const CreateReleasePlan = ({ projectId }) => {
+const CreateReleasePlan = ({ projectId,onFormSubmit }) => {
   const [nameText, setDocumentText] = useState('');
-  const [releaseDateText, setReleaseDateText] = useState('');
+  const [releaseDateText, setReleaseDateText] = useState(null);
   const [userStoriesText, setUserStoriesText] = useState('');
   const [highLevelGoalsText, sethighLevelGoalsText] = useState('');
   const [finalizedDateText, setFinalizedDateText] = useState('');
   const [highLevelGoals, setHighLevelGoals] = useState(['']); // Array of goals
-  const [userStories, setUserStories] = useState([{ description: '', notes: '', storyPoints: '' }]); //Array of user stories
+  const [userStories, setUserStories] = useState([{ description: '', notes: '', points: '' }]); //Array of user stories
 
 
 
@@ -16,17 +20,11 @@ const CreateReleasePlan = ({ projectId }) => {
     setDocumentText(event.target.value);
   };
 
-  const handleReleaseDateChange = (event) => {
-    setReleaseDateText(event.target.value);
+  const handleReleaseDateChange = (value) => {
+    setReleaseDateText(value);
+    console.log(releaseDateText)
+
   };
-
-  // const handleHighLevelGoalsTextChange = (event) => {
-  //   sethighLevelGoalsText(event.target.value);
-  // };
-
-  // const handleUserStoriesTextChange = (event) => {
-  //   setUserStoriesText(event.target.value);
-  // };
 
   //High level goal functions (new)
   const handleHighLevelGoalsChange = (index, event) => {
@@ -51,48 +49,28 @@ const CreateReleasePlan = ({ projectId }) => {
   };
 
   const addNewStory = () => {
-    setUserStories([...userStories, { description: '', notes: '', storyPoints: '' }]);
+    setUserStories([...userStories, { description: '', notes: '', points: '' }]);
   };
 
-  // Old function to handle backend
-  // const handleSaveDocument = () => {
-  //   console.log(projectId);
-  //   const today = new Date();
-  //   const formattedToday = today.toISOString().split('T')[0]; // Format: YYYY-MM-DD
 
-  //   setFinalizedDateText(formattedToday);
-  //   var options = {
-  //       url: `http://localhost:3001/projects/release/${projectId}`,
-  //       method:'POST',
-  //       headers: {
-  //         'Content-Type': 'application/json'
-  //       },
-  //       credentials:'include',
-  //       body:JSON.stringify({high_level_goals:[highLevelGoalsText],status:"incomplete",dateFinalized:finalizedDateText,stories:[]})
-  //   }
-  //   fetch(`http://localhost:3001/projects/release/${projectId}`,options).then((result)=>{
-  //     console.log(result)
-  //     if(result.status == 200){
-  //       console.log(result)
-  //     }
-  //   })
-  // }
 
   //New function to handle backend
   const handleSaveDocument = () => {
     console.log(projectId);
-    const today = new Date();
-    const formattedToday = today.toISOString().split('T')[0]; // Format: YYYY-MM-DD
-  
+    const today = new Date(releaseDateText);
+    // const formattedToday = today.toISOString().split('T')[0]; // Format: YYYY-MM-DD
     // Filter out empty strings from highLevelGoals and userStories
+    console.log(today)
     const filteredHighLevelGoals = highLevelGoals.filter(goal => goal.trim() !== '');
-    const filteredUserStories = userStories.filter(story => story.trim() !== '').map(story => story.description.trim());
-  
+    console.log(userStories)
+    // const filteredUserStories = userStories.filter(story => story.trim() !== '').map(story => story.description.trim());
+    
     const releasePlanData = {
+      name: nameText,
       high_level_goals: filteredHighLevelGoals,
-      user_stories: filteredUserStories,
+      user_stories: userStories,
       status: "incomplete",
-      dateFinalized: formattedToday
+      dateFinalized: today
     };
   
     var options = {
@@ -109,6 +87,7 @@ const CreateReleasePlan = ({ projectId }) => {
       console.log(result)
       if (result.status === 200) {
         console.log(result)
+        onFormSubmit()
       }
     })
   }
@@ -162,7 +141,7 @@ const CreateReleasePlan = ({ projectId }) => {
         Create Release Plan Document
       </Typography>
       <Typography variant="h6" sx={{ marginBottom: 2 }}>
-        Project Name
+        Release Name
       </Typography>
       <TextareaAutosize
         minRows={1}
@@ -174,13 +153,12 @@ const CreateReleasePlan = ({ projectId }) => {
       <Typography variant="h6" sx={{ marginTop: 2, marginBottom: 2 }}>
         Proposed Release Date
       </Typography>
-      <TextareaAutosize
-        minRows={1}
-        placeholder="Enter proposed release date..."
-        style={{ width: '100%', padding: '10px' }}
-        value={releaseDateText}
-        onChange={handleReleaseDateChange}
-      />
+      <LocalizationProvider dateAdapter={AdapterDayjs}>
+        <DemoContainer components={['DatePicker']}>
+          <DatePicker value={releaseDateText} onChange={handleReleaseDateChange} />
+        </DemoContainer>
+      </LocalizationProvider>
+      
       <Typography variant="h6" sx={{ marginTop: 2, marginBottom: 2 }}>
         High Level Goals
       </Typography>
@@ -206,7 +184,7 @@ const CreateReleasePlan = ({ projectId }) => {
       </Typography>
       {userStories.map((story, index) => (
         <Paper key={index} elevation={3} sx={{ padding: 2, marginBottom: 2 }}>
-          <Typography variant="h6">Sprint {index + 1}</Typography>
+          <Typography variant="h6">User Story {index + 1}</Typography>
           <TextareaAutosize
             minRows={3}
             placeholder="Enter description..."
@@ -225,8 +203,8 @@ const CreateReleasePlan = ({ projectId }) => {
             minRows={1}
             placeholder="Enter story points..."
             style={{ width: '100%', padding: '10px', marginBottom: '10px' }}
-            value={story.storyPoints}
-            onChange={(e) => handleUserStoryChange(index, 'storyPoints', e.target.value)}
+            value={story.points}
+            onChange={(e) => handleUserStoryChange(index, 'points', e.target.value)}
           />
         </Paper>
       ))}

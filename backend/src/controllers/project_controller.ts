@@ -3,7 +3,9 @@ import {ProjectModel} from '../db/project';
 import { UserModel } from '../db/user';
 import { ReleaseModel } from '../db/release';
 import {createSprint} from '../db/sprint';
-import { createStory, addStoryToRelease } from '../db/story';
+import { createStory, addStoryToRelease, StoryModel, addStoriesToDatabase } from '../db/story';
+import { IStory } from 'db/interfaces/schemas';
+
 
 
 export class ProjectController {
@@ -45,7 +47,9 @@ export class ProjectController {
   static async createReleasePlanForProject(req: express.Request, res: express.Response) {
       try {
           console.log(req.body);
-          const updatedProject = await ReleaseModel.createReleasePlan({ ...req.body, projectId: req.params.projectId });
+          const createdStories = await addStoriesToDatabase(req.body.user_stories)
+          console.log(createdStories)
+          const updatedProject = await ReleaseModel.createReleasePlan({ ...req.body,stories:createdStories, projectId: req.params.projectId });
           return res.status(200).json(updatedProject);
       } catch (error) {
           console.log(error);
@@ -209,6 +213,18 @@ export class ProjectController {
             const releaseId = req.params.releaseId;
             const addedStory = addStoryToRelease({ ...req.body, release_id: releaseId });
             return res.status(200).json(addedStory);
+        } catch (error) {
+            console.log(error);
+            return res.sendStatus(400);
+        }
+    }
+    static async getProjectById(req: express.Request, res: express.Response) {
+        try{
+            const projectId = req.params.projectId
+            console.log("projectId",projectId)
+            const project = await ProjectModel.getProjectById(projectId)
+            console.log(project)
+            return res.status(200).json(project);
         } catch (error) {
             console.log(error);
             return res.sendStatus(400);

@@ -80,3 +80,16 @@ export const addStoryToRelease = async (storyInput: storyInput): Promise<void> =
   }
   
 }
+export const addStoriesToDatabase = async function (stories: storyInput[]) {
+  try {
+    const createdStories = await StoryModel.create(stories) as Document<IStory>[];
+    console.log('Stories added to the database:', createdStories);
+
+    // Extract the IDs of the created stories and store them in an array
+    const storyIds = createdStories.map((story) => story._id);
+    return storyIds;
+  } catch (error) {
+    console.error('Error adding stories to the database:', error);
+    throw error; // Rethrow the error to handle it further if needed
+  }
+}

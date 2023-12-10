@@ -5,6 +5,7 @@ import { IRelease } from './interfaces/schemas';
 
 // Define the Release Schema
 const releaseSchema = new mongoose.Schema({
+    name: String,
     project_id: { type: mongoose.Schema.Types.ObjectId, required: true, ref: 'Project' },
     high_level_goals: [String],
     stories: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Story' }],
@@ -25,8 +26,9 @@ export const ReleaseModel = mongoose.model<IRelease, IReleaseModel>('Release', r
 ReleaseModel.createReleasePlan = async (releaseInput: ReleaseInput): Promise<void> => {
     try {
         const newRelease = new ReleaseModel({
+            name: releaseInput.name,
             project_id: new mongoose.Types.ObjectId(releaseInput.projectId),
-            high_level_goals: releaseInput.highLevelGoals,
+            high_level_goals: releaseInput.high_level_goals,
             stories: releaseInput.stories.map(storyId => new mongoose.Types.ObjectId(storyId)),
             date_finalized: releaseInput.dateFinalized,
             status: releaseInput.status,
@@ -52,14 +54,16 @@ ReleaseModel.getReleaseById = function (id: string): mongoose.Query<IRelease | n
     return this.findById(id);
 };
 
+
 // Function to update the status of a release by ID
 ReleaseModel.updateReleaseStatus = function (id: string, values: string): mongoose.Query<IRelease | null, IRelease, {}> {
     return this.findByIdAndUpdate(id, { status: values });
 };
 
 export interface ReleaseInput {
+    name: string;
     projectId: string;
-    highLevelGoals: string[];
+    high_level_goals: string[];
     stories: string[]; // Assuming these are story IDs
     dateFinalized: Date;
     status: string;

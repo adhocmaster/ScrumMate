@@ -33,7 +33,12 @@ projectSchema.statics.createProject = function (values: Record<string, any>) {
 };
 
 projectSchema.statics.getProjectById = function (projectId: string) {
-  return this.findById(projectId);
+  return this.findById(projectId).populate('releases').populate('sprints').populate({
+    path:'releases',
+    populate:{
+      path:'stories'
+    }
+  }).exec();
 };
 
 projectSchema.statics.getMembers = function (projectId: string) {

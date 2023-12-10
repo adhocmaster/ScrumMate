@@ -5,6 +5,7 @@ import { isAuthenticated, isOwner } from '../middleware';
 
 export default (router:express.Router)=>{
     router.get('/projects',isAuthenticated, ProjectController.getProjectsFromUser);
+    router.get('/projects/:projectId', ProjectController.getProjectById);
     router.post('/projects',isAuthenticated, ProjectController.newProject);
     router.post('/projects/release/:projectId',ProjectController.createReleasePlanForProject)
     router.post('/projects/release/:projectId/sprint/:releaseId',ProjectController.addSprint)

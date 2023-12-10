@@ -4,13 +4,39 @@ import { AppBar, Typography, Button, Box, Paper } from '@mui/material';
 import { List, ListItem, ListItemText } from '@mui/material';
 import CreateReleasePlan from '../Components/CreateReleasePlan'; // Adjust the import path as necessary
 
+
 const ReleasePlan = () => {
   const [showCreateReleasePlan, setShowCreateReleasePlan] = useState(false);
   const [showReleasePlan, setShowReleasePlan] = useState(false);
   const [releasePlanText, setReleasePlanText] = useState('');
+  const [formSubmitted, setFormSubmitted] = useState(false);
+
   const location = useLocation()
-  const project = location.state.currentProject
+  const [project,setProject] = useState(location.state.currentProject)
   console.log(project)
+  useEffect(()=>{
+    console.log(project._id)
+    if(formSubmitted){
+      //add fetch here
+      const options = {
+        method:"GET",
+        url:`http://localhost:3001/projects/${project._id}`,
+        // headers: {
+        //   'Content-Type': 'application/json'
+        // }
+        credentials:'include'
+      }
+      fetch(`http://localhost:3001/projects/${project._id}`,options).then((result)=>{
+        result.json().then((response)=>{
+          console.log(response)
+          setProject(response)
+        })
+      })
+      console.log("ITS SUBMITTED")
+      setFormSubmitted(false);
+    }
+
+  },[formSubmitted])
   function formatStories(stories){
     
     if (stories.length>0){
@@ -50,7 +76,7 @@ const ReleasePlan = () => {
     }else{
       return(
         <Typography>
-          No Sprints Added Yet
+          No Stories Added Yet
         </Typography>
       )
     }
@@ -60,10 +86,7 @@ const ReleasePlan = () => {
   const toggleCreateReleasePlan = () => {
     setShowCreateReleasePlan(!showCreateReleasePlan);
   };
-  useEffect(()=>{
-    // add fetch here
 
-  },[])
   const toggleViewReleasePlan = () => {
     if (!showReleasePlan) {
       // Retrieve the saved release plan from localStorage if we're going to show it
@@ -95,7 +118,7 @@ const ReleasePlan = () => {
           </Box>
 
           {/* Conditionally render the CreateReleasePlan component */}
-          {showCreateReleasePlan && <CreateReleasePlan projectId={project._id}/>}
+          {showCreateReleasePlan && <CreateReleasePlan projectId={project._id} onFormSubmit = {()=>setFormSubmitted(true)}/>}
 
           {/* Conditionally render the release plan text */}
           {showReleasePlan && (
@@ -105,13 +128,22 @@ const ReleasePlan = () => {
                 
 
                 <Paper key = {index}>
-
                   <Typography
-                    
                     variant="body1"
                     sx={{
                       whiteSpace: 'pre-wrap',
-                      textAlign: index === 0 ? 'center' : 'left' // Justify the first line, left-align the rest
+                      textAlign: 'center',  // Justify the first line, left-align the rest
+                      marginTop:2,
+                      marginBotttom:2
+                    }}
+                  >
+                    {line.name}
+                  </Typography>
+                  <Typography
+                    variant="body1"
+                    sx={{
+                      whiteSpace: 'pre-wrap',
+                      textAlign: 'center' // Justify the first line, left-align the rest
                     }}
                   >
                     High Level Goals: 
@@ -127,7 +159,7 @@ const ReleasePlan = () => {
                   variant="body1"
                   sx={{
                     whiteSpace: 'pre-wrap',
-                    textAlign: index === 0 ? 'center' : 'left' // Justify the first line, left-align the rest
+                    textAlign: 'center' // Justify the first line, left-align the rest
                   }}
                   >
                   Stories
@@ -139,7 +171,7 @@ const ReleasePlan = () => {
                   variant="body1"
                   sx={{
                     whiteSpace: 'pre-wrap',
-                    textAlign: index === 0 ? 'center' : 'left' // Justify the first line, left-align the rest
+                    textAlign: 'center' // Justify the first line, left-align the rest
                   }}
                   >
                     Status: {line.status}
