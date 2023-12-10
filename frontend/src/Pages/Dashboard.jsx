@@ -48,47 +48,10 @@ const Dashboard = ({ isLoggedIn }) => {
       } else {
         console.error('Failed to create a new project');
       }
-      // response.json().then(async (result)=>{
-      //   console.log(result)
-      //   const options = {
-      //     method: 'PUT',
-      //     headers: {
-      //       'Content-Type': 'application/json',
-      //     },
-      //     body: JSON.stringify({
-      //       memberIds: ,
-            
-      //     }),
-      //     credentials: 'include',
-      //   };
-    
-      //   const response = await fetch(`http://localhost:3001/projects/${result._id}/members`, options);
-    
-      //   if (response.status === 200) {
-      //     console.log('members added');
-      //     // Optionally, you can fetch the updated list of projects after creating a new one.
-      //     // Update the projectNames state or perform any other necessary actions.
-      //   } else {
-      //     console.error('members not added');
-      //   }
-
-      // })
       handleDialogClose();
       setNewProjectName('');
       setFlag(false)
 
-    } catch (error) {
-      console.error('Error creating a new project:', error);
-    }
-    try {
-      console.log(newProjectMembers)
-     
-
-      
-  
-      handleDialogClose();
-      // Reset form fields if needed
-      setNewProjectMembers('');
     } catch (error) {
       console.error('Error creating a new project:', error);
     }

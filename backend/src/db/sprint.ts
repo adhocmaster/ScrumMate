@@ -38,11 +38,6 @@ export const createSprint = async (sprintInput: sprintInput): Promise<void> =>{
       { $push: { sprints: savedSprint._id } },
       { new: true, upsert: false }// upsert:false to avoid creating a new project if it doesn't exist
     );
-    await ReleaseModel.findByIdAndUpdate(
-      sprintInput.release_id,
-      { $push: { sprints: savedSprint._id } },
-      { new: true, upsert: false }// upsert:false to avoid creating a new project if it doesn't exist
-    );
 
     console.log('Sprint created and added to the project successfully.',savedSprint);
 
