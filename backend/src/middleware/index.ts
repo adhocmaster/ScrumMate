@@ -1,7 +1,7 @@
 import express from 'express';
 import {get, merge} from 'lodash'
 
-import { getUserBySesssionToken } from '../db/user';
+import { UserModel } from '../db/user';
 declare module 'express' {
     export interface Request {
       userId?: string; // Use the appropriate type for userId
@@ -33,7 +33,7 @@ export const isAuthenticated = async (req:express.Request, res: express.Response
         if(!sessionToken){
             return res.sendStatus(403);
         }
-        const existingUser = await getUserBySesssionToken(sessionToken);
+        const existingUser = await UserModel.getUserBySessionToken(sessionToken);
         if(!existingUser){
             return res.sendStatus(403);
         }

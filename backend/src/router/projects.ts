@@ -1,14 +1,15 @@
 import express from 'express'
 import { update } from 'lodash';
-import { getProjectsFromUser, newProject ,deleteProjectMembers, createReleasePlanForProject, addSprint,addProjectMembers,addStoryToSprint} from '../controllers/project_controller'
+import { ProjectController} from '../controllers/project_controller'
 import { isAuthenticated, isOwner } from '../middleware';
 
 export default (router:express.Router)=>{
-    router.get('/projects',isAuthenticated, getProjectsFromUser);
-    router.post('/projects',isAuthenticated, newProject);
-    router.post('/projects/release/:projectId',createReleasePlanForProject)
-    router.post('/projects/release/:projectId/sprint/:releaseId',addSprint)
-    router.put('/projects/:projectId/members',addProjectMembers)
-    router.put('/projects/story/:sprintId/',addStoryToSprint)
-    // router.patch('/users/:id',isAuthenticated, isOwner, updateUser)
+    router.get('/projects',isAuthenticated, ProjectController.getProjectsFromUser);
+    router.post('/projects',isAuthenticated, ProjectController.newProject);
+    router.post('/projects/release/:projectId',ProjectController.createReleasePlanForProject)
+    router.post('/projects/release/:projectId/sprint/:releaseId',ProjectController.addSprint)
+    router.put('/projects/:projectId/members',ProjectController.addProjectMembers)
+    router.put('/projects/story/:sprintId/',ProjectController.addStoryToSprint)
+    router.put('/projects/story/release/:releaseId/',ProjectController.addStoryToRelease)
+
 }

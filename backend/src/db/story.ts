@@ -1,9 +1,11 @@
+import { isNull } from 'lodash';
 import mongoose, { Document, Schema } from 'mongoose';
 import { IStory } from './interfaces/schemas';
 import { SprintModel } from './sprint';
+import { ReleaseModel } from './release';
 
 const storySchema = new mongoose.Schema({
-    sprint_id: { type: mongoose.Schema.Types.ObjectId, required: true, ref: 'Sprint' },
+    sprint_id: { type: mongoose.Schema.Types.ObjectId, required: false, ref: 'Sprint' },
     description: String,
     notes: String,
     points: Number,
@@ -17,7 +19,8 @@ export interface storyInput {
   description: string;
   notes: string; // Assuming these are story IDs
   points: Number;
-  tasks: string[]
+  tasks: string[];
+  release_id:string;
 }
 
 export const createStory = async (storyInput: storyInput): Promise<void> =>{
@@ -26,6 +29,7 @@ export const createStory = async (storyInput: storyInput): Promise<void> =>{
       sprintId: new mongoose.Types.ObjectId(storyInput.sprint_id),
       description: storyInput.description,
       notes:  storyInput.notes,
+      points: storyInput.points,
       tasks: storyInput.tasks.map(taskId => new mongoose.Types.ObjectId(taskId))
     })
     const savedStory = await newStory.save();
@@ -33,12 +37,41 @@ export const createStory = async (storyInput: storyInput): Promise<void> =>{
     // Add the new release to the project
     await SprintModel.findByIdAndUpdate(
       storyInput.sprint_id,
-      { $push: { sprints: savedStory._id } },
+      { $push: { stories: savedStory._id } },
       { new: true, upsert: false }// upsert:false to avoid creating a new project if it doesn't exist
     );
     
 
     console.log('Sprint created and added to the project successfully.',savedStory);
+
+  } catch (error) {
+    // Handle errors here
+    console.error('Error creating the sprint and adding to the project:', error);
+    throw error; // Rethrow the error for further handling if necessary
+  }
+  
+}
+export const addStoryToRelease = async (storyInput: storyInput): Promise<void> =>{
+  try{
+
+    const newStory = new StoryModel({
+      sprintId: null,
+      description: storyInput.description,
+      notes:  storyInput.notes,
+      points: storyInput.points,
+      tasks: storyInput.tasks.map(taskId => new mongoose.Types.ObjectId(taskId))
+    })
+    const savedStory = await newStory.save();
+
+    // Add the new release to the Release
+    console.log("releaseId",storyInput.release_id)
+    await ReleaseModel.findByIdAndUpdate(
+      storyInput.release_id,
+      { $push: { stories: savedStory._id } },
+      { new: true, upsert: false }// upsert:false to avoid creating a new project if it doesn't exist
+    );
+    
+    console.log('Sprint created and added to the release successfully.',savedStory);
 
   } catch (error) {
     // Handle errors here

@@ -21,6 +21,7 @@ export interface taskInput {
 
 export const createTask = async (taskInput: taskInput): Promise<void> =>{
     try{
+      console.log()
       const newTask = new TaskModel({
         stories_id: new mongoose.Types.ObjectId(taskInput.stories_id),
         description:  taskInput.description,

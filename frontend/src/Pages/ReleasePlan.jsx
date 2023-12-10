@@ -11,6 +11,52 @@ const ReleasePlan = () => {
   const location = useLocation()
   const project = location.state.currentProject
   console.log(project)
+  function formatStories(stories){
+    
+    if (stories.length>0){
+      return(
+        <Paper>
+          <List>
+
+          {stories.map((story,index)=>(
+            <div key = {index}>
+            <ListItem>
+              <Typography sx={{ textAlign: 'center', marginTop: 1, fontSize:16 }}>
+                User Story {index+1}
+              </Typography>
+            </ListItem>
+            <ListItem>
+
+              <Typography sx={{ textAlign: 'left', fontSize:12 }}>
+                Description: {story.description}                
+              </Typography>
+            </ListItem>
+            <ListItem>
+              <Typography sx={{ textAlign: 'left', fontSize:12 }}>
+                  Notes: {story.notes}                
+              </Typography>
+            </ListItem>
+            <ListItem>
+              <Typography sx={{ textAlign: 'left', fontSize:12 }}>
+                Points: {story.points}
+              </Typography>
+            </ListItem>
+
+            </div> 
+          ))}
+        </List>
+      </Paper>
+      )
+    }else{
+      return(
+        <Typography>
+          No Sprints Added Yet
+        </Typography>
+      )
+    }
+
+  }
+  const savedReleasePlans = project.releases
   const toggleCreateReleasePlan = () => {
     setShowCreateReleasePlan(!showCreateReleasePlan);
   };
@@ -21,9 +67,9 @@ const ReleasePlan = () => {
   const toggleViewReleasePlan = () => {
     if (!showReleasePlan) {
       // Retrieve the saved release plan from localStorage if we're going to show it
-      const savedReleasePlan = localStorage.getItem('releasePlanDocument');
       
-      setReleasePlanText(savedReleasePlan || 'No release plan found.');
+      console.log(savedReleasePlans)
+      setReleasePlanText(savedReleasePlans || 'No release plan found.');
     }
     setShowReleasePlan(!showReleasePlan);
   };
@@ -55,17 +101,53 @@ const ReleasePlan = () => {
           {showReleasePlan && (
             <Paper elevation={2} sx={{ backgroundColor: '#e0e0e0', padding: 2, marginTop: 2 }}>
               {/* Split the text into lines and apply different styles to the first line and the rest */}
-              {releasePlanText.split('\n').map((line, index) => (
-                <Typography
-                  key={index}
+              {releasePlanText.map((line, index) => (
+                
+
+                <Paper key = {index}>
+
+                  <Typography
+                    
+                    variant="body1"
+                    sx={{
+                      whiteSpace: 'pre-wrap',
+                      textAlign: index === 0 ? 'center' : 'left' // Justify the first line, left-align the rest
+                    }}
+                  >
+                    High Level Goals: 
+                  </Typography>
+                  <List>
+                    {line.high_level_goals.map((line,index)=>(
+                      <ListItem key = {index}>
+                        <ListItemText primary={line} />
+                      </ListItem>
+                    ))} 
+                  </List>
+                  <Typography
                   variant="body1"
                   sx={{
                     whiteSpace: 'pre-wrap',
                     textAlign: index === 0 ? 'center' : 'left' // Justify the first line, left-align the rest
                   }}
-                >
-                  {line}
-                </Typography>
+                  >
+                  Stories
+                  </Typography>
+                   {formatStories(line.stories)}
+
+
+                  <Typography
+                  variant="body1"
+                  sx={{
+                    whiteSpace: 'pre-wrap',
+                    textAlign: index === 0 ? 'center' : 'left' // Justify the first line, left-align the rest
+                  }}
+                  >
+                    Status: {line.status}
+                  </Typography>
+                </Paper>
+
+
+
               ))}
             </Paper>
           )}
