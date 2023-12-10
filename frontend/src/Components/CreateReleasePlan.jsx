@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Box, Button, TextareaAutosize, Typography } from '@mui/material';
+import { Box, Button, TextareaAutosize, Typography, TextField, Paper} from '@mui/material';
 
 const CreateReleasePlan = ({ projectId }) => {
   const [nameText, setDocumentText] = useState('');
@@ -8,7 +8,8 @@ const CreateReleasePlan = ({ projectId }) => {
   const [highLevelGoalsText, sethighLevelGoalsText] = useState('');
   const [finalizedDateText, setFinalizedDateText] = useState('');
   const [highLevelGoals, setHighLevelGoals] = useState(['']); // Array of goals
-  const [userStories, setUserStories] = useState(['']); //Array of userStories
+  const [userStories, setUserStories] = useState([{ description: '', notes: '', storyPoints: '' }]); //Array of user stories
+
 
 
   const handleNameChange = (event) => {
@@ -19,15 +20,15 @@ const CreateReleasePlan = ({ projectId }) => {
     setReleaseDateText(event.target.value);
   };
 
-  const handleHighLevelGoalsTextChange = (event) => {
-    sethighLevelGoalsText(event.target.value);
-  };
+  // const handleHighLevelGoalsTextChange = (event) => {
+  //   sethighLevelGoalsText(event.target.value);
+  // };
 
-  const handleUserStoriesTextChange = (event) => {
-    setUserStoriesText(event.target.value);
-  };
+  // const handleUserStoriesTextChange = (event) => {
+  //   setUserStoriesText(event.target.value);
+  // };
 
-  //High level goal functions
+  //High level goal functions (new)
   const handleHighLevelGoalsChange = (index, event) => {
     const newGoals = [...highLevelGoals];
     newGoals[index] = event.target.value;
@@ -38,15 +39,19 @@ const CreateReleasePlan = ({ projectId }) => {
     setHighLevelGoals([...highLevelGoals, '']); // Add a new empty goal
   };
 
-  //User story functions
-  const handleUserStoryChange = (index, event) => {
-    const newStories = [...userStories];
-    newStories[index] = event.target.value;
-    setUserStories(newStories);
+  //User story functions (new)
+  const handleUserStoryChange = (index, field, value) => {
+    const updatedStories = userStories.map((story, idx) => {
+      if (idx === index) {
+        return { ...story, [field]: value };
+      }
+      return story;
+    });
+    setUserStories(updatedStories);
   };
 
   const addNewStory = () => {
-    setUserStories([...userStories, '']); //New empty story
+    setUserStories([...userStories, { description: '', notes: '', storyPoints: '' }]);
   };
 
   // Old function to handle backend
@@ -199,16 +204,31 @@ const CreateReleasePlan = ({ projectId }) => {
       <Typography variant="h6" sx={{ marginTop: 2, marginBottom: 2 }}>
         User Stories
       </Typography>
-      
       {userStories.map((story, index) => (
-        <TextareaAutosize
-          key={index}
-          minRows={3}
-          placeholder="Enter new user story..."
-          style={{ width: '100%', padding: '10px', marginBottom: '10px' }}
-          value={story}
-          onChange={(e) => handleUserStoryChange(index, e)}
-        />
+        <Paper key={index} elevation={3} sx={{ padding: 2, marginBottom: 2 }}>
+          <Typography variant="h6">Sprint {index + 1}</Typography>
+          <TextareaAutosize
+            minRows={3}
+            placeholder="Enter description..."
+            style={{ width: '100%', padding: '10px', marginBottom: '10px' }}
+            value={story.description}
+            onChange={(e) => handleUserStoryChange(index, 'description', e.target.value)}
+          />
+          <TextareaAutosize
+            minRows={3}
+            placeholder="Enter notes..."
+            style={{ width: '100%', padding: '10px', marginBottom: '10px' }}
+            value={story.notes}
+            onChange={(e) => handleUserStoryChange(index, 'notes', e.target.value)}
+          />
+          <TextareaAutosize
+            minRows={1}
+            placeholder="Enter story points..."
+            style={{ width: '100%', padding: '10px', marginBottom: '10px' }}
+            value={story.storyPoints}
+            onChange={(e) => handleUserStoryChange(index, 'storyPoints', e.target.value)}
+          />
+        </Paper>
       ))}
 
       <Button
