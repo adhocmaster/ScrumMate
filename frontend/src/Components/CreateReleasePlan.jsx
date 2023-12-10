@@ -7,6 +7,9 @@ const CreateReleasePlan = ({ projectId }) => {
   const [userStoriesText, setUserStoriesText] = useState('');
   const [highLevelGoalsText, sethighLevelGoalsText] = useState('');
   const [finalizedDateText, setFinalizedDateText] = useState('');
+  const [highLevelGoals, setHighLevelGoals] = useState(['']); // Array of goals
+  const [userStories, setUserStories] = useState(['']); //Array of userStories
+
 
   const handleNameChange = (event) => {
     setDocumentText(event.target.value);
@@ -24,34 +27,93 @@ const CreateReleasePlan = ({ projectId }) => {
     setUserStoriesText(event.target.value);
   };
 
+  //High level goal functions
+  const handleHighLevelGoalsChange = (index, event) => {
+    const newGoals = [...highLevelGoals];
+    newGoals[index] = event.target.value;
+    setHighLevelGoals(newGoals);
+  };
+
+  const addNewGoal = () => {
+    setHighLevelGoals([...highLevelGoals, '']); // Add a new empty goal
+  };
+
+  //User story functions
+  const handleUserStoryChange = (index, event) => {
+    const newStories = [...userStories];
+    newStories[index] = event.target.value;
+    setUserStories(newStories);
+  };
+
+  const addNewStory = () => {
+    setUserStories([...userStories, '']); //New empty story
+  };
+
+  // Old function to handle backend
+  // const handleSaveDocument = () => {
+  //   console.log(projectId);
+  //   const today = new Date();
+  //   const formattedToday = today.toISOString().split('T')[0]; // Format: YYYY-MM-DD
+
+  //   setFinalizedDateText(formattedToday);
+  //   var options = {
+  //       url: `http://localhost:3001/projects/release/${projectId}`,
+  //       method:'POST',
+  //       headers: {
+  //         'Content-Type': 'application/json'
+  //       },
+  //       credentials:'include',
+  //       body:JSON.stringify({high_level_goals:[highLevelGoalsText],status:"incomplete",dateFinalized:finalizedDateText,stories:[]})
+  //   }
+  //   fetch(`http://localhost:3001/projects/release/${projectId}`,options).then((result)=>{
+  //     console.log(result)
+  //     if(result.status == 200){
+  //       console.log(result)
+  //     }
+  //   })
+  // }
+
+  //New function to handle backend
   const handleSaveDocument = () => {
     console.log(projectId);
     const today = new Date();
     const formattedToday = today.toISOString().split('T')[0]; // Format: YYYY-MM-DD
-
-    setFinalizedDateText(formattedToday);
+  
+    // Filter out empty strings from highLevelGoals and userStories
+    const filteredHighLevelGoals = highLevelGoals.filter(goal => goal.trim() !== '');
+    const filteredUserStories = userStories.filter(story => story.trim() !== '');
+  
+    const releasePlanData = {
+      high_level_goals: filteredHighLevelGoals,
+      user_stories: filteredUserStories,
+      status: "incomplete",
+      dateFinalized: formattedToday
+    };
+  
     var options = {
-        url: `http://localhost:3001/projects/release/${projectId}`,
-        method:'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        credentials:'include',
-        body:JSON.stringify({high_level_goals:[highLevelGoalsText],status:"incomplete",dateFinalized:finalizedDateText,stories:[]})
+      url: `http://localhost:3001/projects/release/${projectId}`,
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      credentials: 'include',
+      body: JSON.stringify(releasePlanData)
     }
-    fetch(`http://localhost:3001/projects/release/${projectId}`,options).then((result)=>{
+  
+    fetch(`http://localhost:3001/projects/release/${projectId}`, options).then((result) => {
       console.log(result)
-      if(result.status == 200){
+      if (result.status === 200) {
         console.log(result)
       }
     })
   }
+  
 
   useEffect(() => {
     if (finalizedDateText) {
       const combinedDocument = nameText + "\nRelease Date:\n" + releaseDateText + 
-        "\n \nHigh Level Goals:\n" + highLevelGoalsText + 
-        "\n \nUser Stories:\n" + userStoriesText + 
+        "\n \nHigh Level Goals:\n" + highLevelGoals + 
+        "\n \nUser Stories:\n" + userStories + 
         "\n \nDate Finalized:\n" + finalizedDateText;
 
       console.log(projectId)
@@ -117,27 +179,49 @@ const CreateReleasePlan = ({ projectId }) => {
       <Typography variant="h6" sx={{ marginTop: 2, marginBottom: 2 }}>
         High Level Goals
       </Typography>
-      <TextareaAutosize
-        minRows={10}
-        placeholder="Enter high level goals..."
-        style={{ width: '100%', padding: '10px' }}
-        value={highLevelGoalsText}
-        onChange={handleHighLevelGoalsTextChange}
-      />
+      {highLevelGoals.map((goal, index) => (
+        <TextareaAutosize
+          key={index}
+          minRows={3}
+          placeholder="Enter high level goal..."
+          style={{ width: '100%', padding: '10px', marginBottom: '10px' }}
+          value={goal}
+          onChange={(e) => handleHighLevelGoalsChange(index, e)}
+        />
+      ))}
+      <Button
+        variant="contained"
+        sx={{ marginTop: 2, alignSelf: 'start' }}
+        onClick={addNewGoal}
+      >
+        Add New Goal
+      </Button>
       <Typography variant="h6" sx={{ marginTop: 2, marginBottom: 2 }}>
         User Stories
       </Typography>
-      <TextareaAutosize
-        minRows={10}
-        placeholder="Enter user stories..."
-        style={{ width: '100%', padding: '10px' }}
-        value={userStoriesText}
-        onChange={handleUserStoriesTextChange}
-      />
+      
+      {userStories.map((story, index) => (
+        <TextareaAutosize
+          key={index}
+          minRows={3}
+          placeholder="Enter new user story..."
+          style={{ width: '100%', padding: '10px', marginBottom: '10px' }}
+          value={story}
+          onChange={(e) => handleUserStoryChange(index, e)}
+        />
+      ))}
+
+      <Button
+        variant="contained"
+        sx={{ marginTop: 2, alignSelf: 'start' }}
+        onClick={addNewStory}
+      >
+        Add New User Story
+      </Button>
       <Button
         variant="contained"
         color="primary"
-        sx={{ marginTop: 2, alignSelf: 'start' }}
+        sx={{ marginTop: 2, alignSelf: 'center' }}
         onClick={handleSaveDocument}
       >
         Save Document
