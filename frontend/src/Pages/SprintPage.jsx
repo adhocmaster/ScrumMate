@@ -29,34 +29,42 @@ const SprintPage = () => {
   };
   useEffect(()=>{
     console.log(project._id)
-    if(formSubmitted){
-      //add fetch here
-      const options = {
-        method:"GET",
-        url:`http://localhost:3001/projects/${project._id}`,
-        credentials:'include'
-      }
-      fetch(`http://localhost:3001/projects/${project._id}`,options).then((result)=>{
-        result.json().then((response)=>{
-          console.log(response)
-          setProject(response)
+    const options = {
+      method:"GET",
+      url:`http://localhost:3001/projects/${project._id}`,
+      credentials:'include'
+    }
+    fetch(`http://localhost:3001/projects/${project._id}`,options).then((result)=>{
+      result.json().then((response)=>{
+        console.log(response)
+        setProject(response)
 
-        })
       })
-      console.log("ITS SUBMITTED")
+    })
+    if(formSubmitted){
       setFormSubmitted(false);
     }
+      
 
   },[formSubmitted])
+
   function displaySprintBar(){
     if(project.sprints.length>0){
-      console.log("nothing")
       return(
       <List component="nav" aria-label="sprint folders">
       {/* Map through your sprint list or hard code as below */}
         <ListItem button>
           <ListItemText primary="Planning Poker" />
         </ListItem>
+        <Divider />
+       
+        {/* Add Map to show each of the sprints use code below */}
+         {/* <ListItem button disabled>
+              <ListItemText primary="There Are No Sprints For This Project Yet" />
+            </ListItem>
+          </List> */}
+        {/* Repeat for other sprints */}
+
       </List>
       )
     }else{
@@ -71,9 +79,37 @@ const SprintPage = () => {
             <ListItem button disabled>
               <ListItemText primary="There Are No Sprints For This Project Yet" />
             </ListItem>
-            {/* Repeat for other sprints */}
           </List>
       )
+    }
+  }
+
+  function displaySprintData(){
+    if(project.sprints.length>0){
+      //map all of the sprints, this includes
+      return(
+        <List>
+            <ListItem>
+              <ListItemText primary="Sprint 1:" />
+            </ListItem>
+            <List component="div" disablePadding>
+              {/* Repeat this structure for each user story */}
+              <ListItem button sx={{ pl: 4 }}>
+                <ListItemText primary="User story 1 for sprint 1" />
+              </ListItem>
+              <List component="div" disablePadding sx={{ pl: 4 }}>
+                {/* Repeat for tasks */}
+                <ListItem button>
+                  <ListItemText primary="Task for user story 1 (Completed)" />
+                </ListItem>
+                {/* Repeat for other tasks */}
+              </List>
+            </List>
+            {/* Repeat structure for Sprint 2 and subsequent sprints */}
+        </List>
+      )
+    }else{
+      // display something that says there is no sprints
     }
   }
   return (
@@ -93,25 +129,7 @@ const SprintPage = () => {
           <Typography variant="h5" sx={{ marginBottom: 2 }}>
             Sprints
           </Typography>
-          <List>
-            <ListItem>
-              <ListItemText primary="Sprint 1:" />
-            </ListItem>
-            <List component="div" disablePadding>
-              {/* Repeat this structure for each user story */}
-              <ListItem button sx={{ pl: 4 }}>
-                <ListItemText primary="User story 1 for sprint 1" />
-              </ListItem>
-              <List component="div" disablePadding sx={{ pl: 4 }}>
-                {/* Repeat for tasks */}
-                <ListItem button>
-                  <ListItemText primary="Task for user story 1 (Completed)" />
-                </ListItem>
-                {/* Repeat for other tasks */}
-              </List>
-            </List>
-            {/* Repeat structure for Sprint 2 and subsequent sprints */}
-          </List>
+          {displaySprintData()}
         </Paper>
       </Box>
       <Modal
