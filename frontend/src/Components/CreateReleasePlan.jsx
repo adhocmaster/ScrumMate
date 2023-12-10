@@ -4,18 +4,71 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
+import Slider from '@mui/material/Slider';
+
 
 const CreateReleasePlan = ({ projectId,onFormSubmit }) => {
   const [nameText, setDocumentText] = useState('');
-  const [releaseDateText, setReleaseDateText] = useState(null);
+  const placeDate = new Date()
+  const [releaseDateText, setReleaseDateText] = useState(placeDate);
   const [userStoriesText, setUserStoriesText] = useState('');
   const [highLevelGoalsText, sethighLevelGoalsText] = useState('');
   const [finalizedDateText, setFinalizedDateText] = useState('');
   const [highLevelGoals, setHighLevelGoals] = useState(['']); // Array of goals
-  const [userStories, setUserStories] = useState([{ description: '', notes: '', points: '' }]); //Array of user stories
+  const [userStories, setUserStories] = useState([{ description: '', notes: '', points: 20}]); //Array of user stories
 
 
+  //Code for the sliders
+  const marks = [
+    {
+      value: 0,
+      label: '0',
+    },
+    {
+      value: 10,
+      label: '10',
+    },
+    {
+      value: 20,
+      label: '20',
+    },
+    {
+      value: 30,
+      label: '30',
+    },
+    {
+      value: 40,
+      label: '40',
+    },
+    {
+      value: 50,
+      label: '50',
+    },
+    {
+      value: 60,
+      label: '60',
+    },
+    {
+      value: 70,
+      label: '70',
+    },
+    {
+      value: 80,
+      label: '80',
+    },
+    {
+      value: 90,
+      label: '90',
+    },
+    {
+      value: 100,
+      label: '100',
+    },
+  ]
 
+  function valuetext(value) {
+    return `${value}`;
+  }
   const handleNameChange = (event) => {
     setDocumentText(event.target.value);
   };
@@ -39,6 +92,7 @@ const CreateReleasePlan = ({ projectId,onFormSubmit }) => {
 
   //User story functions (new)
   const handleUserStoryChange = (index, field, value) => {
+    console.log(index,field,value)
     const updatedStories = userStories.map((story, idx) => {
       if (idx === index) {
         return { ...story, [field]: value };
@@ -49,7 +103,7 @@ const CreateReleasePlan = ({ projectId,onFormSubmit }) => {
   };
 
   const addNewStory = () => {
-    setUserStories([...userStories, { description: '', notes: '', points: '' }]);
+    setUserStories([...userStories, { description: '', notes: '', points: 20 }]);
   };
 
 
@@ -58,9 +112,7 @@ const CreateReleasePlan = ({ projectId,onFormSubmit }) => {
   const handleSaveDocument = () => {
     console.log(projectId);
     const today = new Date(releaseDateText);
-    // const formattedToday = today.toISOString().split('T')[0]; // Format: YYYY-MM-DD
     // Filter out empty strings from highLevelGoals and userStories
-    console.log(today)
     const filteredHighLevelGoals = highLevelGoals.filter(goal => goal.trim() !== '');
     console.log(userStories)
     // const filteredUserStories = userStories.filter(story => story.trim() !== '').map(story => story.description.trim());
@@ -199,13 +251,24 @@ const CreateReleasePlan = ({ projectId,onFormSubmit }) => {
             value={story.notes}
             onChange={(e) => handleUserStoryChange(index, 'notes', e.target.value)}
           />
-          <TextareaAutosize
+          {/* <TextareaAutosize
             minRows={1}
             placeholder="Enter story points..."
             style={{ width: '100%', padding: '10px', marginBottom: '10px' }}
             value={story.points}
             onChange={(e) => handleUserStoryChange(index, 'points', e.target.value)}
+          /> */}
+          Story Points
+          <Slider
+            aria-label="Always visible"
+            defaultValue={20}
+            getAriaValueText={valuetext}
+            step={1}
+            marks={marks}
+            valueLabelDisplay="on"
+            onChange = {(e,val)=>handleUserStoryChange(index,'points',val)}
           />
+
         </Paper>
       ))}
 

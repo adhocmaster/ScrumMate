@@ -21,9 +21,6 @@ const ReleasePlan = () => {
       const options = {
         method:"GET",
         url:`http://localhost:3001/projects/${project._id}`,
-        // headers: {
-        //   'Content-Type': 'application/json'
-        // }
         credentials:'include'
       }
       fetch(`http://localhost:3001/projects/${project._id}`,options).then((result)=>{
@@ -34,6 +31,8 @@ const ReleasePlan = () => {
       })
       console.log("ITS SUBMITTED")
       setFormSubmitted(false);
+      toggleCreateReleasePlan()
+      toggleViewReleasePlan()
     }
 
   },[formSubmitted])

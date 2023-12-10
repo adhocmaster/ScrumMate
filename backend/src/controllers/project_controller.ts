@@ -3,7 +3,8 @@ import {ProjectModel} from '../db/project';
 import { UserModel } from '../db/user';
 import { ReleaseModel } from '../db/release';
 import {createSprint} from '../db/sprint';
-import { createStory, addStoryToRelease, StoryModel, addStoriesToDatabase } from '../db/story';
+// import { createStory, addStoryToRelease, StoryModel, addStoriesToDatabase } from '../db/story';
+import { StoryModel } from '../db/story';
 import { IStory } from 'db/interfaces/schemas';
 
 
@@ -47,7 +48,7 @@ export class ProjectController {
   static async createReleasePlanForProject(req: express.Request, res: express.Response) {
       try {
           console.log(req.body);
-          const createdStories = await addStoriesToDatabase(req.body.user_stories)
+          const createdStories = await StoryModel.addStoriesToDatabase(req.body.user_stories)
           console.log(createdStories)
           const updatedProject = await ReleaseModel.createReleasePlan({ ...req.body,stories:createdStories, projectId: req.params.projectId });
           return res.status(200).json(updatedProject);
@@ -201,7 +202,7 @@ export class ProjectController {
     static async addStoryToSprint(req: express.Request, res: express.Response) {
         try {
             const sprintId = req.params.sprintId;
-            const addedStory = createStory({ ...req.body, sprint_id: sprintId });
+            const addedStory = await StoryModel.createStory({ ...req.body, sprint_id: sprintId });
             return res.status(200).json(addedStory);
         } catch (error) {
             console.log(error);
@@ -211,7 +212,7 @@ export class ProjectController {
     static async addStoryToRelease(req: express.Request, res: express.Response) {
         try {
             const releaseId = req.params.releaseId;
-            const addedStory = addStoryToRelease({ ...req.body, release_id: releaseId });
+            const addedStory = await StoryModel.addStoryToRelease({ ...req.body, release_id: releaseId });
             return res.status(200).json(addedStory);
         } catch (error) {
             console.log(error);
