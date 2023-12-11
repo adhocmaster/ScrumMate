@@ -1,4 +1,3 @@
-// Navbar.jsx
 import React from 'react';
 import { AppBar, Toolbar, Typography, Button, Box } from '@mui/material';
 import { Link, Outlet } from 'react-router-dom';
@@ -8,14 +7,14 @@ const Navbar = ({ isLoggedIn, onSignOut }) => {
     -1px -1px 0 #000, 
     1px -1px 0 #000, 
     -1px 1px 0 #000, 
-    1px 1px 0 #000`; // Black outline shadow
+    1px 1px 0 #000`; 
 
   return (
     <div>
       <AppBar position="static" sx={{
           backgroundColor: 'rgb(34, 19, 170)',
           padding: '8px 16px',
-          boxShadow: '1px 5px 10px rgba(0, 0, 0, 0.7)' // Navbar shadow
+          boxShadow: '1px 5px 10px rgba(0, 0, 0, 0.7)'
         }}>
         <Toolbar disableGutters sx={{ justifyContent: 'flex-start', alignItems: 'center' }}>
           <Typography
@@ -34,6 +33,7 @@ const Navbar = ({ isLoggedIn, onSignOut }) => {
               cursor: 'pointer',
             }}
           >
+            {/* ScrumMate Logo */}
             <Link to="/" style={{ textDecoration: 'none', color: 'gold' }}>ScrumMate</Link>
           </Typography>
           <Box sx={{ flexGrow: 1, display: 'flex', alignItems: 'center' }}>
@@ -53,9 +53,11 @@ const Navbar = ({ isLoggedIn, onSignOut }) => {
               cursor: 'pointer',
             }}
           >
+            {/* Projects link */}
             <Link to="/" style={{ textDecoration: 'none', color: 'white' }}>Projects</Link>
           </Typography>
           </Box>
+          {/* Sign In/Out Button */}
           <Button
             onClick={isLoggedIn ? onSignOut : null}
             sx={{

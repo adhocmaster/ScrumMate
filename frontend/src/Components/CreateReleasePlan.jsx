@@ -8,7 +8,6 @@ import Slider from '@mui/material/Slider';
 import dayjs from 'dayjs'; 
 
 
-
 const CreateReleasePlan = ({ projectId,onFormSubmit }) => {
   const [nameText, setDocumentText] = useState('');
   const [releaseDateText, setReleaseDateText] = useState(dayjs()); // Initialize with a Day.js object
@@ -189,6 +188,7 @@ const CreateReleasePlan = ({ projectId,onFormSubmit }) => {
         margin: 2
       }}
     >
+      {/* Release plan data text fields */}
       <Typography variant="h5" sx={{ marginBottom: 2 }}>
         Create Release Plan Document
       </Typography>
@@ -224,6 +224,7 @@ const CreateReleasePlan = ({ projectId,onFormSubmit }) => {
           onChange={(e) => handleHighLevelGoalsChange(index, e)}
         />
       ))}
+      {/* Button to add more goals */}
       <Button
         variant="contained"
         sx={{ marginTop: 2, alignSelf: 'start' }}
@@ -258,6 +259,7 @@ const CreateReleasePlan = ({ projectId,onFormSubmit }) => {
             value={story.points}
             onChange={(e) => handleUserStoryChange(index, 'points', e.target.value)}
           /> */}
+          {/* Slider for story points */}
           Story Points
           <Slider
             aria-label="Always visible"
@@ -272,6 +274,7 @@ const CreateReleasePlan = ({ projectId,onFormSubmit }) => {
         </Paper>
       ))}
 
+      {/* Button to add more user stories */}
       <Button
         variant="contained"
         sx={{ marginTop: 2, alignSelf: 'start' }}
@@ -279,6 +282,7 @@ const CreateReleasePlan = ({ projectId,onFormSubmit }) => {
       >
         Add New User Story
       </Button>
+      {/* Button to save document  */}
       <Button
         variant="contained"
         color="primary"

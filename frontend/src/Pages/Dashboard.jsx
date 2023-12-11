@@ -1,5 +1,5 @@
 import React, {useState,useEffect}  from 'react';
-import { AppBar, Toolbar, Typography, Button, Box, Drawer, List, ListItem, ListItemText, Paper } from '@mui/material';
+import { Typography, Button, Box, Drawer, List, ListItem, ListItemText, Paper } from '@mui/material';
 import { Dialog, DialogTitle, DialogContent, TextField, DialogActions } from '@mui/material';
 import { PieChart } from '@mui/icons-material';
 import { Link} from 'react-router-dom';
@@ -121,6 +121,8 @@ const Dashboard = ({ isLoggedIn }) => {
           <Typography variant="h6" sx={{ padding: 2 }}>
             Dashboard
           </Typography>
+
+          {/* Project list */}
           <List>
             {projectNames.map((text, index) => (
               <ListItem button key={text.name}  onClick = {()=>handleButtonClick(text)} > 
@@ -128,11 +130,12 @@ const Dashboard = ({ isLoggedIn }) => {
               </ListItem>
             ))}
           </List>
+          {/* Create new project button */}
           <Button sx={{ margin: 2 }} variant="contained" color="primary" onClick={handleDialogOpen}>
             Create New Project
           </Button>
-
         </Drawer>
+        {/* Project data display box */}
         <Box
           component="main"
           sx={{ flexGrow: 1, bgcolor: 'background.default', padding: 3, marginTop: '50px' }}
@@ -140,18 +143,14 @@ const Dashboard = ({ isLoggedIn }) => {
           <Typography variant="h5" gutterBottom>
             {currentProject.name}
           </Typography>
-          {/* Insert additional layout here similar to the example provided */}
           <Paper sx={{ padding: 2, margin: '10px 0' }}>
-            {/* This is where you'd render your charts and other content */}
+            {/* Pie chart to be implemented */}
             <PieChart />
             <Typography variant="body1">
               Pie Graph of Completed Tasks vs Incomplete
             </Typography>
           </Paper>
-          {/* <Button variant="contained" color="secondary">
-            <Link to = {{path :'/releases', state:{projectId:currentProject.projectId}}}> View Release Plan </Link>
-          </Button> */}
-
+            {/* Buttons to view release plan and sprint pages */}
             <Button
               variant="contained"
               color="secondary"
@@ -174,6 +173,7 @@ const Dashboard = ({ isLoggedIn }) => {
         </Box>
       </Box>
 
+      {/* Create a new project dialog */}
       <Dialog open={openDialog} onClose={handleDialogClose}>
       <DialogTitle>Create New Project</DialogTitle>
       <DialogContent>

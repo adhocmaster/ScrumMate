@@ -15,7 +15,7 @@ const ReleasePlan = () => {
   const [project,setProject] = useState(location.state.currentProject)
   console.log(project)
 
-  // Fetch release plans
+  // Fetch release plans on page open
   useEffect(() => {
     const options = {
       method: "GET",
@@ -30,7 +30,6 @@ const ReleasePlan = () => {
       })
     })
   }, [project._id]);
-
   useEffect(()=>{
     console.log(project._id)
     if(formSubmitted){
@@ -56,11 +55,11 @@ const ReleasePlan = () => {
   },[formSubmitted]);
   function formatStories(stories){
     
+    // Display stories
     if (stories.length>0){
       return(
         <Paper>
           <List>
-
           {stories.map((story,index)=>(
             <div key = {index}>
             <ListItem>
@@ -100,14 +99,15 @@ const ReleasePlan = () => {
 
   }
   const savedReleasePlans = project.releases
+
+  // Show create release plan form
   const toggleCreateReleasePlan = () => {
     setShowCreateReleasePlan(!showCreateReleasePlan);
   };
 
+  // Show release plan
   const toggleViewReleasePlan = () => {
     if (!showReleasePlan) {
-      // Retrieve the saved release plan from localStorage if we're going to show it
-      
       console.log(savedReleasePlans);
       setReleasePlanText(savedReleasePlans || 'No release plan found.');
     }
@@ -116,11 +116,7 @@ const ReleasePlan = () => {
 
   return (
     <Box sx={{ flexGrow: 1 }}>
-      <AppBar position="static" sx={{ backgroundColor: 'navy', marginBottom: 4 }}>
-        {/* AppBar content can go here */}
-      </AppBar>
-
-      <Box display="flex" justifyContent="center" p={2}>
+      <Box display="flex" justifyContent="center" p={7}>
         <Paper elevation={3} sx={{ width: '80%', padding: 2 }}>
           <Typography variant="h4" sx={{ textAlign: 'center', marginBottom: 2 }}>
             Release Plans
@@ -129,9 +125,6 @@ const ReleasePlan = () => {
             <Button variant="contained" color="primary" onClick={toggleCreateReleasePlan}>
               {showCreateReleasePlan ? 'Hide Create Form' : 'Create Release Plan'}
             </Button>
-            {/* <Button variant="contained" color="primary" onClick={toggleViewReleasePlan}>
-              {showReleasePlan ? 'Hide Release Plan' : 'View Release Plan'}
-            </Button> */}
           </Box>
 
           {/* Conditionally render the CreateReleasePlan component */}

@@ -1,9 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { Box, Button, TextareaAutosize, Typography, TextField, Paper} from '@mui/material';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
+import React, { useState } from 'react';
+import { Box, Button, TextareaAutosize, Typography, Paper} from '@mui/material';
 import Slider from '@mui/material/Slider';
 const marks = [
     {

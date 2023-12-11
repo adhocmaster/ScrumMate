@@ -14,7 +14,6 @@ const Register = () => {
   const handleSubmit = async (event) => {
     event.preventDefault();
     try {
-      // Replace with your API call logic
       const response = await fetch('http://localhost:3001/auth/register', {
         method: 'POST',
         headers: {
