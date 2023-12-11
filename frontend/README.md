@@ -1,6 +1,6 @@
 # Frontend Guide for Scrum Mate
 
-There are two folders, components and pages. The main file that runs the frontend is the App.js file in src. 
+The crux of the frontend app is mainly run through the src folder. There are two folders, Components and Pages. The main file that runs the frontend is the App.js file in src. 
 
 Components Folder:
 - The components folder contains some of the components such as the navbar and the menubar.
@@ -12,7 +12,7 @@ Pages Folder:
     - Planning Poker (Not done): Allow teams to play planning poker.
     - Register: The registed page contains the UI for registering a user account. 
     - ReleasePlan: This page contains the release plan, including the proposed release date, high level goals, and user stories.
-    - Sprint (Not done): Contains the sprints for the chose project.
+    - Sprint: Contains the sprints for the chosen project.
 
 The UI makes use of the MUI library to reduce development time and to ensure that the pages are all formatted in a proper way.
 
