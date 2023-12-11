@@ -14,6 +14,8 @@ import {
 import { useLocation } from "react-router-dom"
 import CreateSprints from '../Components/CreateSprints';
 import Modal from '@mui/material/Modal';
+import PlanningPoker from '../Components/PlanningPoker'; // Import the PlanningPoker component
+
 
 
 const SprintPage = () => {
@@ -21,12 +23,19 @@ const SprintPage = () => {
   const [project,setProject] = useState(location.state.currentProject)
   const [showCreateSprints, setShowCreateSprints] = useState(false)
   const [formSubmitted, setFormSubmitted] = useState(false);
-
-  console.log(project)
+  const [selectedSprintIndex, setSelectedSprintIndex] = useState(0);
+  const [showPlanningPoker, setShowPlanningPoker] = useState(false);
 
   const toggleCreateSprints = () => {
     setShowCreateSprints(!showCreateSprints);
+    setShowPlanningPoker(false); // Close the Planning Poker when opening CreateSprints
   };
+
+  const openPlanningPoker = () => {
+    setShowPlanningPoker(true);
+    setShowCreateSprints(false); // Close CreateSprints when opening Planning Poker
+  };
+
   useEffect(()=>{
     console.log(project._id)
     const options = {
@@ -48,70 +57,80 @@ const SprintPage = () => {
 
   },[formSubmitted])
 
-  function displaySprintBar(){
-    if(project.sprints.length>0){
-      return(
-      <List component="nav" aria-label="sprint folders">
-      {/* Map through your sprint list or hard code as below */}
-        <ListItem button>
-          <ListItemText primary="Planning Poker" />
-        </ListItem>
-        <Divider />
-       
-        {/* Add Map to show each of the sprints use code below */}
-         {/* <ListItem button disabled>
-              <ListItemText primary="There Are No Sprints For This Project Yet" />
-            </ListItem>
-          </List> */}
-        {/* Repeat for other sprints */}
-
-      </List>
-      )
-    }else{
-      return(
+  function displaySprintBar() {
+    return (
+      <Box sx={{ maxHeight: '500px', overflowY: 'auto' }}>
         <List component="nav" aria-label="sprint folders">
-            {/* Map through your sprint list or hard code as below */}
-            <ListItem button>
-              <ListItemText primary="Planning Poker" />
-            </ListItem>
-            <Divider />
-
+          <ListItem button onClick={openPlanningPoker}>
+            <ListItemText primary="Planning Poker" />
+          </ListItem>
+          <Divider />
+          {project.sprints.length > 0 ? (
+            project.sprints.map((sprint, index) => (
+              <React.Fragment key={index}>
+                <ListItem button onClick={() => {
+                  setSelectedSprintIndex(index);
+                  setShowPlanningPoker(false); // Close Planning Poker when another sprint is clicked
+                }}>
+                  <ListItemText primary={`Sprint ${index + 1}`} />
+                </ListItem>
+                <Divider />
+              </React.Fragment>
+            ))
+          ) : (
             <ListItem button disabled>
               <ListItemText primary="There Are No Sprints For This Project Yet" />
             </ListItem>
-          </List>
-      )
-    }
+          )}
+        </List>
+      </Box>
+    );
   }
 
-  function displaySprintData(){
-    if(project.sprints.length>0){
-      //map all of the sprints, this includes
-      return(
-        <List>
-            <ListItem>
-              <ListItemText primary="Sprint 1:" />
-            </ListItem>
-            <List component="div" disablePadding>
-              {/* Repeat this structure for each user story */}
-              <ListItem button sx={{ pl: 4 }}>
-                <ListItemText primary="User story 1 for sprint 1" />
-              </ListItem>
-              <List component="div" disablePadding sx={{ pl: 4 }}>
-                {/* Repeat for tasks */}
-                <ListItem button>
-                  <ListItemText primary="Task for user story 1 (Completed)" />
-                </ListItem>
-                {/* Repeat for other tasks */}
+function displaySprintData() {
+  if (project.sprints && project.sprints.length > 0) {
+      const selectedSprint = project.sprints[selectedSprintIndex];
+
+      if (selectedSprint) {
+          return (
+              <List>
+                  {/* Display spikes */}
+                  <ListItem>
+                      <ListItemText 
+                          primary="Spikes"
+                          secondary={selectedSprint.spikes && selectedSprint.spikes.length > 0 ? selectedSprint.spikes.join(', ') : 'No spikes'}
+                      />
+                  </ListItem>
+
+                  {/* Display user stories */}
+                  {selectedSprint.stories && selectedSprint.stories.map((story, storyIndex) => (
+                      <React.Fragment key={storyIndex}>
+                          <ListItem button sx={{ pl: 4 }}>
+                              <ListItemText primary={`User Story ${storyIndex + 1}: ${story.description}`} />
+                          </ListItem>
+                          <ListItem sx={{ pl: 4 }}>
+                              <ListItemText secondary={`Notes: ${story.notes}`} />
+                          </ListItem>
+                          <ListItem sx={{ pl: 4 }}>
+                              <ListItemText secondary={`Story Points: ${story.points}`} />
+                          </ListItem>
+                          {story.tasks && story.tasks.map((task, taskIndex) => (
+                              <ListItem button key={taskIndex} sx={{ pl: 8 }}>
+                                  <ListItemText primary={`${task.name} (${task.completed ? 'Completed' : 'Pending'})`} />
+                              </ListItem>
+                          ))}
+                      </React.Fragment>
+                  ))}
               </List>
-            </List>
-            {/* Repeat structure for Sprint 2 and subsequent sprints */}
-        </List>
-      )
-    }else{
-      // display something that says there is no sprints
-    }
+          );
+      } else {
+          return <Typography sx={{ padding: 2 }}>No user stories in this sprint.</Typography>;
+      }
+  } else {
+      return <Typography sx={{ padding: 2 }}>There are no sprints for this project yet.</Typography>;
   }
+}
+
   return (
     <Box sx={{ flexGrow: 1 }}>
       <AppBar position="static" sx={{ backgroundColor: 'navy', marginBottom: 4 }}>
@@ -126,9 +145,12 @@ const SprintPage = () => {
         </Box>
 
         <Paper elevation={3} sx={{ width: '60%', padding: 2 }}>
-          <Typography variant="h5" sx={{ marginBottom: 2 }}>
-            Sprints
+
+          <Typography variant="h5" sx={{ textAlign: 'center', marginBottom: 2 }}>
+            Sprint {selectedSprintIndex + 1}
           </Typography>
+          {/* Conditionally render the PlanningPoker component */}
+          {showPlanningPoker && <PlanningPoker />}
           {displaySprintData()}
         </Paper>
       </Box>
@@ -150,21 +172,17 @@ const SprintPage = () => {
           }/>
           </Paper>
       </Box>
-
-
       </Modal>
       <Box display="flex" justifyContent="flex-end" p={2}>
-        <Button variant="contained" color="primary" onClick= {()=>toggleCreateSprints()} sx={{ marginBottom: 2,marginRight:2 }}>
+        <Button variant="contained" color="primary" onClick={() => toggleCreateSprints()} sx={{ marginBottom: 2, marginRight: 2 }}>
           Add Sprints
         </Button>
         <Button variant="contained" color="primary" sx={{ marginBottom: 2 }}>
           End of Sprint Report
         </Button>
-        
       </Box>
     </Box>
   );
 };
 
 export default SprintPage;
-

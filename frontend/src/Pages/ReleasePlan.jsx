@@ -8,12 +8,29 @@ import CreateReleasePlan from '../Components/CreateReleasePlan'; // Adjust the i
 const ReleasePlan = () => {
   const [showCreateReleasePlan, setShowCreateReleasePlan] = useState(false);
   const [showReleasePlan, setShowReleasePlan] = useState(false);
-  const [releasePlanText, setReleasePlanText] = useState('');
+  const [releasePlanText, setReleasePlanText] = useState([]);
   const [formSubmitted, setFormSubmitted] = useState(false);
 
   const location = useLocation()
   const [project,setProject] = useState(location.state.currentProject)
   console.log(project)
+
+  // Fetch release plans
+  useEffect(() => {
+    const options = {
+      method: "GET",
+      url: `http://localhost:3001/projects/${project._id}`,
+      credentials: 'include'
+    }
+    fetch(`http://localhost:3001/projects/${project._id}`, options).then((result) => {
+      result.json().then((response) => {
+        console.log(response)
+        setProject(response)
+        setReleasePlanText(response.releases || []);
+      })
+    })
+  }, [project._id]);
+
   useEffect(()=>{
     console.log(project._id)
     if(formSubmitted){
@@ -33,9 +50,10 @@ const ReleasePlan = () => {
       setFormSubmitted(false);
       toggleCreateReleasePlan()
       toggleViewReleasePlan()
+      setReleasePlanText(savedReleasePlans || 'No release plan found.');
     }
 
-  },[formSubmitted])
+  },[formSubmitted]);
   function formatStories(stories){
     
     if (stories.length>0){
@@ -90,7 +108,7 @@ const ReleasePlan = () => {
     if (!showReleasePlan) {
       // Retrieve the saved release plan from localStorage if we're going to show it
       
-      console.log(savedReleasePlans)
+      console.log(savedReleasePlans);
       setReleasePlanText(savedReleasePlans || 'No release plan found.');
     }
     setShowReleasePlan(!showReleasePlan);
@@ -105,35 +123,33 @@ const ReleasePlan = () => {
       <Box display="flex" justifyContent="center" p={2}>
         <Paper elevation={3} sx={{ width: '80%', padding: 2 }}>
           <Typography variant="h4" sx={{ textAlign: 'center', marginBottom: 2 }}>
-            Release Plan
+            Release Plans
           </Typography>
           <Box display="flex" justifyContent="space-between" marginBottom={2}>
             <Button variant="contained" color="primary" onClick={toggleCreateReleasePlan}>
               {showCreateReleasePlan ? 'Hide Create Form' : 'Create Release Plan'}
             </Button>
-            <Button variant="contained" color="primary" onClick={toggleViewReleasePlan}>
+            {/* <Button variant="contained" color="primary" onClick={toggleViewReleasePlan}>
               {showReleasePlan ? 'Hide Release Plan' : 'View Release Plan'}
-            </Button>
+            </Button> */}
           </Box>
 
           {/* Conditionally render the CreateReleasePlan component */}
           {showCreateReleasePlan && <CreateReleasePlan projectId={project._id} onFormSubmit = {()=>setFormSubmitted(true)}/>}
 
-          {/* Conditionally render the release plan text */}
-          {showReleasePlan && (
-            <Paper elevation={2} sx={{ backgroundColor: '#e0e0e0', padding: 2, marginTop: 2 }}>
-              {/* Split the text into lines and apply different styles to the first line and the rest */}
-              {releasePlanText.map((line, index) => (
-                
-
-                <Paper key = {index}>
+          {/* Display Release Plans */}
+          <Paper elevation={2} sx={{ backgroundColor: '#e0e0e0', padding: 2, marginTop: 2 }}>
+            {releasePlanText.length > 0 ? (
+              // If there are release plans, map and display them
+              releasePlanText.map((line, index) => (
+                <Paper key={index}>
                   <Typography
                     variant="body1"
                     sx={{
                       whiteSpace: 'pre-wrap',
-                      textAlign: 'center',  // Justify the first line, left-align the rest
-                      marginTop:2,
-                      marginBotttom:2
+                      textAlign: 'center',
+                      marginTop: 2,
+                      marginBottom: 2
                     }}
                   >
                     {line.name}
@@ -142,66 +158,53 @@ const ReleasePlan = () => {
                     variant="body1"
                     sx={{
                       whiteSpace: 'pre-wrap',
-                      textAlign: 'center' // Justify the first line, left-align the rest
+                      textAlign: 'center'
                     }}
                   >
-                    High Level Goals: 
+                    High Level Goals:
                   </Typography>
                   <List>
-                    {line.high_level_goals.map((line,index)=>(
-                      <ListItem key = {index}>
-                        <ListItemText primary={line} />
+                    {line.high_level_goals.map((goal, goalIndex) => (
+                      <ListItem key={goalIndex}>
+                        <ListItemText primary={goal} />
                       </ListItem>
-                    ))} 
+                    ))}
                   </List>
                   <Typography
-                  variant="body1"
-                  sx={{
-                    whiteSpace: 'pre-wrap',
-                    textAlign: 'center' // Justify the first line, left-align the rest
-                  }}
+                    variant="body1"
+                    sx={{
+                      whiteSpace: 'pre-wrap',
+                      textAlign: 'center'
+                    }}
                   >
-                  Stories
+                    Stories
                   </Typography>
-                   {formatStories(line.stories)}
-
-
+                  {formatStories(line.stories)}
                   <Typography
-                  variant="body1"
-                  sx={{
-                    whiteSpace: 'pre-wrap',
-                    textAlign: 'center' // Justify the first line, left-align the rest
-                  }}
+                    variant="body1"
+                    sx={{
+                      whiteSpace: 'pre-wrap',
+                      textAlign: 'center'
+                    }}
                   >
                     Status: {line.status}
                   </Typography>
                 </Paper>
-
-
-
-              ))}
-            </Paper>
-          )}
-
-          <Paper elevation={2} sx={{ backgroundColor: '#f0f0f0', padding: 2 }}>
-            <Typography variant="h5" sx={{ marginBottom: 2 }}>
-              Sprints
-            </Typography>
-            <List>
-              <ListItem>
-                <ListItemText primary="Sprint 1:" />
-              </ListItem>
-              <Typography variant="body1" component="div">
-                User story 1 for sprint 1
-                <List sx={{ marginLeft: 4 }}>
-                  <ListItem>
-                    <ListItemText primary="Task for user story 1 (Completed)" />
-                  </ListItem>
-                  {/* Repeat for other tasks */}
-                </List>
+              ))
+            ) : (
+              // If there are no release plans, display a message
+              <Typography
+                variant="body1"
+                sx={{
+                  whiteSpace: 'pre-wrap',
+                  textAlign: 'center',
+                  marginTop: 2,
+                  marginBottom: 2
+                }}
+              >
+                No Release Plans to display
               </Typography>
-              {/* Repeat for other user stories and sprints */}
-            </List>
+            )}
           </Paper>
         </Paper>
       </Box>
