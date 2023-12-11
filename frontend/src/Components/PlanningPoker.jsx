@@ -25,9 +25,8 @@ const PlanningPoker = () => {
         Planning Poker
       </Typography>
 
-      {/* Display a list of sprints */}
-      {/* Replace this section with your actual list of sprints */}
       <Box>
+        {/* Button to open/close planning poker */}
         <Button
             variant="contained"
             color="primary"
@@ -37,17 +36,15 @@ const PlanningPoker = () => {
             >
             {showForm ? 'Close' : 'Play'}
         </Button>
-        {/* Add more buttons for other sprints */}
       </Box>
 
       {showForm && (
         <Paper elevation={3} sx={{ padding: 2, marginTop: 2 }}>
+          {/* Assign story points with a slider */}
           <Typography variant="h6" sx={{ marginBottom: 2 }}>
             Assign story points
           </Typography>
 
-          {/* Add your planning poker form components here */}
-          {/* For example, you can use TextFields or other form elements */}
           <Typography variant="h6">Story Points: {storyPoints}</Typography>
           <Slider
             aria-label="Story Points"
@@ -60,8 +57,6 @@ const PlanningPoker = () => {
             valueLabelDisplay="auto"
             onChange={handleSliderChange}
           />
-
-          {/* Add more form elements as needed */}
           <Button variant="contained" color="primary" onClick={toggleForm}>
             Save
           </Button>

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, Typography, Paper, List, ListItem, ListItemText, TextField, Button } from '@mui/material';
+import { Box, Typography, Paper, TextField, Button } from '@mui/material';
 
 const EndOfSprintReport = () => {
   return (

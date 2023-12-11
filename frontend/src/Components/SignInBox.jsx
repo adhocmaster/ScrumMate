@@ -16,12 +16,6 @@ function SignInBox({ onLogin }) {
   const handlePasswordChange = (event) => {
     setPassword(event.target.value);
   };
-
-  // Temporary log in fix for demonstration purposes, can remove once log in is fixed
-  // const handleEnterClick = () => {
-  //   // Call the onLogin function passed as a prop with email and password
-  //   onLogin(email, password);
-  // };
   
   const handleEnterClick = () => {
     onLogin(email,password)
@@ -34,15 +28,14 @@ function SignInBox({ onLogin }) {
       sx={{
         display: 'flex',
         flexDirection: 'column',
-        justifyContent: 'flex-start', // Box content aligned to the top, below the navbar
+        justifyContent: 'flex-start',
         alignItems: 'center',
-        height: 'calc(100vh - 60px)', // Adjust the 60px to match your navbar's height
+        height: 'calc(100vh - 60px)',
         width: '100%',
         paddingTop: '20px',
         '@media (max-width: 600px)': {
-          paddingTop: '10px', // Smaller padding for smaller screens
+          paddingTop: '10px',
         },
-        // Add other responsive adjustments as necessary
       }}
     >
       <Box
@@ -51,7 +44,7 @@ function SignInBox({ onLogin }) {
           maxWidth: '800px',
           bgcolor: 'rgb(34, 19, 170)',
           color: 'white',
-          marginTop: '20px', // Adjusted margin to prevent overlap
+          marginTop: '20px', 
           p: 3,
           borderRadius: '10px',
           boxShadow: '10px 10px 10px rgba(0, 0, 0, 0.7)',
@@ -76,7 +69,6 @@ function SignInBox({ onLogin }) {
               '&.Mui-focused fieldset': {
                 borderColor: 'white', 
               },
-              // Override styles for autofilled inputs
               '& input:-webkit-autofill': {
                 WebkitBoxShadow: '0 0 0 100px rgb(34, 19, 170) inset',
                 WebkitTextFillColor: 'white',
