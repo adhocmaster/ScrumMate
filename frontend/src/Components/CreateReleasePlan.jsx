@@ -5,12 +5,13 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
 import Slider from '@mui/material/Slider';
+import dayjs from 'dayjs'; 
+
 
 
 const CreateReleasePlan = ({ projectId,onFormSubmit }) => {
   const [nameText, setDocumentText] = useState('');
-  const placeDate = new Date()
-  const [releaseDateText, setReleaseDateText] = useState(placeDate);
+  const [releaseDateText, setReleaseDateText] = useState(dayjs()); // Initialize with a Day.js object
   const [userStoriesText, setUserStoriesText] = useState('');
   const [highLevelGoalsText, sethighLevelGoalsText] = useState('');
   const [finalizedDateText, setFinalizedDateText] = useState('');
@@ -73,10 +74,9 @@ const CreateReleasePlan = ({ projectId,onFormSubmit }) => {
     setDocumentText(event.target.value);
   };
 
-  const handleReleaseDateChange = (value) => {
-    setReleaseDateText(value);
-    console.log(releaseDateText)
-
+  const handleReleaseDateChange = (newValue) => {
+    // Ensure newValue is a Day.js object
+    setReleaseDateText(dayjs(newValue));
   };
 
   //High level goal functions (new)

@@ -37,12 +37,24 @@ const Navbar = ({ isLoggedIn, onSignOut }) => {
             <Link to="/" style={{ textDecoration: 'none', color: 'gold' }}>ScrumMate</Link>
           </Typography>
           <Box sx={{ flexGrow: 1, display: 'flex', alignItems: 'center' }}>
-            <Link to="/releases" style={{ textDecoration: 'none', color: 'gold', marginRight: '16px' }}>
-              Release Plan
-            </Link>
-            <Link to="/sprints" style={{ textDecoration: 'none', color: 'gold' }}>
-              Sprints
-            </Link>
+          <Typography
+            variant="h1"
+            sx={{
+              color: 'white',
+              fontSize: '18px',
+              fontWeight: 'bold',
+              marginRight: '30px',
+              transition: 'color 0.3s ease',
+              textShadow: textOutline, 
+              '&:hover': {
+                color: 'white',
+                textShadow: 'none', 
+              },
+              cursor: 'pointer',
+            }}
+          >
+            <Link to="/" style={{ textDecoration: 'none', color: 'white' }}>Projects</Link>
+          </Typography>
           </Box>
           <Button
             onClick={isLoggedIn ? onSignOut : null}

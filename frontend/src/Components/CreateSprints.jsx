@@ -116,7 +116,9 @@ const CreateSprints = ({ projectId,onFormSubmit }) => {
         sx={{
           display: 'flex',
           flexDirection: 'column',
-          margin: 2
+          margin: 2,
+          marginLeft: 'auto',
+          padding: 2
         }}
       >
         <Typography variant="h5" sx={{ marginBottom: 2,marginTop:2 }}>
