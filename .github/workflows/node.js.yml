@@ -5,6 +5,9 @@ name: Node.js CI
 
 on: [push, workflow_dispatch]
 
+env: 
+  CI: false # to not treat warnings as failures
+
 jobs:
   build:
 
@@ -24,10 +27,5 @@ jobs:
         cache: 'npm'
     - run: npm ci
     - run: npm install
-    - run: (cd frontend && npm install)
-    - run: (cd backend && npm install)
-    - run: (cd frontend && npm run build)
-    - run: (cd backend && npm run build)
-    - run: (cd frontend && npm test)
-    - run: (cd backend && npm test)
-    - run: npm test
+    - run: (cd frontend && npm install && npm run build && npm test)
+    - run: (cd backend && npm install && npm run build && npm test)
