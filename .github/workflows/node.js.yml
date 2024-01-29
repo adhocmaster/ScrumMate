@@ -3,11 +3,7 @@
 
 name: Node.js CI
 
-on:
-  push:
-    branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
+on: [push, workflow_dispatch]
 
 jobs:
   build:
@@ -27,5 +23,8 @@ jobs:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
     - run: npm ci
+    # - run: npm install
+    # - run: (cd frontend && npm install)
+    # - run: (cd backend && npm install)
     - run: npm run build --if-present
     - run: npm test
