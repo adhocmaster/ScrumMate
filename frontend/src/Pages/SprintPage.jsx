@@ -66,7 +66,7 @@ const SprintPage = () => {
             <ListItemText primary="Planning Poker" />
           </ListItem>
           <Divider />
-          {project.sprints.length > 0 ? (
+          {project.sprints && project.sprints.length > 0 ? (
             project.sprints.map((sprint, index) => (
               <React.Fragment key={index}>
                 <ListItem button onClick={() => {
