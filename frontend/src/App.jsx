@@ -81,7 +81,7 @@ function App() {
         element={
           <Register/>
         } />
-        <Route path="/registrations" element={<Register />} />
+        {/* <Route path="/registrations" element={<Register />} /> */}
         <Route path="*" element={<Navigate to="/" />} />
       </Routes>
     </div>

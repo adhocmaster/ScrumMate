@@ -136,8 +136,8 @@ function SignInBox({ onLogin }) {
         </Button>
         <Typography sx={{ color: 'white', textAlign: 'center', mt: 2 }}>
           <Link
-            href="#" // Replace with registration page link
-            onClick={() => window.open('/register', '_blank')}
+            href="/register" // Replace with registration page link
+            // onClick={() => window.open('/register', '_blank')}
             sx={{ color: 'white', textDecoration: 'none' }}
           >
             Create a new account
