@@ -6,6 +6,8 @@ import compression from 'compression';
 import cors from 'cors';
 import mongoose from 'mongoose';
 import router from './router'
+import {Entity, PrimaryGeneratedColumn, Column, BaseEntity} from "typeorm"
+import "reflect-metadata"
 
 const app = express();
 
