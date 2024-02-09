@@ -3,7 +3,6 @@ import { Box, Button, TextareaAutosize, Typography, TextField, Paper} from '@mui
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
 import Slider from '@mui/material/Slider';
 import dayjs from 'dayjs'; 
 
@@ -206,9 +205,7 @@ const CreateReleasePlan = ({ projectId,onFormSubmit }) => {
         Proposed Release Date
       </Typography>
       <LocalizationProvider dateAdapter={AdapterDayjs}>
-        <DemoContainer components={['DatePicker']}>
-          <DatePicker value={releaseDateText} onChange={handleReleaseDateChange} />
-        </DemoContainer>
+	  	<DatePicker />
       </LocalizationProvider>
       
       <Typography variant="h6" sx={{ marginTop: 2, marginBottom: 2 }}>

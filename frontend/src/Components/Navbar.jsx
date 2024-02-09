@@ -11,7 +11,7 @@ const Navbar = ({ isLoggedIn, onSignOut }) => {
 
   return (
     <div>
-      <AppBar position="static" sx={{
+      <AppBar position="absolute" sx={{
           backgroundColor: 'rgb(34, 19, 170)',
           padding: '8px 16px',
           boxShadow: '1px 5px 10px rgba(0, 0, 0, 0.7)'
