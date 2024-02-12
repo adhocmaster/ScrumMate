@@ -11,22 +11,13 @@ export class Project {
 	@Column()
 	name: string
 
-    @ManyToOne(
-		() => User,
-		(user) => user.ownedProjects
-	)
+    @ManyToOne(() => User, (user) => user.ownedProjects)
     productOwner: User
     
-	@ManyToMany(
-		() => User,
-		(user) => user.joinedProjects
-	)
+	@ManyToMany(() => User, (user) => user.joinedProjects)
     teamMembers: User[]
 
-	@OneToMany(
-		() => Revision,
-		(revision) => revision.project
-	)
+	@OneToMany(() => Revision, (revision) => revision.project)
 	revisions: Revision[]
 
 }

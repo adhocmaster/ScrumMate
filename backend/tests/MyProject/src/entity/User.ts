@@ -7,36 +7,24 @@ export class User {
     @PrimaryGeneratedColumn()
     id: number
 
-    @Column({
-		unique: true
-	})
+    @Column({unique: true})
     username: string
 
-    @Column({
-		unique: true
-	})
+    @Column({unique: true})
     email: string
 
-    @Column({
-		type: "simple-json",
-		select: false
-	})
-    authentication: {
-		password: string,
-		salt: string,
-		sessionToken: string
-	}
+	// Authentication
+    @Column({select: false})
+	password: string
+	@Column({select: false})
+	salt: string
+    @Column({select: false})
+	sessionToken: string
 
-	@OneToMany(
-		() => Project,
-		(project) => project.productOwner
-	)
+	@OneToMany(() => Project, (project) => project.productOwner)
 	ownedProjects: Project[]
 	
-	@ManyToMany(
-		() => Project,
-		(project) => project.teamMembers
-	)
+	@ManyToMany(() => Project, (project) => project.teamMembers)
 	@JoinTable()
 	joinedProjects: Project[]
 }

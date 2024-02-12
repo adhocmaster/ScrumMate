@@ -21,16 +21,10 @@ export class Revision {
 	@Column()
     revision: number
 
-	@ManyToOne(
-		() => Project,
-		(project) => project.revisions
-	)
+	@ManyToOne(() => Project, (project) => project.revisions)
 	project: Project
 
-	@OneToOne(
-		() => Release,
-		(release) => release.revision
-	)
+	@OneToOne(() => Release, (release) => release.revision)
 	@JoinColumn()
 	release: Release
 

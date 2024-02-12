@@ -14,10 +14,7 @@ export class Task {
     @Column()
     estimate: number
 
-	@ManyToOne(
-		() => Story,
-		(story) => story.tasks
-	)
+	@ManyToOne(() => Story, (story) => story.tasks)
 	story: Story
 
 }

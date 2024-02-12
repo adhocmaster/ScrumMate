@@ -19,21 +19,12 @@ export class Story {
     @Column()
     reasoning: string
 
-	@ManyToOne(
-		() => Release,
-		(release) => release.backlog
-	)
+	@ManyToOne(() => Release, (release) => release.backlog)
 	release: Release
 
-	@ManyToOne(
-		() => Sprint,
-		(sprint) => sprint.stories
-	)
+	@ManyToOne(() => Sprint, (sprint) => sprint.stories)
 	sprint: Sprint
 
-	@OneToMany(
-		() => Task,
-		(task) => task.story
-	)
+	@OneToMany(() => Task, (task) => task.story)
 	tasks: Task[]
 }

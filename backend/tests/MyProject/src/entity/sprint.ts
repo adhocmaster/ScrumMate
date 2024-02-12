@@ -12,21 +12,13 @@ export class Sprint {
 	@Column()
 	goal: string
 
-	@ManyToOne(
-		() => Release,
-		(release) => release.sprints
-	)
+	@ManyToOne(() => Release, (release) => release.sprints)
 	release: Release[]
 
-    @OneToOne(
-		() => User,
-	)
+    @OneToOne(() => User)
 	@JoinColumn()
     scrumMaster: User
 
-	@OneToMany(
-		() => Story,
-		(story) => story.sprint
-	)
+	@OneToMany(() => Story, (story) => story.sprint)
 	stories: Story[]
 }

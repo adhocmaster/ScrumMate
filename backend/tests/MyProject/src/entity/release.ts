@@ -9,27 +9,18 @@ export class Release {
     @PrimaryGeneratedColumn()
     id: number
 
-	// High Level Goals
 	@Column()
 	problemStatement: string
+
 	@Column()
 	goalStatement: string
 	
-	@OneToOne(
-		() => Revision,
-		(revision) => revision.release
-	)
+	@OneToOne(() => Revision, (revision) => revision.release)
 	revision: Revision
 
-	@OneToMany(
-		() => Sprint,
-		(sprint) => sprint.release
-	)
+	@OneToMany(() => Sprint, (sprint) => sprint.release)
 	sprints: Sprint[]
 
-	@OneToMany(
-		() => Story,
-		(story) => story.release
-	)
+	@OneToMany(() => Story, (story) => story.release)
 	backlog: Story[]
 }
