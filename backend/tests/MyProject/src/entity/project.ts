@@ -1,11 +1,15 @@
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany, ManyToMany } from "typeorm"
 import { User } from "./user"
+import { Revision } from "./revision"
 
 @Entity()
 export class Project {
 
     @PrimaryGeneratedColumn()
     id: number
+
+	@Column()
+	name: string
 
     @ManyToOne(
 		() => User,
@@ -17,6 +21,12 @@ export class Project {
 		() => User,
 		(user) => user.joinedProjects
 	)
-    teamMembers: User
+    teamMembers: User[]
+
+	@OneToMany(
+		() => Revision,
+		(revision) => revision.project
+	)
+	revisions: Revision[]
 
 }

@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany, ManyToMany } from "typeorm"
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany, ManyToMany, JoinTable } from "typeorm"
 import { Project } from "./project"
 
 @Entity()
@@ -31,11 +31,12 @@ export class User {
 		() => Project,
 		(project) => project.productOwner
 	)
-	ownedProjects: Project
+	ownedProjects: Project[]
 	
 	@ManyToMany(
 		() => Project,
 		(project) => project.teamMembers
 	)
-	joinedProjects: Project
+	@JoinTable()
+	joinedProjects: Project[]
 }
