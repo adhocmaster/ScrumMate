@@ -1,6 +1,6 @@
 import { AppDataSource } from "./data-source"
-import { User } from "./entity/user"
-import { Project } from "./entity/project"
+import { User } from "../../../src/entity/User"
+import { Project } from "../../../src/entity/project"
 import * as express from "express";
 import { random } from "lodash";
 import { createUserRouter } from "./routes/create_user";

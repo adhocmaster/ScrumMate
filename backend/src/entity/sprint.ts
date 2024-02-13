@@ -1,5 +1,5 @@
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToOne, OneToMany, JoinColumn } from "typeorm"
-import { User } from "./user"
+import { User } from "./User"
 import { Release } from "./release"
 import { Story } from "./story"
 
