@@ -1,19 +1,25 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation } from "react-router-dom"
-import { AppBar, Typography, Button, Box, Paper } from '@mui/material';
+import { AppBar, Typography, Button, Box, Paper, Grid } from '@mui/material';
 import { List, ListItem, ListItemText } from '@mui/material';
 import CreateReleasePlan from '../Components/CreateReleasePlan'; // Adjust the import path as necessary
 
+const emptyReleasePlan = {
+  name: '',
+  releaseDataText: '',
+  finalizedDateText: '',
+  high_level_goals: [''],
+  stories: [{ description: '', notes: '', points: 20}]
+}
 
 const ReleasePlan = () => {
   const [showCreateReleasePlan, setShowCreateReleasePlan] = useState(false);
   const [showReleasePlan, setShowReleasePlan] = useState(false);
   const [releasePlanText, setReleasePlanText] = useState([]);
   const [formSubmitted, setFormSubmitted] = useState(false);
-
+  const [releasePlanDetails, setReleasePlanDetails] = useState(emptyReleasePlan)
   const location = useLocation()
   const [project,setProject] = useState(location.state.currentProject)
-  console.log(project)
 
   // Fetch release plans on page open
   useEffect(() => {
@@ -102,18 +108,23 @@ const ReleasePlan = () => {
 
   // Show create release plan form
   const toggleCreateReleasePlan = () => {
+    setReleasePlanDetails(emptyReleasePlan)
     setShowCreateReleasePlan(!showCreateReleasePlan);
   };
 
   // Show release plan
   const toggleViewReleasePlan = () => {
     if (!showReleasePlan) {
-      console.log(savedReleasePlans);
       setReleasePlanText(savedReleasePlans || 'No release plan found.');
     }
     setShowReleasePlan(!showReleasePlan);
   };
 
+  const viewReleasePlan = (line) => {
+    setReleasePlanDetails(line);
+    window.scrollTo(0, 0);
+    setShowCreateReleasePlan(true);
+  }
   return (
     <Box sx={{ flexGrow: 1 }}>
       <Box display="flex" justifyContent="center" p={7}>
@@ -122,13 +133,14 @@ const ReleasePlan = () => {
             Release Plans
           </Typography>
           <Box display="flex" justifyContent="space-between" marginBottom={2}>
-            <Button variant="contained" color="primary" onClick={toggleCreateReleasePlan}>
+            <Button variant="contained" color="primary" onClick={()=>toggleCreateReleasePlan()}>
               {showCreateReleasePlan ? 'Hide Create Form' : 'Create Release Plan'}
             </Button>
           </Box>
 
           {/* Conditionally render the CreateReleasePlan component */}
-          {showCreateReleasePlan && <CreateReleasePlan projectId={project._id} onFormSubmit = {()=>setFormSubmitted(true)}/>}
+          {showCreateReleasePlan && <CreateReleasePlan releasePlanDetails={releasePlanDetails} 
+            projectId={project._id} onFormSubmit = {()=>setFormSubmitted(true)}/>}
 
           {/* Display Release Plans */}
           <Paper elevation={2} sx={{ backgroundColor: '#e0e0e0', padding: 2, marginTop: 2 }}>
@@ -136,6 +148,14 @@ const ReleasePlan = () => {
               // If there are release plans, map and display them
               releasePlanText.map((line, index) => (
                 <Paper key={index}>
+                  <Grid container justifyContent="flex-start" alignItems="center">
+                    <Grid item>
+                      <Button variant="contained" color="primary" onClick={()=>viewReleasePlan(line)}>
+                        Edit
+                      </Button>
+                    </Grid>
+                  </Grid>
+
                   <Typography
                     variant="body1"
                     sx={{
@@ -170,7 +190,7 @@ const ReleasePlan = () => {
                       textAlign: 'center'
                     }}
                   >
-                    Stories
+                    Product Backlog
                   </Typography>
                   {formatStories(line.stories)}
                   <Typography

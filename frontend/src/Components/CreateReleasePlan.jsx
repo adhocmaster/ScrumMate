@@ -7,14 +7,15 @@ import Slider from '@mui/material/Slider';
 import dayjs from 'dayjs'; 
 
 
-const CreateReleasePlan = ({ projectId,onFormSubmit }) => {
-  const [nameText, setDocumentText] = useState('');
+const CreateReleasePlan = ({ projectId,onFormSubmit, releasePlanDetails}) => {
+  console.log(releasePlanDetails);
+  const [nameText, setDocumentText] = useState(releasePlanDetails.name);
   const [releaseDateText, setReleaseDateText] = useState(dayjs()); // Initialize with a Day.js object
   const [userStoriesText, setUserStoriesText] = useState('');
   const [highLevelGoalsText, sethighLevelGoalsText] = useState('');
   const [finalizedDateText, setFinalizedDateText] = useState('');
-  const [highLevelGoals, setHighLevelGoals] = useState(['']); // Array of goals
-  const [userStories, setUserStories] = useState([{ description: '', notes: '', points: 20}]); //Array of user stories
+  const [highLevelGoals, setHighLevelGoals] = useState(releasePlanDetails.high_level_goals); // Array of goals
+  const [userStories, setUserStories] = useState(releasePlanDetails.stories); //Array of user stories
 
 
   //Code for the sliders
@@ -260,7 +261,7 @@ const CreateReleasePlan = ({ projectId,onFormSubmit }) => {
           Story Points
           <Slider
             aria-label="Always visible"
-            defaultValue={20}
+            defaultValue={story.points}
             getAriaValueText={valuetext}
             step={1}
             marks={marks}
