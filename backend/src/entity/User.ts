@@ -1,6 +1,6 @@
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany, ManyToMany, JoinTable } from "typeorm"
 import { Project } from "./project"
-import { getMaybeUndefined, addMaybeUndefined } from "./utils/addGetList"
+import { getMaybeUndefined, addMaybeUndefined, removeMaybeUndefined } from "./utils/addGetList"
 
 @Entity()
 export class User {
@@ -38,6 +38,10 @@ export class User {
 		this.ownedProjects = addMaybeUndefined(proj, this.ownedProjects)
 	}
 
+	removeOwnedProject(proj: Project): void {
+		this.ownedProjects = removeMaybeUndefined(proj, this.ownedProjects)
+	}
+
 	/// Safer because undefined becomes empty list
 	getJoinedProjects(): Project[] {
 		return getMaybeUndefined(this.joinedProjects)
@@ -45,5 +49,9 @@ export class User {
 
 	addJoinedProject(proj: Project): void {
 		this.joinedProjects = addMaybeUndefined(proj, this.joinedProjects)
+	}
+	
+	removeJoinedProject(proj: Project): void {
+		this.joinedProjects = removeMaybeUndefined(proj, this.joinedProjects)
 	}
 }
