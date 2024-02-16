@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation } from "react-router-dom"
 import { AppBar, Typography, Button, Box, Paper } from '@mui/material';
-import { List, ListItem, ListItemText } from '@mui/material';
+import { List, ListItem, ListItemText, ListItemButton, IconButton, Grid } from '@mui/material';
+import AddIcon from '@mui/icons-material/Add';
+import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import CreateReleasePlan from '../Components/CreateReleasePlan'; // Adjust the import path as necessary
-
 
 const ReleasePlan = () => {
   const [showCreateReleasePlan, setShowCreateReleasePlan] = useState(false);
@@ -12,7 +13,7 @@ const ReleasePlan = () => {
   const [formSubmitted, setFormSubmitted] = useState(false);
 
   const location = useLocation()
-  const [project,setProject] = useState(location.state.currentProject)
+  const [project, setProject] = useState(location.state.currentProject)
   console.log(project)
 
   // Fetch release plans on page open
@@ -96,9 +97,8 @@ const ReleasePlan = () => {
         </Typography>
       )
     }
-
   }
-  const savedReleasePlans = project.releases
+  const savedReleasePlans = project.releases;
 
   // Show create release plan form
   const toggleCreateReleasePlan = () => {
@@ -115,26 +115,82 @@ const ReleasePlan = () => {
   };
 
   return (
-    <Box sx={{ flexGrow: 1 }}>
-      <Box display="flex" justifyContent="center" p={7}>
-        <Paper elevation={3} sx={{ width: '80%', padding: 2 }}>
-          <Typography variant="h4" sx={{ textAlign: 'center', marginBottom: 2 }}>
-            Release Plans
-          </Typography>
-          <Box display="flex" justifyContent="space-between" marginBottom={2}>
-            <Button variant="contained" color="primary" onClick={toggleCreateReleasePlan}>
-              {showCreateReleasePlan ? 'Hide Create Form' : 'Create Release Plan'}
-            </Button>
-          </Box>
+    <Grid 
+      container 
+      spacing={1} 
+      marginTop={10}
+    >
+      {/* Version Sidebar */}
+      <Grid item sm={2}>  
+        <List>
+          <ListItem disablePadding>
+            <Typography 
+              fontFamily="Tinos" 
+              fontWeight="bold" 
+              fontSize={20}
+              marginLeft={2}
+            >
+              {project.name}
+            </Typography>
+            {/* TODO: after creating a new release plan, display it */}
+            <IconButton 
+              onClick={toggleCreateReleasePlan}
+              sx={{marginLeft: 'auto'}}
+            >
+              <AddIcon />
+            </IconButton>
+          </ListItem>
+          
+          {/* TODO: Insert Different Versions here */}
+            <ListItemButton
+            onClick={() => console.log("Version Placeholder")}
+          >
+            <Typography 
+              fontFamily="Tinos" 
+              fontSize={16}
+              sx={{padding: '1px 10px'}}
+            >
+              Version Placeholder
+              </Typography>
+              {/* TODO: create and attach the copy release plan function (make sure propagation is stopped) */}
+              <IconButton
+                onClick={(e) => {
+                  e.stopPropagation();
+                  console.log("Copy");
+                }}
+                sx={{marginLeft: 'auto'}}
+              >
+                <ContentCopyIcon />
+              </IconButton>
+          </ListItemButton>
+          
+        </List>
+      </Grid>
 
-          {/* Conditionally render the CreateReleasePlan component */}
-          {showCreateReleasePlan && <CreateReleasePlan projectId={project._id} onFormSubmit = {()=>setFormSubmitted(true)}/>}
+      <Grid item sm={10}>
+        <Typography
+          fontFamily="Tinos" 
+          fontSize={30}
+        >
+          {project.name}
+        </Typography>
+        <Typography
+          fontFamily="Tinos" 
+          fontSize={30}
+        >
+          {/* TODO: Insert the version into Placeholder */}
+          Release Plan: Version Placeholder
+        </Typography>
 
-          {/* Display Release Plans */}
-          <Paper elevation={2} sx={{ backgroundColor: '#e0e0e0', padding: 2, marginTop: 2 }}>
-            {releasePlanText.length > 0 ? (
-              // If there are release plans, map and display them
-              releasePlanText.map((line, index) => (
+        {showCreateReleasePlan && 
+          <CreateReleasePlan projectId={project._id} onFormSubmit = {()=>setFormSubmitted(true)}/>}
+        {/* Display Release Plans */}
+        {!showCreateReleasePlan && 
+            <Paper elevation={2} sx={{ backgroundColor: '#e0e0e0', padding: 2, marginTop: 2 }}>
+              {/* TODO: make sure to only display the current version release plan */}
+              {releasePlanText.length > 0 ? (
+                // If there are release plans, map and display them
+                releasePlanText.map((line, index) => (
                 <Paper key={index}>
                   <Typography
                     variant="body1"
@@ -163,45 +219,45 @@ const ReleasePlan = () => {
                       </ListItem>
                     ))}
                   </List>
-                  <Typography
-                    variant="body1"
-                    sx={{
-                      whiteSpace: 'pre-wrap',
-                      textAlign: 'center'
-                    }}
-                  >
-                    Stories
-                  </Typography>
-                  {formatStories(line.stories)}
-                  <Typography
-                    variant="body1"
-                    sx={{
-                      whiteSpace: 'pre-wrap',
-                      textAlign: 'center'
-                    }}
-                  >
-                    Status: {line.status}
-                  </Typography>
-                </Paper>
-              ))
+                    <Typography
+                      variant="body1"
+                      sx={{ 
+                        whiteSpace: 'pre-wrap',
+                        textAlign: 'center'
+                      }}
+                    >
+                      Stories
+                    </Typography>
+                    {formatStories(line.stories)}
+                    <Typography
+                      variant="body1"
+                      sx={{
+                        whiteSpace: 'pre-wrap',
+                        textAlign: 'center'
+                      }}
+                    >
+                      Status: {line.status}
+                    </Typography>
+                  </Paper>
+                ))
             ) : (
-              // If there are no release plans, display a message
-              <Typography
-                variant="body1"
-                sx={{
-                  whiteSpace: 'pre-wrap',
-                  textAlign: 'center',
-                  marginTop: 2,
-                  marginBottom: 2
-                }}
-              >
-                No Release Plans to display
-              </Typography>
-            )}
-          </Paper>
+            // If there are no release plans, display a message
+            <Typography
+              variant="body1"
+              sx={{
+                whiteSpace: 'pre-wrap',
+                textAlign: 'center',
+                marginTop: 2,
+                marginBottom: 2
+              }}
+            > 
+              No Release Plans to display
+            </Typography>
+          )}
         </Paper>
-      </Box>
-    </Box>
+        }
+      </Grid>
+    </Grid>
   );
 };
 

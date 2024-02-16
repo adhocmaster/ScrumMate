@@ -12,11 +12,30 @@ const Navbar = ({ isLoggedIn, onSignOut }) => {
   return (
     <div>
       <AppBar position="absolute" sx={{
-          backgroundColor: 'rgb(34, 19, 170)',
+          backgroundColor: '#332F52',
           padding: '8px 16px',
           boxShadow: '1px 5px 10px rgba(0, 0, 0, 0.7)'
         }}>
         <Toolbar disableGutters sx={{ justifyContent: 'flex-start', alignItems: 'center' }}>
+          {/* Home Button */}
+          {isLoggedIn && <Button
+            component={Link}
+            to="/"
+            sx={{
+              fontFamily: 'Roboto',
+              fontWeight: 600,
+              backgroundColor: 'white',
+              color: '#332F52', 
+              marginRight: '20px',
+              borderRadius: '4px',
+              '&:hover': {
+                backgroundColor: '#FFF1A6',
+              },
+            }}
+          >
+            Home
+          </Button>
+          }
           <Typography
             variant="h6"
             sx={{
@@ -34,10 +53,10 @@ const Navbar = ({ isLoggedIn, onSignOut }) => {
             }}
           >
             {/* ScrumMate Logo */}
-            <Link to="/" style={{ textDecoration: 'none', color: 'gold' }}>ScrumMate</Link>
+            <Link to="/" style={{ fontFamily: 'DM Serif Display', textDecoration: 'none', color: '#FFF1A6' }}>ScrumMate</Link>
           </Typography>
           <Box sx={{ flexGrow: 1, display: 'flex', alignItems: 'center' }}>
-          <Typography
+          {/* <Typography
             variant="h1"
             sx={{
               color: 'white',
@@ -52,19 +71,22 @@ const Navbar = ({ isLoggedIn, onSignOut }) => {
               },
               cursor: 'pointer',
             }}
-          >
+          > */}
             {/* Projects link */}
-            <Link to="/" style={{ textDecoration: 'none', color: 'white' }}>Projects</Link>
-          </Typography>
+            {/* <Link to="/" style={{ textDecoration: 'none', color: 'white' }}>Projects</Link>
+          </Typography> */}
           </Box>
           {/* Sign In/Out Button */}
           <Button
             onClick={isLoggedIn ? onSignOut : null}
             sx={{
-              backgroundColor: '#007bff',
-              color: 'white',
+              backgroundColor: 'white',
+              fontFamily: 'Roboto',
+              fontWeight: 600,
+              color: '#332F52', 
+              borderRadius: '4px',
               '&:hover': {
-                backgroundColor: '#7cbbff',
+                backgroundColor: '#FFF1A6',
               },
               marginLeft: 'auto',
             }}
