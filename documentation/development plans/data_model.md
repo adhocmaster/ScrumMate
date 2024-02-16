@@ -63,10 +63,6 @@ erDiagram
         BIGINT[] members
     }
 
-    Story {
-        BIGINT action_id
-    }
-
 
 
     Project }|--|| User: "Product Owner"
@@ -77,7 +73,7 @@ erDiagram
     ReleasePlan ||--|{ SprintPlan: has
     ReleasePlan ||--|{ ProductBacklog: has
 
-    SprintPlan }|--|{ Story: has
+    SprintPlan }|--|{ ProductBacklog: "has sprint backlog"
     SprintPlan }|--|| User: "Scrum Master"
 
     
