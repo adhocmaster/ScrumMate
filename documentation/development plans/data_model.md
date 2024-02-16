@@ -39,7 +39,6 @@ erDiagram
         BIGINT scrum_master_id FK
 
         INT sequence
-        BIGINT[] actions
         
         INT duration_days
         datetime date_created
