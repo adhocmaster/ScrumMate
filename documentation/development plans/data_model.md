@@ -52,6 +52,8 @@ erDiagram
         BIGINT project_id FK
         BIGINT creator_id FK
 
+        BIGINT parent_id FK "nullable. Possibly a story id if the current one is a task"
+
         datetime date_created
         datetime date_updated
 
@@ -78,6 +80,8 @@ erDiagram
 
     
     ProductBacklog ||--|{ ProjectUserRoles: "epic/stories have"
+
+    ProductBacklog ||--|{ ProductBacklog: "a story has tasks"
 
 
 
