@@ -31,6 +31,7 @@ const ReleasePlan = () => {
       })
     })
   }, [project._id]);
+
   useEffect(()=>{
     console.log(project._id)
     if(formSubmitted){
@@ -42,17 +43,16 @@ const ReleasePlan = () => {
       }
       fetch(`http://localhost:3001/projects/${project._id}`,options).then((result)=>{
         result.json().then((response)=>{
-          console.log(response)
-          setProject(response)
+          console.log(response);
+          setProject(response);
+          setReleasePlanText(response.releases || 'No release plan found.');
         })
       })
-      console.log("ITS SUBMITTED")
+      console.log("ITS SUBMITTED");
       setFormSubmitted(false);
-      toggleCreateReleasePlan()
-      toggleViewReleasePlan()
-      setReleasePlanText(savedReleasePlans || 'No release plan found.');
+      toggleCreateReleasePlan();
+      toggleViewReleasePlan();
     }
-
   },[formSubmitted]);
   function formatStories(stories){
     
