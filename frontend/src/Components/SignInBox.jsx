@@ -17,7 +17,8 @@ function SignInBox({ onLogin }) {
     setPassword(event.target.value);
   };
   
-  const handleEnterClick = () => {
+  const handleEnterClick = (e) => {
+    e.preventDefault();
     onLogin(email,password)
   };
 
@@ -90,6 +91,8 @@ function SignInBox({ onLogin }) {
             },
           },
         }}
+        component="form"
+        onSubmit={handleEnterClick}
       >
         <Typography
           sx={{
@@ -120,8 +123,8 @@ function SignInBox({ onLogin }) {
           onChange={handlePasswordChange}
         />
         <Button
+          type="submit"
           variant="contained"
-          onClick={handleEnterClick}
           sx={{
             mt: 2,
             bgcolor: 'white',
@@ -136,8 +139,8 @@ function SignInBox({ onLogin }) {
         </Button>
         <Typography sx={{ color: 'white', textAlign: 'center', mt: 2 }}>
           <Link
-            href="/register" // Replace with registration page link
-            // onClick={() => window.open('/register', '_blank')}
+            href="/register"
+            // onClick={() => window.open('/register', '_blank')} 
             sx={{ color: 'white', textDecoration: 'none' }}
           >
             Create a new account
