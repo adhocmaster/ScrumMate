@@ -235,5 +235,14 @@ export class ProjectController {
             return res.sendStatus(400);
         }
     }
+    static async saveReleasePlan(req: express.Request, res: express.Response) {
+        try{
+            //add the release plan portion here.
+
+        } catch (error) {
+            console.log(error)
+            return res.sendStatus(400)
+        }
+    }
 
 }
