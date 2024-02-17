@@ -48,4 +48,5 @@ export class Project {
 	removeRelease(release: Release): void {
 		this.releases = removeMaybeUndefined(release, this.releases)
 	}
+	
 }

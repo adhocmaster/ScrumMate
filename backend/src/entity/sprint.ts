@@ -1,8 +1,8 @@
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToOne, OneToMany, JoinColumn, CreateDateColumn, ManyToMany, JoinTable } from "typeorm"
 import { User } from "./User"
 import { Release } from "./release"
-import { Story } from "./utils/story"
 import { TodoItem } from "./todo"
+import { ProjectUserRoles } from "./roles"
 
 @Entity()
 export class Sprint {
@@ -32,12 +32,15 @@ export class Sprint {
 	@JoinColumn()
     scrumMaster: User
 
-	@ManyToMany(() => TodoItem, (todo) => todo.sprint)
-	@JoinTable()
+	@OneToMany(() => ProjectUserRoles, (role) => role.sprints)
+	roles?: ProjectUserRoles[]
+	
+	@OneToMany(() => TodoItem, (todo) => todo.sprint)
 	stories: TodoItem[]
 
 	get sprintDuration(): number {
 		var diff = this.startDate.getTime() - this.endDate.getTime()
 		return Math.ceil(diff / (1000 * 3600 * 24)); 
 	}
+
 }

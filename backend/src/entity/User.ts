@@ -58,4 +58,5 @@ export class User {
 	removeJoinedProject(proj: Project): void {
 		this.joinedProjects = removeMaybeUndefined(proj, this.joinedProjects)
 	}
+	
 }

@@ -29,4 +29,5 @@ export class Release {
 	
 	@OneToMany(() => TodoItem, (todo) => todo.release)
 	backlog: TodoItem[]
+	
 }
