@@ -1,6 +1,7 @@
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany, ManyToMany, JoinTable } from "typeorm"
 import { Project } from "./project"
 import { getMaybeUndefined, addMaybeUndefined, removeMaybeUndefined } from "./utils/addGetList"
+import { TodoItem } from "./todo"
 
 @Entity()
 export class User {
@@ -28,6 +29,9 @@ export class User {
 	@ManyToMany(() => Project, (project) => project.teamMembers)
 	@JoinTable()
 	joinedProjects: Project[]
+
+	@ManyToMany(() => TodoItem, (todo) => todo.assignees)
+	assignments: TodoItem[]
 	
 	/// Safer because undefined becomes empty list
 	getOwnedProjects(): Project[] {
