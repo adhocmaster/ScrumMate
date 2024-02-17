@@ -1,10 +1,9 @@
 import { User } from "../src/entity/User"
 import { Project } from "../src/entity/project"
 import { Release } from "../src/entity/release";
-import { Revision } from "../src/entity/revision";
 import { Sprint } from "../src/entity/sprint";
-import { Story } from "../src/entity/story";
-import { Task } from "../src/entity/task";
+import { Story } from "../src/entity/utils/story";
+import { Task } from "../src/entity/utils/task";
 import { DataSource } from "typeorm";
 
 function makeRandomId(length: number) {
@@ -28,7 +27,7 @@ const AppDataSource = new DataSource({
     database: "test",
     synchronize: true,
     logging: false,
-    entities: [User, Project, Release, Revision, Sprint, Story, Task],
+    entities: [User, Project, Release, Sprint, Story, Task],
     migrations: [],
     subscribers: [],
 })

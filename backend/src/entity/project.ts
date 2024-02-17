@@ -1,7 +1,8 @@
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany, ManyToMany } from "typeorm"
 import { User } from "./User"
-import { Revision } from "./revision"
 import { addMaybeUndefined, getMaybeUndefined, removeMaybeUndefined } from "./utils/addGetList"
+import { Release } from "./release"
+import { ProjectUserRoles } from "./roles"
 
 @Entity()
 export class Project {
@@ -18,8 +19,11 @@ export class Project {
 	@ManyToMany(() => User, (user) => user.joinedProjects)
     teamMembers: User[]
 
-	@OneToMany(() => Revision, (revision) => revision.project)
-	revisions: Revision[]
+	@OneToMany(() => Release, (release) => release.project)
+	releases: Release[]
+
+	@OneToMany(() => ProjectUserRoles, (role) => role.project)
+	roles: ProjectUserRoles[]
 
 	getTeamMembers(): User[] {
 		return getMaybeUndefined(this.teamMembers)
@@ -33,15 +37,15 @@ export class Project {
 		this.teamMembers = removeMaybeUndefined(member, this.teamMembers)
 	}
 	
-	getRevisions(): Revision[] {
-		return getMaybeUndefined(this.revisions)
+	getReleases(): Release[] {
+		return getMaybeUndefined(this.releases)
 	}
 
-	addRevision(revision: Revision): void {
-		this.revisions = addMaybeUndefined(revision, this.revisions)
+	addRelease(release: Release): void {
+		this.releases = addMaybeUndefined(release, this.releases)
 	}
 
-	removeRevision(revision: Revision): void {
-		this.revisions = removeMaybeUndefined(revision, this.revisions)
+	removeRelease(release: Release): void {
+		this.releases = removeMaybeUndefined(release, this.releases)
 	}
 }
