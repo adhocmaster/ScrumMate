@@ -1,21 +1,30 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany, ManyToOne } from "typeorm"
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToOne, JoinColumn } from "typeorm"
 import { Sprint } from "./sprint"
 import { Project } from "./project"
 import { User } from "./User"
 
 @Entity()
-export class ProjectUserRoles {
+export class UserRole {
 
     @PrimaryGeneratedColumn()
     id: number
-
+	
 	@Column()
-	userToRole: Map<User, string>
+	role: string
+	
+	///// Relational /////
 
-	@ManyToOne(() => Sprint, (sprint) => sprint.release)
-	sprints: Sprint[]
+	@OneToOne(() => User)
+	@JoinColumn()
+	user: User
+	
+	@ManyToOne(() => Sprint, (sprint) => sprint.roles)
+	sprint: Sprint
 
 	@ManyToOne(() => Project, (project) => project.roles)
-	project?: Project
+	project: Project
 	
+	///// Methods /////
+	
+	// TODO
 }

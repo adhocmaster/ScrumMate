@@ -2,13 +2,13 @@ import { Entity, PrimaryGeneratedColumn, Column, OneToMany, ManyToOne, ManyToMan
 import { Sprint } from "./sprint"
 import { Release } from "./release"
 import { User } from "./User"
+import { getMaybeUndefined, addMaybeUndefined, removeMaybeUndefined } from "./utils/addGetList"
 
 export enum Priority {
-	MUST = 4,
-	SHOULD = 3,
-	COULD = 2,
-	WONT = 1,
-	UNPRIORITIZED = 0
+	HIGH = 4,
+	MEDIUM = 3,
+	LOW = 2,
+	NONE = 1,
 }
 
 @Entity()
@@ -24,20 +24,33 @@ export class TodoItem {
 	@UpdateDateColumn()
 	updatedDate: Date
 
-	@ManyToMany(() => User, (user) => user.assignments)
-	@JoinTable()
-	assignees: User[]
-
+	///// Relational /////
+	
 	@ManyToOne(() => Release, (release) => release.backlog) // have this whether it is in a backlog or not?
-	release: Release[]
+	release: Release
 
 	// deviating from diagram: each todo item should only be in one backlog.
 	// if you need it in another sprint (eg. did not finish it this sprint and want to move it to next), copy it
 	// this way if you edit it in the new one, we don't change it in the previous sprints
 	// also, work in a sprint should be completed within that sprint.
-	@ManyToOne(() => Sprint, (story) => story.stories)
-	sprint?: Sprint[] // nullable in case it is just in the backlog
+	@ManyToOne(() => Sprint, (story) => story.todos)
+	sprint: Sprint // nullable in case it is just in the backlog
 
+	@ManyToMany(() => User, (user) => user.assignments)
+	@JoinTable()
+	assignees: User[]
+
+	///// Methods /////
+	
+	getAssignees(): User[] {
+        return getMaybeUndefined(this.assignees);
+    }
+    addAssignee(user: User): void {
+        this.assignees = addMaybeUndefined(user, this.assignees);
+    }
+    removeAssignee(user: User): void {
+        this.assignees = removeMaybeUndefined(user, this.assignees);
+    }
 }
 
 // How to handle these? display them in anything?
@@ -81,15 +94,29 @@ export class Story extends TodoItem {
 	@Column({
 		type: "enum",
 		enum: Priority,
-		default: Priority.UNPRIORITIZED
+		default: Priority.NONE
 	})
 	priority: Priority
+
+	///// Relational /////
 
 	@ManyToOne(() => Epic, (epic) => epic.stories)
 	epic?: Epic
 	
 	@OneToMany(() => Task, (task) => task.story)
 	tasks: Task[]
+
+	///// Methods /////
+	
+	getTasks(): Task[] {
+        return getMaybeUndefined(this.tasks);
+    }
+    addTask(task: Task): void {
+        this.tasks = addMaybeUndefined(task, this.tasks);
+    }
+    removeTask(task: Task): void {
+        this.tasks = removeMaybeUndefined(task, this.tasks);
+    }
 
 }
 
