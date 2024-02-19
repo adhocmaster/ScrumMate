@@ -11,11 +11,13 @@ router.post('/api/release', async (req, res) => {
 		problemStatement,
 		goalStatement
 	} = req.body
+
 	const release = new Release()
 	release.revision = revision
 	release.revisionDate = revisionDate
 	release.problemStatement = problemStatement
 	release.goalStatement = goalStatement
+	
 	await AppDataSource.manager.save(release)
 	return res.json(release)
 })
