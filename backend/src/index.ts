@@ -1,37 +1,69 @@
 import express from 'express';
-import http from 'http';
-import bodyParser from 'body-parser';
-import cookieParser from 'cookie-parser';
-import compression from 'compression';
-import cors from 'cors';
-import mongoose from 'mongoose';
-import router from './router'
-import {Entity, PrimaryGeneratedColumn, Column, BaseEntity} from "typeorm"
-import "reflect-metadata"
+// import http from 'http';
+// import bodyParser from 'body-parser';
+// import cookieParser from 'cookie-parser';
+// import compression from 'compression';
+// import cors from 'cors';
+// import router from './router'
+// import {Entity, PrimaryGeneratedColumn, Column, BaseEntity} from "typeorm"
+// import "reflect-metadata"
+import { AppDataSource } from './data-source';
+import { Release } from "./entity/release"
+import { fetchReleaseVersions } from './controllers/release';
 
 const app = express();
 
-app.use(cors({
-    origin:"http://localhost:3000",
-    credentials: true,
-}));
+AppDataSource.initialize().then(async () => {
 
-app.use(compression());
-app.use(cookieParser());
-app.use(bodyParser.json());
+    console.log("Inserting a new user into the database...")
+    const release = new Release()
+    release.problemStatement = "31231sdan24235"
+    release.goalStatement = "413rquterouvnbyoai"
+    await AppDataSource.manager.save(release)
+    console.log("Saved a new release with id: " + release.id)
 
-const server = http.createServer(app)
+    console.log("Loading releases from the database...")
+    const releases = await AppDataSource.manager.find(Release)
+    console.log("Loaded releases: ", releases)
 
-server.listen(3001, ()=>{
-    console.log("server running on http://localhost:3001")
-})
+    // console.log("Here you can setup and run express / fastify / any other framework.")
 
-const MONGODB_URI = 'mongodb+srv://rojwilli:8Rosemont@cluster0.mit0tdn.mongodb.net/?retryWrites=true&w=majority'  || 'mongodb://127.0.0.1:27017/scrum_mate'
+	app.use(express.json())
 
-mongoose.Promise = Promise
-mongoose.connect(MONGODB_URI)
-mongoose.connection.on('error',(error:Error)=>{
-    console.log(error)
-})
+	const router = express.Router()
+	router.post('/api/release', async (req, res) => {
+		const {
+			problemStatement,
+			goalStatement
+		} = req.body
+		const release = new Release()
+		release.problemStatement = "cant find happiness"
+		release.goalStatement = "try to be happiness"
+		await AppDataSource.manager.save(release)
+		return res.json(release)
+	})
 
-app.use('/',router())
+	app.use(router);
+
+	app.listen(8080, () => {
+		console.log("Running on port 8080")
+	})
+
+}).catch(error => console.log(error))
+
+// app.use(cors({
+//     origin:"http://localhost:3000",
+//     credentials: true,
+// }));
+
+// app.use(compression());
+// app.use(cookieParser());
+// app.use(bodyParser.json());
+
+// const server = http.createServer(app)
+
+// server.listen(3001, ()=>{
+//     console.log("server running on http://localhost:3001")
+// })
+
+// app.use('/',router())
