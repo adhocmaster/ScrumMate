@@ -1,12 +1,11 @@
+import { UserRole } from "./entity/roles"
 import { User } from "./entity/User"
 import { Project } from "./entity/project"
 import { Release } from "./entity/release"
-import { Revision } from "./entity/revision"
 import { Sprint } from "./entity/sprint"
-import { Story } from "./entity/story"
-import { Task } from "./entity/task"
 import "reflect-metadata"
 import { DataSource } from "typeorm"
+import { Bug, Epic, Infrastructure, Spike, Story, Task, TodoItem } from "entity/todo"
 
 export const AppDataSource = new DataSource({
     type: "postgres",
@@ -17,7 +16,7 @@ export const AppDataSource = new DataSource({
     database: "test",
     synchronize: true,
     logging: true,
-    entities: [User, Project, Release, Revision, Sprint, Story, Task],
+    entities: [User, Project, Release, UserRole, Sprint, TodoItem, Epic, Story, Task, Spike, Infrastructure, Bug],
     subscribers: [],
     migrations: [],
 })
