@@ -2,17 +2,13 @@ import express from "express";
 import { Release} from "../entity/release";
 import {Project} from '../entity/project';
 import { AppDataSource } from "../data-source";
+import { Project } from "../entity/project";
 
 
 const router = express.Router()
 
-router.post('/api/release/:projectId', async (req, res) => {
-  const {projectId} = req.params;
-  const projectIdNum = parseInt(projectId);
-  if(!projectIdNum) return res.sendStatus(400);
-
-  const project = await AppDataSource.manager.find(Project, {where: {id: projectIdNum}});
-  if(project.length == 0) return res.sendStatus(404);
+router.post('/api/:projectId/release', async (req, res) => {
+	const { projectId } = req.params
 
 	const {
 		revision,
@@ -30,7 +26,16 @@ router.post('/api/release/:projectId', async (req, res) => {
 
   console.log(release.project);
 
+	const project = await AppDataSource.manager.findOneBy(Project, {id: parseInt(projectId)})
+
+	release.project = project 
+
 	await AppDataSource.manager.save(release)
+
+	// Not sure if need to do this too or if automatic
+	// project.addRelease(release)
+	// await AppDataSource.manager.save(project)
+	
 	return res.json(release)
 })
 
@@ -74,5 +79,5 @@ router.post('/api/release/copy/:releaseId', async (req, res) => {
 });
 
 export {
-	router as createReleaseRouter
+	router as createRelease
 }

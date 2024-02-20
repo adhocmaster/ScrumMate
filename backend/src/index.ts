@@ -9,9 +9,10 @@ import express from 'express';
 // import "reflect-metadata"
 import { AppDataSource } from './data-source';
 import { Release } from "./entity/release"
-import { createReleaseRouter } from './router/create_release';
+import { createRelease } from './router/create_release';
 import { Project } from './entity/project';
 import { fetchProjectReleases } from './router/fetchProjectReleases';
+import { saveRelease } from './router/save_release';
 
 const app = express();
 
@@ -34,15 +35,30 @@ AppDataSource.initialize().then(async () => {
 
 	app.use(express.json())
 
-	app.use(createReleaseRouter);
+	app.use(createRelease);
 	app.use(fetchProjectReleases);
+	app.use(saveRelease);
 
 	app.listen(8080, () => {
 		console.log("Running on port 8080")
 	})
 
-	// const releaseRepository = await AppDataSource.getRepository(Release)
-	// const projectRepository = await AppDataSource.getRepository(Project)
+	const releaseRepository = await AppDataSource.getRepository(Release)
+	const projectRepository = await AppDataSource.getRepository(Project)
+
+	// POST save release
+	// var release1 = new Release()
+	// release1.revision = 1
+	// release1.revisionDate = new Date()
+	// release1.problemStatement = "Scrum Tools is making too much money that the rest of the world is now in poverty"
+	// release1.goalStatement = "We are gonna make the product even better to take the rest of their money"
+	// await releaseRepository.save(release1)
+	// const releases = await releaseRepository.find({order: {
+	// 	id: "DESC"
+	// }})
+	// release1 = releases[0] // get biggest ID
+	// console.log(release1)
+
 
 	// // GET project releases
 	// var proj = new Project() 
