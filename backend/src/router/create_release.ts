@@ -23,5 +23,5 @@ router.post('/api/release', async (req, res) => {
 })
 
 export {
-	router as createReleaseRouter
+	router as createRelease
 }
