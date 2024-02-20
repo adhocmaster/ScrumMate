@@ -41,8 +41,8 @@ AppDataSource.initialize().then(async () => {
 		console.log("Running on port 8080")
 	})
 
-	const releaseRepository = await AppDataSource.getRepository(Release)
-	const projectRepository = await AppDataSource.getRepository(Project)
+	// const releaseRepository = await AppDataSource.getRepository(Release)
+	// const projectRepository = await AppDataSource.getRepository(Project)
 
 	// // GET project releases
 	// var proj = new Project() 
