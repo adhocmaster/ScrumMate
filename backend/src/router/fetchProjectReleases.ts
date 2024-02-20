@@ -21,7 +21,19 @@ router.get('/api/project/:projectId', async (req, res) => {
 	// console.log(project[0].releases)
 
 	return res.json(project[0].releases)
-})
+});
+
+router.post('/api/project', async (req, res) => {
+  const {
+    name
+  } = req.body;
+
+  if(!name) return res.sendStatus(400);
+  const project = new Project();
+  project.name = name;
+  await AppDataSource.manager.save(Project, project);
+  return res.json(project);
+});
 
 export {
 	router as fetchProjectReleases
