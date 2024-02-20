@@ -1,7 +1,7 @@
 import express from "express";
 import { Release } from "../entity/release";
 import { AppDataSource } from "../data-source";
-import { Project } from "entity/project";
+import { Project } from "../entity/project";
 
 const router = express.Router()
 
