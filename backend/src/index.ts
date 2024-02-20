@@ -44,6 +44,8 @@ AppDataSource.initialize().then(async () => {
 	// const releaseRepository = await AppDataSource.getRepository(Release)
 	// const projectRepository = await AppDataSource.getRepository(Project)
 
+	// POST save release
+
 	// // GET project releases
 	// var proj = new Project() 
 	// proj.name = "scrum tools"

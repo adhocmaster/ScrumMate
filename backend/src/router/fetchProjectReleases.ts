@@ -6,7 +6,6 @@ import { Project } from "../entity/project";
 const router = express.Router()
 
 router.get('/api/project/:projectId', async (req, res) => {
-	console.log("here")
 	const { projectId } = req.params
 
 	const projectRepository = await AppDataSource.getRepository(Project)
