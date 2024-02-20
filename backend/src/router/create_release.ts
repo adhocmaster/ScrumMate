@@ -22,9 +22,6 @@ router.post('/api/:projectId/release', async (req, res) => {
 	release.revisionDate = revisionDate
 	release.problemStatement = problemStatement
 	release.goalStatement = goalStatement
-  release.project = project[0];
-
-  console.log(release.project);
 
 	const project = await AppDataSource.manager.findOneBy(Project, {id: parseInt(projectId)})
 
