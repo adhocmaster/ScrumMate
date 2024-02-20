@@ -20,7 +20,7 @@ router.post('/api/release/:releaseId', async (req, res) => {
 	releaseToUpdate.revisionDate = revisionDate ?? releaseToUpdate.revisionDate
 	releaseToUpdate.problemStatement = problemStatement ?? releaseToUpdate.problemStatement
 	releaseToUpdate.goalStatement = goalStatement ?? releaseToUpdate.goalStatement
-
+	// if adding sprint, this will be done by a different API call like createSprint or somethign
 	await AppDataSource.manager.save(releaseToUpdate)
 	return res.json(releaseToUpdate)
 })
