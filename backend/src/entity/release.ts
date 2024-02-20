@@ -24,7 +24,7 @@ export class Release {
 
 	///// Relational /////
 
-	@ManyToOne(() => Project, (project) => project.releases)
+	@ManyToOne(() => Project, (project) => project.releases, {nullable: false})
 	project: Project
 	
 	@OneToMany(() => Sprint, (sprint) => sprint.release)
@@ -59,6 +59,7 @@ export class Release {
     this.problemStatement = release.problemStatement;
     this.goalStatement = release.goalStatement;
     this.revisionDate = release.revisionDate;
+    this.project = release.project;
   }
 	
 }

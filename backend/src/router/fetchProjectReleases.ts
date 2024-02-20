@@ -29,7 +29,7 @@ router.post('/api/project', async (req, res) => {
     name
   } = req.body;
 
-  if(!name) res.sendStatus(400);
+  if(!name) return res.sendStatus(400);
   const project = new Project();
   project.name = name;
   await AppDataSource.manager.save(Project, project);
