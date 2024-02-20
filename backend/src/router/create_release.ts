@@ -10,6 +10,8 @@ router.post('/api/release', async (req, res) => {
 		revisionDate,
 		problemStatement,
 		goalStatement,
+		sprints,
+		backlog,
 	} = req.body
 
 	const release = new Release()
@@ -17,6 +19,8 @@ router.post('/api/release', async (req, res) => {
 	release.revisionDate = revisionDate
 	release.problemStatement = problemStatement
 	release.goalStatement = goalStatement
+	release.sprints = sprints
+	release.backlog = backlog
 
 	await AppDataSource.manager.save(release)
 	return res.json(release)

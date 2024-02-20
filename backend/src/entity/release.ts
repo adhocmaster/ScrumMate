@@ -21,6 +21,7 @@ export class Release {
 
 	@Column()
 	goalStatement: string
+	
 
 	///// Relational /////
 
@@ -44,7 +45,6 @@ export class Release {
 	removeSprint(sprint: Sprint): void {
 		this.sprints = removeMaybeUndefined(sprint, this.sprints)
 	}
-
 	getBacklog(): TodoItem[] {
 		return getMaybeUndefined(this.backlog)
 	}
