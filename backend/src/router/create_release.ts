@@ -1,6 +1,5 @@
 import express from "express";
 import { Release} from "../entity/release";
-import {Project} from '../entity/project';
 import { AppDataSource } from "../data-source";
 import { Project } from "../entity/project";
 
