@@ -9,7 +9,7 @@ router.post('/api/release', async (req, res) => {
 		revision,
 		revisionDate,
 		problemStatement,
-		goalStatement
+		goalStatement,
 	} = req.body
 
 	const release = new Release()
@@ -17,11 +17,11 @@ router.post('/api/release', async (req, res) => {
 	release.revisionDate = revisionDate
 	release.problemStatement = problemStatement
 	release.goalStatement = goalStatement
-	
+
 	await AppDataSource.manager.save(release)
 	return res.json(release)
 })
 
 export {
-	router as fetchReleaseVersions
+	router as createReleaseRouter
 }
