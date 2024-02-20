@@ -5,7 +5,7 @@ import { Release } from "./entity/release"
 import { Sprint } from "./entity/sprint"
 import "reflect-metadata"
 import { DataSource } from "typeorm"
-import { Bug, Epic, Infrastructure, Spike, Story, Task, TodoItem } from "entity/todo"
+import { Bug, Epic, Infrastructure, Spike, Story, Task, TodoItem } from "./entity/todo"
 
 export const AppDataSource = new DataSource({
     type: "postgres",
