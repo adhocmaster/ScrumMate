@@ -9,8 +9,9 @@ import express from 'express';
 // import "reflect-metadata"
 import { AppDataSource } from './data-source';
 import { Release } from "./entity/release"
-import { createReleaseRouter } from './controllers/create_release';
+import { createReleaseRouter } from './router/create_release';
 import { Project } from './entity/project';
+import { fetchProjectReleases } from './router/fetchProjectReleases';
 
 const app = express();
 
@@ -34,13 +35,39 @@ AppDataSource.initialize().then(async () => {
 	app.use(express.json())
 
 	app.use(createReleaseRouter);
+	app.use(fetchProjectReleases);
 
 	app.listen(8080, () => {
 		console.log("Running on port 8080")
 	})
 
-	const releaseRepository = await AppDataSource.getRepository(Release)
-	const projectRepository = await AppDataSource.getRepository(Project)
+	// const releaseRepository = await AppDataSource.getRepository(Release)
+	// const projectRepository = await AppDataSource.getRepository(Project)
+
+	// // GET project releases
+	// var proj = new Project() 
+	// proj.name = "scrum tools"
+	// const release1 = new Release()
+	// release1.revision = 1
+	// release1.revisionDate = new Date()
+	// release1.problemStatement = "Scrum Tools is making too much money that the rest of the world is now in poverty"
+	// release1.goalStatement = "We are gonna make the product even better to take the rest of their money"
+	// release1.project = proj
+	// const release2 = new Release()
+	// release2.revision = 2
+	// release2.revisionDate = new Date()
+	// release2.problemStatement = "Scrum Tools is bankrupt"
+	// release2.goalStatement = "We want to make $1 by December"
+	// release2.project = proj
+	// proj.releases = [release1, release2]
+	// await projectRepository.save(proj)
+	// await releaseRepository.save(release1)
+	// await releaseRepository.save(release2)
+	// const projects = await projectRepository.find({order: {
+	// 	id: "DESC"
+	// }})
+	// proj = projects[0] // get biggest ID
+	// console.log(proj)
 
 	// // The frontend will create something by another API call to get id, but I dont have that yet
 	// var proj = new Project() 
