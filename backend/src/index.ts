@@ -9,7 +9,7 @@ import express from 'express';
 // import "reflect-metadata"
 import { AppDataSource } from './data-source';
 import { Release } from "./entity/release"
-import { fetchReleaseVersions } from './controllers/release';
+import { createReleaseRouter } from './controllers/create_release';
 import { Project } from './entity/project';
 
 const app = express();
@@ -33,7 +33,7 @@ AppDataSource.initialize().then(async () => {
 
 	app.use(express.json())
 
-	app.use(fetchReleaseVersions);
+	app.use(createReleaseRouter);
 
 	app.listen(8080, () => {
 		console.log("Running on port 8080")
@@ -42,43 +42,43 @@ AppDataSource.initialize().then(async () => {
 	const releaseRepository = await AppDataSource.getRepository(Release)
 	const projectRepository = await AppDataSource.getRepository(Project)
 
-	// The frontend will create something by another API call to get id, but I dont have that yet
-	var proj = new Project() 
-	proj.name = "scrum tools"
-	projectRepository.save(proj)
-	const projects = await projectRepository.find({order: {
-		id: "DESC"
-	}})
-	proj = projects[0] // get biggest ID
+	// // The frontend will create something by another API call to get id, but I dont have that yet
+	// var proj = new Project() 
+	// proj.name = "scrum tools"
+	// projectRepository.save(proj)
+	// const projects = await projectRepository.find({order: {
+	// 	id: "DESC"
+	// }})
+	// proj = projects[0] // get biggest ID
 
-	console.log("before")
-	console.log(await AppDataSource.manager.find(Release))
-	console.log(await AppDataSource.manager.find(Project))
-	const releasePlanData = {
-		revision: 12,
-		revisionDate: new Date(),
-		problemStatement: "Scrum Tools is making too much money that the rest of the world is now in poverty",
-		goalStatement: "We are gonna make the product even better to take the rest of their money",
-		projID: proj.id
-	}
+	// console.log("before")
+	// console.log(await AppDataSource.manager.find(Release))
+	// console.log(await AppDataSource.manager.find(Project))
+	// const releasePlanData = {
+	// 	revision: 12,
+	// 	revisionDate: new Date(),
+	// 	problemStatement: "Scrum Tools is making too much money that the rest of the world is now in poverty",
+	// 	goalStatement: "We are gonna make the product even better to take the rest of their money",
+	// 	projID: proj.id
+	// }
 	
-	await fetch(`http://localhost:8080/api/release`, {
-		method: 'POST',
-		headers: {
-			'Content-Type': 'application/json'
-		},
-		credentials: 'include',
-		body: JSON.stringify(releasePlanData)
-	}).then((result) => {
-		// console.log(result)
-		console.log(result.ok)
-		// if (result.status === 200) {
-		// 	console.log(result)
-		// } 
-	})
+	// await fetch(`http://localhost:8080/api/release`, {
+	// 	method: 'POST',
+	// 	headers: {
+	// 		'Content-Type': 'application/json'
+	// 	},
+	// 	credentials: 'include',
+	// 	body: JSON.stringify(releasePlanData)
+	// }).then((result) => {
+	// 	// console.log(result)
+	// 	console.log(result.ok)
+	// 	// if (result.status === 200) {
+	// 	// 	console.log(result)
+	// 	// } 
+	// })
 
-	console.log("after")
-	console.log(await AppDataSource.manager.find(Release, {relations: {project: true}}))
+	// console.log("after")
+	// console.log(await AppDataSource.manager.find(Release, {relations: {project: true}}))
 
 }).catch(error => console.log(error))
 
