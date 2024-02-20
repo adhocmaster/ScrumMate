@@ -9,7 +9,7 @@ import express from 'express';
 // import "reflect-metadata"
 import { AppDataSource } from './data-source';
 import { Release } from "./entity/release"
-import { createReleaseRouter } from './controllers/create_release';
+import { createReleaseRouter } from './router/create_release';
 import { Project } from './entity/project';
 
 const app = express();
