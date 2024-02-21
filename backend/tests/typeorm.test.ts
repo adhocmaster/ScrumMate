@@ -157,6 +157,7 @@ describe('testing that everything can be saved and loaded from database', () => 
 			sprint1.release = release2; release2.addSprint(sprint1);
 			sprint2.release = release2; release2.addSprint(sprint2);
 				role.sprint = sprint1; sprint2.addRole(role) // assume adding to release meanse it is backlogged
+				role.user = teammember1;
 				spike.sprint = sprint2; sprint2.addTODO(spike)
 				story1.sprint = sprint2; sprint2.addTODO(story1)
 					task1.story = story1; story1.addTask(task1); task1.sprint = sprint1; sprint1.addTODO(task1)
@@ -238,11 +239,13 @@ describe('testing that everything can be saved and loaded from database', () => 
 
 			// Assert everything is still the same
 			var userList = [productOwner1, productOwner2, teammember1, teammember2].sort((a, b) => a.username.localeCompare(b.username))
+			expect(loadedUsers.length).toBe(userList.length)
 			for (let i = 0; i < loadedUsers.length; i++) {
 				expect(loadedUsers[i].username == userList[i].username)
 				expect(loadedUsers[i].email == userList[i].email)
 			}
 			var projList = [project1, project2, project3].sort((a,b) => a.name.localeCompare(b.name))
+			expect(loadedProjects.length).toBe(projList.length)
 			for (let i = 0; i < loadedProjects.length; i++) {
 				expect(loadedProjects[i].name == projList[i].name)
 			}

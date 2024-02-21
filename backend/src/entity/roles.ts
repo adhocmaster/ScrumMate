@@ -18,10 +18,10 @@ export class UserRole {
 	@JoinColumn()
 	user: User
 	
-	@ManyToOne(() => Sprint, (sprint) => sprint.roles, {nullable: false})
+	@ManyToOne(() => Sprint, (sprint) => sprint.roles) // unknown if it will be sprint or proj
 	sprint: Sprint
 
-	@ManyToOne(() => Project, (project) => project.roles, {nullable: false})
+	@ManyToOne(() => Project, (project) => project.roles)
 	project: Project
 	
 	///// Methods /////
