@@ -3,10 +3,8 @@ import { Release} from "../entity/release";
 import { AppDataSource } from "../data-source";
 import { Project } from "../entity/project";
 
-
-const router = express.Router()
-
-router.post('/api/:projectId/release', async (req, res) => {
+const newReleaseRouter = express.Router()
+newReleaseRouter.post('/api/project/:projectId/newRelease', async (req, res) => {
 	const { projectId } = req.params
 
 	const {
@@ -31,19 +29,41 @@ router.post('/api/:projectId/release', async (req, res) => {
 	// Not sure if need to do this too or if automatic
 	// project.addRelease(release)
 	// await AppDataSource.manager.save(project)
+
+	const project2 = await AppDataSource.getRepository(Project).findOne({where: {id: parseInt(projectId)}, relations: ['releases']})
+	console.log(project2)
 	
 	return res.json(release)
 })
 
-// router.get('/api/releases', async (req, res) => {
-//   // const {projectId} = req.params;
-//   return res.status(200);
-// });
 
 
-//const releaseRepository = AppDataSource.getRepository(Release);
+const editReleaseRouter = express.Router()
+editReleaseRouter.post('/api/release/:releaseId', async (req, res) => {
+	const { releaseId } = req.params
+	const releaseRepository = await AppDataSource.getRepository(Release)
+	const releaseToUpdate = await releaseRepository.findOneBy({id: parseInt(releaseId)})
 
-router.post('/api/release/copy/:releaseId', async (req, res) => {
+	const {
+		revision,
+		revisionDate,
+		problemStatement,
+		goalStatement,
+	} = req.body
+
+	releaseToUpdate.revision = revision ?? releaseToUpdate.revision
+	releaseToUpdate.revisionDate = revisionDate ?? releaseToUpdate.revisionDate
+	releaseToUpdate.problemStatement = problemStatement ?? releaseToUpdate.problemStatement
+	releaseToUpdate.goalStatement = goalStatement ?? releaseToUpdate.goalStatement
+
+	await releaseRepository.save(releaseToUpdate)
+	return res.json(releaseToUpdate)
+})
+
+
+
+const copyReleaseRouter = express.Router()
+copyReleaseRouter.post('/api/release/copy/:releaseId', async (req, res) => {
   const {releaseId} = req.params;
   const releaseIdNum = parseInt(releaseId);
   if(!releaseIdNum) return res.sendStatus(400);
@@ -74,6 +94,10 @@ router.post('/api/release/copy/:releaseId', async (req, res) => {
   res.json(releaseCopy);
 });
 
+
+
 export {
-	router as createRelease
+	newReleaseRouter as newReleaseRouter,
+	editReleaseRouter as editReleaseRouter,
+	copyReleaseRouter as copyReleaseRouter,
 }

@@ -16,10 +16,6 @@ router.get('/api/project/:projectId', async (req, res) => {
 		.getMany();
 	// const project = await projectRepository.findOne({where: {id: parseInt(projectId)}, relations: ['releases']})
 
-	// console.log(project)
-	// console.log(project[0])
-	// console.log(project[0].releases)
-
 	return res.json(project[0].releases)
 });
 

@@ -37,7 +37,7 @@ export class Sprint {
 	@JoinColumn()
 	scrumMaster: User
 	
-	@ManyToOne(() => Release, (release) => release.sprints)
+	@ManyToOne(() => Release, (release) => release.sprints, {nullable: false})
 	release: Release
 	
 	@OneToMany(() => TodoItem, (todo) => todo.sprint)

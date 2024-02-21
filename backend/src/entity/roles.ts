@@ -14,14 +14,14 @@ export class UserRole {
 	
 	///// Relational /////
 
-	@OneToOne(() => User)
+	@OneToOne(() => User, {nullable: false})
 	@JoinColumn()
 	user: User
 	
-	@ManyToOne(() => Sprint, (sprint) => sprint.roles)
+	@ManyToOne(() => Sprint, (sprint) => sprint.roles, {nullable: false})
 	sprint: Sprint
 
-	@ManyToOne(() => Project, (project) => project.roles)
+	@ManyToOne(() => Project, (project) => project.roles, {nullable: false})
 	project: Project
 	
 	///// Methods /////

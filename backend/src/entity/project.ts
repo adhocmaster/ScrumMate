@@ -15,7 +15,7 @@ export class Project {
 
 	///// Relational /////
 	
-    @ManyToOne(() => User, (user) => user.ownedProjects)
+    @ManyToOne(() => User, (user) => user.ownedProjects, {nullable: false})
     productOwner: User
     
 	@ManyToMany(() => User, (user) => user.joinedProjects)

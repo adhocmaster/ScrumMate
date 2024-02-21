@@ -1,18 +1,10 @@
 import express from 'express';
-// import http from 'http';
-// import bodyParser from 'body-parser';
-// import cookieParser from 'cookie-parser';
-// import compression from 'compression';
-// import cors from 'cors';
-// import router from './router'
-// import {Entity, PrimaryGeneratedColumn, Column, BaseEntity} from "typeorm"
-// import "reflect-metadata"
 import { AppDataSource } from './data-source';
 import { Release } from "./entity/release"
-import { createRelease } from './router/create_release';
 import { Project } from './entity/project';
-import { fetchProjectReleases } from './router/fetchProjectReleases';
-import { saveRelease } from './router/save_release';
+import { createUserRouter, editUserRouter } from './router/user';
+import { createNewProjectRouter, joinProjectRouter, editProject } from './router/project';
+import { newReleaseRouter, copyReleaseRouter, editReleaseRouter } from './router/release';
 
 const app = express();
 
@@ -35,9 +27,16 @@ AppDataSource.initialize().then(async () => {
 
 	app.use(express.json())
 
-	app.use(createRelease);
-	app.use(fetchProjectReleases);
-	app.use(saveRelease);
+	app.use(createUserRouter)
+	app.use(editUserRouter)
+
+	app.use(createNewProjectRouter)
+	app.use(joinProjectRouter)
+	app.use(editProject)
+
+	app.use(newReleaseRouter);
+	app.use(copyReleaseRouter);
+	app.use(editReleaseRouter);
 
 	app.listen(8080, () => {
 		console.log("Running on port 8080")
@@ -85,17 +84,19 @@ AppDataSource.initialize().then(async () => {
 	// proj = projects[0] // get biggest ID
 	// console.log(proj)
 
-	// // The frontend will create something by another API call to get id, but I dont have that yet
-	// var proj = new Project() 
-	// proj.name = "scrum tools"
-	// projectRepository.save(proj)
+	// POST create release
+	var proj = new Project() 
+	proj.name = "scrum tools"
+	proj.id = 1
+	await projectRepository.save(proj)
+	proj = await projectRepository.findOneBy({id: proj.id})
+	console.log(proj)
+
+	// OLD test
 	// const projects = await projectRepository.find({order: {
 	// 	id: "DESC"
 	// }})
 	// proj = projects[0] // get biggest ID
-
-	// console.log("before")
-	// console.log(await AppDataSource.manager.find(Release))
 	// console.log(await AppDataSource.manager.find(Project))
 	// const releasePlanData = {
 	// 	revision: 12,
@@ -105,6 +106,7 @@ AppDataSource.initialize().then(async () => {
 	// 	projID: proj.id
 	// }
 	
+	// SAMPLE frontend how to call
 	// await fetch(`http://localhost:8080/api/release`, {
 	// 	method: 'POST',
 	// 	headers: {
@@ -124,20 +126,3 @@ AppDataSource.initialize().then(async () => {
 	// console.log(await AppDataSource.manager.find(Release, {relations: {project: true}}))
 
 }).catch(error => console.log(error))
-
-// app.use(cors({
-//     origin:"http://localhost:3000",
-//     credentials: true,
-// }));
-
-// app.use(compression()); 
-// app.use(cookieParser());
-// app.use(bodyParser.json());
-
-// const server = http.createServer(app)
-
-// server.listen(3001, ()=>{
-//     console.log("server running on http://localhost:3001")
-// })
-
-// app.use('/',router())
