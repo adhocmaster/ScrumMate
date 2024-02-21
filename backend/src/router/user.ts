@@ -3,7 +3,6 @@ import { AppDataSource } from "../data-source";
 import { User } from "../entity/User";
 
 const createUserRouter = express.Router()
-
 createUserRouter.post('/api/user/create', async (req, res) => {
 	const {
 		username,
@@ -21,16 +20,15 @@ createUserRouter.post('/api/user/create', async (req, res) => {
 	newUser.sessionToken = sessionToken
 
 	await AppDataSource.manager.save(newUser)
-	
 	return res.json(newUser)
 })
 
-const editUserRouter = express.Router()
 
+
+const editUserRouter = express.Router()
 editUserRouter.post('/api/user/edit/:userId', async (req, res) => {
 	const { userId } = req.params
 	const user = await AppDataSource.manager.findOneBy(User, {id: parseInt(userId)})
-
 	const {
 		username,
 		email,
@@ -46,9 +44,10 @@ editUserRouter.post('/api/user/edit/:userId', async (req, res) => {
 	user.sessionToken = sessionToken ?? user.sessionToken
 
 	await AppDataSource.manager.save(user)
-	
 	return res.json(user)
 })
+
+
 
 export {
 	createUserRouter as createUserRouter,

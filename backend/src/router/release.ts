@@ -39,7 +39,7 @@ newReleaseRouter.post('/api/project/:projectId/newRelease', async (req, res) => 
 
 
 const editReleaseRouter = express.Router()
-editReleaseRouter.post('/api/release/:releaseId', async (req, res) => {
+editReleaseRouter.post('/api/release/:releaseId/edit', async (req, res) => {
 	const { releaseId } = req.params
 	const releaseRepository = await AppDataSource.getRepository(Release)
 	const releaseToUpdate = await releaseRepository.findOneBy({id: parseInt(releaseId)})
@@ -63,7 +63,7 @@ editReleaseRouter.post('/api/release/:releaseId', async (req, res) => {
 
 
 const copyReleaseRouter = express.Router()
-copyReleaseRouter.post('/api/release/copy/:releaseId', async (req, res) => {
+copyReleaseRouter.post('/api/release/copy/:releaseId/copy', async (req, res) => {
   const {releaseId} = req.params;
   const releaseIdNum = parseInt(releaseId);
   if(!releaseIdNum) return res.sendStatus(400);
