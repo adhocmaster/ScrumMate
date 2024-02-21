@@ -64,7 +64,7 @@ editReleaseRouter.post('/api/release/:releaseId/edit', async (req, res) => {
 
 // TODO: revisit and clean up a bit
 const copyReleaseRouter = express.Router()
-copyReleaseRouter.post('/api/release/copy/:releaseId/copy', async (req, res) => {
+copyReleaseRouter.post('/api/release/:releaseId/copy', async (req, res) => {
   const {releaseId} = req.params;
   const releaseIdNum = parseInt(releaseId);
   if(!releaseIdNum) return res.sendStatus(400);

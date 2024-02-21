@@ -57,7 +57,7 @@ editProject.post('/api/project/:projectId/edit', async (req, res) => {
 
 
 const getReleasesRouter = express.Router()
-getReleasesRouter.get('/api/project/:projectId', async (req, res) => {
+getReleasesRouter.get('/api/project/:projectId/releases', async (req, res) => {
 	const { projectId } = req.params
 
 	const projectRepository = await AppDataSource.getRepository(Project)

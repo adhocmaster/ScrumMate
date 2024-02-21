@@ -26,7 +26,7 @@ createUserRouter.post('/api/user/create', async (req, res) => {
 
 
 const editUserRouter = express.Router()
-editUserRouter.post('/api/user/edit/:userId', async (req, res) => {
+editUserRouter.post('/api/user/:userId/edit', async (req, res) => {
 	const { userId } = req.params
 	const user = await AppDataSource.manager.findOneBy(User, {id: parseInt(userId)})
 	const {
