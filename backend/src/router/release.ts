@@ -6,7 +6,7 @@ import { Project } from "../entity/project";
 const newReleaseRouter = express.Router()
 newReleaseRouter.post('/api/project/:projectId/newRelease', async (req, res) => {
 	const { projectId } = req.params
-
+	const project = await AppDataSource.manager.findOneBy(Project, {id: parseInt(projectId)})
 	const {
 		revision,
 		revisionDate,
@@ -19,20 +19,9 @@ newReleaseRouter.post('/api/project/:projectId/newRelease', async (req, res) => 
 	release.revisionDate = revisionDate
 	release.problemStatement = problemStatement
 	release.goalStatement = goalStatement
-
-	const project = await AppDataSource.manager.findOneBy(Project, {id: parseInt(projectId)})
-
-	release.project = project 
+	release.project = project // do not need to load relations or save the other way
 
 	await AppDataSource.manager.save(release)
-
-	// Not sure if need to do this too or if automatic
-	// project.addRelease(release)
-	// await AppDataSource.manager.save(project)
-
-	const project2 = await AppDataSource.getRepository(Project).findOne({where: {id: parseInt(projectId)}, relations: ['releases']})
-	console.log(project2)
-	
 	return res.json(release)
 })
 

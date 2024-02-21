@@ -18,10 +18,11 @@ createRoleRouter.post('/api/role/create/user/:userId/sprint/:sprintId', async (r
 	newRole.role = role
 	newRole.user = user
 	newRole.sprint = sprint
-	sprint.addRole(newRole) // may break without relations
+	// may break without relations? hope it works without this
+	// sprint.addRole(newRole)
 
 	await AppDataSource.manager.save(newRole)
-	await AppDataSource.manager.save(sprint)
+	// await AppDataSource.manager.save(sprint)
 	return res.json(newRole)
 })
 
@@ -38,10 +39,10 @@ editRoleRouter.post('/api/role/:roleId/edit/:userId', async (req, res) => {
 	} = req.body
 
 	userRole.role = role ?? userRole.role
-	userRole.user = user ?? userRole.user // may break if relational not loaded
+	userRole.user = user ?? userRole.user // may break if relational not loaded?
 
-	await AppDataSource.manager.save(user)
-	return res.json(user)
+	await AppDataSource.manager.save(userRole)
+	return res.json(userRole)
 })
 
 
