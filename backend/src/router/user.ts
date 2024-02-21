@@ -1,6 +1,7 @@
 import express from "express";
 import { AppDataSource } from "../data-source";
 import { User } from "../entity/User";
+import { authentication, random } from "../helpers/index";
 
 const createUserRouter = express.Router()
 createUserRouter.post('/api/user/create', async (req, res) => {
@@ -8,22 +9,48 @@ createUserRouter.post('/api/user/create', async (req, res) => {
 		username,
 		email,
 		password,
-		salt,
-		sessionToken
 	} = req.body
+
+  if(!username || !password || !email) return res.sendStatus(400);
+  
+  const user = await AppDataSource.manager.findOneBy(User, {email: email});
+  if(user) return res.sendStatus(400);
 
 	const newUser = new User()
 	newUser.username = username
 	newUser.email = email
-	newUser.password = password
-	newUser.salt = salt
-	newUser.sessionToken = sessionToken
+  newUser.salt = random();
+	newUser.password = authentication(newUser.salt, password);
 
 	await AppDataSource.manager.save(newUser)
-	return res.json(newUser)
-})
+
+  delete newUser.password;
+
+	return res.json(newUser);
+});
 
 
+createUserRouter.post('/api/user/login', async (req, res) => {
+  const {
+		email,
+		password,
+	} = req.body
+  if(!email || !password) return res.sendStatus(400);
+
+  const user = await AppDataSource.manager.findOneBy(User, {email: email});
+  if(!user) return res.sendStatus(404);
+
+  const expectedHash = authentication(user.salt, password);
+
+  if(expectedHash !== user.password) return res.sendStatus(403);
+
+  const newSalt = random();
+  user.salt = newSalt;
+  user.sessionToken = authentication(newSalt, user.username);
+  await AppDataSource.manager.save(User, user);
+  res.cookie('user-auth', user.sessionToken, { domain: "localhost", path: "/" });
+  return res.sendStatus(200);
+});
 
 const editUserRouter = express.Router()
 editUserRouter.post('/api/user/:userId/edit', async (req, res) => {

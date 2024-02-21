@@ -16,11 +16,11 @@ export class User {
     email: string
 
 	// Authentication
-    @Column({select: false})
+    @Column()
 	password: string
-	@Column({select: false})
+	@Column()
 	salt: string
-    @Column({select: false})
+    @Column({nullable: true})
 	sessionToken: string
 
 	///// Relational /////
