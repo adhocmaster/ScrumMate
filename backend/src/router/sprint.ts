@@ -1,10 +1,12 @@
 import express from "express";
 import { AppDataSource } from "../data-source";
-import { User } from "../entity/User";
 import { Sprint } from "../entity/sprint";
+import { Release } from "../entity/release";
 
 const createSprintRouter = express.Router()
 createSprintRouter.post('/api/release/:releaseId/sprint/create', async (req, res) => {
+	const { releaseId } = req.params
+	const release = await AppDataSource.manager.findOneBy(Release, {id: parseInt(releaseId)})
 	const {
 		sprintNumber,
 		startDate,
@@ -19,8 +21,11 @@ createSprintRouter.post('/api/release/:releaseId/sprint/create', async (req, res
 	newSprint.endDate = endDate
 	newSprint.createdDate = createdDate
 	newSprint.goal = goal
+	newSprint.release = release
+	release.addSprint(newSprint) // not sure if need to do. need to load relation?
 
 	await AppDataSource.manager.save(newSprint)
+	// await AppDataSource.manager.save(release)
 	return res.json(newSprint)
 })
 
