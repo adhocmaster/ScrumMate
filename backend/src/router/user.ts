@@ -1,33 +1,12 @@
 import express from "express";
-import { AppDataSource } from "../data-source";
-import { User } from "../entity/User";
-import { authentication, random } from "../helpers/index";
+import {createUser} from '../controllers/user';
 
-const createUserRouter = express.Router()
-createUserRouter.post('/api/user/create', async (req, res) => {
-	const {
-		username,
-		email,
-		password,
-	} = req.body
+export default (router:express.Router) =>{
+  router.post('/user/create', createUser);
+  router.post('/user/login', login);
+  router.post('user/:userId/edit', edit);
+};
 
-  if(!username || !password || !email) return res.sendStatus(400);
-  
-  const user = await AppDataSource.manager.findOneBy(User, {email: email});
-  if(user) return res.sendStatus(400);
-
-	const newUser = new User()
-	newUser.username = username
-	newUser.email = email
-  newUser.salt = random();
-	newUser.password = authentication(newUser.salt, password);
-
-	await AppDataSource.manager.save(newUser)
-
-  delete newUser.password;
-
-	return res.json(newUser);
-});
 
 
 createUserRouter.post('/api/user/login', async (req, res) => {
@@ -73,10 +52,3 @@ editUserRouter.post('/api/user/:userId/edit', async (req, res) => {
 	await AppDataSource.manager.save(user)
 	return res.json(user)
 })
-
-
-
-export {
-	createUserRouter as createUserRouter,
-	editUserRouter as editUserRouter,
-}
