@@ -18,6 +18,13 @@ const ReleasePlan = () => {
     setOpen(!open);
   };
 
+  const [backlogItems, setBacklogItems] = useState([]);
+
+  const addBacklogItem = () => {
+    const newBacklogItems = [...backlogItems, { description: '' }];
+    setBacklogItems(newBacklogItems);
+  };
+
   return (
     <Grid
       container
@@ -214,47 +221,50 @@ const ReleasePlan = () => {
                 borderRadius: 6,
               }}
             >
-              {/* TODO: add Backlog items */}
-              <List>
-                <ListItem>
-                  <Card
-                    sx={{
-                      marginBottom: 1,
-                      borderRadius: 6,
-                    }}
-                  >
-                    <CardContent>
-                      <Typography
-                        variant="h6"
-                        textAlign={'left'}
-                        fontSize={16}
-                      >
-                        As a student I want to be able to reset my password in case I forget so that 
-                        I do not lost access to all my account and data.
-                      </Typography>
-                    </CardContent>
-                  </Card>
-                </ListItem>
-                <ListItem>
-                  <Card
-                    sx={{
-                      marginBottom: 1,
-                      borderRadius: 6,
-                    }}
-                  >
-                    <CardContent>
-                      <Typography
-                        variant="h6"
-                        textAlign={'left'}
-                        fontSize={16}
-                      >
-                        As a student I want to be able to reset my password in case I forget so that 
-                        I do not lost access to all my account and data.
-                      </Typography>
-                    </CardContent>
-                  </Card>
-                </ListItem>
-              </List>
+              
+          <List>
+            {backlogItems.map((item, index) => (
+              <ListItem key={index}>
+                <Card
+                  sx={{
+                    marginBottom: 1,
+                    borderRadius: 6,
+                  }}
+                >
+                  <CardContent>
+                    <Typography
+                      variant="h6"
+                      fontSize={16}
+                    >
+                      <input
+                        type="text"
+                        value={item.description}
+                        onChange={(e) => {
+                          const newBacklogItems = [...backlogItems];
+                          newBacklogItems[index].description = e.target.value;
+                          setBacklogItems(newBacklogItems);
+                        }}
+                        placeholder="Enter backlog item"
+                        style={{ border: 'none', width: '100%', padding: '4px' }}
+                      />
+                    </Typography>
+                  </CardContent>
+                </Card>
+              </ListItem>
+            ))}
+            </List>
+              {/* Button to add new backlog item */}
+              <Button
+                variant="contained"
+                onClick={addBacklogItem}
+                sx={{bgcolor: 'grey',
+                    '&:hover': {
+                      bgcolor: 'darkgrey', // Background color on hover
+                    },
+                  }}
+                >
+                Add Backlog Item +
+              </Button>
             </Paper>
           </Grid>
 
