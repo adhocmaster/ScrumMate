@@ -9,6 +9,7 @@ import ButtonGroup from '@mui/material/ButtonGroup';
 import Divider from '@mui/material/Divider';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
+import CardHeader from '@mui/material/CardHeader';
 
 const ReleasePlan = () => {
   const [open, setOpen] = useState(true);
@@ -53,7 +54,7 @@ const ReleasePlan = () => {
             variant="contained" 
             sx={{
               margin: '5px 10px',
-              height: '70px' 
+              height: '60px',
             }}
           >
             {/* TODO: Handle button clicks */}
@@ -102,7 +103,7 @@ const ReleasePlan = () => {
         
         <Divider 
           sx={{
-            margin: '20px 0', 
+            margin: '20px 0px', 
             backgroundColor: 'rgba(0, 0, 0, 0.5)',
             height: '1.5px'
           }}
@@ -119,7 +120,15 @@ const ReleasePlan = () => {
           Release Plan:
         </Typography>
 
-        {/* TODO: Add version number */}
+        {/* TODO: Change version number */}
+        <Typography
+          textAlign="left"
+          marginLeft={2}
+          marginBottom={2}
+        >
+          v1.0.0
+        </Typography>
+        
 
         {/* Problem Statement */}
         <Typography
@@ -139,7 +148,9 @@ const ReleasePlan = () => {
             minHeight: 100,
             maxWidth: '95%',
             marginLeft: 2,
-            backgroundColor: 'lightgray'
+            marginBottom: 2,
+            backgroundColor: 'lightgray',
+            borderRadius: 5,
           }}
         >
           <CardContent>
@@ -155,12 +166,10 @@ const ReleasePlan = () => {
         <Typography
           variant="h6"
           marginBottom={2}
-          marginTop={2}
           marginLeft={2}
           textAlign={'left'}
           fontWeight="bold"
           fontSize={18}
-          
         >
           High Level Goals
         </Typography>
@@ -170,7 +179,9 @@ const ReleasePlan = () => {
             minHeight: 100,
             maxWidth: '95%',
             marginLeft: 2,
-            backgroundColor: 'lightgray'
+            marginBottom: 2,
+            backgroundColor: 'lightgray',
+            borderRadius: 5,
           }}
         >
           <CardContent>
@@ -182,6 +193,118 @@ const ReleasePlan = () => {
             </Typography>
           </CardContent>
         </Card>
+
+        <Grid container spacing={2}>
+          <Grid item xs={2.5}>
+            <Typography
+              variant="h6"
+              marginLeft={2}
+              textAlign={'left'}
+              fontWeight="bold"
+              fontSize={24}
+              
+            >
+              Backlog
+            </Typography>
+
+            <Paper
+              sx={{
+                marginLeft: 2,
+                backgroundColor: 'lightgray',
+                borderRadius: 6,
+              }}
+            >
+              {/* TODO: add Backlog items */}
+              <List>
+                <ListItem>
+                  <Card
+                    sx={{
+                      marginBottom: 1,
+                      borderRadius: 6,
+                    }}
+                  >
+                    <CardContent>
+                      <Typography
+                        variant="h6"
+                        textAlign={'left'}
+                        fontSize={16}
+                      >
+                        As a student I want to be able to reset my password in case I forget so that 
+                        I do not lost access to all my account and data.
+                      </Typography>
+                    </CardContent>
+                  </Card>
+                </ListItem>
+                <ListItem>
+                  <Card
+                    sx={{
+                      marginBottom: 1,
+                      borderRadius: 6,
+                    }}
+                  >
+                    <CardContent>
+                      <Typography
+                        variant="h6"
+                        textAlign={'left'}
+                        fontSize={16}
+                      >
+                        As a student I want to be able to reset my password in case I forget so that 
+                        I do not lost access to all my account and data.
+                      </Typography>
+                    </CardContent>
+                  </Card>
+                </ListItem>
+              </List>
+            </Paper>
+          </Grid>
+
+          <Grid item xs>
+            <Typography
+              variant="h6"
+              marginLeft={2}
+              textAlign={'left'}
+              fontWeight="bold"
+              fontSize={24}
+              
+            >
+              Sprints
+            </Typography>
+
+            <Paper
+              sx={{
+                maxWidth: '95%',
+                marginLeft: 2,
+                backgroundColor: 'lightgray',
+                borderRadius: 6,
+              }}
+            >
+              {/* TODO: add Sprints */}
+              <List>
+                <ListItem>
+                  <Card
+                    sx={{
+                      maxWidth: '25%',
+                      marginBottom: 1,
+                      borderRadius: 6,
+                    }}
+                  >
+                    <CardContent>
+                      <Typography
+                        variant="h6"
+                        textAlign={'left'}
+                        fontSize={16}
+                      >
+                        As a student I want to be able to reset my password in case I forget so that 
+                        I do not lost access to all my account and data.
+                      </Typography>
+                    </CardContent>
+                  </Card>
+                </ListItem>
+              </List>
+            </Paper>
+          </Grid>
+
+        </Grid>
 
       </Grid>
     </Grid>
