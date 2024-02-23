@@ -3,205 +3,188 @@ import { useLocation } from "react-router-dom"
 import { AppBar, Typography, Button, Box, Paper } from '@mui/material';
 import { List, ListItem, ListItemText } from '@mui/material';
 import CreateReleasePlan from '../Components/CreateReleasePlan'; // Adjust the import path as necessary
-
+import { Grid } from '@mui/material';
+import Sidebar from '../Components/Sidebar';
+import ButtonGroup from '@mui/material/ButtonGroup';
+import Divider from '@mui/material/Divider';
+import Card from '@mui/material/Card';
+import CardContent from '@mui/material/CardContent';
 
 const ReleasePlan = () => {
-  const [showCreateReleasePlan, setShowCreateReleasePlan] = useState(false);
-  const [showReleasePlan, setShowReleasePlan] = useState(false);
-  const [releasePlanText, setReleasePlanText] = useState([]);
-  const [formSubmitted, setFormSubmitted] = useState(false);
+  const [open, setOpen] = useState(true);
 
-  const location = useLocation()
-  const [project,setProject] = useState(location.state.currentProject)
-  console.log(project)
-
-  // Fetch release plans on page open
-  useEffect(() => {
-    const options = {
-      method: "GET",
-      url: `http://localhost:3001/projects/${project._id}`,
-      credentials: 'include'
-    }
-    fetch(`http://localhost:3001/projects/${project._id}`, options).then((result) => {
-      result.json().then((response) => {
-        console.log(response)
-        setProject(response)
-        setReleasePlanText(response.releases || []);
-      })
-    })
-  }, [project._id]);
-  useEffect(()=>{
-    console.log(project._id)
-    if(formSubmitted){
-      //add fetch here
-      const options = {
-        method:"GET",
-        url:`http://localhost:3001/projects/${project._id}`,
-        credentials:'include'
-      }
-      fetch(`http://localhost:3001/projects/${project._id}`,options).then((result)=>{
-        result.json().then((response)=>{
-          console.log(response)
-          setProject(response)
-        })
-      })
-      console.log("ITS SUBMITTED")
-      setFormSubmitted(false);
-      toggleCreateReleasePlan()
-      toggleViewReleasePlan()
-      setReleasePlanText(savedReleasePlans || 'No release plan found.');
-    }
-
-  },[formSubmitted]);
-  function formatStories(stories){
-    
-    // Display stories
-    if (stories.length>0){
-      return(
-        <Paper>
-          <List>
-          {stories.map((story,index)=>(
-            <div key = {index}>
-            <ListItem>
-              <Typography sx={{ textAlign: 'center', marginTop: 1, fontSize:16 }}>
-                User Story {index+1}
-              </Typography>
-            </ListItem>
-            <ListItem>
-
-              <Typography sx={{ textAlign: 'left', fontSize:12 }}>
-                Description: {story.description}                
-              </Typography>
-            </ListItem>
-            <ListItem>
-              <Typography sx={{ textAlign: 'left', fontSize:12 }}>
-                  Notes: {story.notes}                
-              </Typography>
-            </ListItem>
-            <ListItem>
-              <Typography sx={{ textAlign: 'left', fontSize:12 }}>
-                Points: {story.points}
-              </Typography>
-            </ListItem>
-
-            </div> 
-          ))}
-        </List>
-      </Paper>
-      )
-    }else{
-      return(
-        <Typography>
-          No Stories Added Yet
-        </Typography>
-      )
-    }
-
-  }
-  const savedReleasePlans = project.releases
-
-  // Show create release plan form
-  const toggleCreateReleasePlan = () => {
-    setShowCreateReleasePlan(!showCreateReleasePlan);
-  };
-
-  // Show release plan
-  const toggleViewReleasePlan = () => {
-    if (!showReleasePlan) {
-      console.log(savedReleasePlans);
-      setReleasePlanText(savedReleasePlans || 'No release plan found.');
-    }
-    setShowReleasePlan(!showReleasePlan);
+  const toggleDrawer = () => {
+    setOpen(!open);
   };
 
   return (
-    <Box sx={{ flexGrow: 1 }}>
-      <Box display="flex" justifyContent="center" p={7}>
-        <Paper elevation={3} sx={{ width: '80%', padding: 2 }}>
-          <Typography variant="h4" sx={{ textAlign: 'center', marginBottom: 2 }}>
-            Release Plans
-          </Typography>
-          <Box display="flex" justifyContent="space-between" marginBottom={2}>
-            <Button variant="contained" color="primary" onClick={toggleCreateReleasePlan}>
-              {showCreateReleasePlan ? 'Hide Create Form' : 'Create Release Plan'}
-            </Button>
-          </Box>
+    <Grid
+      container
+      spacing={2}
+    >
+      <Grid 
+        item
+        xs={open ? 2 : 'auto'}
+      >
+        <Sidebar open={open} toggleDrawer={toggleDrawer} />
+      </Grid>
 
-          {/* Conditionally render the CreateReleasePlan component */}
-          {showCreateReleasePlan && <CreateReleasePlan projectId={project._id} onFormSubmit = {()=>setFormSubmitted(true)}/>}
-
-          {/* Display Release Plans */}
-          <Paper elevation={2} sx={{ backgroundColor: '#e0e0e0', padding: 2, marginTop: 2 }}>
-            {releasePlanText.length > 0 ? (
-              // If there are release plans, map and display them
-              releasePlanText.map((line, index) => (
-                <Paper key={index}>
-                  <Typography
-                    variant="body1"
-                    sx={{
-                      whiteSpace: 'pre-wrap',
-                      textAlign: 'center',
-                      marginTop: 2,
-                      marginBottom: 2
-                    }}
-                  >
-                    {line.name}
-                  </Typography>
-                  <Typography
-                    variant="body1"
-                    sx={{
-                      whiteSpace: 'pre-wrap',
-                      textAlign: 'center'
-                    }}
-                  >
-                    High Level Goals:
-                  </Typography>
-                  <List>
-                    {line.high_level_goals.map((goal, goalIndex) => (
-                      <ListItem key={goalIndex}>
-                        <ListItemText primary={goal} />
-                      </ListItem>
-                    ))}
-                  </List>
-                  <Typography
-                    variant="body1"
-                    sx={{
-                      whiteSpace: 'pre-wrap',
-                      textAlign: 'center'
-                    }}
-                  >
-                    Stories
-                  </Typography>
-                  {formatStories(line.stories)}
-                  <Typography
-                    variant="body1"
-                    sx={{
-                      whiteSpace: 'pre-wrap',
-                      textAlign: 'center'
-                    }}
-                  >
-                    Status: {line.status}
-                  </Typography>
-                </Paper>
-              ))
-            ) : (
-              // If there are no release plans, display a message
+      <Grid item xs>
+        {/* TODO: update Sprint Number */}
+        <Typography
+          variant="h6"
+          marginTop={8}
+          marginBottom={2}
+          marginLeft={1}
+          textAlign={'left'}
+          sx={{
+            fontWeight: 'bold',
+            fontSize: 32,
+          }}
+        >
+          Sprint 3:
+        </Typography>
+        <Box
+          display="flex"
+          justifyContent={'flex-start'}
+        >
+          <ButtonGroup 
+            fullWidth
+            variant="contained" 
+            sx={{
+              margin: '5px 10px',
+              height: '70px' 
+            }}
+          >
+            {/* TODO: Handle button clicks */}
+            <Button
+              onClick={() => console.log('Clicked Sprint Plan')}
+            >
               <Typography
-                variant="body1"
-                sx={{
-                  whiteSpace: 'pre-wrap',
-                  textAlign: 'center',
-                  marginTop: 2,
-                  marginBottom: 2
-                }}
+                fontWeight="bold"
               >
-                No Release Plans to display
+                Sprint Plan
               </Typography>
-            )}
-          </Paper>
-        </Paper>
-      </Box>
-    </Box>
+              
+            </Button>
+
+            <Button
+              onClick={() => console.log('Clicked Scrum Board')}
+            >
+              <Typography
+                fontWeight="bold"
+              >
+                Scrum Board
+              </Typography>
+            </Button>
+
+            <Button
+              onClick={() => console.log('Clicked Burnup Chart')}
+            >
+              <Typography
+                fontWeight="bold"
+              >
+                Burnup Chart
+              </Typography>
+            </Button>
+
+            <Button
+              onClick={() => console.log('Clicked All Sprints')}
+            >
+              <Typography
+                fontWeight="bold"
+              >
+                All Sprints
+              </Typography>
+            </Button>
+          </ButtonGroup>
+        </Box>
+        
+        <Divider 
+          sx={{
+            margin: '20px 0', 
+            backgroundColor: 'rgba(0, 0, 0, 0.5)',
+            height: '1.5px'
+          }}
+        />
+
+        <Typography
+          variant="h6"
+          marginBottom={2}
+          marginLeft={1}
+          textAlign={'left'}
+          fontWeight="bold"
+          fontSize={32}
+        >
+          Release Plan:
+        </Typography>
+
+        {/* TODO: Add version number */}
+
+        {/* Problem Statement */}
+        <Typography
+          variant="h6"
+          marginBottom={2}
+          marginLeft={2}
+          textAlign={'left'}
+          fontWeight="bold"
+          fontSize={18}
+          
+        >
+          Problem Statement
+        </Typography>
+
+        <Card
+          sx={{
+            minHeight: 100,
+            maxWidth: '95%',
+            marginLeft: 2,
+            backgroundColor: 'lightgray'
+          }}
+        >
+          <CardContent>
+            <Typography textAlign='left'>
+              {/* TODO: Add problem statement */}
+              We noticed that there are currently no good websites for Professor Jullig to run CSE 115 on. 
+              All the existing ones are lacking in functionality or have high cost.
+            </Typography>
+          </CardContent>
+        </Card>
+
+        {/* High Level Goals */}
+        <Typography
+          variant="h6"
+          marginBottom={2}
+          marginTop={2}
+          marginLeft={2}
+          textAlign={'left'}
+          fontWeight="bold"
+          fontSize={18}
+          
+        >
+          High Level Goals
+        </Typography>
+
+        <Card
+          sx={{
+            minHeight: 100,
+            maxWidth: '95%',
+            marginLeft: 2,
+            backgroundColor: 'lightgray'
+          }}
+        >
+          <CardContent>
+            <Typography textAlign='left'>
+              {/* TODO: Add high level goals */}
+              In this release, we will implement the ability for students to join their class, join or create projects, create accounts, 
+              and be able to reset their password. There will be users of different types and they will be able to interact with one 
+              another in real time.
+            </Typography>
+          </CardContent>
+        </Card>
+
+      </Grid>
+    </Grid>
   );
 };
 
