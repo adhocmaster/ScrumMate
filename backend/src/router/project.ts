@@ -3,8 +3,8 @@ import { newProject, joinProject, editProject, getReleases} from "../controllers
 
 
 export default (router:express.Router) => {
-  router.post('/project/:userId/newProject', newProject);
-  router.post('/project/:userId/joinProject/:projectId', joinProject);
-  router.post('/project/:projectId/edit', editProject)
-  router.post('/project/:projectId/releases', getReleases);
+  router.post('/api/project/:userId/newProject', newProject);
+  router.post('/api/project/:userId/joinProject/:projectId', joinProject);
+  router.post('/api/project/:projectId/edit', editProject)
+  router.post('/api/project/:projectId/releases', getReleases);
 };

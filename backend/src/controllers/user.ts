@@ -10,20 +10,20 @@ export const createUser = async (req: express.Request, res: express.Response) =>
 		password,
 	} = req.body
 
-  if(!username || !password || !email) return res.sendStatus(400);
-  
-  const user = await AppDataSource.manager.findOneBy(User, {email: email});
-  if(user) return res.sendStatus(400);
+	if(!username || !password || !email) return res.sendStatus(400);
+	
+	const user = await AppDataSource.manager.findOneBy(User, {email: email});
+	if(user) return res.sendStatus(400);
 
 	const newUser = new User()
 	newUser.username = username
 	newUser.email = email
-  newUser.salt = random();
+  	newUser.salt = random();
 	newUser.password = authentication(newUser.salt, password);
 
 	await AppDataSource.manager.save(newUser)
 
-  delete newUser.password;
+  	delete newUser.password;
 
 	return res.json(newUser);
 };
