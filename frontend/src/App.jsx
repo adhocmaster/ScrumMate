@@ -67,9 +67,11 @@ function App() {
         />
         <Route
           path="/releases"
-          element={
+          /*element={
             isLoggedIn ? <ReleasePlan /> : <Navigate replace to="/" />
-          }
+          }*/
+
+          element={<ReleasePlan/>}
         />
         <Route
           path="/sprints"

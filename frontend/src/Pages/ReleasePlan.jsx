@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback, Component } from 'react';
 import { useLocation } from "react-router-dom"
 import { AppBar, Typography, Button, Box, Paper } from '@mui/material';
 import { List, ListItem, ListItemText } from '@mui/material';
@@ -10,8 +10,76 @@ import Divider from '@mui/material/Divider';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import CardHeader from '@mui/material/CardHeader';
+import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
+
+
+/*
+This code allows the user to drag and drop the different stories in the release plan. 
+*/
+
+// fake data generator
+const getItems = count =>
+  Array.from({ length: count }, (v, k) => k).map(k => ({
+    id: `item-${k}`,
+    content: `item ${k}`,
+  }));
+
+// a little function to help us with reordering the result
+const reorder = (list, startIndex, endIndex) => {
+  const result = Array.from(list);
+  const [removed] = result.splice(startIndex, 1);
+  result.splice(endIndex, 0, removed);
+
+  return result;
+};
+
+const grid = 8;
+
+const getItemStyle = (isDragging, draggableStyle) => ({
+  // some basic styles to make the items look a bit nicer
+  userSelect: 'none',
+  padding: grid * 2,
+  margin: `0 ${grid}px 0 0`,
+
+  // change background colour if dragging
+  background: isDragging ? 'lightgreen' : 'grey',
+
+  // styles we need to apply on draggables
+  ...draggableStyle,
+});
+
+const getListStyle = isDraggingOver => ({
+  background: isDraggingOver ? 'lightblue' : 'lightgrey',
+  display: 'flex',
+  padding: grid,
+  overflow: 'auto',
+});
+
+
+
+
 
 const ReleasePlan = () => {
+  
+  //////////////Attributes for DnD/////////////////
+  
+  const [items, setItems] = useState(getItems(6));
+
+  const onDragEnd = useCallback((result) => {
+    if (!result.destination) {
+      return;
+    }
+
+    const reorderedItems = reorder(
+      items,
+      result.source.index,
+      result.destination.index
+    );
+
+    setItems(reorderedItems);
+  }, [items]);
+  
+  ////////////////////////////////////////////////
   const [open, setOpen] = useState(true);
 
   const toggleDrawer = () => {
@@ -300,6 +368,7 @@ const ReleasePlan = () => {
                     </CardContent>
                   </Card>
                 </ListItem>
+                
               </List>
             </Paper>
           </Grid>
