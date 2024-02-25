@@ -1,15 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation } from "react-router-dom"
-import { AppBar, Typography, Button, Box, Paper } from '@mui/material';
+import { Typography, Button, Box, Paper } from '@mui/material';
 import { List, ListItem, ListItemText } from '@mui/material';
 import CreateReleasePlan from '../Components/CreateReleasePlan'; // Adjust the import path as necessary
-import { Grid } from '@mui/material';
+import { Grid, Input, Divider, Card, CardContent } from '@mui/material';
 import Sidebar from '../Components/Sidebar';
-import ButtonGroup from '@mui/material/ButtonGroup';
-import Divider from '@mui/material/Divider';
-import Card from '@mui/material/Card';
-import CardContent from '@mui/material/CardContent';
-import CardHeader from '@mui/material/CardHeader';
+import ButtonBar from '../Components/ButtonBar';
+import ContentBox from '../Components/ContentBox';
+import UserStory from '../Components/UserStory';
 
 const ReleasePlan = () => {
   const [open, setOpen] = useState(true);
@@ -25,87 +23,68 @@ const ReleasePlan = () => {
     setBacklogItems(newBacklogItems);
   };
 
+  // TODO: update Placeholder functions/variables with actual data
+  const sprintPlanClick = () => console.log('Clicked Sprint Plan');
+  const scrumBoardClick = () => console.log('Clicked Scrum Board');
+  const burnupChartClick = () => console.log('Clicked Burnup Chart');
+  const allSprintsClick = () => console.log('Clicked All Sprints');
+  const revisionsClick = () => console.log('Revision Placeholder');
+  const problemStatement = `We noticed that there are currently no good 
+    websites for Professor Jullig to run CSE 115 on. All the existing 
+    ones are lacking in functionality or have high cost.`
+  const highLevelGoals = `In this release, we will implement the ability 
+    for students to join their class, join or create projects, create 
+    accounts, and be able to reset their password. There will be users of 
+    different types and they will be able to interact with one 
+    another in real time.`
+  const userStoryText = `As a student I want to be able to reset my password 
+    in case I forget so that I do not lost access to all my account and data.`
+
   return (
-    <Grid
-      container
-      spacing={2}
-    >
-      <Grid 
-        item
-        xs={open ? 2 : 'auto'}
-      >
-        <Sidebar open={open} toggleDrawer={toggleDrawer} />
+    <Grid container spacing={2}>
+      {/* Revision Sidebar */}
+      <Grid item xs={open ? 2 : 'auto'}>
+        {/* TODO: replace the revisions */}
+        <Sidebar 
+          open={open} 
+          toggleDrawer={toggleDrawer} 
+          title={'Revisions'}
+          items={'Revision 4 2/20/24'}
+          itemClick={revisionsClick}
+        />
       </Grid>
 
       <Grid item xs>
+        {/* Current Sprint */}
         {/* TODO: update Sprint Number */}
         <Typography
-          variant="h6"
+          variant="h4"
           marginTop={8}
           marginBottom={2}
           marginLeft={1}
           textAlign={'left'}
           sx={{
             fontWeight: 'bold',
-            fontSize: 32,
           }}
         >
-          Sprint 3:
+          Current Sprint (#3):
         </Typography>
+
         <Box
           display="flex"
           justifyContent={'flex-start'}
         >
-          <ButtonGroup 
-            fullWidth
-            variant="contained" 
-            sx={{
-              margin: '5px 10px',
-              height: '60px',
-            }}
-          >
-            {/* TODO: Handle button clicks */}
-            <Button
-              onClick={() => console.log('Clicked Sprint Plan')}
-            >
-              <Typography
-                fontWeight="bold"
-              >
-                Sprint Plan
-              </Typography>
-              
-            </Button>
-
-            <Button
-              onClick={() => console.log('Clicked Scrum Board')}
-            >
-              <Typography
-                fontWeight="bold"
-              >
-                Scrum Board
-              </Typography>
-            </Button>
-
-            <Button
-              onClick={() => console.log('Clicked Burnup Chart')}
-            >
-              <Typography
-                fontWeight="bold"
-              >
-                Burnup Chart
-              </Typography>
-            </Button>
-
-            <Button
-              onClick={() => console.log('Clicked All Sprints')}
-            >
-              <Typography
-                fontWeight="bold"
-              >
-                All Sprints
-              </Typography>
-            </Button>
-          </ButtonGroup>
+          {/* Handle Button Clicks */}
+          <ButtonBar 
+            text1={'Sprint Plan'}
+            text2={'Scrum Board'}
+            text3={'Burnup Chart'}
+            text4={'All Sprints'}
+            text1Click={sprintPlanClick}
+            text2Click={scrumBoardClick}
+            text3Click={burnupChartClick}
+            text4Click={allSprintsClick}
+          />
         </Box>
         
         <Divider 
@@ -117,12 +96,11 @@ const ReleasePlan = () => {
         />
 
         <Typography
-          variant="h6"
+          variant="h5"
           marginBottom={2}
           marginLeft={1}
           textAlign={'left'}
           fontWeight="bold"
-          fontSize={32}
         >
           Release Plan:
         </Typography>
@@ -138,69 +116,14 @@ const ReleasePlan = () => {
         
 
         {/* Problem Statement */}
-        <Typography
-          variant="h6"
-          marginBottom={2}
-          marginLeft={2}
-          textAlign={'left'}
-          fontWeight="bold"
-          fontSize={18}
-          
-        >
-          Problem Statement
-        </Typography>
-
-        <Card
-          sx={{
-            minHeight: 100,
-            maxWidth: '95%',
-            marginLeft: 2,
-            marginBottom: 2,
-            backgroundColor: 'lightgray',
-            borderRadius: 5,
-          }}
-        >
-          <CardContent>
-            <Typography textAlign='left'>
-              {/* TODO: Add problem statement */}
-              We noticed that there are currently no good websites for Professor Jullig to run CSE 115 on. 
-              All the existing ones are lacking in functionality or have high cost.
-            </Typography>
-          </CardContent>
-        </Card>
+        {/* TODO: replace problem statement */}
+        <ContentBox title={'Problem Statement'} content={problemStatement} />
 
         {/* High Level Goals */}
-        <Typography
-          variant="h6"
-          marginBottom={2}
-          marginLeft={2}
-          textAlign={'left'}
-          fontWeight="bold"
-          fontSize={18}
-        >
-          High Level Goals
-        </Typography>
-
-        <Card
-          sx={{
-            minHeight: 100,
-            maxWidth: '95%',
-            marginLeft: 2,
-            marginBottom: 2,
-            backgroundColor: 'lightgray',
-            borderRadius: 5,
-          }}
-        >
-          <CardContent>
-            <Typography textAlign='left'>
-              {/* TODO: Add high level goals */}
-              In this release, we will implement the ability for students to join their class, join or create projects, create accounts, 
-              and be able to reset their password. There will be users of different types and they will be able to interact with one 
-              another in real time.
-            </Typography>
-          </CardContent>
-        </Card>
-
+        {/* TODO: high level goals */}
+        <ContentBox title={'High Level Goals'} content={highLevelGoals} />
+        
+        {/* Backlog */}
         <Grid container spacing={2}>
           <Grid item xs={2.5}>
             <Typography
@@ -208,8 +131,6 @@ const ReleasePlan = () => {
               marginLeft={2}
               textAlign={'left'}
               fontWeight="bold"
-              fontSize={24}
-              
             >
               Backlog
             </Typography>
@@ -221,38 +142,36 @@ const ReleasePlan = () => {
                 borderRadius: 6,
               }}
             >
-              
-          <List>
-            {backlogItems.map((item, index) => (
-              <ListItem key={index}>
-                <Card
-                  sx={{
-                    marginBottom: 1,
-                    borderRadius: 6,
-                  }}
-                >
-                  <CardContent>
-                    <Typography
-                      variant="h6"
-                      fontSize={16}
+              <List>
+                {backlogItems.map((item, index) => (
+                  <ListItem key={index}>
+                    <Card
+                      sx={{
+                        marginBottom: 1,
+                      }}
                     >
-                      <input
-                        type="text"
-                        value={item.description}
-                        onChange={(e) => {
-                          const newBacklogItems = [...backlogItems];
-                          newBacklogItems[index].description = e.target.value;
-                          setBacklogItems(newBacklogItems);
-                        }}
-                        placeholder="Enter backlog item"
-                        style={{ border: 'none', width: '100%', padding: '4px' }}
-                      />
-                    </Typography>
-                  </CardContent>
-                </Card>
-              </ListItem>
-            ))}
-            </List>
+                      <CardContent>
+                        <Typography
+                          variant="body1"
+                          fontSize={16}
+                        >
+                          <Input
+                            type="text"
+                            value={item.description}
+                            onChange={(e) => {
+                              const newBacklogItems = [...backlogItems];
+                              newBacklogItems[index].description = e.target.value;
+                              setBacklogItems(newBacklogItems);
+                            }}
+                            placeholder="Enter backlog item"
+                            style={{ border: 'none', width: '100%', padding: '4px' }}
+                          />
+                        </Typography>
+                      </CardContent>
+                    </Card>
+                  </ListItem>
+                ))}
+              </List>
               {/* Button to add new backlog item */}
               <Button
                 variant="contained"
@@ -268,14 +187,13 @@ const ReleasePlan = () => {
             </Paper>
           </Grid>
 
+          {/* Sprints */}
           <Grid item xs>
             <Typography
               variant="h6"
               marginLeft={2}
               textAlign={'left'}
               fontWeight="bold"
-              fontSize={24}
-              
             >
               Sprints
             </Typography>
@@ -285,37 +203,17 @@ const ReleasePlan = () => {
                 maxWidth: '95%',
                 marginLeft: 2,
                 backgroundColor: 'lightgray',
-                borderRadius: 6,
               }}
             >
               {/* TODO: add Sprints */}
               <List>
                 <ListItem>
-                  <Card
-                    sx={{
-                      maxWidth: '25%',
-                      marginBottom: 1,
-                      borderRadius: 6,
-                    }}
-                  >
-                    <CardContent>
-                      <Typography
-                        variant="h6"
-                        textAlign={'left'}
-                        fontSize={16}
-                      >
-                        As a student I want to be able to reset my password in case I forget so that 
-                        I do not lost access to all my account and data.
-                      </Typography>
-                    </CardContent>
-                  </Card>
+                  <UserStory userStoryText={userStoryText} />
                 </ListItem>
               </List>
             </Paper>
           </Grid>
-
         </Grid>
-
       </Grid>
     </Grid>
   );
