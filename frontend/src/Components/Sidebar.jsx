@@ -3,7 +3,7 @@ import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import { Drawer, IconButton, Typography } from "@mui/material";
 import { List, ListItem, ListItemButton } from "@mui/material";
 
-const Sidebar = ({ open, toggleDrawer }) => {
+const Sidebar = ({ open, toggleDrawer, title, items, itemClick }) => {
   return (
     <Drawer
       open={true}
@@ -32,7 +32,7 @@ const Sidebar = ({ open, toggleDrawer }) => {
                 fontSize: 24,
               }}
             >
-              Revisions
+              {title}
             </Typography>
           }
 
@@ -57,17 +57,16 @@ const Sidebar = ({ open, toggleDrawer }) => {
           }
         </ListItem>
 
-        {/* TODO: the revisions go here */}
         {open &&
           <ListItemButton
-              onClick={() => console.log("Revision Placeholder")}
+              onClick={itemClick}
           >
             {/* Revision Placeholder */}
             <Typography 
               fontSize={16}
               sx={{margin: 'auto'}}
             >
-              Revision 4 2/20/24
+              {items}
             </Typography>
           </ListItemButton>
         }
