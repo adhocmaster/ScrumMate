@@ -2,12 +2,12 @@ import express from 'express';
 import { AppDataSource } from './data-source';
 import { Release } from "./entity/release"
 import { Project } from './entity/project';
-import { createUserRouter, editUserRouter } from './router/user';
-import { createNewProjectRouter, joinProjectRouter, editProject } from './router/project';
 import { newReleaseRouter, copyReleaseRouter, editReleaseRouter } from './router/release';
 import { createRoleRouter, editRoleRouter } from './router/roles';
 import { createSprintRouter, editSprintRouter } from './router/sprint';
 import { createStory, editStory } from './router/todo';
+import user from './router/user';
+import project from 'router/project';
 
 const app = express();
 
@@ -30,12 +30,8 @@ AppDataSource.initialize().then(async () => {
 
 	app.use(express.json())
 
-	app.use(createUserRouter)
-	app.use(editUserRouter)
-
-	app.use(createNewProjectRouter)
-	app.use(joinProjectRouter)
-	app.use(editProject)
+	user(app)
+	project(app)
 
 	app.use(newReleaseRouter);
 	app.use(copyReleaseRouter);

@@ -3,8 +3,8 @@ import { AppDataSource } from '../src/data-source';
 import { Release } from "../src/entity/release"
 import request from 'supertest'
 import { newReleaseRouter } from '../src/router/release';
-import {getReleasesRouter } from '../src/router/project';
-import { createUserRouter } from '../src/router/user';
+import user from '../src/router/user';
+import project from '../src/router/project';
 import { User } from '../src/entity/User';
 import { Project } from '../src/entity/project';
 import { UserRole } from '../src/entity/roles';
@@ -20,8 +20,8 @@ beforeAll(async () => {
 	appData = await AppDataSource.initialize().then(async () => {
 		app.use(express.json())
 		app.use(newReleaseRouter);
-		app.use(getReleasesRouter);
-		app.use(createUserRouter);
+		user(app)
+		project(app)
 		const server = app.listen(8080)
 		return {app, server};
 	  });;
