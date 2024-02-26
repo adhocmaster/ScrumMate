@@ -11,7 +11,6 @@ createSprintRouter.post('/api/release/:releaseId/sprint/create', async (req, res
 		sprintNumber,
 		startDate,
 		endDate,
-		createdDate,
 		goal,
 	} = req.body
 
@@ -19,7 +18,6 @@ createSprintRouter.post('/api/release/:releaseId/sprint/create', async (req, res
 	newSprint.sprintNumber = sprintNumber
 	newSprint.startDate = startDate
 	newSprint.endDate = endDate
-	newSprint.createdDate = createdDate
 	newSprint.goal = goal
 	newSprint.release = release
 	release.addSprint(newSprint) // not sure if need to do. need to load relation?
@@ -39,14 +37,12 @@ editSprintRouter.post('/api/sprint/:sprintId/edit', async (req, res) => {
 		sprintNumber,
 		startDate,
 		endDate,
-		createdDate,
 		goal,
 	} = req.body
 
 	sprint.sprintNumber = sprintNumber ?? sprint.sprintNumber
 	sprint.startDate = startDate ?? sprint.startDate
 	sprint.endDate = endDate ?? sprint.endDate
-	sprint.createdDate = createdDate ?? sprint.createdDate
 	sprint.goal = goal ?? sprint.goal
 
 	await AppDataSource.manager.save(sprint)

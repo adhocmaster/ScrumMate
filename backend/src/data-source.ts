@@ -274,8 +274,30 @@ export class Database {
 	}
 
 	///// Sprint Methods /////
+	
+	public async createNewSprint(releaseId: number, sprintNumber: number, startDate: Date, endDate: Date, goal: string): Promise<Sprint> {
+		const release = await this.lookupReleaseById(releaseId)
+		const newSprint = new Sprint()
+		newSprint.sprintNumber = sprintNumber
+		newSprint.startDate = startDate
+		newSprint.endDate = endDate
+		newSprint.goal = goal
+		newSprint.release = release
+		release.addSprint(newSprint)
+		await this.save(newSprint)
+		return newSprint
+	}
 
-	// todo: more
+	public async updateSprint(sprintId: number, sprintNumber?: number, startDate?: Date, endDate?: Date, goal?: string): Promise<Sprint> {
+		const sprint = await this.lookupSprintById(sprintId)
+		sprint.sprintNumber = sprintNumber ?? sprint.sprintNumber
+		sprint.startDate = startDate ?? sprint.startDate
+		sprint.endDate = endDate ?? sprint.endDate
+		sprint.goal = goal ?? sprint.goal
+		await this.save(sprint)
+		return sprint
+	}
+	
 	public async lookupSprintById(id: number): Promise<Sprint> {
 		const maybeSprint =  await this.dataSource.manager.findOneBy(Sprint, {id: id});
 		if (!maybeSprint) {
