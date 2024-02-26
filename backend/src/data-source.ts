@@ -94,7 +94,7 @@ export class Database {
 		user.salt = salt ?? user.salt
 		user.sessionToken = sessionToken ?? user.sessionToken
 
-		this.save(user)
+		await this.save(user)
 		return user
 	}
 
@@ -136,6 +136,7 @@ export class Database {
 		const user = await this.lookupUserById(userId)
 		const newProject = new Project()
 		newProject.name = projectName
+		newProject.nextRevision = 1
 		newProject.productOwner = user
 		user.addOwnedProject(newProject)
 		await this.save(user)
@@ -151,11 +152,19 @@ export class Database {
 	}
 
 	public async lookupProjectById(id: number): Promise<Project> {
-		return await this.dataSource.manager.findOneBy(Project, {id: id});
+		const maybeProject = await this.dataSource.manager.findOneBy(Project, {id: id});
+		if (!maybeProject) {
+			throw new Error(`Project with id ${id} not found`)
+		}
+		return maybeProject
 	}
 
 	public async lookupProjectByIdWithUsers(id: number): Promise<Project> {
-		return (await this.dataSource.getRepository(Project).find({where: {id: id}, relations:{productOwner: true, teamMembers: true}}))[0]
+		const maybeProject =  (await this.dataSource.getRepository(Project).find({where: {id: id}, relations:{productOwner: true, teamMembers: true}}))[0]
+		if (!maybeProject) {
+			throw new Error(`Project with id ${id} not found`)
+		}
+		return maybeProject
 	}
 
 	public async fetchProjectWithReleases(id: number): Promise<Project> {
@@ -171,7 +180,68 @@ export class Database {
 
 	///// Release Methods /////
 
-	// TODO
+	public async createNewRelease(projectId: number, revision?: number, revisionDate?: Date, problemStatement?: string, goalStatement?: string): Promise<Release> {
+		const project = await this.lookupProjectById(projectId)
+		const release = new Release()
+		release.project = project 
+		if (!revision) {
+			revision = project.nextRevision
+			project.nextRevision = project.nextRevision + 1
+			console.log(project)
+			await this.save(project)
+		}
+		release.revision = revision
+		release.revisionDate = revisionDate ?? new Date()
+		release.problemStatement = problemStatement ?? ""
+		release.goalStatement = goalStatement ?? ""
+		await this.save(release)
+		return release
+	}
+
+	public async updateRelease(releaseId: number, revisionDate?: Date, problemStatement?: string, goalStatement?: string): Promise<Release> {
+		const release = await this.lookupReleaseById(releaseId)
+		// const releaseWithProject = await this.lookupReleaseWithProject(releaseId)
+		// release.revision = revision ?? release.revision // shouldnt change
+		release.revisionDate = revisionDate ?? release.revisionDate
+		release.problemStatement = problemStatement ?? release.problemStatement
+		release.goalStatement = goalStatement ?? release.goalStatement
+		await this.save(release)
+		return release
+	}
+
+	public async lookupReleaseById(id: number): Promise<Release> {
+		const maybeRelease =  await this.dataSource.manager.findOneBy(Release, {id: id});
+		if (!maybeRelease) {
+			throw new Error(`Release with id ${id} not found`)
+		}
+		return maybeRelease
+	}
+
+	public async lookupReleaseWithProject(releaseId: number): Promise<Release> {
+		const releaseWithProject = (await this.dataSource.getRepository(Release).find({
+			where: {id: releaseId},
+			relations:{
+				project: true
+			}}))[0]
+		if (!releaseWithProject) {
+			throw new Error(`Release with releaseId ${releaseId} not found`)
+		}
+		return releaseWithProject
+	}
+
+	/// Copies the columns only, but not the relations. TODO: copy relations
+	public async copyRelease(releaseId: number): Promise<Release> {
+		const releaseCopy = new Release();
+		// need to get the whole list of releases in this project so we can get the new version #
+		// should we just make a new variable to count the max version
+		const releaseWithProject = await this.lookupReleaseWithProject(releaseId)
+		releaseCopy.copy(releaseWithProject)
+		releaseCopy.revision = releaseCopy.project.nextRevision;
+		releaseCopy.project.nextRevision += 1;
+		await this.save(releaseCopy.project)
+		await this.save(releaseCopy)
+		return releaseCopy
+	}
 
 	///// Role Methods /////
 
@@ -190,6 +260,20 @@ export class Database {
 	public async save(item: any) {
 		return await this.dataSource.manager.save(item);
 	}
+	
+	/// Like save, but guaranteed to not exist in the db
+	/// for performance purposes
+	/// WARNING: behaves differently than save somehow... doesnt save into original entity?
+	public async insert(item: User | Project | Release | UserRole | Sprint | TodoItem) {
+		return await this.dataSource.manager.insert(typeof(item), item);
+	}
+
+	/// Like save, but guaranteed to already exist in the db
+	/// for performance purposes
+	/// WARNING: behaves differently than save somehow...
+	public async update(item: User | Project | Release | UserRole | Sprint | TodoItem) {
+		return await this.dataSource.manager.update(typeof(item), item.id, item);
+	}
 
 	public async find(entity: EntityTarget<ObjectLiteral>, findOptions: FindManyOptions<ObjectLiteral>) {
 		return await this.dataSource.manager.find(entity, findOptions)
@@ -200,30 +284,33 @@ export class Database {
 	}
 
 	public async deleteAll(): Promise<void> {
-		await this.dataSource.getRepository(UserRole).delete({})
-		await this.dataSource.getRepository(TodoItem).delete({})
-		await this.dataSource.getRepository(Sprint).delete({})
-		await this.dataSource.getRepository(Release).delete({})
+		const loadedReleases = await this.dataSource.getRepository(Release).find({
+			relations: ['project', 'sprints', 'backlog'],
+		});
 		const loadedProjects = await this.dataSource.getRepository(Project).find({
 			relations: ['productOwner', 'teamMembers'],
-			order: {
-				name: "ASC"
-			}
 		});
 		const loadedUsers = await this.dataSource.getRepository(User).find({
 			relations: ['ownedProjects', 'joinedProjects'],
-			order: {
-				username: "ASC"
-			}
 		});
+		await this.dataSource.getRepository(UserRole).delete({})
+		await this.dataSource.getRepository(TodoItem).delete({})
+		await this.dataSource.getRepository(Sprint).delete({})
+		for (const release of loadedReleases) { // many2many hard :(
+			delete release.project
+			release.sprints = []
+			release.backlog = []
+			await this.dataSource.manager.save(release)
+		}
+		await this.dataSource.getRepository(Release).delete({})
 		for (const project of loadedProjects) { // many2many hard :(
 			project.teamMembers = []
-			await AppDataSource.manager.save(project)
+			await this.dataSource.manager.save(project)
 		}
 		for (const user of loadedUsers) {
 			user.ownedProjects = []
 			user.joinedProjects = []
-			await AppDataSource.manager.save(user)
+			await this.dataSource.manager.save(user)
 		}
 		await this.dataSource.getRepository(Project).delete({})
 		await this.dataSource.getRepository(User).delete({})

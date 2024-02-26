@@ -1,11 +1,13 @@
 import { DataSource } from "typeorm";
 import { AppDataSource, Database } from "../src/data-source";
 import { User } from "../src/entity/User";
-import { Project } from "entity/project";
+import { Project } from "../src/entity/project";
+import { Release } from "../src/entity/release";
 
 var bob: User;
 var joe: User;
 var plannertarium: Project;
+var release: Release;
 
 beforeAll(async () => {
 	if (AppDataSource.isInitialized)
@@ -65,6 +67,16 @@ describe("User methods", () => {
 		expect((await db.lookupUserByEmail("bob@gmail.com")).username).toBe("bob")
 	});
 
+	test("updating user", async () => {
+		const db = Database.getInstance();
+		joe = await db.updateUser(joe.id, "joe mama")
+		expect(joe.username).toBe("joe mama")
+		expect(joe.email).toBe("joe@gmail.com")
+		joe = await db.updateUser(joe.id, "joe")
+		expect(joe.username).toBe("joe")
+		expect(joe.email).toBe("joe@gmail.com")
+	});
+
 });
 
 describe("Project methods", () => {
@@ -92,6 +104,39 @@ describe("Project methods", () => {
 		expect(plannertarium.productOwner.username).toBe("bob")
 		expect(plannertarium.getTeamMembers().length).toBe(1)
 		expect(plannertarium.getTeamMembers()[0].username).toBe("joe")
+	});
+
+});
+
+describe("release plans", () => {
+
+	test("making a new release plan for plannertarium", async () => {
+		const db = Database.getInstance()
+		release = await db.createNewRelease(plannertarium.id)
+		expect(release.revision).toBe(1)
+		expect(release.problemStatement).toBe("")
+		expect(release.goalStatement).toBe("")
+		plannertarium = await db.lookupProjectById(plannertarium.id)
+		expect(plannertarium.nextRevision).toBe(2)
+	});
+
+	test("updating release plan", async () => {
+		const db = Database.getInstance()
+		release = await db.updateRelease(release.id, null, "app is too good", null)
+		expect(release.revision).toBe(1)
+		expect(release.problemStatement).toBe("app is too good")
+		expect(release.goalStatement).toBe("")
+		plannertarium = await db.lookupProjectById(plannertarium.id)
+		expect(plannertarium.nextRevision).toBe(2)
+	});
+
+	test("copying release plan", async () => {
+		const db = Database.getInstance()
+		release = await db.copyRelease(release.id)
+		expect(release.problemStatement).toBe("app is too good")
+		expect(release.revision).toBe(2)
+		plannertarium = await db.lookupProjectById(plannertarium.id)
+		expect(plannertarium.nextRevision).toBe(3)
 	});
 
 });
