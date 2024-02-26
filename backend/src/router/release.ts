@@ -75,7 +75,7 @@ copyReleaseRouter.post('/api/release/:releaseId/copy', async (req, res) => {
       },
       order: {id: "DESC"}
     });
-    console.log(releases);
+    // console.log(releases);
     releaseCopy.revision = releases[0].revision + 1;
 
     await transactionalEntityManager.save(Release, releaseCopy);

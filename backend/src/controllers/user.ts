@@ -13,7 +13,7 @@ export const createUser = async (req: express.Request, res: express.Response) =>
 	if(!username || !password || !email) return res.sendStatus(400);
 	
 	const user = await AppDataSource.manager.findOneBy(User, {email: email});
-	if(user) return res.sendStatus(400);
+	if(user) return res.sendStatus(400); // can use the unique: true flag in the entity
 
 	const newUser = new User()
 	newUser.username = username
