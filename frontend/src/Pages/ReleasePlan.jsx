@@ -125,6 +125,34 @@ const ReleasePlan = () => {
         
         {/* Backlog */}
         <Grid container spacing={2}>
+
+          {/* Sprints */}
+          <Grid item xs>
+            <Typography
+              variant="h6"
+              marginLeft={2}
+              textAlign={'left'}
+              fontWeight="bold"
+            >
+              Sprints
+            </Typography>
+
+            <Paper
+              sx={{
+                maxWidth: '95%',
+                marginLeft: 2,
+                backgroundColor: 'lightgray',
+              }}
+            >
+              {/* TODO: add Sprints */}
+              <List>
+                <ListItem>
+                  <UserStory userStoryText={userStoryText} />
+                </ListItem>
+              </List>
+            </Paper>
+          </Grid>
+
           <Grid item xs={2.5}>
             <Typography
               variant="h6"
@@ -184,33 +212,6 @@ const ReleasePlan = () => {
                 >
                 Add Backlog Item +
               </Button>
-            </Paper>
-          </Grid>
-
-          {/* Sprints */}
-          <Grid item xs>
-            <Typography
-              variant="h6"
-              marginLeft={2}
-              textAlign={'left'}
-              fontWeight="bold"
-            >
-              Sprints
-            </Typography>
-
-            <Paper
-              sx={{
-                maxWidth: '95%',
-                marginLeft: 2,
-                backgroundColor: 'lightgray',
-              }}
-            >
-              {/* TODO: add Sprints */}
-              <List>
-                <ListItem>
-                  <UserStory userStoryText={userStoryText} />
-                </ListItem>
-              </List>
             </Paper>
           </Grid>
         </Grid>
