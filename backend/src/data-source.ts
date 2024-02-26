@@ -20,3 +20,46 @@ export const AppDataSource = new DataSource({
     subscribers: [],
     migrations: [],
 })
+
+export class Database {
+	private static instance: Database;
+	private dataSource: DataSource | null = null
+
+	private constructor(dataSource: DataSource) {
+		this.initialize(dataSource);
+	}
+
+	public static getInstance(): Database {
+		if (!Database.instance) {
+			throw Error("Database is not initialized! Use setAndGetInstance first.")
+		}
+		return Database.instance;
+	}
+
+	public static async setAndGetInstance(dataSource: DataSource): Promise<Database> {
+		if (!Database.instance) {
+			if (!dataSource.isInitialized)
+				throw Error("Database's DataSource is not initialized! Use setAndGetInstance first.")
+			Database.instance = new Database(dataSource);
+		}
+		return Database.instance;
+	}
+
+	private initialize(dataSource: DataSource): void {
+		try {
+			this.dataSource = dataSource;
+			console.log('Connected to database');
+		} catch (error) {
+			console.error('Error connecting to database:', error);
+			throw error; // Rethrow the error to notify the caller of the failure
+		}
+	}
+
+	public get databaseIsInitialized(): boolean {
+		return Database.instance != null;
+	}
+
+	public get dataSourceIsInitialized(): boolean {
+		return this.dataSource != null && this.dataSource.isInitialized;
+	}
+}
