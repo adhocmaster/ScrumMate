@@ -308,7 +308,8 @@ export class Database {
 
 	///// Todo Methods /////
 
-	// todo: more
+	// TODO: more methods for stories, tasks, etc
+	// Some details TBD because of sponsor saying avoid duplication of data
 	public async lookupTODOById(id: number): Promise<TodoItem> {
 		const maybeTODO =  await this.dataSource.manager.findOneBy(TodoItem, {id: id});
 		if (!maybeTODO) {
