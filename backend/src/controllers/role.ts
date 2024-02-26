@@ -4,10 +4,8 @@ import { User } from "../entity/User";
 import { UserRole } from "../entity/roles";
 import { Sprint } from "../entity/sprint";
 
-const createRoleRouter = express.Router()
-// TODO: arent roles only for sprints? not for anything else? 
-createRoleRouter.post('/api/role/create/user/:userId/sprint/:sprintId', async (req, res) => {
-	const { userId, sprintId } = req.params
+export const createRole = async (req: express.Request, res: express.Response) => {
+  const { userId, sprintId } = req.params
 	const user = await AppDataSource.manager.findOneBy(User, {id: parseInt(userId)})
 	const sprint = await AppDataSource.manager.findOneBy(Sprint, {id: parseInt(sprintId)}) // may need to include relations
 	const {
@@ -23,16 +21,12 @@ createRoleRouter.post('/api/role/create/user/:userId/sprint/:sprintId', async (r
 
 	await AppDataSource.manager.save(newRole)
 	// await AppDataSource.manager.save(sprint)
-	return res.json(newRole)
-})
+	return res.json(newRole);
+};
 
-
-
-/// userId can be optional here
-const editRoleRouter = express.Router()
-editRoleRouter.post('/api/role/:roleId/edit/:userId', async (req, res) => {
+export const editRole = async (req: express.Request, res: express.Response) => {
 	const { roleId, userId } = req.params
-	const userRole = await AppDataSource.manager.findOneBy(UserRole, {id: parseInt(userId)})
+	const userRole = await AppDataSource.manager.findOneBy(UserRole, {id: parseInt(roleId)})
 	const user = await AppDataSource.manager.findOneBy(User, {id: parseInt(userId)})
 	const {
 		role,
@@ -43,11 +37,4 @@ editRoleRouter.post('/api/role/:roleId/edit/:userId', async (req, res) => {
 
 	await AppDataSource.manager.save(userRole)
 	return res.json(userRole)
-})
-
-
-
-export {
-	createRoleRouter as createRoleRouter,
-	editRoleRouter as editRoleRouter,
-}
+};

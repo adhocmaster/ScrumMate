@@ -2,12 +2,7 @@ import express from 'express';
 import { AppDataSource } from './data-source';
 import { Release } from "./entity/release"
 import { Project } from './entity/project';
-import { newReleaseRouter, copyReleaseRouter, editReleaseRouter } from './router/release';
-import { createRoleRouter, editRoleRouter } from './router/roles';
-import { createSprintRouter, editSprintRouter } from './router/sprint';
-import { createStory, editStory } from './router/todo';
-import user from './router/user';
-import project from 'router/project';
+import router from './router/index';
 
 const app = express();
 
@@ -29,23 +24,7 @@ AppDataSource.initialize().then(async () => {
     // console.log("Here you can setup and run express / fastify / any other framework.")
 
 	app.use(express.json())
-
-	user(app)
-	project(app)
-
-	app.use(newReleaseRouter);
-	app.use(copyReleaseRouter);
-	app.use(editReleaseRouter);
-
-	app.use(createRoleRouter);
-	app.use(editRoleRouter);
-
-	app.use(createSprintRouter);
-	app.use(editSprintRouter);
-
-	app.use(createStory);
-	app.use(editStory);
-
+  app.use('/api', router());
 	app.listen(8080, () => {
 		console.log("Running on port 8080")
 	})
