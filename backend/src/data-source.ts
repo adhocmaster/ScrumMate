@@ -245,15 +245,55 @@ export class Database {
 
 	///// Role Methods /////
 
-	// TODO
+	public async createNewRole(userId: number, sprintId: number, role: string): Promise<UserRole> {
+		const user = await this.lookupUserById(userId)
+		const sprint = await this.lookupSprintById(sprintId)
+		const newRole = new UserRole()
+		newRole.role = role
+		newRole.user = user
+		newRole.sprint = sprint
+		await this.save(newRole)
+		return newRole
+	}
+
+	public async updateRole(roleId: number, userId: number, role?: string): Promise<UserRole> {
+		const userRole = await this.lookupRoleById(roleId)
+		const user = await this.lookupUserById(userId)
+		userRole.role = role ?? userRole.role
+		userRole.user = user ?? userRole.user // may break if relational not loaded?
+		await this.save(userRole)
+		return userRole
+	}
+	
+	public async lookupRoleById(id: number): Promise<UserRole> {
+		const maybeRole =  await this.dataSource.manager.findOneBy(UserRole, {id: id});
+		if (!maybeRole) {
+			throw new Error(`Role with id ${id} not found`)
+		}
+		return maybeRole
+	}
 
 	///// Sprint Methods /////
 
-	// TODO
+	// todo: more
+	public async lookupSprintById(id: number): Promise<Sprint> {
+		const maybeSprint =  await this.dataSource.manager.findOneBy(Sprint, {id: id});
+		if (!maybeSprint) {
+			throw new Error(`Sprint with id ${id} not found`)
+		}
+		return maybeSprint
+	}
 
 	///// Todo Methods /////
 
-	// TODO
+	// todo: more
+	public async lookupTODOById(id: number): Promise<TodoItem> {
+		const maybeTODO =  await this.dataSource.manager.findOneBy(TodoItem, {id: id});
+		if (!maybeTODO) {
+			throw new Error(`TODO with id ${id} not found`)
+		}
+		return maybeTODO
+	}
 
 	///// General Methods - Only use if there is not a method above to use /////
 
