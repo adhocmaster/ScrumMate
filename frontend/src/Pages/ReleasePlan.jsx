@@ -10,7 +10,7 @@ import Divider from '@mui/material/Divider';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import CardHeader from '@mui/material/CardHeader';
-import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
+import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 
 
 /*
@@ -18,13 +18,12 @@ This code allows the user to drag and drop the different stories in the release 
 */
 
 // fake data generator
-const getItems = count =>
+const getItems = (count, offset = 0) =>
   Array.from({ length: count }, (v, k) => k).map(k => ({
-    id: `item-${k}`,
-    content: `item ${k}`,
+    id: `item-${k + offset}-${new Date().getTime()}`,
+    content: `item ${k + offset}`
   }));
 
-// a little function to help us with reordering the result
 const reorder = (list, startIndex, endIndex) => {
   const result = Array.from(list);
   const [removed] = result.splice(startIndex, 1);
@@ -33,51 +32,87 @@ const reorder = (list, startIndex, endIndex) => {
   return result;
 };
 
+
+/**
+ * Moves an item from one list to another list.
+ */
+const move = (source, destination, droppableSource, droppableDestination) => {
+  const sourceClone = Array.from(source);
+  const destClone = Array.from(destination);
+  const [removed] = sourceClone.splice(droppableSource.index, 1);
+
+  destClone.splice(droppableDestination.index, 0, removed);
+
+  const result = {};
+  result[droppableSource.droppableId] = sourceClone;
+  result[droppableDestination.droppableId] = destClone;
+
+  return result;
+};
+
 const grid = 8;
 
 const getItemStyle = (isDragging, draggableStyle) => ({
   // some basic styles to make the items look a bit nicer
-  userSelect: 'none',
+  userSelect: "none",
   padding: grid * 2,
-  margin: `0 ${grid}px 0 0`,
+  margin: `0 0 ${grid}px 0`,
 
   // change background colour if dragging
-  background: isDragging ? 'lightgreen' : 'grey',
+  background: isDragging ? "lightgreen" : "grey",
 
   // styles we need to apply on draggables
-  ...draggableStyle,
+  ...draggableStyle
 });
-
 const getListStyle = isDraggingOver => ({
-  background: isDraggingOver ? 'lightblue' : 'lightgrey',
-  display: 'flex',
+  background: isDraggingOver ? "lightblue" : "lightgrey",
   padding: grid,
-  overflow: 'auto',
+  width: 250
 });
-
-
-
 
 
 const ReleasePlan = () => {
   
   //////////////Attributes for DnD/////////////////
-  
-  const [items, setItems] = useState(getItems(6));
 
-  const onDragEnd = useCallback((result) => {
+  const [state, setState] = useState([getItems(10), getItems(5, 10)]);
+
+  
+  {/*const [items, setItems] = useState(getItems(6)); 
+    const onDragEnd = useCallback((result) => {
     if (!result.destination) {
       return;
     }
 
-    const reorderedItems = reorder(
-      items,
-      result.source.index,
-      result.destination.index
-    );
+  }, [state]);
 
-    setItems(reorderedItems);
-  }, [items]);
+
+  */}
+
+  const onDragEnd = useCallback((result) => {
+    const {source, destination} = result;
+
+    if(!destination){
+      return;
+    }
+    const sInd = +source.droppableId;
+    const dInd = +destination.droppableId;
+
+    if (sInd === dInd) {
+      const items = reorder(state[sInd], source.index, destination.index);
+      const newState = [...state];
+      newState[sInd] = items;
+      setState(newState);
+    } else {
+      const result = move(state[sInd], state[dInd], source, destination);
+      const newState = [...state];
+      newState[sInd] = result[sInd];
+      newState[dInd] = result[dInd];
+
+      setState(newState.filter(group => group.length));
+    }
+  });
+
   
   ////////////////////////////////////////////////
   const [open, setOpen] = useState(true);
@@ -368,7 +403,7 @@ const ReleasePlan = () => {
                     </CardContent>
                   </Card>
                 </ListItem>
-                
+                {/*Test the drag/drop feature here*/}                    
               </List>
             </Paper>
           </Grid>
@@ -377,6 +412,11 @@ const ReleasePlan = () => {
 
       </Grid>
     </Grid>
+
+    
+
+
+    
   );
 };
 
