@@ -57,9 +57,6 @@ const Dashboard = ({ isLoggedIn }) => {
     }
   };
   
-  
-  
-
 
   // Functionality for navigation clicks will need to be implemented
   const [projectNames, setProjectNames] = useState([]);
