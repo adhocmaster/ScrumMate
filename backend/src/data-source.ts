@@ -75,14 +75,12 @@ export class Database {
 		newUser.email = email
 		newUser.salt = salt ?? random();
 		newUser.password = authentication(newUser.salt, password);
-		
 		try {
 			await this.save(newUser)
 		} catch {
 			throw new Error("Likely found a duplicate username or email")
 		}
 		delete newUser.password;
-
 		return newUser
 	}
 
@@ -139,7 +137,7 @@ export class Database {
 		newProject.nextRevision = 1
 		newProject.productOwner = user
 		user.addOwnedProject(newProject)
-		await this.save(user)
+		// await this.save(user) // DO NOT DO THIS! if dont fetch all old projects, saving just 1 project erases
 		await this.save(newProject)
 		return newProject
 	}
