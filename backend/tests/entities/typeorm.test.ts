@@ -1,10 +1,10 @@
-import { User } from "../src/entity/User"
-import { Project } from "../src/entity/project"
-import { Release } from "../src/entity/release";
-import { Sprint } from "../src/entity/sprint";
+import { User } from "../../src/entity/User"
+import { Project } from "../../src/entity/project"
+import { Release } from "../../src/entity/release";
+import { Sprint } from "../../src/entity/sprint";
 import { DataSource } from "typeorm";
-import { Bug, Epic, Infrastructure, Spike, Story, Task, TodoItem } from "../src/entity/todo";
-import { UserRole } from "../src/entity/roles";
+import { Bug, Epic, Infrastructure, Spike, Story, Task, BacklogItem } from "../../src/entity/backlog";
+import { UserRole } from "../../src/entity/roles";
 
 function makeRandomId(length: number) {
     let result = '';
@@ -36,6 +36,7 @@ function populateUser(user: User, length=10) {
 
 function populateProject(project: Project, length=10) {
 	project.name = makeRandomId(length)
+	project.nextRevision = 1
 }
 
 function populateRelease(release: Release, length=10) {
@@ -65,7 +66,7 @@ const AppDataSource = new DataSource({
     database: "test",
     synchronize: true,
     logging: false,
-    entities: [User, Project, Release, Sprint, UserRole, TodoItem, Epic, Story, Task, Spike, Infrastructure, Bug],
+    entities: [User, Project, Release, Sprint, UserRole, BacklogItem, Epic, Story, Task, Spike, Infrastructure, Bug],
     migrations: [],
     subscribers: [],
 })
@@ -157,6 +158,7 @@ describe('testing that everything can be saved and loaded from database', () => 
 			sprint1.release = release2; release2.addSprint(sprint1);
 			sprint2.release = release2; release2.addSprint(sprint2);
 				role.sprint = sprint1; sprint2.addRole(role) // assume adding to release meanse it is backlogged
+				role.user = teammember1;
 				spike.sprint = sprint2; sprint2.addTODO(spike)
 				story1.sprint = sprint2; sprint2.addTODO(story1)
 					task1.story = story1; story1.addTask(task1); task1.sprint = sprint1; sprint1.addTODO(task1)
@@ -189,19 +191,19 @@ describe('testing that everything can be saved and loaded from database', () => 
 	test('Saving then loading everything from the database', async () => {
 		await AppDataSource.initialize().then(async () => {
 			// connects to the test database
-			const userRepository = await AppDataSource.getRepository(User)
-			const projectRepository = await AppDataSource.getRepository(Project)
-			const releaseRepository = await AppDataSource.getRepository(Release)
-			const sprintRepository = await AppDataSource.getRepository(Sprint)
-			const todoRepository = await AppDataSource.getRepository(TodoItem)
-			const rolesRepository = await AppDataSource.getRepository(UserRole)
+			const userRepository = AppDataSource.getRepository(User)
+			const projectRepository = AppDataSource.getRepository(Project)
+			const releaseRepository = AppDataSource.getRepository(Release)
+			const sprintRepository = AppDataSource.getRepository(Sprint)
+			const backlogItemRepository = AppDataSource.getRepository(BacklogItem)
+			const rolesRepository = AppDataSource.getRepository(UserRole)
 			
 			// save everything into the database
 			await userRepository.save([productOwner1, productOwner2, teammember1, teammember2]);
             await projectRepository.save([project1, project2, project3]);
             await releaseRepository.save([release1, release2]);
             await sprintRepository.save([sprint1, sprint2]);
-            await todoRepository.save([spike, story1, story2, task1, task2, task3, task4]);
+            await backlogItemRepository.save([spike, story1, story2, task1, task2, task3, task4]);
             await rolesRepository.save([role]);
 
 			// load everything from the database and verify it passes
@@ -229,7 +231,7 @@ describe('testing that everything can be saved and loaded from database', () => 
 					goal: "ASC"
 				}
             });
-            const loadedTodos = await todoRepository.find({
+            const loadedbacklogItems = await backlogItemRepository.find({
                 relations: ['sprint', 'story', 'tasks'],
             });
             const loadedRoles = await rolesRepository.find({
@@ -238,11 +240,13 @@ describe('testing that everything can be saved and loaded from database', () => 
 
 			// Assert everything is still the same
 			var userList = [productOwner1, productOwner2, teammember1, teammember2].sort((a, b) => a.username.localeCompare(b.username))
+			expect(loadedUsers.length).toBe(userList.length)
 			for (let i = 0; i < loadedUsers.length; i++) {
 				expect(loadedUsers[i].username == userList[i].username)
 				expect(loadedUsers[i].email == userList[i].email)
 			}
 			var projList = [project1, project2, project3].sort((a,b) => a.name.localeCompare(b.name))
+			expect(loadedProjects.length).toBe(projList.length)
 			for (let i = 0; i < loadedProjects.length; i++) {
 				expect(loadedProjects[i].name == projList[i].name)
 			}
@@ -251,7 +255,7 @@ describe('testing that everything can be saved and loaded from database', () => 
 
 			// delete everything from the test database
 			await rolesRepository.delete({});
-			await todoRepository.delete({});
+			await backlogItemRepository.delete({});
 			await sprintRepository.delete({});
 			await releaseRepository.delete({});
 			for (const project of loadedProjects) { // many2many hard :(

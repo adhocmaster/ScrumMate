@@ -3,12 +3,9 @@ import { Release} from "../entity/release";
 import { AppDataSource } from "../data-source";
 import { Project } from "../entity/project";
 
-
-const router = express.Router()
-
-router.post('/api/:projectId/release', async (req, res) => {
-	const { projectId } = req.params
-
+export const newRelease = async (req: express.Request, res: express.Response) => {
+  const { projectId } = req.params
+	const project = await AppDataSource.manager.findOneBy(Project, {id: parseInt(projectId)})
 	const {
 		revision,
 		revisionDate,
@@ -21,29 +18,34 @@ router.post('/api/:projectId/release', async (req, res) => {
 	release.revisionDate = revisionDate
 	release.problemStatement = problemStatement
 	release.goalStatement = goalStatement
-
-	const project = await AppDataSource.manager.findOneBy(Project, {id: parseInt(projectId)})
-
-	release.project = project 
+	release.project = project // do not need to load relations or save the other way
 
 	await AppDataSource.manager.save(release)
-
-	// Not sure if need to do this too or if automatic
-	// project.addRelease(release)
-	// await AppDataSource.manager.save(project)
-	
 	return res.json(release)
-})
+};
 
-// router.get('/api/releases', async (req, res) => {
-//   // const {projectId} = req.params;
-//   return res.status(200);
-// });
+export const editRelease = async (req: express.Request, res: express.Response) => {
+	const { releaseId } = req.params
+	const releaseRepository = AppDataSource.getRepository(Release)
+	const releaseToUpdate = await releaseRepository.findOneBy({id: parseInt(releaseId)})
 
+	const {
+		revision,
+		revisionDate,
+		problemStatement,
+		goalStatement,
+	} = req.body
 
-//const releaseRepository = AppDataSource.getRepository(Release);
+	releaseToUpdate.revision = revision ?? releaseToUpdate.revision
+	releaseToUpdate.revisionDate = revisionDate ?? releaseToUpdate.revisionDate
+	releaseToUpdate.problemStatement = problemStatement ?? releaseToUpdate.problemStatement
+	releaseToUpdate.goalStatement = goalStatement ?? releaseToUpdate.goalStatement
 
-router.post('/api/release/copy/:releaseId', async (req, res) => {
+	await releaseRepository.save(releaseToUpdate)
+	return res.json(releaseToUpdate)
+};
+
+export const copyRelease = async (req: express.Request, res: express.Response) => {
   const {releaseId} = req.params;
   const releaseIdNum = parseInt(releaseId);
   if(!releaseIdNum) return res.sendStatus(400);
@@ -72,8 +74,4 @@ router.post('/api/release/copy/:releaseId', async (req, res) => {
   });
 
   res.json(releaseCopy);
-});
-
-export {
-	router as createRelease
-}
+};

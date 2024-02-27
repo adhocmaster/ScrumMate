@@ -1,7 +1,7 @@
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany, ManyToOne } from "typeorm"
 import { Sprint } from "./sprint"
 import { Project } from "./project"
-import { TodoItem } from "./todo"
+import { BacklogItem } from "./backlog"
 import { addMaybeUndefined, getMaybeUndefined, removeMaybeUndefined } from "./utils/addGetList"
 
 @Entity()
@@ -30,8 +30,8 @@ export class Release {
 	@OneToMany(() => Sprint, (sprint) => sprint.release)
 	sprints: Sprint[]
 	
-	@OneToMany(() => TodoItem, (todo) => todo.release)
-	backlog: TodoItem[]
+	@OneToMany(() => BacklogItem, (backlog) => backlog.release)
+	backlog: BacklogItem[]
 
 	///// Methods /////
 	
@@ -45,14 +45,14 @@ export class Release {
 		this.sprints = removeMaybeUndefined(sprint, this.sprints)
 	}
 
-	getBacklog(): TodoItem[] {
+	getBacklog(): BacklogItem[] {
 		return getMaybeUndefined(this.backlog)
 	}
-	addToBacklog(todo: TodoItem): void {
-		this.backlog = addMaybeUndefined(todo, this.backlog)
+	addToBacklog(backlogItem: BacklogItem): void {
+		this.backlog = addMaybeUndefined(backlogItem, this.backlog)
 	}
-	removeFromBacklog(todo: TodoItem): void {
-		this.backlog = removeMaybeUndefined(todo, this.backlog)
+	removeFromBacklog(backlogItem: BacklogItem): void {
+		this.backlog = removeMaybeUndefined(backlogItem, this.backlog)
 	}
   copy(release: Release): void {
     this.revision = release.revision;

@@ -13,6 +13,9 @@ export class Project {
 	@Column()
 	name: string
 
+	@Column()
+	nextRevision: number
+
 	///// Relational /////
 	
     @ManyToOne(() => User, (user) => user.ownedProjects)
