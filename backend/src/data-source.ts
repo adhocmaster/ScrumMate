@@ -16,7 +16,7 @@ export const AppDataSource = new DataSource({
     password: "test",
     database: "test",
     synchronize: true,
-    logging: true,
+    logging: false,
     entities: [User, Project, Release, UserRole, Sprint, BacklogItem, Epic, Story, Task, Spike, Infrastructure, Bug],
     subscribers: [],
     migrations: [],
