@@ -4,7 +4,7 @@ import { Release } from "./entity/release"
 import { UserRole } from "./entity/roles"
 import { Sprint } from "./entity/sprint"
 import { DataSource, EntityTarget, FindManyOptions, FindOptionsWhere, ObjectLiteral, QueryFailedError } from "typeorm"
-import { Bug, Epic, Infrastructure, Spike, Story, Task, BacklogItem } from "./entity/backlog"
+import { Bug, Epic, Infrastructure, Spike, Story, Task, BacklogItem, Priority } from "./entity/backlog"
 import { authentication, random } from "./helpers"
 import "reflect-metadata"
 
@@ -307,6 +307,39 @@ export class Database {
 
 	///// Todo Methods /////
 
+	public async createNewStory(sprintId: number, userTypes: string, functionalityDescription: string, reasoning: string, acceptanceCriteria: string, storyPoints: number, priority: Priority): Promise<Story> {
+		const sprint = await this.lookupSprintById(sprintId)
+		const newStory = new Story()
+		newStory.userTypes = userTypes
+		newStory.functionalityDescription = functionalityDescription
+		newStory.reasoning = reasoning
+		newStory.acceptanceCriteria = acceptanceCriteria
+		newStory.storyPoints = storyPoints
+		newStory.priority = priority
+		newStory.sprint = sprint
+		sprint.addTODO(newStory) // not sure if need to do. need to load sprint's relation?
+		await this.save(newStory)
+		return newStory
+	}
+
+	public async updateStory(storyId: number, sprintId?: number, userTypes?: string, functionalityDescription?: string, reasoning?: string, acceptanceCriteria?: string, storyPoints?: number, priority?: Priority): Promise<Sprint> {
+		const sprint = await this.lookupSprintById(sprintId)
+		const story = await this.lookupStoryById(storyId)
+		story.userTypes = userTypes ?? story.userTypes
+		story.functionalityDescription = functionalityDescription ?? story.functionalityDescription
+		story.reasoning = reasoning ?? story.reasoning
+		story.acceptanceCriteria = acceptanceCriteria ?? story.acceptanceCriteria
+		story.storyPoints = storyPoints ?? story.storyPoints
+		story.priority = priority ?? story.priority
+		if (sprint) {
+		  story.sprint.removeTODO(story) // may need to fix the remove method, match on id
+		  story.sprint = sprint
+		  sprint.addTODO(story) // again, might break
+		}
+		await this.save(sprint)
+		return sprint
+	}
+
 	// TODO: more methods for stories, tasks, etc
 	// Some details TBD because of sponsor saying avoid duplication of data
 	public async lookupBacklogById(id: number): Promise<BacklogItem> {
@@ -315,6 +348,14 @@ export class Database {
 			throw new Error(`TODO with id ${id} not found`)
 		}
 		return maybeBacklog
+	}
+	
+	public async lookupStoryById(id: number): Promise<Story> {
+		const maybeStory =  await this.dataSource.manager.findOneBy(Story, {id: id});
+		if (!maybeStory) {
+			throw new Error(`TODO with id ${id} not found`)
+		}
+		return maybeStory
 	}
 
 	///// General Methods - Only use if there is not a method above to use /////
