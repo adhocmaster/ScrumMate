@@ -1,15 +1,15 @@
 import express from 'express';
-import { AppDataSource } from '../src/data-source';
-import { Release } from "../src/entity/release"
+import { AppDataSource } from '../../src/data-source';
+import { Release } from "../../src/entity/release"
 import request from 'supertest'
 // import { newReleaseRouter } from '../src/router/release';
-import user from '../src/router/user';
-import project from '../src/router/project';
-import { User } from '../src/entity/User';
-import { Project } from '../src/entity/project';
-import { UserRole } from '../src/entity/roles';
-import { Sprint } from '../src/entity/sprint';
-import { BacklogItem } from '../src/entity/backlog';
+import user from '../../src/router/user';
+import project from '../../src/router/project';
+import { User } from '../../src/entity/User';
+import { Project } from '../../src/entity/project';
+import { UserRole } from '../../src/entity/roles';
+import { Sprint } from '../../src/entity/sprint';
+import { BacklogItem } from '../../src/entity/backlog';
 import { DataSource } from 'typeorm';
 
 let app = express();
