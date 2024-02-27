@@ -3,7 +3,7 @@ import { Project } from "../src/entity/project"
 import { Release } from "../src/entity/release";
 import { Sprint } from "../src/entity/sprint";
 import { DataSource } from "typeorm";
-import { Bug, Epic, Infrastructure, Spike, Story, Task, TodoItem } from "../src/entity/todo";
+import { Bug, Epic, Infrastructure, Spike, Story, Task, BacklogItem } from "../src/entity/backlog";
 import { UserRole } from "../src/entity/roles";
 
 function makeRandomId(length: number) {
@@ -66,7 +66,7 @@ const AppDataSource = new DataSource({
     database: "test",
     synchronize: true,
     logging: false,
-    entities: [User, Project, Release, Sprint, UserRole, TodoItem, Epic, Story, Task, Spike, Infrastructure, Bug],
+    entities: [User, Project, Release, Sprint, UserRole, BacklogItem, Epic, Story, Task, Spike, Infrastructure, Bug],
     migrations: [],
     subscribers: [],
 })
@@ -195,7 +195,7 @@ describe('testing that everything can be saved and loaded from database', () => 
 			const projectRepository = await AppDataSource.getRepository(Project)
 			const releaseRepository = await AppDataSource.getRepository(Release)
 			const sprintRepository = await AppDataSource.getRepository(Sprint)
-			const todoRepository = await AppDataSource.getRepository(TodoItem)
+			const backlogItemRepository = await AppDataSource.getRepository(BacklogItem)
 			const rolesRepository = await AppDataSource.getRepository(UserRole)
 			
 			// save everything into the database
@@ -203,7 +203,7 @@ describe('testing that everything can be saved and loaded from database', () => 
             await projectRepository.save([project1, project2, project3]);
             await releaseRepository.save([release1, release2]);
             await sprintRepository.save([sprint1, sprint2]);
-            await todoRepository.save([spike, story1, story2, task1, task2, task3, task4]);
+            await backlogItemRepository.save([spike, story1, story2, task1, task2, task3, task4]);
             await rolesRepository.save([role]);
 
 			// load everything from the database and verify it passes
@@ -231,7 +231,7 @@ describe('testing that everything can be saved and loaded from database', () => 
 					goal: "ASC"
 				}
             });
-            const loadedTodos = await todoRepository.find({
+            const loadedbacklogItems = await backlogItemRepository.find({
                 relations: ['sprint', 'story', 'tasks'],
             });
             const loadedRoles = await rolesRepository.find({
@@ -255,7 +255,7 @@ describe('testing that everything can be saved and loaded from database', () => 
 
 			// delete everything from the test database
 			await rolesRepository.delete({});
-			await todoRepository.delete({});
+			await backlogItemRepository.delete({});
 			await sprintRepository.delete({});
 			await releaseRepository.delete({});
 			for (const project of loadedProjects) { // many2many hard :(

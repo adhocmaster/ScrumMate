@@ -1,7 +1,7 @@
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToOne, OneToMany, JoinColumn, CreateDateColumn, ManyToMany, JoinTable } from "typeorm"
 import { User } from "./User"
 import { Release } from "./release"
-import { TodoItem } from "./todo"
+import { BacklogItem } from "./backlog"
 import { UserRole } from "./roles"
 import { getMaybeUndefined, addMaybeUndefined, removeMaybeUndefined } from "./utils/addGetList"
 
@@ -40,8 +40,8 @@ export class Sprint {
 	@ManyToOne(() => Release, (release) => release.sprints, {nullable: false})
 	release: Release
 	
-	@OneToMany(() => TodoItem, (todo) => todo.sprint)
-	todos: TodoItem[]
+	@OneToMany(() => BacklogItem, (todo) => todo.sprint)
+	todos: BacklogItem[]
 
 	@OneToMany(() => UserRole, (role) => role.sprint)
 	roles: UserRole[]
@@ -58,13 +58,13 @@ export class Sprint {
         this.roles = removeMaybeUndefined(role, this.roles);
     }
 
-    getTODOs(): TodoItem[] {
+    getTODOs(): BacklogItem[] {
         return getMaybeUndefined(this.todos);
     }
-    addTODO(story: TodoItem): void {
+    addTODO(story: BacklogItem): void {
         this.todos = addMaybeUndefined(story, this.todos);
     }
-    removeTODO(story: TodoItem): void {
+    removeTODO(story: BacklogItem): void {
         this.todos = removeMaybeUndefined(story, this.todos);
     }
 

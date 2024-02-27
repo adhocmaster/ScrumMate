@@ -1,7 +1,7 @@
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany, ManyToMany, JoinTable } from "typeorm"
 import { Project } from "./project"
 import { getMaybeUndefined, addMaybeUndefined, removeMaybeUndefined } from "./utils/addGetList"
-import { TodoItem } from "./todo"
+import { BacklogItem } from "./backlog"
 
 @Entity()
 export class User {
@@ -32,8 +32,8 @@ export class User {
 	@JoinTable()
 	joinedProjects: Project[]
 
-	@ManyToMany(() => TodoItem, (todo) => todo.assignees)
-	assignments: TodoItem[]
+	@ManyToMany(() => BacklogItem, (todo) => todo.assignees)
+	assignments: BacklogItem[]
 	
 	///// Methods /////
 	

@@ -2,14 +2,14 @@ import express from 'express';
 import { AppDataSource } from '../src/data-source';
 import { Release } from "../src/entity/release"
 import request from 'supertest'
-import { newReleaseRouter } from '../src/router/release';
+// import { newReleaseRouter } from '../src/router/release';
 import user from '../src/router/user';
 import project from '../src/router/project';
 import { User } from '../src/entity/User';
 import { Project } from '../src/entity/project';
 import { UserRole } from '../src/entity/roles';
 import { Sprint } from '../src/entity/sprint';
-import { TodoItem } from '../src/entity/todo';
+import { BacklogItem } from '../src/entity/backlog';
 import { DataSource } from 'typeorm';
 
 let app = express();
@@ -19,7 +19,7 @@ let server;
 beforeAll(async () => {
 	appData = await AppDataSource.initialize().then(async () => {
 		app.use(express.json())
-		app.use(newReleaseRouter);
+		// app.use(newReleaseRouter);
 		user(app)
 		project(app)
 		const server = app.listen(8080)
@@ -30,15 +30,15 @@ beforeAll(async () => {
 })
 
 afterAll(async () => {
-	const userRepository = await AppDataSource.getRepository(User)
-	const projectRepository = await AppDataSource.getRepository(Project)
-	const releaseRepository = await AppDataSource.getRepository(Release)
-	const sprintRepository = await AppDataSource.getRepository(Sprint)
-	const todoRepository = await AppDataSource.getRepository(TodoItem)
-	const rolesRepository = await AppDataSource.getRepository(UserRole)
+	const userRepository = AppDataSource.getRepository(User)
+	const projectRepository = AppDataSource.getRepository(Project)
+	const releaseRepository = AppDataSource.getRepository(Release)
+	const sprintRepository = AppDataSource.getRepository(Sprint)
+	const backlogItemRepository = AppDataSource.getRepository(BacklogItem)
+	const rolesRepository = AppDataSource.getRepository(UserRole)
 
 	await rolesRepository.delete({});
-	await todoRepository.delete({});
+	await backlogItemRepository.delete({});
 	await sprintRepository.delete({});
 	await releaseRepository.delete({});
 	await projectRepository.delete({});
