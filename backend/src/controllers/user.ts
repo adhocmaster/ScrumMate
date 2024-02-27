@@ -1,9 +1,10 @@
 import express from "express";
-import { AppDataSource } from "../data-source";
-import { User } from "../entity/User";
 import { authentication, random } from "../helpers/index";
+import { Database } from "../data-source";
+
 
 export const createUser = async (req: express.Request, res: express.Response) => {
+	const db = Database.getInstance()
 	const {
 		username,
 		email,
@@ -12,47 +13,44 @@ export const createUser = async (req: express.Request, res: express.Response) =>
 
 	if(!username || !password || !email) return res.sendStatus(400);
 	
-	const user = await AppDataSource.manager.findOneBy(User, {email: email});
-	if(user) return res.sendStatus(400); // can use the unique: true flag in the entity
+	try {
+		const newUser = await db.createNewUser(username, email, password)
+		return res.json(newUser);
+	} catch {
+		return res.sendStatus(400)
+	}
 
-	const newUser = new User()
-	newUser.username = username
-	newUser.email = email
-  	newUser.salt = random();
-	newUser.password = authentication(newUser.salt, password);
-
-	await AppDataSource.manager.save(newUser)
-
-  	delete newUser.password;
-
-	return res.json(newUser);
 };
 
 export const login = async (req: express.Request, res: express.Response) => {
-  const {
-		email,
-		password,
-	} = req.body
-  if(!email || !password) return res.sendStatus(400);
+	const db = Database.getInstance()
+	const {
+			email,
+			password,
+		} = req.body
+	if(!email || !password) return res.sendStatus(400);
 
-  const user = await AppDataSource.manager.findOneBy(User, {email: email});
-  if(!user) return res.sendStatus(404);
+	try {
+		const user = await db.lookupUserByEmail(email);
+		const expectedHash = authentication(user.salt, password);
+		if(expectedHash !== user.password) return res.sendStatus(403);
 
-  const expectedHash = authentication(user.salt, password);
+		const newSalt = random();
+		user.salt = newSalt;
+		user.sessionToken = authentication(newSalt, user.username);
 
-  if(expectedHash !== user.password) return res.sendStatus(403);
+		await db.save(user);
 
-  const newSalt = random();
-  user.salt = newSalt;
-  user.sessionToken = authentication(newSalt, user.username);
-  await AppDataSource.manager.save(User, user);
-  res.cookie('user-auth', user.sessionToken, { domain: "localhost", path: "/" });
-  return res.sendStatus(200);
+		res.cookie('user-auth', user.sessionToken, { domain: "localhost", path: "/" });
+		return res.sendStatus(200);
+	} catch {
+		return res.sendStatus(404);
+	}
 };
 
 export const edit = async (req: express.Request, res: express.Response) => {
+	const db = Database.getInstance()
 	const { userId } = req.params
-	const user = await AppDataSource.manager.findOneBy(User, {id: parseInt(userId)})
 	const {
 		username,
 		email,
@@ -61,12 +59,7 @@ export const edit = async (req: express.Request, res: express.Response) => {
 		sessionToken
 	} = req.body
 
-	user.username = username ?? user.username
-	user.email = email ?? user.email
-	user.password = password ?? user.password
-	user.salt = salt ?? user.salt
-	user.sessionToken = sessionToken ?? user.sessionToken
+	const user = await db.updateUser(parseInt(userId), username, email, password, salt, sessionToken)
 
-	await AppDataSource.manager.save(user)
 	return res.json(user)
 };

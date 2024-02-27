@@ -1,5 +1,5 @@
 import express from "express";
-import {createUser, login, edit} from '../controllers/user';
+import { createUser, login, edit } from "../controllers/user";
 
 export default (router:express.Router) =>{
   router.post('/api/user/create', createUser);
