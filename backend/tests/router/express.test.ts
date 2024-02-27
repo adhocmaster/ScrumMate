@@ -9,7 +9,7 @@ import { User } from '../../src/entity/User';
 import { Project } from '../../src/entity/project';
 import { UserRole } from '../../src/entity/roles';
 import { Sprint } from '../../src/entity/sprint';
-import { BacklogItem } from '../../src/entity/backlog';
+import { BacklogItem } from '../../src/entity/backlogItem';
 
 let app = express();
 var appData: { app: any; server: any; destroy?: any; };

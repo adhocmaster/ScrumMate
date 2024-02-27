@@ -4,7 +4,7 @@ import { Release } from "./entity/release"
 import { UserRole } from "./entity/roles"
 import { Sprint } from "./entity/sprint"
 import { DataSource, EntityTarget, FindManyOptions, FindOptionsWhere, ObjectLiteral, QueryFailedError } from "typeorm"
-import { Bug, Epic, Infrastructure, Spike, Story, Task, BacklogItem, Priority } from "./entity/backlog"
+import { Bug, Epic, Infrastructure, Spike, Story, Task, BacklogItem, Priority } from "./entity/backlogItem"
 import { authentication, random } from "./helpers"
 import "reflect-metadata"
 

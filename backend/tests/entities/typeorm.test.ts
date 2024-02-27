@@ -3,7 +3,7 @@ import { Project } from "../../src/entity/project"
 import { Release } from "../../src/entity/release";
 import { Sprint } from "../../src/entity/sprint";
 import { DataSource } from "typeorm";
-import { Bug, Epic, Infrastructure, Spike, Story, Task, BacklogItem } from "../../src/entity/backlog";
+import { Bug, Epic, Infrastructure, Spike, Story, Task, BacklogItem } from "../../src/entity/backlogItem";
 import { UserRole } from "../../src/entity/roles";
 
 function makeRandomId(length: number) {

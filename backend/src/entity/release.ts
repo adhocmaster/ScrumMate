@@ -1,7 +1,7 @@
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany, ManyToOne } from "typeorm"
 import { Sprint } from "./sprint"
 import { Project } from "./project"
-import { BacklogItem } from "./backlog"
+import { BacklogItem } from "./backlogItem"
 import { addMaybeUndefined, getMaybeUndefined, removeMaybeUndefined } from "./utils/addGetList"
 
 @Entity()
