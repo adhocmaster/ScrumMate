@@ -17,7 +17,6 @@ export const createUser = async (req: express.Request, res: express.Response) =>
 	} catch {
 		return res.sendStatus(400)
 	}
-
 };
 
 export const login = async (req: express.Request, res: express.Response) => {

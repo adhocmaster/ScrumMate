@@ -1,5 +1,5 @@
 import express from 'express';
-import { AppDataSource, Database } from "../data-source";
+import { Database } from "../data-source";
 
 //User id param
 export const newProject =  async (req: express.Request, res: express.Response) => {
