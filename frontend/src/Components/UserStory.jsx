@@ -4,7 +4,7 @@ const UserStory = ({userStoryText}) => {
   return (
     <Card
       sx={{
-        maxWidth: '25%',
+        minHeight: 200,
         marginBottom: 1,
         marginRight: 2,
       }}

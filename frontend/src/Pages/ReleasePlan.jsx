@@ -39,7 +39,8 @@ const ReleasePlan = () => {
     another in real time.`
   const userStoryText = `As a student I want to be able to reset my password 
     in case I forget so that I do not lost access to all my account and data.`
-
+  const allUserStories = [userStoryText, problemStatement, highLevelGoals, highLevelGoals, problemStatement, "set up infrastructure", userStoryText, userStoryText, problemStatement, highLevelGoals, highLevelGoals, problemStatement, "add testing", userStoryText];
+  
   return (
     <Grid container spacing={2}>
       {/* Revision Sidebar */}
@@ -54,7 +55,7 @@ const ReleasePlan = () => {
         />
       </Grid>
 
-      <Grid item xs>
+      <Grid item xs={open ? 10 : 11}>
         {/* Current Sprint */}
         {/* TODO: update Sprint Number */}
         <Typography
@@ -123,11 +124,10 @@ const ReleasePlan = () => {
         {/* TODO: high level goals */}
         <ContentBox title={'High Level Goals'} content={highLevelGoals} />
         
-        {/* Backlog */}
         <Grid container spacing={2}>
 
           {/* Sprints */}
-          <Grid item xs>
+          <Grid item xs={9}>
             <Typography
               variant="h6"
               marginLeft={2}
@@ -139,21 +139,43 @@ const ReleasePlan = () => {
 
             <Paper
               sx={{
-                maxWidth: '95%',
                 marginLeft: 2,
                 backgroundColor: 'lightgray',
+                overflowX: 'auto', 
+                marginBottom: 2,
               }}
             >
-              {/* TODO: add Sprints */}
-              <List>
-                <ListItem>
-                  <UserStory userStoryText={userStoryText} />
-                </ListItem>
+              <List sx={{display: 'flex'}}>
+                {/* TODO: add Sprint's User Stories */}
+                {allUserStories.map((userStory, i) => (
+                  <ListItem key={i}  sx={{minWidth: 300, display: 'inline-block'}}>
+                      <UserStory userStoryText={userStory} />
+                  </ListItem>
+                ))}
               </List>
             </Paper>
+            
+            <Paper
+              sx={{
+                marginLeft: 2,
+                backgroundColor: 'lightgray',
+                overflowX: 'auto', 
+                marginBottom: 2,
+              }}
+            >
+              <List sx={{display: 'flex'}}>
+                {/* TODO: add Sprint's User Stories */}
+                {allUserStories.reverse().map((userStory, i) => (
+                  <ListItem key={i}  sx={{minWidth: 300, display: 'inline-block'}}>
+                      <UserStory userStoryText={userStory} />
+                  </ListItem>
+                ))}
+              </List>
+            </Paper>
+            
           </Grid>
 
-          <Grid item xs={2.5}>
+          <Grid item xs={3}>
             <Typography
               variant="h6"
               marginLeft={2}
@@ -165,6 +187,7 @@ const ReleasePlan = () => {
 
             <Paper
               sx={{
+                maxWidth: '90%',
                 marginLeft: 2,
                 backgroundColor: 'lightgray',
                 borderRadius: 6,
