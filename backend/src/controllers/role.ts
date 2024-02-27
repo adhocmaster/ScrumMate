@@ -1,7 +1,5 @@
 import express from "express";
-import { AppDataSource, Database } from "../data-source";
-import { User } from "../entity/User";
-import { UserRole } from "../entity/roles";
+import { Database } from "../data-source";
 
 export const createRole = async (req: express.Request, res: express.Response) => {
 	const db = Database.getInstance()
