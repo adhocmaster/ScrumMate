@@ -13,7 +13,7 @@ export enum Priority {
 
 @Entity()
 @TableInheritance({ column: { type: "varchar", name: "type" } })
-export class TodoItem {
+export class BacklogItem {
 
     @PrimaryGeneratedColumn()
     id: number
@@ -29,11 +29,11 @@ export class TodoItem {
 	@ManyToOne(() => Release, (release) => release.backlog) // have this whether it is in a backlog or not?
 	release: Release
 
-	// deviating from diagram: each todo item should only be in one backlog.
+	// deviating from diagram: each backlog item should only be in one backlog.
 	// if you need it in another sprint (eg. did not finish it this sprint and want to move it to next), copy it
 	// this way if you edit it in the new one, we don't change it in the previous sprints
 	// also, work in a sprint should be completed within that sprint.
-	@ManyToOne(() => Sprint, (story) => story.todos)
+	@ManyToOne(() => Sprint, (sprint) => sprint.todos)
 	sprint: Sprint // nullable in case it is just in the backlog
 
 	@ManyToMany(() => User, (user) => user.assignments)
@@ -57,7 +57,7 @@ export class TodoItem {
 // What fields do they have?
 // Maybe just leave this alone for now... we will surely get a US for it soon
 @ChildEntity()
-export class Epic extends TodoItem {
+export class Epic extends BacklogItem {
 
 	@Column()
 	userTypes: string
@@ -74,7 +74,7 @@ export class Epic extends TodoItem {
 }
 
 @ChildEntity()
-export class Story extends TodoItem {
+export class Story extends BacklogItem {
 
 	@Column()
 	userTypes: string
@@ -121,7 +121,7 @@ export class Story extends TodoItem {
 }
 
 @ChildEntity()
-export class Task extends TodoItem {
+export class Task extends BacklogItem {
 
 	@Column()
     description: string
@@ -135,7 +135,7 @@ export class Task extends TodoItem {
 }
 
 @ChildEntity()
-export class Spike extends TodoItem {
+export class Spike extends BacklogItem {
 
 	@Column()
 	description: string
@@ -143,7 +143,7 @@ export class Spike extends TodoItem {
 }
 
 @ChildEntity()
-export class Infrastructure extends TodoItem {
+export class Infrastructure extends BacklogItem {
 
 	@Column()
 	description: string
@@ -151,7 +151,7 @@ export class Infrastructure extends TodoItem {
 }
 
 @ChildEntity()
-export class Bug extends TodoItem {
+export class Bug extends BacklogItem {
 
 	@Column()
 	description: string

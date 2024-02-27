@@ -6,7 +6,7 @@ import project from './project';
 import release from './release';
 import role from './role';
 import sprint from './sprint';
-import todo from './todo';
+import backlogItem from './backlogItem';
 
 export default (): express.Router => {
    // authentication(router)
@@ -15,7 +15,7 @@ export default (): express.Router => {
     release(router);
     role(router);
     sprint(router);
-    todo(router);
+    backlogItem(router);
 
     return router;
 }

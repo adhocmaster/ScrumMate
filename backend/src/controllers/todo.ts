@@ -1,6 +1,6 @@
 import express from 'express';
 import { AppDataSource } from "../data-source";
-import { Story } from "../entity/todo";
+import { Story } from "../entity/backlog";
 import { Sprint } from "../entity/sprint";
 
 export const createStory = async(req: express.Request, res: express.Response) => {

@@ -4,7 +4,7 @@ import { Release } from "./entity/release"
 import { UserRole } from "./entity/roles"
 import { Sprint } from "./entity/sprint"
 import { DataSource, EntityTarget, FindManyOptions, FindOptionsWhere, ObjectLiteral, QueryFailedError } from "typeorm"
-import { Bug, Epic, Infrastructure, Spike, Story, Task, TodoItem } from "./entity/todo"
+import { Bug, Epic, Infrastructure, Spike, Story, Task, BacklogItem } from "./entity/backlog"
 import { authentication, random } from "./helpers"
 import "reflect-metadata"
 
@@ -12,12 +12,12 @@ export const AppDataSource = new DataSource({
     type: "postgres",
     host: "localhost",
     port: 5432,
-    username: "postgres",
-    password: "arthur",
+    username: "test",
+    password: "test",
     database: "test",
     synchronize: true,
     logging: true,
-    entities: [User, Project, Release, UserRole, Sprint, TodoItem, Epic, Story, Task, Spike, Infrastructure, Bug],
+    entities: [User, Project, Release, UserRole, Sprint, BacklogItem, Epic, Story, Task, Spike, Infrastructure, Bug],
     subscribers: [],
     migrations: [],
 })
@@ -187,7 +187,6 @@ export class Database {
 		if (!revision) {
 			revision = project.nextRevision
 			project.nextRevision = project.nextRevision + 1
-			console.log(project)
 			await this.save(project)
 		}
 		release.revision = revision
@@ -310,12 +309,12 @@ export class Database {
 
 	// TODO: more methods for stories, tasks, etc
 	// Some details TBD because of sponsor saying avoid duplication of data
-	public async lookupTODOById(id: number): Promise<TodoItem> {
-		const maybeTODO =  await this.dataSource.manager.findOneBy(TodoItem, {id: id});
-		if (!maybeTODO) {
+	public async lookupBacklogById(id: number): Promise<BacklogItem> {
+		const maybeBacklog =  await this.dataSource.manager.findOneBy(BacklogItem, {id: id});
+		if (!maybeBacklog) {
 			throw new Error(`TODO with id ${id} not found`)
 		}
-		return maybeTODO
+		return maybeBacklog
 	}
 
 	///// General Methods - Only use if there is not a method above to use /////
@@ -327,14 +326,14 @@ export class Database {
 	/// Like save, but guaranteed to not exist in the db
 	/// for performance purposes
 	/// WARNING: behaves differently than save somehow... doesnt save into original entity?
-	public async insert(item: User | Project | Release | UserRole | Sprint | TodoItem) {
+	public async insert(item: User | Project | Release | UserRole | Sprint | BacklogItem) {
 		return await this.dataSource.manager.insert(typeof(item), item);
 	}
 
 	/// Like save, but guaranteed to already exist in the db
 	/// for performance purposes
 	/// WARNING: behaves differently than save somehow...
-	public async update(item: User | Project | Release | UserRole | Sprint | TodoItem) {
+	public async update(item: User | Project | Release | UserRole | Sprint | BacklogItem) {
 		return await this.dataSource.manager.update(typeof(item), item.id, item);
 	}
 
@@ -357,7 +356,7 @@ export class Database {
 			relations: ['ownedProjects', 'joinedProjects'],
 		});
 		await this.dataSource.getRepository(UserRole).delete({})
-		await this.dataSource.getRepository(TodoItem).delete({})
+		await this.dataSource.getRepository(BacklogItem).delete({})
 		await this.dataSource.getRepository(Sprint).delete({})
 		for (const release of loadedReleases) { // many2many hard :(
 			delete release.project
