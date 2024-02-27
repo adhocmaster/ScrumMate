@@ -25,7 +25,7 @@ describe("Creating a database", () => {
 
 	test("setAndGetInstance initializes the database", async () => {
 		const datasouce:DataSource = await AppDataSource.initialize();
-		const db = await Database.setAndGetInstance(datasouce);
+		const db = Database.setAndGetInstance(datasouce);
 		expect(db.databaseIsInitialized).toBe(true)
 		expect(db.dataSourceIsInitialized).toBe(true)
 	});

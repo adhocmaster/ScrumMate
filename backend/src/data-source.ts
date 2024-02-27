@@ -40,7 +40,7 @@ export class Database {
 		return Database.instance;
 	}
 
-	public static async setAndGetInstance(dataSource: DataSource): Promise<Database> {
+	public static setAndGetInstance(dataSource: DataSource): Database {
 		if (!Database.instance) {
 			if (!dataSource.isInitialized)
 				throw new Error("Database's DataSource is not initialized! Use setAndGetInstance first.")

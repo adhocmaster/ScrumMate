@@ -191,12 +191,12 @@ describe('testing that everything can be saved and loaded from database', () => 
 	test('Saving then loading everything from the database', async () => {
 		await AppDataSource.initialize().then(async () => {
 			// connects to the test database
-			const userRepository = await AppDataSource.getRepository(User)
-			const projectRepository = await AppDataSource.getRepository(Project)
-			const releaseRepository = await AppDataSource.getRepository(Release)
-			const sprintRepository = await AppDataSource.getRepository(Sprint)
-			const backlogItemRepository = await AppDataSource.getRepository(BacklogItem)
-			const rolesRepository = await AppDataSource.getRepository(UserRole)
+			const userRepository = AppDataSource.getRepository(User)
+			const projectRepository = AppDataSource.getRepository(Project)
+			const releaseRepository = AppDataSource.getRepository(Release)
+			const sprintRepository = AppDataSource.getRepository(Sprint)
+			const backlogItemRepository = AppDataSource.getRepository(BacklogItem)
+			const rolesRepository = AppDataSource.getRepository(UserRole)
 			
 			// save everything into the database
 			await userRepository.save([productOwner1, productOwner2, teammember1, teammember2]);
