@@ -10,9 +10,7 @@ export const createUser = async (req: express.Request, res: express.Response) =>
 		email,
 		password,
 	} = req.body
-
 	if(!username || !password || !email) return res.sendStatus(400);
-	
 	try {
 		const newUser = await db.createNewUser(username, email, password)
 		return res.json(newUser);
@@ -29,7 +27,6 @@ export const login = async (req: express.Request, res: express.Response) => {
 			password,
 		} = req.body
 	if(!email || !password) return res.sendStatus(400);
-
 	try {
 		const user = await db.lookupUserByEmail(email);
 		const expectedHash = authentication(user.salt, password);
@@ -58,8 +55,6 @@ export const edit = async (req: express.Request, res: express.Response) => {
 		salt,
 		sessionToken
 	} = req.body
-
 	const user = await db.updateUser(parseInt(userId), username, email, password, salt, sessionToken)
-
 	return res.json(user)
 };
