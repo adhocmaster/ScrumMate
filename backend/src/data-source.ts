@@ -187,7 +187,6 @@ export class Database {
 		if (!revision) {
 			revision = project.nextRevision
 			project.nextRevision = project.nextRevision + 1
-			console.log(project)
 			await this.save(project)
 		}
 		release.revision = revision
