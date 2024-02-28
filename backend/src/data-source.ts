@@ -8,7 +8,6 @@ import { Bug, Epic, Infrastructure, Spike, Story, Task, BacklogItem, Priority } 
 import { authentication, random } from "./helpers"
 import "reflect-metadata"
 import { ExistingUserError, NotFoundError, NotSavedError } from "./helpers/errors"
-import { resourceLimits } from "worker_threads"
 
 export const AppDataSource = new DataSource({
     type: "postgres",
