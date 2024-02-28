@@ -1,5 +1,6 @@
 import express from 'express';
 import { Database } from "../data-source";
+import { verifyParameters } from './utils/verifyParams';
 
 //User id param
 export const newProject =  async (req: express.Request, res: express.Response) => {

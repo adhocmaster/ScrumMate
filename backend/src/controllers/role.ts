@@ -1,5 +1,6 @@
 import express from "express";
 import { Database } from "../data-source";
+import { verifyParameters } from './utils/verifyParams';
 
 export const createRole = async (req: express.Request, res: express.Response) => {
 	const db = Database.getInstance()
@@ -7,6 +8,7 @@ export const createRole = async (req: express.Request, res: express.Response) =>
 	const {
 		role,
 	} = req.body
+	if (!verifyParameters(role)) res.sendStatus(403)
 	const newRole = await db.createNewRole(parseInt(userId), parseInt(sprintId), role)
 	return res.json(newRole);
 };
