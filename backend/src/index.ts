@@ -24,7 +24,7 @@ AppDataSource.initialize().then(async () => {
     // console.log("Here you can setup and run express / fastify / any other framework.")
 
 	app.use(express.json())
-  app.use('/api', router());
+  	app.use('/api', router());
 	app.listen(8080, () => {
 		console.log("Running on port 8080")
 	})

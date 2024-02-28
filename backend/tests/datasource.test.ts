@@ -106,6 +106,16 @@ describe("Project methods", () => {
 		expect(plannertarium.getTeamMembers()[0].username).toBe("joe")
 	});
 
+	test("creating a second project for bob", async () => {
+		const db = Database.getInstance();
+		const scrumMate = await db.createNewProject(bob.id, "scrummate")
+		expect(scrumMate.name).toBe("scrummate")
+		expect((await db.fetchUserWithProjects(bob.id)).getOwnedProjects().length).toBe(2)
+		expect((await db.fetchUserWithProjects(bob.id)).getOwnedProjects()[0].name).toBe("plannertarium")
+		expect((await db.fetchUserWithProjects(bob.id)).getOwnedProjects()[1].name).toBe("scrummate")
+		expect((await db.fetchUserWithProjects(bob.id)).getJoinedProjects()).toStrictEqual([])
+	});
+
 });
 
 describe("release plans", () => {

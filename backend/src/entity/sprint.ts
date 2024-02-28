@@ -1,7 +1,7 @@
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToOne, OneToMany, JoinColumn, CreateDateColumn, ManyToMany, JoinTable } from "typeorm"
 import { User } from "./User"
 import { Release } from "./release"
-import { BacklogItem } from "./backlog"
+import { BacklogItem } from "./backlogItem"
 import { UserRole } from "./roles"
 import { getMaybeUndefined, addMaybeUndefined, removeMaybeUndefined } from "./utils/addGetList"
 

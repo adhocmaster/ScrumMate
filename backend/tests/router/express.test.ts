@@ -1,5 +1,5 @@
 import express from 'express';
-import { AppDataSource } from '../../src/data-source';
+import { AppDataSource, Database } from '../../src/data-source';
 import { Release } from "../../src/entity/release"
 import request from 'supertest'
 // import { newReleaseRouter } from '../src/router/release';
@@ -9,8 +9,7 @@ import { User } from '../../src/entity/User';
 import { Project } from '../../src/entity/project';
 import { UserRole } from '../../src/entity/roles';
 import { Sprint } from '../../src/entity/sprint';
-import { BacklogItem } from '../../src/entity/backlog';
-import { DataSource } from 'typeorm';
+import { BacklogItem } from '../../src/entity/backlogItem';
 
 let app = express();
 var appData: { app: any; server: any; destroy?: any; };
@@ -29,6 +28,8 @@ beforeAll(async () => {
 	  });;
 	app = appData.app;
 	server = appData.server;
+
+	Database.setAndGetInstance(AppDataSource)
 })
 
 afterAll(async () => {

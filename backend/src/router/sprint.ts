@@ -1,10 +1,8 @@
 import express from "express";
-import { AppDataSource } from "../data-source";
-import { Sprint } from "../entity/sprint";
-import { Release } from "../entity/release";
 import { createSprint, editSprint} from '../controllers/sprint';
+import { errorWrapper } from '../helpers/errors';
 
 export default (router: express.Router) => {
-  router.post('/release/:releaseId/sprint/create', createSprint);
-  router.post('/sprint/:sprintId/edit', editSprint);
+  router.post('/release/:releaseId/sprint/create', errorWrapper(createSprint));
+  router.post('/sprint/:sprintId/edit', errorWrapper(editSprint));
 }

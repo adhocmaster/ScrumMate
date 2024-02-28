@@ -1,7 +1,7 @@
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany, ManyToMany, JoinTable } from "typeorm"
 import { Project } from "./project"
 import { getMaybeUndefined, addMaybeUndefined, removeMaybeUndefined } from "./utils/addGetList"
-import { BacklogItem } from "./backlog"
+import { BacklogItem } from "./backlogItem"
 
 @Entity()
 export class User {
