@@ -30,10 +30,6 @@ export const editRelease = async (req: express.Request, res: express.Response) =
 export const copyRelease = async (req: express.Request, res: express.Response) => {
 	const db = Database.getInstance()
 	const {releaseId} = req.params;
-	try {
-		const release = await db.copyRelease(parseInt(releaseId))
-		res.json(release)
-	} catch {
-		res.sendStatus(404) // 404 right?
-	}
+	const release = await db.copyRelease(parseInt(releaseId))
+	return res.json(release)
 };
