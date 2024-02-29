@@ -1,5 +1,6 @@
 import express from 'express';
-import { AppDataSource } from './data-source';
+import { Database, AppDataSource } from './data-source';
+
 import { Release } from "./entity/release"
 import { Project } from './entity/project';
 import router from './router/index';
@@ -7,24 +8,9 @@ import router from './router/index';
 const app = express();
 
 AppDataSource.initialize().then(async () => {
-
-    // console.log("Inserting a new user into the database...")
-    // const release = new Release()
-	// release.revision = 1
-	// release.revisionDate = new Date()
-	// release.problemStatement = "31231sdan24235"
-    // release.goalStatement = "413rquterouvnbyoai"
-    // await AppDataSource.manager.save(release)
-    // console.log("Saved a new release with id: " + release.id)
-
-    // console.log("Loading releases from the database...")
-    // const releases = await AppDataSource.manager.find(Release)
-    // console.log("Loaded releases: ", releases)
-
-    // console.log("Here you can setup and run express / fastify / any other framework.")
-
+  Database.setAndGetInstance(AppDataSource);
 	app.use(express.json())
-  	app.use('/api', router());
+  app.use('/api', router());
 	app.listen(8080, () => {
 		console.log("Running on port 8080")
 	})

@@ -5,9 +5,9 @@ import { verifyParameters } from './utils/verifyParams';
 //User id param
 export const newProject =  async (req: express.Request, res: express.Response) => {
 	const db = Database.getInstance()
-	const { userId } = req.params
 	const {
 		name,
+    userId
 	} = req.body
 	const newProject = await db.createNewProject(parseInt(userId), name)
 	return res.json(newProject)

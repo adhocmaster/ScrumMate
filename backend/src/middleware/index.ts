@@ -1,12 +1,13 @@
 import express from 'express';
 import {get, merge} from 'lodash'
+import { Database } from '../../src/data-source';
 
 import { UserModel } from '../db/user';
 declare module 'express' {
-    export interface Request {
-      userId?: string; // Use the appropriate type for userId
-    }
+  export interface Request {
+    userId?: number; // Use the appropriate type for userId
   }
+}
 
 export const isOwner = async (req:express.Request, res: express.Response, next:express.NextFunction) => {
     try{
@@ -27,24 +28,18 @@ export const isOwner = async (req:express.Request, res: express.Response, next:e
 }
 
 export const isAuthenticated = async (req:express.Request, res: express.Response, next:express.NextFunction) => {
-    try{
-        const sessionToken = req.cookies['user-auth'];
-        console.log(sessionToken)
-        if(!sessionToken){
-            return res.sendStatus(403);
-        }
-        const existingUser = await UserModel.getUserBySessionToken(sessionToken);
-        if(!existingUser){
-            return res.sendStatus(403);
-        }
-        req.userId = existingUser._id
-        merge(req,{identity: existingUser})
-        return next();
-    }catch(error){
-        console.log(error);
-        return res.sendStatus(400);
-
-    }
+  const db = Database.getInstance()
+  const sessionToken = req.cookies['user-auth'];
+  console.log(sessionToken)
+  if(!sessionToken){
+    return res.sendStatus(403);
+  }
+  const existingUser = await db.lookupUserBySessionToken(sessionToken);
+  if(!existingUser){
+    return res.sendStatus(403);
+  }
+  req.userId = existingUser.id
+  return next();
 }
 
 
