@@ -1,5 +1,5 @@
 import express from 'express';
-import { AppDataSource } from './data-source';
+import { AppDataSource, Database } from './data-source';
 import { Release } from "./entity/release"
 import { Project } from './entity/project';
 import router from './router/index';
@@ -22,7 +22,7 @@ AppDataSource.initialize().then(async () => {
     // console.log("Loaded releases: ", releases)
 
     // console.log("Here you can setup and run express / fastify / any other framework.")
-
+	Database.setAndGetInstance(AppDataSource)
 	app.use(express.json())
   	app.use('/api', router());
 	app.listen(8080, () => {
