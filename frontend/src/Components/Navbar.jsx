@@ -7,6 +7,31 @@ import { IconButton } from '@mui/material';
 
 const Navbar = ({ isLoggedIn, onSignOut }) => {
 
+
+  const projectName = (name) => {
+    try{
+      var options = {
+        url: "https://localhost:3000/projects", //this is a placeholder, backend creates function
+        method: "GET",
+        headers: {
+          'Content-Type': 'applications/json'
+        },
+        body:JSON.stringify({name}),
+        credentials: 'include'
+      }
+      fetch('http://localhost:3001/projects', options). then((result) => {
+        console.log(result)
+        if(result.status == 200){
+
+        }
+        return result.json()
+      })
+    }
+    catch{
+
+    }
+  }
+
   // const textOutline = `
   //   -1px -1px 0 #000, 
   //   1px -1px 0 #000, 
@@ -35,6 +60,10 @@ const Navbar = ({ isLoggedIn, onSignOut }) => {
           >
             {/* ScrumMate Logo */}
             <Link exact to="/" style={{ textDecoration: 'none', color: 'white' }}>ScrumMate</Link>
+          </Typography>
+
+          <Typography>
+
           </Typography>
 
           {/* Avatar Button */}
