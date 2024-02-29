@@ -4,12 +4,14 @@ import { Database, AppDataSource } from './data-source';
 import { Release } from "./entity/release"
 import { Project } from './entity/project';
 import router from './router/index';
+import cookieParser from 'cookie-parser';
 
 const app = express();
 
 AppDataSource.initialize().then(async () => {
   Database.setAndGetInstance(AppDataSource);
 	app.use(express.json())
+  app.use(cookieParser());
   app.use('/api', router());
 	app.listen(8080, () => {
 		console.log("Running on port 8080")

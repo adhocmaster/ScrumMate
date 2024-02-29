@@ -7,10 +7,6 @@ export const Codes = {
   Success: 200,
 };
 
-export interface Error {
-  __code?: Number
-}
-
 export class NotFoundError extends Error {
     constructor(msg: string) {
         super(msg);
@@ -46,7 +42,6 @@ export function errorWrapper(func: { (req: express.Request, res: express.Respons
 		try {
 			return func(req, res)
 		} catch (err) {
-      console.log('here')
 			if(err.code) {
         return res.sendStatus(err.code());
       }

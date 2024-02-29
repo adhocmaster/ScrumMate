@@ -9,7 +9,7 @@ export const newProject =  async (req: express.Request, res: express.Response) =
 		name,
     userId
 	} = req.body
-	const newProject = await db.createNewProject(parseInt(userId), name)
+	const newProject = await db.createNewProject(userId, name)
 	return res.json(newProject)
 };
 

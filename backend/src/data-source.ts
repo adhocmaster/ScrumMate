@@ -13,8 +13,8 @@ export const AppDataSource = new DataSource({
     type: "postgres",
     host: "localhost",
     port: 5432,
-    username: "postgres",
-    password: "arthur",
+    username: "test",
+    password: "test",
     database: "test",
     synchronize: true,
     logging: false,
@@ -151,6 +151,8 @@ export class Database {
 		user.addOwnedProject(newProject)
 		// await this.save(user) // DO NOT DO THIS! if dont fetch all old projects, saving just 1 project erases
 		await this.save(newProject)
+    // await this.save(user);
+    delete newProject.productOwner.ownedProjects;
 		return newProject
 	}
 
