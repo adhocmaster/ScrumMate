@@ -38,14 +38,15 @@ export class ExistingUserError extends Error {
 }
 
 export function errorWrapper(func: { (req: express.Request, res: express.Response): Promise<express.Response>; (arg0: express.Request, arg1: express.Response): any; }) {
-	return function call(req: express.Request, res: express.Response) {
+	return async function call(req: express.Request, res: express.Response) {
 		try {
-			return func(req, res)
+			// console.log(`running function ${func.name}`)
+			return await func(req, res)
 		} catch (err) {
+			// console.log("caught error")
 			if(err.code) {
-        return res.sendStatus(err.code());
-      }
-
+				return res.sendStatus(err.code());
+			}
 			return res.sendStatus(500)
 		}
 	}

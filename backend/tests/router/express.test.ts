@@ -73,13 +73,13 @@ describe("User API tests", () => {
 		.expect(403);
 	});
 
-  test('Missing parameters', async () => {
-    const body = {email: 'saly@gmail.com', password: "password"}
-    await request(app)
-    .post("/api/user/create")
-    .send(body)
-    .expect(400);
-  });
+	test('Missing parameters', async () => {
+		const body = {email: 'saly@gmail.com', password: "password"}
+		await request(app)
+		.post("/api/user/create")
+		.send(body)
+		.expect(400);
+	});
 
 	test("Valid login", async () => {
 		const body = {email: "sallys@gmail.com", password: "password123"}
@@ -89,16 +89,16 @@ describe("User API tests", () => {
 		.expect(200);
 	});
 
-  test('Create user with same email', async () => {
-    const body = {username: "sally", email: "sallys@gmail.com", password: "password123"}
-      let res;
-      try {
-        res = await request(app).post("/api/user/create").send(body)
-      } catch(e) {
-        expect(e).toBe(ExistingUserError);
-      }
-      expect(res).toBeUndefined;      
-  });
+	test('Create user with same email', async () => {
+		const body = {username: "sally", email: "sallys@gmail.com", password: "password123"}
+		let res;
+		try {
+			res = await request(app).post("/api/user/create").send(body)
+		} catch(e) {
+			expect(e).toBe(ExistingUserError);
+		}
+		expect(res).toBeUndefined;      
+	});
 
   
 
