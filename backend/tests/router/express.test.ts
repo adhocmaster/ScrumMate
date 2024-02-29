@@ -17,9 +17,9 @@ var appData: { app: any; server: any; destroy?: any; };
 let server;
 
 beforeAll(async () => {
-	if (AppDataSource.isInitialized) await deleteAll();
+	if (AppDataSource.isInitialized) await AppDataSource.destroy();
 
-  appData = await AppDataSource.initialize().then(async () => {
+  	appData = await AppDataSource.initialize().then(async () => {
     Database.setAndGetInstance(AppDataSource);
     app.use(express.json())
     app.use('/api', router())

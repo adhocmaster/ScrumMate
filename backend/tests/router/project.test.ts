@@ -17,7 +17,7 @@ import { IntegerType } from 'typeorm';
 
 let app = express();
 var appData: { app: any; server: any; destroy?: any; };
-let server;
+let server: { close: () => any; };
 
 beforeAll(async () => {
 	  if (AppDataSource.isInitialized) await deleteAll();
@@ -53,6 +53,7 @@ async function deleteAll() {
 afterAll(async () => {
 	await deleteAll();
 	await AppDataSource.destroy();
+	await server.close()
 });
 
 describe("Project API tests", () => {
