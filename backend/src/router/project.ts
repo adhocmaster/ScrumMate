@@ -6,6 +6,6 @@ import { isAuthenticated } from "../middleware/index";
 export default (router:express.Router) => {
   router.post('/project', isAuthenticated, errorWrapper(newProject));
   router.post('/project/:userId/joinProject/:projectId', errorWrapper(joinProject));
-  router.post('/project/:projectId/edit', errorWrapper(editProject))
-  router.post('/project/:projectId/releases', errorWrapper(getReleases));
+  router.patch('/project/:projectId', isAuthenticated, errorWrapper(editProject))
+  router.get('/project/:projectId/releases', isAuthenticated, errorWrapper(getReleases));
 };

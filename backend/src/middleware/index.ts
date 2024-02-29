@@ -29,7 +29,6 @@ export const isOwner = async (req:express.Request, res: express.Response, next:e
 
 export const isAuthenticated = async (req:express.Request, res: express.Response, next:express.NextFunction) => {
   const db = Database.getInstance()
-  console.log(req.cookies)
   const sessionToken = req.cookies['user-auth'];
   if(!sessionToken){
     return res.sendStatus(403);
@@ -38,7 +37,6 @@ export const isAuthenticated = async (req:express.Request, res: express.Response
   if(!existingUser){
     return res.sendStatus(403);
   }
-  console.log(existingUser.id)
   req.userId = existingUser.id
   return next();
 }

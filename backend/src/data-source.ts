@@ -148,6 +148,7 @@ export class Database {
 		newProject.name = projectName
 		newProject.nextRevision = 1
 		newProject.productOwner = user
+    newProject.releases = [];
 		user.addOwnedProject(newProject)
 		// await this.save(user) // DO NOT DO THIS! if dont fetch all old projects, saving just 1 project erases
 		await this.save(newProject)

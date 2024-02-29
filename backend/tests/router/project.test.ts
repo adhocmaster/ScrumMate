@@ -12,6 +12,8 @@ import { UserRole } from '../../src/entity/roles';
 import { Sprint } from '../../src/entity/sprint';
 import { BacklogItem } from '../../src/entity/backlogItem';
 import cookieParser from 'cookie-parser';
+import internal from 'stream';
+import { IntegerType } from 'typeorm';
 
 let app = express();
 var appData: { app: any; server: any; destroy?: any; };
@@ -79,6 +81,8 @@ describe("Project API tests", () => {
     });
 	});
 
+  let projectId: Number;
+
   test('Create project', async () => {
     const body = {name: "new Project"};
     await request(app)
@@ -88,7 +92,50 @@ describe("Project API tests", () => {
     .expect(200)
     .then((res) => {
       expect(res.body).toBeDefined();
-      expect(res.body.name).toEqual('new Project');
+      expect(res.body.name).toEqual('new Project'); 
+      expect(res.body.id).toBeDefined();
+      projectId = res.body.id;
     });
+  });
+
+  test('Create Project without auth', async ()=> {
+    const body = {name: "new Project"};
+    await request(app)
+    .post("/api/project")
+    .send(body)
+    .expect(403)
+  });
+
+  test('Update Project', async () => {
+    const body = {name: "Updated Project"};
+    await request(app)
+    .patch(`/api/project/${projectId}`)
+    .set('Cookie', [`user-auth=${sessionToken}`])
+    .send(body)
+    .expect(200)
+    .then((res) => {
+      expect(res.body).toBeDefined();
+      expect(res.body.name).toEqual('Updated Project'); 
+      expect(res.body.id).toBeDefined();
+    });
+  });
+
+  test('Update Non exisiting Project', async () => {
+    await request(app)
+    .patch(`/api/project/500`)
+    .set('Cookie', [`user-auth=${sessionToken}`])
+    .expect(400)
+  });
+
+  test("Get Releases of Empty Project", async () => {
+    await request(app)
+    .get(`/api/project/${projectId}/releases`)
+    .set('Cookie', [`user-auth=${sessionToken}`])
+    .expect(200)
+    .then((res) => {
+      expect(res.body).toBeDefined();
+      expect(res.body.id).toBeDefined();
+      expect(res.body.releases).toEqual([]);
+    })
   });
 });

@@ -97,9 +97,9 @@ describe("User API tests", () => {
       } catch(e) {
         expect(e).toBe(ExistingUserError);
       }
-      expect(res).toBeUndefined;
-
-      
+      expect(res).toBeUndefined;      
   });
+
+  
 
 });

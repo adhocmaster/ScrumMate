@@ -35,4 +35,3 @@ export const getReleases = async (req: express.Request, res: express.Response) =
 	const { projectId } = req.params
 	return res.json(await db.fetchProjectWithReleases(parseInt(projectId)))
 };
-
