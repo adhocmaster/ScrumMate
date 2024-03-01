@@ -1,28 +1,28 @@
-import React, { useState } from 'react';
-import Box from '@mui/material/Box';
-import Typography from '@mui/material/Typography';
-import TextField from '@mui/material/TextField';
-import Button from '@mui/material/Button';
-import Link from '@mui/material/Link';
+import React, { useState } from 'react'
+import Box from '@mui/material/Box'
+import Typography from '@mui/material/Typography'
+import TextField from '@mui/material/TextField'
+import Button from '@mui/material/Button'
+import Link from '@mui/material/Link'
 
-function SignInBox({ onLogin }) {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+function SignInBox ({ onLogin }) {
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
 
   const handleEmailChange = (event) => {
-    setEmail(event.target.value);
-  };
+    setEmail(event.target.value)
+  }
 
   const handlePasswordChange = (event) => {
-    setPassword(event.target.value);
-  };
-  
-  const handleEnterClick = (e) => {
-    e.preventDefault();
-    onLogin(email,password)
-  };
+    setPassword(event.target.value)
+  }
 
-  console.log("HIT THE SIGN IN BOX")
+  const handleEnterClick = (e) => {
+    e.preventDefault()
+    onLogin(email, password)
+  }
+
+  console.log('HIT THE SIGN IN BOX')
 
   return (
     <Box
@@ -35,8 +35,8 @@ function SignInBox({ onLogin }) {
         width: '100%',
         paddingTop: '20px',
         '@media (max-width: 600px)': {
-          paddingTop: '10px',
-        },
+          paddingTop: '10px'
+        }
       }}
     >
       <Box
@@ -45,7 +45,7 @@ function SignInBox({ onLogin }) {
           maxWidth: '800px',
           bgcolor: 'rgb(34, 19, 170)',
           color: 'white',
-          marginTop: '20px', 
+          marginTop: '20px',
           p: 3,
           borderRadius: '10px',
           boxShadow: '10px 10px 10px rgba(0, 0, 0, 0.7)',
@@ -60,15 +60,15 @@ function SignInBox({ onLogin }) {
             '& .MuiInput-underline:hover:not(.Mui-disabled):before': { borderBottomColor: 'white' },
             '& .MuiInput-underline:after': { borderBottomColor: 'white' },
             '& .MuiOutlinedInput-root': {
-              color: 'white', 
+              color: 'white',
               '& fieldset': {
-                borderColor: 'white',
+                borderColor: 'white'
               },
               '&:hover fieldset': {
-                borderColor: 'white', 
+                borderColor: 'white'
               },
               '&.Mui-focused fieldset': {
-                borderColor: 'white', 
+                borderColor: 'white'
               },
               '& input:-webkit-autofill': {
                 WebkitBoxShadow: '0 0 0 100px rgb(34, 19, 170) inset',
@@ -87,9 +87,9 @@ function SignInBox({ onLogin }) {
                 WebkitTextFillColor: 'white',
                 WebkitBackgroundClip: 'text',
                 caretColor: 'white'
-              },
-            },
-          },
+              }
+            }
+          }
         }}
         component="form"
         onSubmit={handleEnterClick}
@@ -99,7 +99,7 @@ function SignInBox({ onLogin }) {
             typography: 'h5',
             color: 'white',
             textAlign: 'center',
-            textShadow: '1px 1px black, -1px -1px black, 1px -1px black, -1px 1px black',
+            textShadow: '1px 1px black, -1px -1px black, 1px -1px black, -1px 1px black'
           }}
         >
           Sign In
@@ -111,7 +111,7 @@ function SignInBox({ onLogin }) {
           value={email}
           onChange={handleEmailChange}
           sx={{
-            marginBottom: '20px', 
+            marginBottom: '20px'
           }}
         />
         <TextField
@@ -131,8 +131,8 @@ function SignInBox({ onLogin }) {
             color: 'rgb(34, 19, 170)',
             '&:hover': {
               bgcolor: 'white',
-              color: 'rgb(34, 19, 170)',
-            },
+              color: 'rgb(34, 19, 170)'
+            }
           }}
         >
           Enter
@@ -140,7 +140,7 @@ function SignInBox({ onLogin }) {
         <Typography sx={{ color: 'white', textAlign: 'center', mt: 2 }}>
           <Link
             href="/register"
-            // onClick={() => window.open('/register', '_blank')} 
+            // onClick={() => window.open('/register', '_blank')}
             sx={{ color: 'white', textDecoration: 'none' }}
           >
             Create a new account
@@ -156,7 +156,7 @@ function SignInBox({ onLogin }) {
         </Typography>
       </Box>
     </Box>
-  );
+  )
 }
 
-export default SignInBox;
+export default SignInBox

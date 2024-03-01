@@ -1,113 +1,110 @@
-import React, { useState } from 'react';
-import { Box, Button, TextareaAutosize, Typography, Paper} from '@mui/material';
-import Slider from '@mui/material/Slider';
+import React, { useState } from 'react'
+import { Box, Button, TextareaAutosize, Typography, Paper } from '@mui/material'
+import Slider from '@mui/material/Slider'
 const marks = [
-    {
-      value: 0,
-      label: '0',
-    },
-    {
-      value: 10,
-      label: '10',
-    },
-    {
-      value: 20,
-      label: '20',
-    },
-    {
-      value: 30,
-      label: '30',
-    },
-    {
-      value: 40,
-      label: '40',
-    },
-    {
-      value: 50,
-      label: '50',
-    },
-    {
-      value: 60,
-      label: '60',
-    },
-    {
-      value: 70,
-      label: '70',
-    },
-    {
-      value: 80,
-      label: '80',
-    },
-    {
-      value: 90,
-      label: '90',
-    },
-    {
-      value: 100,
-      label: '100',
-    },
-  ]
-const CreateSprints = ({ projectId,onFormSubmit }) => {
-    
-    const [userStories, setUserStories] = useState([{ description: '', notes: '', points: 20}]); //Array of user stories
-    const [spikes, setSpikes] = useState(['']); // Array of goals
-    const handleUserStoryChange = (index, field, value) => {
-        console.log(index,field,value)
-        const updatedStories = userStories.map((story, idx) => {
-          if (idx === index) {
-            return { ...story, [field]: value };
-          }
-          return story;
-        });
-        setUserStories(updatedStories);
-    };
+  {
+    value: 0,
+    label: '0'
+  },
+  {
+    value: 10,
+    label: '10'
+  },
+  {
+    value: 20,
+    label: '20'
+  },
+  {
+    value: 30,
+    label: '30'
+  },
+  {
+    value: 40,
+    label: '40'
+  },
+  {
+    value: 50,
+    label: '50'
+  },
+  {
+    value: 60,
+    label: '60'
+  },
+  {
+    value: 70,
+    label: '70'
+  },
+  {
+    value: 80,
+    label: '80'
+  },
+  {
+    value: 90,
+    label: '90'
+  },
+  {
+    value: 100,
+    label: '100'
+  }
+]
+const CreateSprints = ({ projectId, onFormSubmit }) => {
+  const [userStories, setUserStories] = useState([{ description: '', notes: '', points: 20 }]) // Array of user stories
+  const [spikes, setSpikes] = useState(['']) // Array of goals
+  const handleUserStoryChange = (index, field, value) => {
+    console.log(index, field, value)
+    const updatedStories = userStories.map((story, idx) => {
+      if (idx === index) {
+        return { ...story, [field]: value }
+      }
+      return story
+    })
+    setUserStories(updatedStories)
+  }
 
-    const addNewStory = () => {
-        setUserStories([...userStories, { description: '', notes: '', points: 20 }]);
-    };
-    
-    function valuetext(value) {
-        return `${value}`;
+  const addNewStory = () => {
+    setUserStories([...userStories, { description: '', notes: '', points: 20 }])
+  }
+
+  function valuetext (value) {
+    return `${value}`
+  }
+
+  const handleSpikeChange = (index, event) => {
+    const newSpikes = [...spikes]
+    newSpikes[index] = event.target.value
+    setSpikes(newSpikes)
+  }
+
+  const addNewSpike = () => {
+    setSpikes([...spikes, '']) // Add a new empty goal
+  }
+  const handleSaveDocument = () => {
+    console.log(projectId, spikes, userStories)
+    // create Fetch here
+    const SprintData = {
+      spikes,
+      user_stories: userStories
     }
 
-    const handleSpikeChange = (index, event) => {
-        const newSpikes = [...spikes];
-        newSpikes[index] = event.target.value;
-        setSpikes(newSpikes);
-    };
-
-    const addNewSpike = () => {
-        setSpikes([...spikes, '']); // Add a new empty goal
-    };
-    const handleSaveDocument = () => {
-        console.log(projectId,spikes,userStories)
-        //create Fetch here
-        const SprintData = {
-            spikes: spikes,
-            user_stories: userStories,
-          };
-        
-          var options = {
-            url: `http://localhost:3001/projects/${projectId}/sprint/`,
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json'
-            },
-            credentials: 'include',
-            body: JSON.stringify(SprintData)
-          }
-        fetch(`http://localhost:3001/projects/${projectId}/sprint/`,options).then((result) => {
-            console.log(result)
-            if (result.status === 200) {
-              console.log(result)
-              onFormSubmit()
-            }
-          })
+    const options = {
+      url: `http://localhost:3001/projects/${projectId}/sprint/`,
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      credentials: 'include',
+      body: JSON.stringify(SprintData)
+    }
+    fetch(`http://localhost:3001/projects/${projectId}/sprint/`, options).then((result) => {
+      console.log(result)
+      if (result.status === 200) {
+        console.log(result)
         onFormSubmit()
-
-
-    }
-    return(
+      }
+    })
+    onFormSubmit()
+  }
+  return (
         <Box
         sx={{
           display: 'flex',
@@ -117,10 +114,10 @@ const CreateSprints = ({ projectId,onFormSubmit }) => {
           padding: 2
         }}
       >
-        <Typography variant="h5" sx={{ marginBottom: 2,marginTop:2 }}>
+        <Typography variant="h5" sx={{ marginBottom: 2, marginTop: 2 }}>
           Create Sprint Document
-        </Typography>       
-        
+        </Typography>
+
         <Typography variant="h6" sx={{ marginTop: 2, marginBottom: 2 }}>
           Spikes
         </Typography>
@@ -170,12 +167,12 @@ const CreateSprints = ({ projectId,onFormSubmit }) => {
               step={1}
               marks={marks}
               valueLabelDisplay="on"
-              onChange = {(e,val)=>handleUserStoryChange(index,'points',val)}
+              onChange = {(e, val) => handleUserStoryChange(index, 'points', val)}
             />
-  
+
           </Paper>
         ))}
-  
+
         <Button
           variant="contained"
           sx={{ marginTop: 2, alignSelf: 'start' }}
@@ -186,14 +183,13 @@ const CreateSprints = ({ projectId,onFormSubmit }) => {
         <Button
           variant="contained"
           color="primary"
-          sx={{ marginTop: 2,marginBottom:2, alignSelf: 'center' }}
+          sx={{ marginTop: 2, marginBottom: 2, alignSelf: 'center' }}
           onClick={handleSaveDocument}
         >
           Save Sprint
         </Button>
       </Box>
-    )
-
+  )
 }
 
 export default CreateSprints

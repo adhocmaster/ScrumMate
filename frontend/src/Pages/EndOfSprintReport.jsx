@@ -1,5 +1,5 @@
-import React from 'react';
-import { Box, Typography, Paper, TextField, Button } from '@mui/material';
+import React from 'react'
+import { Box, Typography, Paper, TextField, Button } from '@mui/material'
 
 const EndOfSprintReport = () => {
   return (
@@ -13,13 +13,13 @@ const EndOfSprintReport = () => {
           <Paper elevation={2} sx={{ mb: 2, p: 2 }}>
             <Typography variant="h6" sx={{ mb: 2 }}>Completed User Stories</Typography>
             {/* List out completed user stories */}
-            
+
             <Typography variant="h6" sx={{ mb: 2 }}>Incomplete User Stories</Typography>
             {/* List out incomplete user stories */}
-            
+
             <Typography variant="h6" sx={{ mb: 2 }}>Completed Tasks</Typography>
             {/* List out completed tasks */}
-            
+
             <Typography variant="h6" sx={{ mb: 2 }}>Incomplete Tasks</Typography>
             {/* List out incomplete tasks */}
           </Paper>
@@ -49,7 +49,7 @@ const EndOfSprintReport = () => {
         </Box>
       </Box>
     </Box>
-  );
-};
+  )
+}
 
-export default EndOfSprintReport;
+export default EndOfSprintReport

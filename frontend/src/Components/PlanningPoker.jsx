@@ -1,23 +1,23 @@
-import React, { useState } from 'react';
-import { Box, Button, Typography, Paper, Slider } from '@mui/material';
+import React, { useState } from 'react'
+import { Box, Button, Typography, Paper, Slider } from '@mui/material'
 
 const PlanningPoker = () => {
-  const [showForm, setShowForm] = useState(false);
-  const [selectedSprintIndex, setSelectedSprintIndex] = useState(0);
-  const [storyPoints, setStoryPoints] = useState(20); // Initialize the story points with a default value
+  const [showForm, setShowForm] = useState(false)
+  const [selectedSprintIndex, setSelectedSprintIndex] = useState(0)
+  const [storyPoints, setStoryPoints] = useState(20) // Initialize the story points with a default value
 
   const toggleForm = () => {
-    setShowForm(!showForm);
-  };
+    setShowForm(!showForm)
+  }
 
   const handleSprintSelect = (index) => {
-    setSelectedSprintIndex(index);
-    toggleForm();
-  };
+    setSelectedSprintIndex(index)
+    toggleForm()
+  }
 
   const handleSliderChange = (event, newValue) => {
-    setStoryPoints(newValue);
-  };
+    setStoryPoints(newValue)
+  }
 
   return (
     <Box>
@@ -31,7 +31,7 @@ const PlanningPoker = () => {
             variant="contained"
             color="primary"
             onClick={() =>
-                showForm ? toggleForm() : handleSprintSelect(0)
+              showForm ? toggleForm() : handleSprintSelect(0)
             }
             >
             {showForm ? 'Close' : 'Play'}
@@ -63,7 +63,7 @@ const PlanningPoker = () => {
         </Paper>
       )}
     </Box>
-  );
-};
+  )
+}
 
-export default PlanningPoker;
+export default PlanningPoker

@@ -1,21 +1,21 @@
-import React from 'react';
-import { AppBar, Toolbar, Typography, Button, Box } from '@mui/material';
-import { Link, Outlet } from 'react-router-dom';
+import React from 'react'
+import { AppBar, Toolbar, Typography, Button, Box } from '@mui/material'
+import { Link, Outlet } from 'react-router-dom'
 
 const Navbar = ({ isLoggedIn, onSignOut }) => {
   const textOutline = `
     -1px -1px 0 #000, 
     1px -1px 0 #000, 
     -1px 1px 0 #000, 
-    1px 1px 0 #000`; 
+    1px 1px 0 #000`
 
   return (
     <div>
       <AppBar position="absolute" sx={{
-          backgroundColor: 'rgb(34, 19, 170)',
-          padding: '8px 16px',
-          boxShadow: '1px 5px 10px rgba(0, 0, 0, 0.7)'
-        }}>
+        backgroundColor: 'rgb(34, 19, 170)',
+        padding: '8px 16px',
+        boxShadow: '1px 5px 10px rgba(0, 0, 0, 0.7)'
+      }}>
         <Toolbar disableGutters sx={{ justifyContent: 'flex-start', alignItems: 'center' }}>
           <Typography
             variant="h6"
@@ -25,12 +25,12 @@ const Navbar = ({ isLoggedIn, onSignOut }) => {
               fontWeight: 'bold',
               marginRight: '30px',
               transition: 'color 0.3s ease',
-              textShadow: textOutline, 
+              textShadow: textOutline,
               '&:hover': {
                 color: 'white',
-                textShadow: 'none', 
+                textShadow: 'none'
               },
-              cursor: 'pointer',
+              cursor: 'pointer'
             }}
           >
             {/* ScrumMate Logo */}
@@ -45,12 +45,12 @@ const Navbar = ({ isLoggedIn, onSignOut }) => {
               fontWeight: 'bold',
               marginRight: '30px',
               transition: 'color 0.3s ease',
-              textShadow: textOutline, 
+              textShadow: textOutline,
               '&:hover': {
                 color: 'white',
-                textShadow: 'none', 
+                textShadow: 'none'
               },
-              cursor: 'pointer',
+              cursor: 'pointer'
             }}
           >
             {/* Projects link */}
@@ -64,9 +64,9 @@ const Navbar = ({ isLoggedIn, onSignOut }) => {
               backgroundColor: '#007bff',
               color: 'white',
               '&:hover': {
-                backgroundColor: '#7cbbff',
+                backgroundColor: '#7cbbff'
               },
-              marginLeft: 'auto',
+              marginLeft: 'auto'
             }}
           >
             {isLoggedIn ? 'Sign Out' : 'Sign In'}
@@ -75,7 +75,7 @@ const Navbar = ({ isLoggedIn, onSignOut }) => {
       </AppBar>
       <Outlet/>
     </div>
-  );
-};
+  )
+}
 
-export default Navbar;
+export default Navbar

@@ -1,4 +1,4 @@
-import React,{useState,useEffect} from 'react';
+import React, { useState, useEffect } from 'react'
 import {
   AppBar,
   Typography,
@@ -9,56 +9,53 @@ import {
   ListItemText,
   Paper,
   Divider
-} from '@mui/material';
-import { useLocation } from "react-router-dom"
-import CreateSprints from '../Components/CreateSprints';
-import Modal from '@mui/material/Modal';
-import PlanningPoker from '../Components/PlanningPoker'; // Import the PlanningPoker component
-
-
+} from '@mui/material'
+import { useLocation } from 'react-router-dom'
+import CreateSprints from '../Components/CreateSprints'
+import Modal from '@mui/material/Modal'
+import PlanningPoker from '../Components/PlanningPoker' // Import the PlanningPoker component
 
 const SprintPage = () => {
   const location = useLocation()
-  const [project,setProject] = useState(location.state.currentProject)
+  const [project, setProject] = useState(location.state.currentProject)
   const [showCreateSprints, setShowCreateSprints] = useState(false)
-  const [formSubmitted, setFormSubmitted] = useState(false);
-  const [selectedSprintIndex, setSelectedSprintIndex] = useState(0);
-  const [showPlanningPoker, setShowPlanningPoker] = useState(false);
+  const [formSubmitted, setFormSubmitted] = useState(false)
+  const [selectedSprintIndex, setSelectedSprintIndex] = useState(0)
+  const [showPlanningPoker, setShowPlanningPoker] = useState(false)
 
   // Create sprint form
   const toggleCreateSprints = () => {
-    setShowCreateSprints(!showCreateSprints);
-    setShowPlanningPoker(false); 
-  };
+    setShowCreateSprints(!showCreateSprints)
+    setShowPlanningPoker(false)
+  }
 
   // Open planning poker UI
   const openPlanningPoker = () => {
-    setShowPlanningPoker(true);
-    setShowCreateSprints(false); 
-  };
+    setShowPlanningPoker(true)
+    setShowCreateSprints(false)
+  }
 
   // Fetch project data
-  useEffect(()=>{
+  useEffect(() => {
     console.log(project._id)
     const options = {
-      method:"GET",
-      url:`http://localhost:3001/projects/${project._id}`,
-      credentials:'include'
+      method: 'GET',
+      url: `http://localhost:3001/projects/${project._id}`,
+      credentials: 'include'
     }
-    fetch(`http://localhost:3001/projects/${project._id}`,options).then((result)=>{
-      result.json().then((response)=>{
+    fetch(`http://localhost:3001/projects/${project._id}`, options).then((result) => {
+      result.json().then((response) => {
         console.log(response)
         setProject(response)
-
       })
     })
-    if(formSubmitted){
-      setFormSubmitted(false);
+    if (formSubmitted) {
+      setFormSubmitted(false)
     }
-  },[formSubmitted])
+  }, [formSubmitted])
 
   // Display sprints in a list
-  function displaySprintBar() {
+  function displaySprintBar () {
     return (
       <Box sx={{ maxHeight: '500px', overflowY: 'auto' }}>
         <List component="nav" aria-label="sprint folders">
@@ -70,8 +67,8 @@ const SprintPage = () => {
             project.sprints.map((sprint, index) => (
               <React.Fragment key={index}>
                 <ListItem button onClick={() => {
-                  setSelectedSprintIndex(index);
-                  setShowPlanningPoker(false); // Close Planning Poker if another sprint is clicked
+                  setSelectedSprintIndex(index)
+                  setShowPlanningPoker(false) // Close Planning Poker if another sprint is clicked
                 }}>
                   <ListItemText primary={`Sprint ${index + 1}`} />
                 </ListItem>
@@ -86,20 +83,20 @@ const SprintPage = () => {
           )}
         </List>
       </Box>
-    );
+    )
   }
 
-  // Display respective sprint data 
-  function displaySprintData() {
+  // Display respective sprint data
+  function displaySprintData () {
     if (project.sprints && project.sprints.length > 0) {
-        const selectedSprint = project.sprints[selectedSprintIndex];
+      const selectedSprint = project.sprints[selectedSprintIndex]
 
-        if (selectedSprint) {
-            return (
+      if (selectedSprint) {
+        return (
                 <List>
                     {/* Display spikes */}
                     <ListItem>
-                        <ListItemText 
+                        <ListItemText
                             primary="Spikes"
                             secondary={selectedSprint.spikes && selectedSprint.spikes.length > 0 ? selectedSprint.spikes.join(', ') : 'No spikes'}
                         />
@@ -125,12 +122,12 @@ const SprintPage = () => {
                         </React.Fragment>
                     ))}
                 </List>
-            );
-        } else {
-            return <Typography sx={{ padding: 2 }}>No user stories in this sprint.</Typography>;
-        }
+        )
+      } else {
+        return <Typography sx={{ padding: 2 }}>No user stories in this sprint.</Typography>
+      }
     } else {
-        return <Typography sx={{ padding: 2 }}>There are no sprints for this project yet.</Typography>;
+      return <Typography sx={{ padding: 2 }}>There are no sprints for this project yet.</Typography>
     }
   }
 
@@ -159,15 +156,15 @@ const SprintPage = () => {
       <Modal
         open = {showCreateSprints}
         sx = {{
-          overflow:'scroll',
-          width:"100%"
+          overflow: 'scroll',
+          width: '100%'
         }}
       >
         <Box
           justifyContent="center"
         >
           <Paper>
-            <CreateSprints projectId={project._id} onFormSubmit = {()=>{
+            <CreateSprints projectId={project._id} onFormSubmit = {() => {
               setFormSubmitted(true)
               setShowCreateSprints(false)
             }
@@ -185,7 +182,7 @@ const SprintPage = () => {
         </Button>
       </Box>
     </Box>
-  );
-};
+  )
+}
 
-export default SprintPage;
+export default SprintPage

@@ -1,24 +1,23 @@
-import React, { useState, useEffect } from 'react';
-import { useLocation } from "react-router-dom"
-import { AppBar, Typography, Button, Box, Paper } from '@mui/material';
-import { List, ListItem, ListItemText } from '@mui/material';
-import CreateReleasePlan from '../Components/CreateReleasePlan'; // Adjust the import path as necessary
+import React, { useState, useEffect } from 'react'
+import { useLocation } from 'react-router-dom'
+import { AppBar, Typography, Button, Box, Paper, List, ListItem, ListItemText } from '@mui/material'
 
+import CreateReleasePlan from '../Components/CreateReleasePlan' // Adjust the import path as necessary
 
 const ReleasePlan = () => {
-  const [showCreateReleasePlan, setShowCreateReleasePlan] = useState(false);
-  const [showReleasePlan, setShowReleasePlan] = useState(false);
-  const [releasePlanText, setReleasePlanText] = useState([]);
-  const [formSubmitted, setFormSubmitted] = useState(false);
+  const [showCreateReleasePlan, setShowCreateReleasePlan] = useState(false)
+  const [showReleasePlan, setShowReleasePlan] = useState(false)
+  const [releasePlanText, setReleasePlanText] = useState([])
+  const [formSubmitted, setFormSubmitted] = useState(false)
 
   const location = useLocation()
-  const [project,setProject] = useState(location.state.currentProject)
+  const [project, setProject] = useState(location.state.currentProject)
   console.log(project)
 
   // Fetch release plans on page open
   useEffect(() => {
     const options = {
-      method: "GET",
+      method: 'GET',
       url: `http://localhost:3001/projects/${project._id}`,
       credentials: 'include'
     }
@@ -26,93 +25,90 @@ const ReleasePlan = () => {
       result.json().then((response) => {
         console.log(response)
         setProject(response)
-        setReleasePlanText(response.releases || []);
+        setReleasePlanText(response.releases || [])
       })
     })
-  }, [project._id]);
-  useEffect(()=>{
+  }, [project._id])
+  useEffect(() => {
     console.log(project._id)
-    if(formSubmitted){
-      //add fetch here
+    if (formSubmitted) {
+      // add fetch here
       const options = {
-        method:"GET",
-        url:`http://localhost:3001/projects/${project._id}`,
-        credentials:'include'
+        method: 'GET',
+        url: `http://localhost:3001/projects/${project._id}`,
+        credentials: 'include'
       }
-      fetch(`http://localhost:3001/projects/${project._id}`,options).then((result)=>{
-        result.json().then((response)=>{
+      fetch(`http://localhost:3001/projects/${project._id}`, options).then((result) => {
+        result.json().then((response) => {
           console.log(response)
           setProject(response)
         })
       })
-      console.log("ITS SUBMITTED")
-      setFormSubmitted(false);
+      console.log('ITS SUBMITTED')
+      setFormSubmitted(false)
       toggleCreateReleasePlan()
       toggleViewReleasePlan()
-      setReleasePlanText(savedReleasePlans || 'No release plan found.');
+      setReleasePlanText(savedReleasePlans || 'No release plan found.')
     }
-
-  },[formSubmitted]);
-  function formatStories(stories){
-    
+  }, [formSubmitted])
+  function formatStories (stories) {
     // Display stories
-    if (stories.length>0){
-      return(
+    if (stories.length > 0) {
+      return (
         <Paper>
           <List>
-          {stories.map((story,index)=>(
+          {stories.map((story, index) => (
             <div key = {index}>
             <ListItem>
-              <Typography sx={{ textAlign: 'center', marginTop: 1, fontSize:16 }}>
-                User Story {index+1}
+              <Typography sx={{ textAlign: 'center', marginTop: 1, fontSize: 16 }}>
+                User Story {index + 1}
               </Typography>
             </ListItem>
             <ListItem>
 
-              <Typography sx={{ textAlign: 'left', fontSize:12 }}>
-                Description: {story.description}                
+              <Typography sx={{ textAlign: 'left', fontSize: 12 }}>
+                Description: {story.description}
               </Typography>
             </ListItem>
             <ListItem>
-              <Typography sx={{ textAlign: 'left', fontSize:12 }}>
-                  Notes: {story.notes}                
+              <Typography sx={{ textAlign: 'left', fontSize: 12 }}>
+                  Notes: {story.notes}
               </Typography>
             </ListItem>
             <ListItem>
-              <Typography sx={{ textAlign: 'left', fontSize:12 }}>
+              <Typography sx={{ textAlign: 'left', fontSize: 12 }}>
                 Points: {story.points}
               </Typography>
             </ListItem>
 
-            </div> 
+            </div>
           ))}
         </List>
       </Paper>
       )
-    }else{
-      return(
+    } else {
+      return (
         <Typography>
           No Stories Added Yet
         </Typography>
       )
     }
-
   }
   const savedReleasePlans = project.releases
 
   // Show create release plan form
   const toggleCreateReleasePlan = () => {
-    setShowCreateReleasePlan(!showCreateReleasePlan);
-  };
+    setShowCreateReleasePlan(!showCreateReleasePlan)
+  }
 
   // Show release plan
   const toggleViewReleasePlan = () => {
     if (!showReleasePlan) {
-      console.log(savedReleasePlans);
-      setReleasePlanText(savedReleasePlans || 'No release plan found.');
+      console.log(savedReleasePlans)
+      setReleasePlanText(savedReleasePlans || 'No release plan found.')
     }
-    setShowReleasePlan(!showReleasePlan);
-  };
+    setShowReleasePlan(!showReleasePlan)
+  }
 
   return (
     <Box sx={{ flexGrow: 1 }}>
@@ -128,7 +124,7 @@ const ReleasePlan = () => {
           </Box>
 
           {/* Conditionally render the CreateReleasePlan component */}
-          {showCreateReleasePlan && <CreateReleasePlan projectId={project._id} onFormSubmit = {()=>setFormSubmitted(true)}/>}
+          {showCreateReleasePlan && <CreateReleasePlan projectId={project._id} onFormSubmit = {() => setFormSubmitted(true)}/>}
 
           {/* Display Release Plans */}
           <Paper elevation={2} sx={{ backgroundColor: '#e0e0e0', padding: 2, marginTop: 2 }}>
@@ -202,7 +198,7 @@ const ReleasePlan = () => {
         </Paper>
       </Box>
     </Box>
-  );
-};
+  )
+}
 
-export default ReleasePlan;
+export default ReleasePlan

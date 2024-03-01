@@ -1,39 +1,39 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Box, Container, TextField, Button, Typography } from '@mui/material';
+import React, { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
+import { Box, Container, TextField, Button, Typography } from '@mui/material'
 
 const Register = () => {
-  console.log("IN REGISTER PAGE");
-  const [username, setUsername] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
+  console.log('IN REGISTER PAGE')
+  const [username, setUsername] = useState('')
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [confirmPassword, setConfirmPassword] = useState('')
 
-  const navigate = useNavigate();
+  const navigate = useNavigate()
 
   const handleSubmit = async (event) => {
-    event.preventDefault();
+    event.preventDefault()
     try {
       const response = await fetch('http://localhost:3001/auth/register', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
+          'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ username, email, password }),
-      });
+        body: JSON.stringify({ username, email, password })
+      })
 
       if (response.ok) {
         // Handle successful Register
         // For example, log the user in and redirect to dashboard
-        navigate('/dashboard');
+        navigate('/dashboard')
       } else {
         // Handle errors (e.g., user already exists, validation error)
       }
     } catch (error) {
       // Handle network or other errors
     }
-  };
-return (
+  }
+  return (
     <Container maxWidth="sm">
       <Typography variant="h4" sx={{ marginY: 4 }}>Register</Typography>
       <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
@@ -90,7 +90,7 @@ return (
         </Button>
       </Box>
     </Container>
-  );
-};
+  )
+}
 
-export default Register;
+export default Register

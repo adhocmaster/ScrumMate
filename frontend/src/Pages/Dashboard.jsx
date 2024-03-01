@@ -1,107 +1,98 @@
-import React, {useState,useEffect}  from 'react';
-import { Typography, Button, Box, Drawer, List, ListItem, ListItemText, Paper } from '@mui/material';
-import { Dialog, DialogTitle, DialogContent, TextField, DialogActions } from '@mui/material';
-import { PieChart } from '@mui/icons-material';
-import { Link} from 'react-router-dom';
+import React, { useState, useEffect } from 'react'
+import { Typography, Button, Box, Drawer, List, ListItem, ListItemText, Paper, Dialog, DialogTitle, DialogContent, TextField, DialogActions } from '@mui/material'
 
-const drawerWidth = 240;
+import { PieChart } from '@mui/icons-material'
+import { Link } from 'react-router-dom'
+
+const drawerWidth = 240
 
 const Dashboard = ({ isLoggedIn }) => {
-
-  //State hooks for create project
-  const [openDialog, setOpenDialog] = useState(false);
-  const [newProjectName, setNewProjectName] = useState('');
-  const [newProjectMembers, setNewProjectMembers] = useState('');
+  // State hooks for create project
+  const [openDialog, setOpenDialog] = useState(false)
+  const [newProjectName, setNewProjectName] = useState('')
+  const [newProjectMembers, setNewProjectMembers] = useState('')
   const [flag, setFlag] = useState(true)
 
   const handleDialogOpen = () => {
-    setOpenDialog(true);
-  };
-  
-  const handleDialogClose = () => {
-    setOpenDialog(false);
-  };
-  
-  const handleSubmit = async () => {
+    setOpenDialog(true)
+  }
 
+  const handleDialogClose = () => {
+    setOpenDialog(false)
+  }
+
+  const handleSubmit = async () => {
     try {
-      var memberEmails = newProjectMembers.split(/[, ]+/);
+      const memberEmails = newProjectMembers.split(/[, ]+/)
       console.log(memberEmails)
       const options = {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
+          'Content-Type': 'application/json'
         },
         body: JSON.stringify({
           name: newProjectName,
-          members:memberEmails
+          members: memberEmails
         }),
-        credentials: 'include',
-      };
-  
-      const response = await fetch('http://localhost:3001/projects', options);
+        credentials: 'include'
+      }
+
+      const response = await fetch('http://localhost:3001/projects', options)
       console.log(response)
       if (response.status === 200) {
-        console.log('New project created successfully!');
+        console.log('New project created successfully!')
         // Optionally, you can fetch the updated list of projects after creating a new one.
         // Update the projectNames state or perform any other necessary actions.
       } else {
-        console.error('Failed to create a new project');
+        console.error('Failed to create a new project')
       }
-      handleDialogClose();
-      setNewProjectName('');
+      handleDialogClose()
+      setNewProjectName('')
       setFlag(false)
-
     } catch (error) {
-      console.error('Error creating a new project:', error);
+      console.error('Error creating a new project:', error)
     }
-  };
-  
-  
-  
-
+  }
 
   // Functionality for navigation clicks will need to be implemented
-  const [projectNames, setProjectNames] = useState([]);
-  const [currentProject, setCurrentProject] = useState({name:"loading"})
+  const [projectNames, setProjectNames] = useState([])
+  const [currentProject, setCurrentProject] = useState({ name: 'loading' })
   const handleNavClick = (page) => {
     // Logic to handle navigation
-    console.log(`Navigate to ${page}`);
-  };
-  const handleButtonClick = (project)=>{
+    console.log(`Navigate to ${page}`)
+  }
+  const handleButtonClick = (project) => {
     setCurrentProject(project)
   }
-  useEffect( ()=>{
-     try{
-      var options = {
-        url: `http://localhost:3001/projects`,
-        method:'get',
+  useEffect(() => {
+    try {
+      const options = {
+        url: 'http://localhost:3001/projects',
+        method: 'get',
         // headers: {
         //   'Content-Type': 'application/json'
         // }
-        credentials:'include'
+        credentials: 'include'
       }
-      fetch(`http://localhost:3001/projects`,options).then((result)=>{
+      fetch('http://localhost:3001/projects', options).then((result) => {
         console.log(result)
-        if(result.status == 200){
+        if (result.status == 200) {
           console.log(result)
         }
-        result.json().then((response)=>{
+        result.json().then((response) => {
           console.log(response)
           setProjectNames(response)
-          if(response.length> 0){
+          if (response.length > 0) {
             setCurrentProject(response[0])
-          }else{
-            setCurrentProject({name:"You have no projects yet, click Create New Project to make one. "})
+          } else {
+            setCurrentProject({ name: 'You have no projects yet, click Create New Project to make one. ' })
           }
         })
       })
-
-    }catch(error){
+    } catch (error) {
       console.log(error)
     }
-
-  },[flag])
+  }, [flag])
   return (
     <>
       <Box display="flex">
@@ -112,8 +103,8 @@ const Dashboard = ({ isLoggedIn }) => {
             '& .MuiDrawer-paper': {
               width: drawerWidth,
               boxSizing: 'border-box',
-              marginTop: '150px',
-            },
+              marginTop: '150px'
+            }
           }}
           variant="permanent"
           anchor="left"
@@ -125,7 +116,7 @@ const Dashboard = ({ isLoggedIn }) => {
           {/* Project list */}
           <List>
             {projectNames.map((text, index) => (
-              <ListItem button key={text.name}  onClick = {()=>handleButtonClick(text)} > 
+              <ListItem button key={text.name} onClick = {() => handleButtonClick(text)} >
                 <ListItemText primary={text.name} />
               </ListItem>
             ))}
@@ -161,7 +152,7 @@ const Dashboard = ({ isLoggedIn }) => {
               View Release Plan
             </Button>
             <Button
-              sx = {{marginLeft:2}}
+              sx = {{ marginLeft: 2 }}
               variant="contained"
               color="secondary"
               component={Link}
@@ -206,7 +197,7 @@ const Dashboard = ({ isLoggedIn }) => {
     </Dialog>
 
     </>
-  );
-};
+  )
+}
 
-export default Dashboard;
+export default Dashboard

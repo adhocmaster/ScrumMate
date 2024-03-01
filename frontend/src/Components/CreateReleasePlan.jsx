@@ -1,129 +1,125 @@
-import React, { useState, useEffect } from 'react';
-import { Box, Button, TextareaAutosize, Typography, TextField, Paper} from '@mui/material';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-import Slider from '@mui/material/Slider';
-import dayjs from 'dayjs'; 
+import React, { useState, useEffect } from 'react'
+import { Box, Button, TextareaAutosize, Typography, TextField, Paper } from '@mui/material'
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'
+import { DatePicker } from '@mui/x-date-pickers/DatePicker'
+import Slider from '@mui/material/Slider'
+import dayjs from 'dayjs'
 
+const CreateReleasePlan = ({ projectId, onFormSubmit }) => {
+  const [nameText, setDocumentText] = useState('')
+  const [releaseDateText, setReleaseDateText] = useState(dayjs()) // Initialize with a Day.js object
+  const [userStoriesText, setUserStoriesText] = useState('')
+  const [highLevelGoalsText, sethighLevelGoalsText] = useState('')
+  const [finalizedDateText, setFinalizedDateText] = useState('')
+  const [highLevelGoals, setHighLevelGoals] = useState(['']) // Array of goals
+  const [userStories, setUserStories] = useState([{ description: '', notes: '', points: 20 }]) // Array of user stories
 
-const CreateReleasePlan = ({ projectId,onFormSubmit }) => {
-  const [nameText, setDocumentText] = useState('');
-  const [releaseDateText, setReleaseDateText] = useState(dayjs()); // Initialize with a Day.js object
-  const [userStoriesText, setUserStoriesText] = useState('');
-  const [highLevelGoalsText, sethighLevelGoalsText] = useState('');
-  const [finalizedDateText, setFinalizedDateText] = useState('');
-  const [highLevelGoals, setHighLevelGoals] = useState(['']); // Array of goals
-  const [userStories, setUserStories] = useState([{ description: '', notes: '', points: 20}]); //Array of user stories
-
-
-  //Code for the sliders
+  // Code for the sliders
   const marks = [
     {
       value: 0,
-      label: '0',
+      label: '0'
     },
     {
       value: 10,
-      label: '10',
+      label: '10'
     },
     {
       value: 20,
-      label: '20',
+      label: '20'
     },
     {
       value: 30,
-      label: '30',
+      label: '30'
     },
     {
       value: 40,
-      label: '40',
+      label: '40'
     },
     {
       value: 50,
-      label: '50',
+      label: '50'
     },
     {
       value: 60,
-      label: '60',
+      label: '60'
     },
     {
       value: 70,
-      label: '70',
+      label: '70'
     },
     {
       value: 80,
-      label: '80',
+      label: '80'
     },
     {
       value: 90,
-      label: '90',
+      label: '90'
     },
     {
       value: 100,
-      label: '100',
-    },
+      label: '100'
+    }
   ]
 
-  function valuetext(value) {
-    return `${value}`;
+  function valuetext (value) {
+    return `${value}`
   }
   const handleNameChange = (event) => {
-    setDocumentText(event.target.value);
-  };
+    setDocumentText(event.target.value)
+  }
 
   const handleReleaseDateChange = (newValue) => {
     // Ensure newValue is a Day.js object
-    setReleaseDateText(dayjs(newValue));
-  };
+    setReleaseDateText(dayjs(newValue))
+  }
 
-  //High level goal functions (new)
+  // High level goal functions (new)
   const handleHighLevelGoalsChange = (index, event) => {
-    const newGoals = [...highLevelGoals];
-    newGoals[index] = event.target.value;
-    setHighLevelGoals(newGoals);
-  };
+    const newGoals = [...highLevelGoals]
+    newGoals[index] = event.target.value
+    setHighLevelGoals(newGoals)
+  }
 
   const addNewGoal = () => {
-    setHighLevelGoals([...highLevelGoals, '']); // Add a new empty goal
-  };
+    setHighLevelGoals([...highLevelGoals, '']) // Add a new empty goal
+  }
 
-  //User story functions (new)
+  // User story functions (new)
   const handleUserStoryChange = (index, field, value) => {
-    console.log(index,field,value)
+    console.log(index, field, value)
     const updatedStories = userStories.map((story, idx) => {
       if (idx === index) {
-        return { ...story, [field]: value };
+        return { ...story, [field]: value }
       }
-      return story;
-    });
-    setUserStories(updatedStories);
-  };
+      return story
+    })
+    setUserStories(updatedStories)
+  }
 
   const addNewStory = () => {
-    setUserStories([...userStories, { description: '', notes: '', points: 20 }]);
-  };
+    setUserStories([...userStories, { description: '', notes: '', points: 20 }])
+  }
 
-
-
-  //New function to handle backend
+  // New function to handle backend
   const handleSaveDocument = () => {
-    console.log(projectId);
-    const today = new Date(releaseDateText);
+    console.log(projectId)
+    const today = new Date(releaseDateText)
     // Filter out empty strings from highLevelGoals and userStories
-    const filteredHighLevelGoals = highLevelGoals.filter(goal => goal.trim() !== '');
+    const filteredHighLevelGoals = highLevelGoals.filter(goal => goal.trim() !== '')
     console.log(userStories)
     // const filteredUserStories = userStories.filter(story => story.trim() !== '').map(story => story.description.trim());
-    
+
     const releasePlanData = {
       name: nameText,
       high_level_goals: filteredHighLevelGoals,
       user_stories: userStories,
-      status: "incomplete",
+      status: 'incomplete',
       dateFinalized: today
-    };
-  
-    var options = {
+    }
+
+    const options = {
       url: `http://localhost:3001/projects/release/${projectId}`,
       method: 'POST',
       headers: {
@@ -132,7 +128,7 @@ const CreateReleasePlan = ({ projectId,onFormSubmit }) => {
       credentials: 'include',
       body: JSON.stringify(releasePlanData)
     }
-  
+
     fetch(`http://localhost:3001/projects/release/${projectId}`, options).then((result) => {
       console.log(result)
       if (result.status === 200) {
@@ -141,18 +137,17 @@ const CreateReleasePlan = ({ projectId,onFormSubmit }) => {
       }
     })
   }
-  
 
   useEffect(() => {
     if (finalizedDateText) {
-      const combinedDocument = nameText + "\nRelease Date:\n" + releaseDateText + 
-        "\n \nHigh Level Goals:\n" + highLevelGoals + 
-        "\n \nUser Stories:\n" + userStories + 
-        "\n \nDate Finalized:\n" + finalizedDateText;
+      const combinedDocument = nameText + '\nRelease Date:\n' + releaseDateText +
+        '\n \nHigh Level Goals:\n' + highLevelGoals +
+        '\n \nUser Stories:\n' + userStories +
+        '\n \nDate Finalized:\n' + finalizedDateText
 
       console.log(projectId)
       try {
-        localStorage.setItem('releasePlanDocument', combinedDocument);
+        localStorage.setItem('releasePlanDocument', combinedDocument)
         // var options = {
         //   url: `http://localhost:3001/projects/release/${projectId}`,
         //   method:'POST',
@@ -171,14 +166,14 @@ const CreateReleasePlan = ({ projectId,onFormSubmit }) => {
         //     console.log(response)
         //     setProjectNames(response)
         //   })
-        // })   
-        alert('Document saved!');
+        // })
+        alert('Document saved!')
       } catch (error) {
-        console.log(error);
+        console.log(error)
       }
     }
-  }, [projectId, nameText, releaseDateText, highLevelGoalsText, userStoriesText, finalizedDateText]);
-  
+  }, [projectId, nameText, releaseDateText, highLevelGoalsText, userStoriesText, finalizedDateText])
+
   return (
     <Box
       sx={{
@@ -207,7 +202,7 @@ const CreateReleasePlan = ({ projectId,onFormSubmit }) => {
       <LocalizationProvider dateAdapter={AdapterDayjs}>
 	  	<DatePicker />
       </LocalizationProvider>
-      
+
       <Typography variant="h6" sx={{ marginTop: 2, marginBottom: 2 }}>
         High Level Goals
       </Typography>
@@ -265,7 +260,7 @@ const CreateReleasePlan = ({ projectId,onFormSubmit }) => {
             step={1}
             marks={marks}
             valueLabelDisplay="on"
-            onChange = {(e,val)=>handleUserStoryChange(index,'points',val)}
+            onChange = {(e, val) => handleUserStoryChange(index, 'points', val)}
           />
 
         </Paper>
@@ -289,8 +284,7 @@ const CreateReleasePlan = ({ projectId,onFormSubmit }) => {
         Save Document
       </Button>
     </Box>
-  );
-};
+  )
+}
 
-
-export default CreateReleasePlan;
+export default CreateReleasePlan

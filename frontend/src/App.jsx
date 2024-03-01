@@ -1,49 +1,44 @@
 // App.jsx
-import React, { useState } from 'react';
-import { Routes, Route, Navigate } from 'react-router-dom';
-import SignInBox from './Components/SignInBox';
-import Dashboard from './Pages/Dashboard';
-import ReleasePlan from './Pages/ReleasePlan';
-import SprintPlan from './Pages/SprintPage';
-import Navbar from './Components/Navbar'; // Make sure the path is correct
-import Register from './Pages/Register';
+import React, { useState } from 'react'
+import { Routes, Route, Navigate } from 'react-router-dom'
+import SignInBox from './Components/SignInBox'
+import Dashboard from './Pages/Dashboard'
+import ReleasePlan from './Pages/ReleasePlan'
+import SprintPlan from './Pages/SprintPage'
+import Navbar from './Components/Navbar' // Make sure the path is correct
+import Register from './Pages/Register'
 
-function App() {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+function App () {
+  const [isLoggedIn, setIsLoggedIn] = useState(false)
   const handleSignIn = (email, password) => {
-    try{ 
-      var options = {
-        url:"https://localhost:3001/auth/login/",
-        method:'POST',
+    try {
+      const options = {
+        url: 'https://localhost:3001/auth/login/',
+        method: 'POST',
         headers: {
           'Content-Type': 'application/json'
         },
-        body:JSON.stringify({email,password}),
-        credentials:'include'
+        body: JSON.stringify({ email, password }),
+        credentials: 'include'
       }
-      fetch('http://localhost:3001/auth/login/',options).then((result)=>{
+      fetch('http://localhost:3001/auth/login/', options).then((result) => {
         console.log(result)
-        if(result.status == 200){
-          
+        if (result.status == 200) {
+
         }
         return result.json()
-
-      }).then((response)=>{
+      }).then((response) => {
         console.log(response)
-        setIsLoggedIn(true);
-
+        setIsLoggedIn(true)
       })
-
-    }catch(error){
+    } catch (error) {
       console.log(error)
     }
-
-  };
-  
+  }
 
   const handleSignOut = () => {
-    setIsLoggedIn(false);
-  };
+    setIsLoggedIn(false)
+  }
 
   return (
     <div className="App">
@@ -52,11 +47,13 @@ function App() {
         <Route
           path="/"
           element={
-            isLoggedIn ? (
+            isLoggedIn
+              ? (
               <Navigate replace to="/dashboard" />
-            ) : (
+                )
+              : (
               <SignInBox onLogin={handleSignIn} />
-            )
+                )
           }
         />
         <Route
@@ -85,7 +82,7 @@ function App() {
         <Route path="*" element={<Navigate to="/" />} />
       </Routes>
     </div>
-  );
+  )
 }
 
-export default App;
+export default App
