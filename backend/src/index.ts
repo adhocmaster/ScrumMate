@@ -4,6 +4,7 @@ import { Database, AppDataSource } from './data-source';
 import { Release } from "./entity/release"
 import { Project } from './entity/project';
 import router from './router/index';
+import cors from 'cors';
 import cookieParser from 'cookie-parser';
 
 const app = express();
@@ -11,6 +12,10 @@ const app = express();
 AppDataSource.initialize().then(async () => {
   Database.setAndGetInstance(AppDataSource);
 	app.use(express.json())
+  app.use(cors({
+    origin:"http://localhost:3000",
+    credentials: true,
+  }));
   app.use(cookieParser());
   app.use('/api', router());
 	app.listen(8080, () => {

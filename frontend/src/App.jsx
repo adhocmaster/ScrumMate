@@ -13,7 +13,7 @@ function App() {
   const handleSignIn = (email, password) => {
     try{ 
       var options = {
-        url:"https://localhost:3001/auth/login/",
+        url:"https://localhost:8080/api/user/login/",
         method:'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -21,7 +21,7 @@ function App() {
         body:JSON.stringify({email,password}),
         credentials:'include'
       }
-      fetch('http://localhost:3001/auth/login/',options).then((result)=>{
+      fetch('http://localhost:8080/api/user/login/',options).then((result)=>{
         console.log(result)
         if(result.status == 200){
           
