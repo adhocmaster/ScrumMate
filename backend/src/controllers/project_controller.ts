@@ -6,6 +6,7 @@ import {createSprint} from '../db/sprint';
 // import { createStory, addStoryToRelease, StoryModel, addStoriesToDatabase } from '../db/story';
 import { StoryModel } from '../db/story';
 import { IStory } from 'db/interfaces/schemas';
+import { stringify } from 'querystring';
 
 
 
@@ -17,8 +18,8 @@ export class ProjectController {
    */
   static async getProjectsFromUser(req: express.Request, res: express.Response) {
       try {
-          const projects = await ProjectModel.getProjectsByUser(req.userId);
-          return res.status(200).json(projects);
+        //   const projects = await ProjectModel.getProjectsByUser(req.userId);
+          return res.status(200);
       } catch (error) {
           console.log(error);
           res.sendStatus(400);
