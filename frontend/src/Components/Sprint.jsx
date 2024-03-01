@@ -3,18 +3,6 @@ import MenuIcon from '@mui/icons-material/Menu';
 import UserStory from './UserStory';
 
 const Sprint = ({userStories}) => {
-  const truncateText = (text, maxLength) => {
-    if (text.length <= maxLength) {
-      return text;
-    }
-
-    const truncatedText = text.slice(0, maxLength);
-    const lastSpaceIndex = truncatedText.lastIndexOf(' ');
-    const truncatedWithEllipsis = lastSpaceIndex !== -1 ? `${truncatedText.slice(0, lastSpaceIndex)} ...` : `${truncatedText} ...`;
-
-    return truncatedWithEllipsis;
-  };
-
   return (
     <>
       <Box 
@@ -91,7 +79,7 @@ const Sprint = ({userStories}) => {
                   padding: '8px 0px 8px 12px',
                 }}
               >
-                <UserStory userStoryText={truncateText(userStory, 120)} storyPoints={5}/>
+                <UserStory userStoryText={userStory} storyPoints={5}/>
               </ListItem>
             ))}
           </List>
