@@ -1,11 +1,12 @@
 import { useState } from 'react';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
-import { Button, Drawer, Icon, IconButton, Typography } from "@mui/material";
+import { Button, Drawer, Icon, IconButton, Typography, Grid } from "@mui/material";
 import { List, ListItem, ListItemButton } from "@mui/material";
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import LockIcon from '@mui/icons-material/Lock';
 import LockOpenIcon from '@mui/icons-material/LockOpen';
+import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 
 const Sidebar = ({ open, toggleDrawer, title, items, itemClick }) => {
 	const [revisions, setRevisions] = useState(items);
@@ -42,9 +43,9 @@ const Sidebar = ({ open, toggleDrawer, title, items, itemClick }) => {
 				width: open ? 250 : 40,
 				flexShrink: 0,
 				'& .MuiDrawer-paper': {
-				marginTop: 10,
-				width: open ? 250 : 40,
-				boxSizing: 'border-box',
+					marginTop: 10,
+					width: open ? 250 : 40,
+					boxSizing: 'border-box',
 				},
 			}}
 		>
@@ -55,13 +56,25 @@ const Sidebar = ({ open, toggleDrawer, title, items, itemClick }) => {
 				<Typography
 					variant='body'
 					sx={{
-						marginLeft: 9,
+						marginLeft: 2,
 						fontWeight: 'bold',
-						fontSize: 24,
+						fontSize: 22,
 					}}
 				>
-					{title}
+					{title}					
 				</Typography>
+			}
+		
+			{open &&
+				<Grid container justifyContent="flex-end">
+					<Grid item>
+						<IconButton 
+							onClick={console.log("temp")}
+							>
+							<AddCircleOutlineIcon />
+						</IconButton>
+					</Grid>
+				</Grid>
 			}
 
 			{open ? 
@@ -114,7 +127,6 @@ const Sidebar = ({ open, toggleDrawer, title, items, itemClick }) => {
 						>
 						<ContentCopyIcon />
 					</IconButton>
-					{/* <Button endIcon={<Button onClick={console.log("temp")}><EditIcon /></Button>}/> */}
 				</ListItemButton>
 			))}
 		</List>
