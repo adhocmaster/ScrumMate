@@ -76,7 +76,7 @@ const Sidebar = ({ open, toggleDrawer, title, items, itemClick }) => {
 						<IconButton 
 							onClick={addRevisions}
 						>
-							<AddCircleOutlineIcon />
+							<AddCircleOutlineIcon fontSize="small"/>
 						</IconButton>
 					</Grid>
 				</Grid>
@@ -89,7 +89,7 @@ const Sidebar = ({ open, toggleDrawer, title, items, itemClick }) => {
 						marginLeft: 'auto',
 					}}
 				>
-					<ChevronLeftIcon />
+					<ChevronLeftIcon fontSize="small"/>
 				</IconButton> 
 				:
 				<IconButton 
@@ -98,7 +98,7 @@ const Sidebar = ({ open, toggleDrawer, title, items, itemClick }) => {
 						marginLeft: 'auto',
 					}}
 				>
-					<ChevronRightIcon />
+					<ChevronRightIcon fontSize="small"/>
 				</IconButton>
 			}
 			</ListItem>
@@ -114,7 +114,7 @@ const Sidebar = ({ open, toggleDrawer, title, items, itemClick }) => {
 							marginRight: 'auto',
 						}}
 					>
-						{locked ? <LockIcon /> : <LockOpenIcon />}
+						{locked ? <LockIcon fontSize="small"/> : <LockOpenIcon fontSize="small"/>}
 					</IconButton>
 
 					<Typography fontSize={14}>
@@ -127,7 +127,7 @@ const Sidebar = ({ open, toggleDrawer, title, items, itemClick }) => {
 							marginLeft: 'auto',
 						}}
 						>
-						<ContentCopyIcon />
+						<ContentCopyIcon fontSize="small"/>
 					</IconButton>
 				</ListItemButton>
 			))}
