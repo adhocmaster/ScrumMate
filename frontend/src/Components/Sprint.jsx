@@ -89,7 +89,7 @@ const Sprint = ({userStories}) => {
                   padding: '8px 0px 8px 12px',
                 }}
               >
-                <UserStory userStoryText={truncateText({text: userStory, maxWords: 20})} storyPoints={5}/>
+                <UserStory userStoryText={truncateText({text: userStory, maxWords: 30})} storyPoints={5}/>
               </ListItem>
             ))}
           </List>
