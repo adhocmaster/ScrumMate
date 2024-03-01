@@ -3,6 +3,16 @@ import MenuIcon from '@mui/icons-material/Menu';
 import UserStory from './UserStory';
 
 const Sprint = ({userStories}) => {
+  const truncateText = ({ text, maxWords }) => {
+    const words = text.split(' ');
+    if (words.length <= maxWords) {
+      return text;
+    }
+
+    const truncatedText = words.slice(0, maxWords).join(' ');
+    return truncatedText + '...';
+  };
+
   return (
     <>
       <Box 
@@ -46,6 +56,7 @@ const Sprint = ({userStories}) => {
               8
             </Typography>
           </Box>
+
           <Box sx={{height: '100%'}}>
             <Divider 
               orientation='vertical'
@@ -73,12 +84,12 @@ const Sprint = ({userStories}) => {
               <ListItem 
                 key={index} 
                 sx={{
-                  minWidth: 300, 
+                  minWidth: 200, 
                   display: 'inline-block', 
                   padding: '8px 0px 8px 12px',
                 }}
               >
-                <UserStory userStoryText={userStory} storyPoints={5}/>
+                <UserStory userStoryText={truncateText({text: userStory, maxWords: 20})} storyPoints={5}/>
               </ListItem>
             ))}
           </List>

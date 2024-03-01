@@ -58,7 +58,7 @@ const ReleasePlan = () => {
         {/* Current Sprint */}
         {/* TODO: update Sprint Number */}
         <Typography
-          variant="h4"
+          variant="h6"
           marginTop={8}
           marginBottom={2}
           marginLeft={1}
@@ -96,7 +96,6 @@ const ReleasePlan = () => {
         />
 
         <Typography
-          variant="h5"
           marginBottom={2}
           marginLeft={1}
           textAlign={'left'}
@@ -126,7 +125,6 @@ const ReleasePlan = () => {
           {/* Sprints */}
           <Grid item xs={9}>
             <Typography
-              variant="h6"
               marginLeft={2}
               textAlign="left"
               fontWeight="bold"

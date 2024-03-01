@@ -9,11 +9,11 @@ const UserStory = ({userStoryText, storyPoints}) => {
         position: 'relative',
       }}
     >
-      <CardContent sx={{minHeight: 200}}>
+      <CardContent sx={{minHeight: 100}}>
         <Typography
           variant="body1"
           textAlign={'left'}
-          fontSize={16}
+          // fontSize={16}
         >
           {userStoryText}
         </Typography>
@@ -21,7 +21,7 @@ const UserStory = ({userStoryText, storyPoints}) => {
         <Typography
           variant="body1"
           textAlign={'right'}
-          fontSize={16}
+          // fontSize={16}
           sx={{
             position: 'absolute',
             bottom: 10,

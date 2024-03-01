@@ -7,7 +7,7 @@ const ButtonBar = ({text1, text2, text3, text4, text1Click, text2Click, text3Cli
             variant="contained" 
             sx={{
               margin: '5px 10px',
-              height: '60px',
+              height: '40px',
             }}
           >
             <Button

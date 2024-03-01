@@ -4,7 +4,7 @@ const ContentBox = ({title, content}) => {
   return (
     <>
       <Typography
-        variant="h6"
+        variant='body1'
         marginBottom={2}
         marginLeft={2}
         textAlign={'left'}
