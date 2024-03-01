@@ -2,12 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { useLocation } from "react-router-dom"
 import { Typography, Button, Box, Paper } from '@mui/material';
 import { List, ListItem, ListItemText } from '@mui/material';
-import CreateReleasePlan from '../Components/CreateReleasePlan'; // Adjust the import path as necessary
-import { Grid, Input, Divider, Card, CardContent } from '@mui/material';
+import { Grid, Input, Divider, Card, CardContent, IconButton } from '@mui/material';
 import Sidebar from '../Components/Sidebar';
 import ButtonBar from '../Components/ButtonBar';
 import ContentBox from '../Components/ContentBox';
-import UserStory from '../Components/UserStory';
+import Sprint from '../Components/Sprint';
 
 const ReleasePlan = () => {
   const [open, setOpen] = useState(true);
@@ -115,7 +114,6 @@ const ReleasePlan = () => {
           v1.0.0
         </Typography>
         
-
         {/* Problem Statement */}
         {/* TODO: replace problem statement */}
         <ContentBox title={'Problem Statement'} content={problemStatement} />
@@ -125,54 +123,19 @@ const ReleasePlan = () => {
         <ContentBox title={'High Level Goals'} content={highLevelGoals} />
         
         <Grid container spacing={2}>
-
           {/* Sprints */}
           <Grid item xs={9}>
             <Typography
               variant="h6"
               marginLeft={2}
-              textAlign={'left'}
+              textAlign="left"
               fontWeight="bold"
             >
               Sprints
             </Typography>
 
-            <Paper
-              sx={{
-                marginLeft: 2,
-                backgroundColor: 'lightgray',
-                overflowX: 'auto', 
-                marginBottom: 2,
-              }}
-            >
-              <List sx={{display: 'flex'}}>
-                {/* TODO: add Sprint's User Stories */}
-                {allUserStories.map((userStory, i) => (
-                  <ListItem key={i}  sx={{minWidth: 300, display: 'inline-block'}}>
-                      <UserStory userStoryText={userStory} />
-                  </ListItem>
-                ))}
-              </List>
-            </Paper>
-            
-            <Paper
-              sx={{
-                marginLeft: 2,
-                backgroundColor: 'lightgray',
-                overflowX: 'auto', 
-                marginBottom: 2,
-              }}
-            >
-              <List sx={{display: 'flex'}}>
-                {/* TODO: add Sprint's User Stories */}
-                {allUserStories.reverse().map((userStory, i) => (
-                  <ListItem key={i}  sx={{minWidth: 300, display: 'inline-block'}}>
-                      <UserStory userStoryText={userStory} />
-                  </ListItem>
-                ))}
-              </List>
-            </Paper>
-            
+            <Sprint userStories={allUserStories} />
+            <Sprint userStories={allUserStories.reverse()} />
           </Grid>
 
           <Grid item xs={3}>
@@ -190,7 +153,6 @@ const ReleasePlan = () => {
                 maxWidth: '90%',
                 marginLeft: 2,
                 backgroundColor: 'lightgray',
-                borderRadius: 6,
               }}
             >
               <List>
