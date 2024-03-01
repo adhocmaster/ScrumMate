@@ -49,7 +49,7 @@ const ReleasePlan = () => {
           open={open} 
           toggleDrawer={toggleDrawer} 
           title={'Revisions'}
-          items={'Revision 4 2/20/24'}
+          items={[{revisionDate: 'Revision 4 2/20/24', locked: false}, {revisionDate: 'Revision 3 2/10/24', locked: true}]}
           itemClick={revisionsClick}
         />
       </Grid>
