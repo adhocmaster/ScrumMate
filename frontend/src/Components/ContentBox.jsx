@@ -9,6 +9,7 @@ const ContentBox = ({title, content}) => {
         marginLeft={2}
         textAlign={'left'}
         fontWeight="bold"
+        fontSize={14}
       >
         {title}
       </Typography>
@@ -23,7 +24,7 @@ const ContentBox = ({title, content}) => {
         }}
       >
         <CardContent>
-          <Typography variant='body1' textAlign='left'>
+          <Typography variant='body1' textAlign='left' fontSize={14}>
             {content}
           </Typography>
         </CardContent>

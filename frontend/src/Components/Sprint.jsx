@@ -3,14 +3,16 @@ import MenuIcon from '@mui/icons-material/Menu';
 import UserStory from './UserStory';
 
 const Sprint = ({userStories}) => {
-  const truncateText = ({ text, maxWords }) => {
-    const words = text.split(' ');
-    if (words.length <= maxWords) {
+  const truncateText = (text, maxLength) => {
+    if (text.length <= maxLength) {
       return text;
     }
 
-    const truncatedText = words.slice(0, maxWords).join(' ');
-    return truncatedText + '...';
+    const truncatedText = text.slice(0, maxLength);
+    const lastSpaceIndex = truncatedText.lastIndexOf(' ');
+    const truncatedWithEllipsis = lastSpaceIndex !== -1 ? `${truncatedText.slice(0, lastSpaceIndex)} ...` : `${truncatedText} ...`;
+
+    return truncatedWithEllipsis;
   };
 
   return (
@@ -42,7 +44,7 @@ const Sprint = ({userStories}) => {
             }}
           >
             {/* TODO: replace with sprint number */}
-            <Typography sx={{marginTop: 2}}>
+            <Typography sx={{marginTop: 2}} fontSize={14}>
               1
             </Typography>
             
@@ -52,7 +54,7 @@ const Sprint = ({userStories}) => {
             </IconButton>
 
             {/* TODO: replace with total number of story points */}
-            <Typography sx={{marginBottom: 2}}>
+            <Typography sx={{marginBottom: 2}} fontSize={14}>
               8
             </Typography>
           </Box>
@@ -89,7 +91,7 @@ const Sprint = ({userStories}) => {
                   padding: '8px 0px 8px 12px',
                 }}
               >
-                <UserStory userStoryText={truncateText({text: userStory, maxWords: 30})} storyPoints={5}/>
+                <UserStory userStoryText={truncateText(userStory, 120)} storyPoints={5}/>
               </ListItem>
             ))}
           </List>

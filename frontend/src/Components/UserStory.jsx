@@ -9,7 +9,7 @@ const UserStory = ({userStoryText, storyPoints}) => {
         position: 'relative',
       }}
     >
-      <CardContent sx={{minHeight: 120}}>
+      <CardContent sx={{minHeight: 125}}>
         <Typography
           variant="body1"
           textAlign={'left'}

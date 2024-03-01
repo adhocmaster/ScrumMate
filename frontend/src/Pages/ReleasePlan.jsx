@@ -38,7 +38,8 @@ const ReleasePlan = () => {
     another in real time.`
   const userStoryText = `As a student I want to be able to reset my password 
     in case I forget so that I do not lost access to all my account and data.`
-  const allUserStories = [userStoryText, problemStatement, highLevelGoals, highLevelGoals, problemStatement, "set up infrastructure", userStoryText, userStoryText, problemStatement, highLevelGoals, highLevelGoals, problemStatement, "add testing", userStoryText];
+  const allUserStories = [userStoryText, userStoryText, problemStatement, highLevelGoals, 
+    highLevelGoals, problemStatement, "add testing", userStoryText];
   
   return (
     <Grid container spacing={2}>
@@ -100,6 +101,7 @@ const ReleasePlan = () => {
           marginLeft={1}
           textAlign={'left'}
           fontWeight="bold"
+          fontSize={14}
         >
           Release Plan:
         </Typography>
@@ -109,6 +111,7 @@ const ReleasePlan = () => {
           textAlign="left"
           marginLeft={2}
           marginBottom={2}
+          fontSize={14}
         >
           v1.0.0
         </Typography>
@@ -128,6 +131,7 @@ const ReleasePlan = () => {
               marginLeft={2}
               textAlign="left"
               fontWeight="bold"
+              fontSize={14}
             >
               Sprints
             </Typography>
@@ -142,6 +146,7 @@ const ReleasePlan = () => {
               marginLeft={2}
               textAlign={'left'}
               fontWeight="bold"
+              fontSize={14}
             >
               Backlog
             </Typography>
@@ -164,7 +169,7 @@ const ReleasePlan = () => {
                       <CardContent>
                         <Typography
                           variant="body1"
-                          fontSize={16}
+                          fontSize={14}
                         >
                           <Input
                             type="text"
