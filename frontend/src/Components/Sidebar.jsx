@@ -24,9 +24,14 @@ const Sidebar = ({ open, toggleDrawer, title, items, itemClick }) => {
 		});
 	}
 
-	const addRevisions = (item) => {
-		setRevisions([...revisions, item]);
+	const addRevisions = () => {
+		const item = {revisionDate: "Revision x 2/29/24", locked: false}
+		setRevisions([item, ...revisions]);
 	};
+
+	const copyRevision = (index) => {
+    	setRevisions([revisions[index], ...revisions]);
+	}
 	
 	const removeRevisions = (index) => {
 		const newRevisionArray = revisions.filter((_, i) => i !== index);
@@ -69,7 +74,7 @@ const Sidebar = ({ open, toggleDrawer, title, items, itemClick }) => {
 				<Grid container justifyContent="flex-end">
 					<Grid item>
 						<IconButton 
-							onClick={console.log("temp")}
+							onClick={addRevisions}
 							>
 							<AddCircleOutlineIcon />
 						</IconButton>
@@ -120,15 +125,17 @@ const Sidebar = ({ open, toggleDrawer, title, items, itemClick }) => {
 					</Typography>
 					
 					<IconButton 
-						onClick={console.log("temp")}
+						onClick={() => {copyRevision(index)}}
 						sx={{ 
 							marginLeft: 'auto',
 						}}
 						>
 						<ContentCopyIcon />
 					</IconButton>
+
 				</ListItemButton>
 			))}
+
 		</List>
 		</Drawer>
 	);
