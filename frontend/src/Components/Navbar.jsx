@@ -1,4 +1,6 @@
-import React from 'react';
+import React, {useState, useEffect} from 'react';
+import { BrowserRouter as useParams } from 'react-router-dom';
+import useFetch from '../useFetch';
 import { AppBar, Toolbar, Typography, Button, Box } from '@mui/material';
 import { Link, Outlet, useLocation } from 'react-router-dom';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
@@ -7,30 +9,19 @@ import { IconButton } from '@mui/material';
 
 const Navbar = ({ isLoggedIn, onSignOut }) => {
 
+  const [name, setName] = useState('');
 
-  const projectName = (name) => {
-    try{
-      var options = {
-        url: "https://localhost:3000/projects", //this is a placeholder, backend creates function
-        method: "GET",
-        headers: {
-          'Content-Type': 'applications/json'
-        },
-        body:JSON.stringify({name}),
-        credentials: 'include'
-      }
-      fetch('http://localhost:3001/projects', options). then((result) => {
-        console.log(result)
-        if(result.status == 200){
+  useEffect(() => {
 
-        }
-        return result.json()
-      })
-    }
-    catch{
-
-    }
-  }
+    fetch('https://localhost:8080/project/:projectId/getName')
+    .then (response => response.json())
+    .then(data => {
+        setName(data);
+    })
+    .catch(error => {
+      console.error('Error', error);
+    });
+  }, []);
 
   // const textOutline = `
   //   -1px -1px 0 #000, 
@@ -62,9 +53,9 @@ const Navbar = ({ isLoggedIn, onSignOut }) => {
             <Link exact to="/" style={{ textDecoration: 'none', color: 'white' }}>ScrumMate</Link>
           </Typography>
 
-          <Typography>
-
-          </Typography>
+              <Typography>
+                {name}
+              </Typography>
 
           {/* Avatar Button */}
           {isLoggedIn && 
