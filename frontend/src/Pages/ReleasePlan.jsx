@@ -9,8 +9,26 @@ import ContentBox from '../Components/ContentBox';
 import Sprint from '../Components/Sprint';
 
 const ReleasePlan = () => {
+	function fetchMostRecentRelease(projectId, setId) {
+		console.log("about to most recent release")
+		var options = {
+			method:'get',
+			credentials:'include'
+		  }
+		fetch(`http://localhost:8080/api/${projectId}/recentRelease`, options).then((result)=>{
+			if(result.status == 200){
+				console.log(result)
+			}
+			result.json().then((response)=>{
+				console.log(response)
+				setProblem(response.problemStatement)
+				setGoals(response.goalStatement)
+			})
+		})
+	}
+
 	function fetchRelease(releaseId, setProblem, setGoals) {
-		console.log("about to fetch")
+		console.log("about to fetch a release")
 		var options = {
 			method:'get',
 			credentials:'include'

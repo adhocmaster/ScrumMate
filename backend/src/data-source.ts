@@ -185,6 +185,21 @@ export class Database {
 		return maybeProject[0]
 	}
 
+	public async fetchMostRecentRelease(id: number): Promise<Release> {
+		// Get the project with revisions' with only their numbers and dates
+		// avoids getting the problem/goal statements and saves on data
+		const maybeProject = await this.dataSource.getRepository(Project).createQueryBuilder("project")
+			.where("project.id = :projectId", {projectId: id})
+			.select(['project.id', 'release.id', 'release.revision', "release.revisionDate"])
+			.leftJoin('project.releases', 'release')  // releases is the joined table
+			.getMany();
+		if (!maybeProject || maybeProject.length === 0) {
+			throw new NotFoundError(`Project with id ${id} not found`)
+		}
+		reverse(maybeProject[0].releases) // may need to get from db in desc order instead
+		return maybeProject[0].releases[0]
+	}
+
 	///// Release Methods /////
 
 	/// correctly automatically generates new revision if not provided
