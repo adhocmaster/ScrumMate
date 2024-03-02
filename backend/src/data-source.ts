@@ -148,12 +148,10 @@ export class Database {
 		newProject.name = projectName
 		newProject.nextRevision = 1
 		newProject.productOwner = user
-    newProject.releases = [];
-		user.addOwnedProject(newProject)
+    	newProject.releases = [];
 		// await this.save(user) // DO NOT DO THIS! if dont fetch all old projects, saving just 1 project erases
 		await this.save(newProject)
     // await this.save(user);
-    delete newProject.productOwner.ownedProjects;
 		return newProject
 	}
 
@@ -299,7 +297,7 @@ export class Database {
 		newSprint.endDate = endDate
 		newSprint.goal = goal
 		newSprint.release = release
-		release.addSprint(newSprint)
+		// release.addSprint(newSprint)
 		await this.save(newSprint)
 		return newSprint
 	}

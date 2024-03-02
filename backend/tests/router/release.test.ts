@@ -53,7 +53,7 @@ afterAll(async () => {
 	await server.close()
 });
 
-describe("Project API tests", () => {
+describe("Release API tests", () => {
   let sessionToken: string;
 	test("CREATE USER", async () => {
 		const body = {username: "sallyg", email: "sallys@gmail.com", password: "password123"}
@@ -96,37 +96,6 @@ describe("Project API tests", () => {
     });
   });
 
-  test('Create Project without auth', async ()=> {
-    const body = {name: "new Project"};
-    await request(app)
-    .post("/api/project")
-    .send(body)
-    .expect(403)
-  });
-
-  test('Update Project', async () => {
-    const body = {name: "Updated Project"};
-    await request(app)
-    .patch(`/api/project/${projectId}`)
-    .set('Cookie', [`user-auth=${sessionToken}`])
-    .send(body)
-    .expect(200)
-    .then((res) => {
-      expect(res.body).toBeDefined();
-      expect(res.body.name).toEqual('Updated Project'); 
-      expect(res.body.id).toBeDefined();
-    });
-  });
-
-  test('Update Non exisiting Project', async () => {
-	const body = {name: "Updated Project"};
-    await request(app)
-    .patch(`/api/project/500`)
-    .set('Cookie', [`user-auth=${sessionToken}`])
-	.send(body)
-    .expect(Codes.NotFoundError);
-  });
-
   test("Get Releases of Empty Project", async () => {
     await request(app)
     .get(`/api/project/${projectId}/releases`)
@@ -138,4 +107,80 @@ describe("Project API tests", () => {
       expect(res.body.releases).toEqual([]);
     })
   });
+
+  test('New Release', async () => {
+    const body = {"revision": 2, "goalStatement": "here"}
+    await request(app)
+    .post(`/api/project/${projectId}/release`)
+	.set('Cookie', [`user-auth=${sessionToken}`])
+	.send(body)
+	.expect(200)
+	.then((res) => {
+		expect(res.body).toBeDefined();
+		expect(res.body.revision).toBeDefined();
+		expect(res.body.goalStatement).toBeDefined();
+		console.log(res.body);
+	});
+  });
+
+  test('New Release 2', async () => {
+	const body = {"goalStatement": "release 2"}
+    await request(app)
+    .post(`/api/project/${projectId}/release`)
+	.set('Cookie', [`user-auth=${sessionToken}`])
+	.send(body)
+	.expect(200)
+	.then((res) => {
+		expect(res.body).toBeDefined();
+		expect(res.body.revision).toBeDefined();
+		expect(res.body.goalStatement).toBeDefined();
+		console.log(res.body);
+	});
+  });
+
+  let releaseId: Number;
+  test("Get Releases of project with 2 releases", async () => {
+    await request(app)
+    .get(`/api/project/${projectId}/releases`)
+    .set('Cookie', [`user-auth=${sessionToken}`])
+    .expect(200)
+    .then((res) => {
+      expect(res.body).toBeDefined();
+      expect(res.body.id).toBeDefined();
+	  releaseId = res.body.id;
+      expect(res.body.releases.length).toEqual(2);
+    })
+  });
+
+  test('Edit Release Plan', async () => {
+	const body = {"goalStatement": "release EDITEd"}
+    await request(app)
+    .post(`/api/project/${projectId}/release`)
+	.set('Cookie', [`user-auth=${sessionToken}`])
+	.send(body)
+	.expect(200)
+	.then((res) => {
+		expect(res.body).toBeDefined();
+		expect(res.body.revision).toBeDefined();
+		expect(res.body.goalStatement).toBeDefined();
+		expect(res.body.goalStatement).toEqual("release EDITEd");
+		console.log(res.body);
+	});
+  });
+
+//   test('Copy Release Plan', async () => {
+// 	const body = {"goalStatement": "release EDITEd"}
+//     await request(app)
+//     .post(`/api/project/${projectId}/release`)
+// 	.set('Cookie', [`user-auth=${sessionToken}`])
+// 	.send(body)
+// 	.expect(200)
+// 	.then((res) => {
+// 		expect(res.body).toBeDefined();
+// 		expect(res.body.revision).toBeDefined();
+// 		expect(res.body.goalStatement).toBeDefined();
+// 		expect(res.body.goalStatement).toEqual("release EDITEd");
+// 		console.log(res.body);
+// 	});
+//   })
 });

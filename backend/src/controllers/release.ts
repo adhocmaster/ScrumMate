@@ -11,6 +11,9 @@ export const newRelease = async (req: express.Request, res: express.Response) =>
 		problemStatement,
 		goalStatement,
 	} = req.body
+	if(!verifyParameters(projectId)) return res.sendStatus(400);
+
+  	// if(!verifyParameters(projectId, revision, revisionDate, problemStatement, goalStatement)) {
 	const release = await db.createNewRelease(parseInt(projectId), revision, revisionDate, problemStatement, goalStatement)
 	return res.json(release)
 };

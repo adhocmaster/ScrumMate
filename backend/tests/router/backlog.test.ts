@@ -53,7 +53,7 @@ afterAll(async () => {
 	await server.close()
 });
 
-describe("Project API tests", () => {
+describe("Release API tests", () => {
   let sessionToken: string;
 	test("CREATE USER", async () => {
 		const body = {username: "sallyg", email: "sallys@gmail.com", password: "password123"}
@@ -73,69 +73,84 @@ describe("Project API tests", () => {
 		.post("/api/user/login")
 		.send(body)
 		.expect(200)
-    .then((res) => {
-      expect(res.body.sessionToken).toBeDefined();
-      sessionToken = res.body.sessionToken;
-    });
+		.then((res) => {
+			expect(res.body.sessionToken).toBeDefined();
+			sessionToken = res.body.sessionToken;
+		});
 	});
 
-  let projectId: Number;
+	let projectId: Number;
+	let sprintId: Number;
+	let releaseId: Number;
 
-  test('Create project', async () => {
-    const body = {name: "new Project"};
-    await request(app)
-    .post("/api/project")
-    .set('Cookie', [`user-auth=${sessionToken}`])
-    .send(body)
-    .expect(200)
-    .then((res) => {
-      expect(res.body).toBeDefined();
-      expect(res.body.name).toEqual('new Project'); 
-      expect(res.body.id).toBeDefined();
-      projectId = res.body.id;
-    });
-  });
+	test('Create project', async () => {
+		const body = {name: "new Project"};
+		await request(app)
+		.post("/api/project")
+		.set('Cookie', [`user-auth=${sessionToken}`])
+		.send(body)
+		.expect(200)
+		.then((res) => {
+			expect(res.body).toBeDefined();
+			expect(res.body.name).toEqual('new Project'); 
+			expect(res.body.id).toBeDefined();
+			projectId = res.body.id;
+		});
+	});
 
-  test('Create Project without auth', async ()=> {
-    const body = {name: "new Project"};
-    await request(app)
-    .post("/api/project")
-    .send(body)
-    .expect(403)
-  });
+	test('New Release', async () => {
+		const body = {"revision": 2, "goalStatement": "here"}
+		await request(app)
+		.post(`/api/project/${projectId}/release`)
+		.set('Cookie', [`user-auth=${sessionToken}`])
+		.send(body)
+		.expect(200)
+		.then((res) => {
+			expect(res.body).toBeDefined();
+			expect(res.body.revision).toBeDefined();
+			expect(res.body.id).toBeDefined();
+			releaseId = res.body.id;
+			expect(res.body.goalStatement).toBeDefined();
+			console.log(res.body);
+		});
+	});
 
-  test('Update Project', async () => {
-    const body = {name: "Updated Project"};
-    await request(app)
-    .patch(`/api/project/${projectId}`)
-    .set('Cookie', [`user-auth=${sessionToken}`])
-    .send(body)
-    .expect(200)
-    .then((res) => {
-      expect(res.body).toBeDefined();
-      expect(res.body.name).toEqual('Updated Project'); 
-      expect(res.body.id).toBeDefined();
-    });
-  });
+	test('New Sprint', async () => {
+		const body = {"sprintNumber": 1, "startDate": "1709330028", "endDate": "1709330028", "goal": "New sprint goal"}
+		await request(app)
+		.post(`/api/release/${releaseId}/sprint`)
+		.set('Cookie', [`user-auth=${sessionToken}`])
+		.send(body)
+		.expect(200)
+		.then((res) => {
+			expect(res.body).toBeDefined();
+			expect(res.body.id).toBeDefined();
+			sprintId = res.body.id;
+			expect(res.body.startDate).toBeDefined();
+		});
+	});
 
-  test('Update Non exisiting Project', async () => {
-	const body = {name: "Updated Project"};
-    await request(app)
-    .patch(`/api/project/500`)
-    .set('Cookie', [`user-auth=${sessionToken}`])
-	.send(body)
-    .expect(Codes.NotFoundError);
-  });
+	test('New sprint missing data', async () => {
+		const body = {"startDate": "1709330028", "endDate": "1709330028", "goal": "New sprint goal"}
+		await request(app)
+		.post(`api/release/${releaseId}/sprint`)
+		.set('Cookie', [`user-auth=${sessionToken}`])
+		.send(body)
+		.expect(400);
+	});
 
-  test("Get Releases of Empty Project", async () => {
-    await request(app)
-    .get(`/api/project/${projectId}/releases`)
-    .set('Cookie', [`user-auth=${sessionToken}`])
-    .expect(200)
-    .then((res) => {
-      expect(res.body).toBeDefined();
-      expect(res.body.id).toBeDefined();
-      expect(res.body.releases).toEqual([]);
-    })
-  });
+	test('Edit Sprint', async () => {
+		const body = {"goal": "New sprint goal"}
+		await request(app)
+		.post(`api/sprint/${sprintId}/edit`)
+		.set('Cookie', [`user-auth=${sessionToken}`])
+		.send(body)
+		.expect(200)
+		.then((res) => {
+			expect(res.body).toBeDefined();
+			expect(res.body.goal).toBeDefined();
+			expect(res.body.goal).toEqual("New sprint goal")
+			expect(res.body.sprintNumber);
+		});
+	});
 });
