@@ -126,8 +126,6 @@ describe("Release API tests", () => {
 			expect(res.body.id).toBeDefined();
 			sprintId = res.body.id;
 			expect(res.body.startDate).toBeDefined();
-			console.log(res.body);
-
 		});
 	});
 
