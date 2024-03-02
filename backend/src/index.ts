@@ -24,7 +24,7 @@ AppDataSource.initialize().then(async () => {
 	const productOwner1 = new User()
 	productOwner1.username = "mr. fakeperson"
 	productOwner1.email = "fakeperson@nonexistent.mmm"
-	productOwner1.password = "scrum123"
+	productOwner1.password = "hamburger"
 	productOwner1.salt = "salt"
 	productOwner1.id = 1
 	await db.save(productOwner1)
