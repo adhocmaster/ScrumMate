@@ -119,7 +119,6 @@ describe("Release API tests", () => {
 		expect(res.body).toBeDefined();
 		expect(res.body.revision).toBeDefined();
 		expect(res.body.goalStatement).toBeDefined();
-		console.log(res.body);
 	});
   });
 
@@ -134,7 +133,6 @@ describe("Release API tests", () => {
 		expect(res.body).toBeDefined();
 		expect(res.body.revision).toBeDefined();
 		expect(res.body.goalStatement).toBeDefined();
-		console.log(res.body);
 	});
   });
 
@@ -164,7 +162,6 @@ describe("Release API tests", () => {
 		expect(res.body.revision).toBeDefined();
 		expect(res.body.goalStatement).toBeDefined();
 		expect(res.body.goalStatement).toEqual("release EDITEd");
-		console.log(res.body);
 	});
   });
 

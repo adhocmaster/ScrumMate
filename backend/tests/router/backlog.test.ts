@@ -144,8 +144,6 @@ describe("Release API tests", () => {
 		.send(body)
 		.expect(200)
 		.then((res) => {
-			console.log(res.body);
-
 			expect(res.body).toBeDefined();
 			expect(res.body.id).toBeDefined();
 			backlogId = res.body.id;
@@ -161,7 +159,6 @@ describe("Release API tests", () => {
 		.send(body)
 		.expect(200)
 		.then((res) => {
-			console.log(res.body);
 			expect(res.body).toBeDefined();
 			expect(res.body.id).toBeDefined();
 			backlogId = res.body.id;
