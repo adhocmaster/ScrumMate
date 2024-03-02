@@ -11,13 +11,6 @@ import { Sprint } from './entity/sprint';
 const app = express();
 
 AppDataSource.initialize().then(async () => {
-
-	app.use(express.json())
-  	app.use('/api', router());
-	app.listen(8080, () => {
-		console.log("Running on port 8080")
-	})
-
 	/// Initializing som basic information for the frontend
 	/// TEMPORARY CODE UNTIL THE SIGNIN AND PROJECT SELECTION PAGES ARE DONE
 	const db = Database.setAndGetInstance(AppDataSource)
@@ -31,7 +24,7 @@ AppDataSource.initialize().then(async () => {
 
 	var project1 = new Project()
 	project1.name = "scrum tools"
-	project1.nextRevision = 1
+	project1.nextRevision = 3
 	project1.productOwner = productOwner1
 	project1.id = 1
 	await db.save(project1)
@@ -54,4 +47,10 @@ AppDataSource.initialize().then(async () => {
 	release2.id = 2
 	await db.save(release2)
 
+	/// Start express
+	app.use(express.json())
+  	app.use('/api', router());
+	app.listen(8080, () => {
+		console.log("Running on port 8080")
+	})
 }).catch(error => console.log(error))

@@ -8,6 +8,12 @@ import LockIcon from '@mui/icons-material/Lock';
 import LockOpenIcon from '@mui/icons-material/LockOpen';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 
+function convertRevisionAndDate(release) {
+	release.revision = `Revision ${release.revision}`
+	release.revisionDate = new Date(release.revisionDate).toLocaleString().split(',')[0]
+	return release
+}
+
 function fetchReleases(projectId, setRevisions) {
 	console.log("about to fetch")
 	var options = {
@@ -21,7 +27,7 @@ function fetchReleases(projectId, setRevisions) {
 		}
 		result.json().then((response)=>{
 			console.log(response)
-			setRevisions(response.releases)
+			setRevisions(response.releases.map((release) => convertRevisionAndDate(release)))
 		})
 	})
 }
@@ -34,6 +40,28 @@ function createNewRelease(projectId, addRevisions) {
             credentials: 'include',
         };
         fetch(`http://localhost:8080/api/project/${projectId}/newRelease`, options).then((result)=>{
+			if(result.status == 200){
+				console.log(result)
+			}
+			result.json().then((response)=>{
+				console.log(response)
+				addRevisions(response);
+			})
+		})
+    } catch (error) {
+        console.error(error);
+        return null; // Return null or handle the error as needed
+    }
+}
+
+function copyRelease(releaseId, addRevisions) {
+    try {
+        console.log("about to copy");
+        const options = {
+            method: 'POST',
+            credentials: 'include',
+        };
+        fetch(`http://localhost:8080/api/release/${releaseId}/copy`, options).then((result)=>{
 			if(result.status == 200){
 				console.log(result)
 			}
@@ -71,12 +99,8 @@ const Sidebar = ({ open, toggleDrawer, title, items, itemClick }) => {
 	}
 
 	const addRevisions = (item) => {
-		setRevisions([item, ...revisions]);
+		setRevisions([convertRevisionAndDate(item), ...revisions]);
 	};
-
-	const copyRevision = (index) => {
-    	setRevisions([{revision: revisions[index].revision, revisionDate: revisions[index].revisionDate, locked: false}, ...revisions]);
-	}
 	
 	const removeRevisions = (index) => {
 		const newRevisionArray = revisions.filter((_, i) => i !== index);
@@ -148,7 +172,7 @@ const Sidebar = ({ open, toggleDrawer, title, items, itemClick }) => {
 			}
 			</ListItem>
 
-			{open && revisions.map(({revision, revisionDate, locked}, index) => (
+			{open && revisions.map(({id, revision, revisionDate, locked}, index) => (
 				<ListItemButton
 					onClick={itemClick}
 					key={index}
@@ -167,7 +191,7 @@ const Sidebar = ({ open, toggleDrawer, title, items, itemClick }) => {
 					</Typography>
 					
 					<IconButton 
-						onClick={() => {copyRevision(index)}}
+						onClick={() => {copyRelease(id, addRevisions)}}
 						sx={{ 
 							marginLeft: 'auto',
 						}}

@@ -8,6 +8,7 @@ import { Bug, Epic, Infrastructure, Spike, Story, Task, BacklogItem, Priority } 
 import { authentication, random } from "./helpers"
 import "reflect-metadata"
 import { ExistingUserError, NotFoundError, NotSavedError } from "./helpers/errors"
+import { reverse } from "lodash"
 
 export const AppDataSource = new DataSource({
     type: "postgres",
@@ -174,12 +175,13 @@ export class Database {
 		// avoids getting the problem/goal statements and saves on data
 		const maybeProject = await this.dataSource.getRepository(Project).createQueryBuilder("project")
 			.where("project.id = :projectId", {projectId: id})
-			.select(['project.id', 'release.revision', "release.revisionDate"])
+			.select(['project.id', 'release.id', 'release.revision', "release.revisionDate"])
 			.leftJoin('project.releases', 'release')  // releases is the joined table
 			.getMany();
 		if (!maybeProject || maybeProject.length === 0) {
 			throw new NotFoundError(`Project with id ${id} not found`)
 		}
+		reverse(maybeProject[0].releases)
 		return maybeProject[0]
 	}
 
