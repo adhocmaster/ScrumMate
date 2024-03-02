@@ -242,13 +242,13 @@ describe('testing that everything can be saved and loaded from database', () => 
 			var userList = [productOwner1, productOwner2, teammember1, teammember2].sort((a, b) => a.username.localeCompare(b.username))
 			expect(loadedUsers.length).toBe(userList.length)
 			for (let i = 0; i < loadedUsers.length; i++) {
-				expect(loadedUsers[i].username == userList[i].username)
-				expect(loadedUsers[i].email == userList[i].email)
+				expect(loadedUsers[i].username).toStrictEqual(userList[i].username)
+				expect(loadedUsers[i].email).toStrictEqual(userList[i].email)
 			}
 			var projList = [project1, project2, project3].sort((a,b) => a.name.localeCompare(b.name))
 			expect(loadedProjects.length).toBe(projList.length)
 			for (let i = 0; i < loadedProjects.length; i++) {
-				expect(loadedProjects[i].name == projList[i].name)
+				expect(loadedProjects[i].name).toStrictEqual(projList[i].name)
 			}
 			expect(loadedRoles[0].role).toBe(role.role)
 			// ... the rest are probably fine ...

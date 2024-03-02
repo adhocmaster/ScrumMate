@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect  } from 'react';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import { Button, Drawer, Icon, IconButton, Typography, Grid } from "@mui/material";
@@ -9,8 +9,80 @@ import LockOpenIcon from '@mui/icons-material/LockOpen';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 
 const Sidebar = ({ open, toggleDrawer, title, items, itemClick }) => {
-	const [revisions, setRevisions] = useState(items);
+	function convertRevisionAndDate(release) {
+		release.revision = `Revision ${release.revision}`
+		release.revisionDate = new Date(release.revisionDate).toLocaleString().split(',')[0]
+		return release
+	}
 	
+	function fetchReleases(projectId, setRevisions) {
+		console.log("about to fetch")
+		var options = {
+			method:'get',
+			credentials:'include'
+		  }
+		fetch(`http://localhost:8080/api/api/project/${projectId}/releases`, options).then((result)=>{
+			if(result.status == 200){
+				console.log(result)
+			}
+			result.json().then((response)=>{
+				console.log(response)
+				setRevisions(response.releases.map((release) => convertRevisionAndDate(release)))
+			})
+		})
+	}
+	
+	function createNewRelease(projectId, addRevisions) {
+		try {
+			console.log("about to create");
+			const options = {
+				method: 'POST',
+				credentials: 'include',
+			};
+			fetch(`http://localhost:8080/api/project/${projectId}/newRelease`, options).then((result)=>{
+				if(result.status == 200){
+					console.log(result)
+				}
+				result.json().then((response)=>{
+					console.log(response)
+					addRevisions(response);
+				})
+			})
+		} catch (error) {
+			console.error(error);
+			return null; // Return null or handle the error as needed
+		}
+	}
+	
+	function copyRelease(releaseId, addRevisions) {
+		try {
+			console.log("about to copy");
+			const options = {
+				method: 'POST',
+				credentials: 'include',
+			};
+			fetch(`http://localhost:8080/api/release/${releaseId}/copy`, options).then((result)=>{
+				if(result.status == 200){
+					console.log(result)
+				}
+				result.json().then((response)=>{
+					console.log(response)
+					addRevisions(response);
+				})
+			})
+		} catch (error) {
+			console.error(error);
+			return null; // Return null or handle the error as needed
+		}
+	}
+	
+	const [revisions, setRevisions] = useState(items || []);
+	console.log("running sidebar")
+
+	useEffect(() => {
+		fetchReleases(1, setRevisions);
+	}, []);
+
 	const toggleLock = (index) => {
 		setRevisions(prevRevisions => {
 			// Create a copy of the revisions array
@@ -24,14 +96,9 @@ const Sidebar = ({ open, toggleDrawer, title, items, itemClick }) => {
 		});
 	}
 
-	const addRevisions = () => {
-		const item = {revisionDate: "Revision x 2/29/24", locked: false}
-		setRevisions([item, ...revisions]);
+	const addRevisions = (item) => {
+		setRevisions([convertRevisionAndDate(item), ...revisions]);
 	};
-
-	const copyRevision = (index) => {
-    	setRevisions([{revisionDate: revisions[index].revisionDate, locked: false}, ...revisions]);
-	}
 	
 	const removeRevisions = (index) => {
 		const newRevisionArray = revisions.filter((_, i) => i !== index);
@@ -74,7 +141,7 @@ const Sidebar = ({ open, toggleDrawer, title, items, itemClick }) => {
 				<Grid container justifyContent="flex-end">
 					<Grid item>
 						<IconButton 
-							onClick={addRevisions}
+							onClick={() => {createNewRelease(1, addRevisions)}}
 						>
 							<AddCircleOutlineIcon fontSize="small"/>
 						</IconButton>
@@ -103,9 +170,9 @@ const Sidebar = ({ open, toggleDrawer, title, items, itemClick }) => {
 			}
 			</ListItem>
 
-			{open && revisions.map(({revisionDate, locked}, index) => (
+			{open && revisions.map(({id, revision, revisionDate, locked}, index) => (
 				<ListItemButton
-					onClick={itemClick}
+					onClick={() => itemClick(id)}
 					key={index}
 				>
 					<IconButton 
@@ -118,11 +185,11 @@ const Sidebar = ({ open, toggleDrawer, title, items, itemClick }) => {
 					</IconButton>
 
 					<Typography fontSize={14}>
-						{revisionDate}
+						{`${revision} ${revisionDate}`}
 					</Typography>
 					
 					<IconButton 
-						onClick={() => {copyRevision(index)}}
+						onClick={() => {copyRelease(id, addRevisions)}}
 						sx={{ 
 							marginLeft: 'auto',
 						}}
