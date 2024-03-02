@@ -4,11 +4,12 @@ const ContentBox = ({title, content}) => {
   return (
     <>
       <Typography
-        variant="h6"
+        variant='body1'
         marginBottom={2}
         marginLeft={2}
         textAlign={'left'}
         fontWeight="bold"
+        fontSize={14}
       >
         {title}
       </Typography>
@@ -23,7 +24,7 @@ const ContentBox = ({title, content}) => {
         }}
       >
         <CardContent>
-          <Typography variant='body1' textAlign='left'>
+          <Typography variant='body1' textAlign='left' fontSize={14}>
             {content}
           </Typography>
         </CardContent>

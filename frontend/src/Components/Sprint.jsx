@@ -32,7 +32,7 @@ const Sprint = ({userStories}) => {
             }}
           >
             {/* TODO: replace with sprint number */}
-            <Typography sx={{marginTop: 2}}>
+            <Typography sx={{marginTop: 2}} fontSize={14}>
               1
             </Typography>
             
@@ -42,7 +42,7 @@ const Sprint = ({userStories}) => {
             </IconButton>
 
             {/* TODO: replace with total number of story points */}
-            <Typography sx={{marginBottom: 2}}>
+            <Typography sx={{marginBottom: 2}} fontSize={14}>
               8
             </Typography>
           </Box>
@@ -73,7 +73,7 @@ const Sprint = ({userStories}) => {
               <ListItem 
                 key={index} 
                 sx={{
-                  minWidth: 300, 
+                  minWidth: 200, 
                   display: 'inline-block', 
                   padding: '8px 0px 8px 12px',
                 }}

@@ -63,7 +63,7 @@ const Sidebar = ({ open, toggleDrawer, title, items, itemClick }) => {
 					sx={{
 						marginLeft: 2,
 						fontWeight: 'bold',
-						fontSize: 22,
+						fontSize: 14,
 					}}
 				>
 					{title}					
@@ -75,8 +75,7 @@ const Sidebar = ({ open, toggleDrawer, title, items, itemClick }) => {
 					<Grid item>
 						<IconButton 
 							onClick={addRevisions}
-							>
-							<AddCircleOutlineIcon />
+							<AddCircleOutlineIcon fontSize="small"/>
 						</IconButton>
 					</Grid>
 				</Grid>
@@ -89,7 +88,7 @@ const Sidebar = ({ open, toggleDrawer, title, items, itemClick }) => {
 						marginLeft: 'auto',
 					}}
 				>
-					<ChevronLeftIcon />
+					<ChevronLeftIcon fontSize="small"/>
 				</IconButton> 
 				:
 				<IconButton 
@@ -98,7 +97,7 @@ const Sidebar = ({ open, toggleDrawer, title, items, itemClick }) => {
 						marginLeft: 'auto',
 					}}
 				>
-					<ChevronRightIcon />
+					<ChevronRightIcon fontSize="small"/>
 				</IconButton>
 			}
 			</ListItem>
@@ -113,14 +112,11 @@ const Sidebar = ({ open, toggleDrawer, title, items, itemClick }) => {
 						sx={{ 
 							marginRight: 'auto',
 						}}
-						>
-						{locked ? <LockIcon /> : <LockOpenIcon />}
+					>
+						{locked ? <LockIcon fontSize="small"/> : <LockOpenIcon fontSize="small"/>}
 					</IconButton>
 
-					<Typography
-						fontSize={16}
-						sx={{ margin: 'left' }}
-					>
+					<Typography fontSize={14}>
 						{revisionDate}
 					</Typography>
 					
@@ -130,9 +126,8 @@ const Sidebar = ({ open, toggleDrawer, title, items, itemClick }) => {
 							marginLeft: 'auto',
 						}}
 						>
-						<ContentCopyIcon />
+						<ContentCopyIcon fontSize="small"/>
 					</IconButton>
-
 				</ListItemButton>
 			))}
 
