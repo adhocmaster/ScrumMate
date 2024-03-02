@@ -181,7 +181,7 @@ export class Database {
 		if (!maybeProject || maybeProject.length === 0) {
 			throw new NotFoundError(`Project with id ${id} not found`)
 		}
-		reverse(maybeProject[0].releases)
+		reverse(maybeProject[0].releases) // may need to get from db in desc order instead
 		return maybeProject[0]
 	}
 

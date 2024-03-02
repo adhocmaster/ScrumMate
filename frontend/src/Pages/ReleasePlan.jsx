@@ -8,36 +8,6 @@ import ButtonBar from '../Components/ButtonBar';
 import ContentBox from '../Components/ContentBox';
 import Sprint from '../Components/Sprint';
 
-function fetchReleases(projectId) {
-	console.log("about to fetch")
-	var options = {
-		url: `http://localhost:8080/api/api/project/${projectId}/releases`,
-		method:'get',
-		credentials:'include'
-	  }
-	fetch(`http://localhost:8080/api/api/project/${projectId}/releases`, options).then((result)=>{
-		console.log("fetched")
-		console.log(result)
-		if(result.status == 200){
-			console.log(result)
-		}
-		console.log("is okay")
-		result.json().then((response)=>{
-			console.log(response)
-			// setRevisions(response.releases)
-			return response.releases
-			// setProjectNames(response)
-			// if(response.length> 0){
-			// 	setCurrentProject(response[0])
-			// } else {
-			// 	setCurrentProject({name:"You have no projects yet, click Create New Project to make one. "})
-			// }
-		})
-		console.log("bing chilling")
-		})
-	console.log("over")
-}
-
 const ReleasePlan = () => {
   const [open, setOpen] = useState(true);
 
@@ -80,7 +50,7 @@ const ReleasePlan = () => {
           open={open} 
           toggleDrawer={toggleDrawer} 
           title={'Revisions'}
-          items={fetchReleases(1)}
+          items={[]}
           itemClick={revisionsClick}
         />
       </Grid>

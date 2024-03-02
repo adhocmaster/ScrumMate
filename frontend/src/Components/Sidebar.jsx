@@ -17,7 +17,6 @@ function convertRevisionAndDate(release) {
 function fetchReleases(projectId, setRevisions) {
 	console.log("about to fetch")
 	var options = {
-		url: `http://localhost:8080/api/api/project/${projectId}/releases`,
 		method:'get',
 		credentials:'include'
 	  }
@@ -174,7 +173,7 @@ const Sidebar = ({ open, toggleDrawer, title, items, itemClick }) => {
 
 			{open && revisions.map(({id, revision, revisionDate, locked}, index) => (
 				<ListItemButton
-					onClick={itemClick}
+					onClick={() => itemClick(id)}
 					key={index}
 				>
 					<IconButton 
