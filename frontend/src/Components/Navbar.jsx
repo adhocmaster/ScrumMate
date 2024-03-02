@@ -57,11 +57,9 @@ const Navbar = ({ isLoggedIn, onSignOut, projectId }) => {
             {/* ScrumMate Logo */}
             <Link exact to="/" style={{ textDecoration: 'none', color: 'white' }}>ScrumMate</Link>
           </Typography>
-
               <Typography>
                 {name}
               </Typography>
-
           {/* Avatar Button */}
           {isLoggedIn && 
             <IconButton

@@ -1,139 +1,62 @@
 import React, { useState, useEffect, useCallback, Component } from 'react';
 import { useLocation } from "react-router-dom"
-import { AppBar, Typography, Button, Box, Paper } from '@mui/material';
+import { Typography, Button, Box, Paper } from '@mui/material';
 import { List, ListItem, ListItemText } from '@mui/material';
-import CreateReleasePlan from '../Components/CreateReleasePlan'; // Adjust the import path as necessary
-import { Grid } from '@mui/material';
+import { Grid, Input, Divider, Card, CardContent, IconButton } from '@mui/material';
 import Sidebar from '../Components/Sidebar';
-import ButtonGroup from '@mui/material/ButtonGroup';
-import Divider from '@mui/material/Divider';
-import Card from '@mui/material/Card';
-import CardContent from '@mui/material/CardContent';
-import CardHeader from '@mui/material/CardHeader';
-import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
-
-
-/*
-This code allows the user to drag and drop the different stories in the release plan. 
-*/
-
-// fake data generator
-const getItems = (count, offset = 0) =>
-  Array.from({ length: count }, (v, k) => k).map(k => ({
-    id: `item-${k + offset}-${new Date().getTime()}`,
-    content: `item ${k + offset}`
-  }));
-
-const reorder = (list, startIndex, endIndex) => {
-  const result = Array.from(list);
-  const [removed] = result.splice(startIndex, 1);
-  result.splice(endIndex, 0, removed);
-
-  return result;
-};
-
-
-/**
- * Moves an item from one list to another list.
- */
-const move = (source, destination, droppableSource, droppableDestination) => {
-  const sourceClone = Array.from(source);
-  const destClone = Array.from(destination);
-  const [removed] = sourceClone.splice(droppableSource.index, 1);
-
-  destClone.splice(droppableDestination.index, 0, removed);
-
-  const result = {};
-  result[droppableSource.droppableId] = sourceClone;
-  result[droppableDestination.droppableId] = destClone;
-
-  return result;
-};
-
-const grid = 8;
-
-const getItemStyle = (isDragging, draggableStyle) => ({
-  // some basic styles to make the items look a bit nicer
-  userSelect: "none",
-  padding: grid * 2,
-  margin: `0 0 ${grid}px 0`,
-
-  // change background colour if dragging
-  background: isDragging ? "lightgreen" : "grey",
-
-  // styles we need to apply on draggables
-  ...draggableStyle
-});
-const getListStyle = isDraggingOver => ({
-  background: isDraggingOver ? "lightblue" : "lightgrey",
-  padding: grid,
-  width: 250
-});
-
+import ButtonBar from '../Components/ButtonBar';
+import ContentBox from '../Components/ContentBox';
+import Sprint from '../Components/Sprint';
 
 const ReleasePlan = () => {
-  
-  //////////////Attributes for DnD/////////////////
-
-  const [state, setState] = useState([getItems(10), getItems(5, 10)]);
-
-  
-  {/*const [items, setItems] = useState(getItems(6)); 
-    const onDragEnd = useCallback((result) => {
-    if (!result.destination) {
-      return;
-    }
-
-  }, [state]);
-
-
-  */}
-
-  const onDragEnd = useCallback((result) => {
-    const {source, destination} = result;
-
-    if(!destination){
-      return;
-    }
-    const sInd = +source.droppableId;
-    const dInd = +destination.droppableId;
-
-    if (sInd === dInd) {
-      const items = reorder(state[sInd], source.index, destination.index);
-      const newState = [...state];
-      newState[sInd] = items;
-      setState(newState);
-    } else {
-      const result = move(state[sInd], state[dInd], source, destination);
-      const newState = [...state];
-      newState[sInd] = result[sInd];
-      newState[dInd] = result[dInd];
-
-      setState(newState.filter(group => group.length));
-    }
-  });
-
-  
-  ////////////////////////////////////////////////
   const [open, setOpen] = useState(true);
 
   const toggleDrawer = () => {
     setOpen(!open);
   };
 
+  const [backlogItems, setBacklogItems] = useState([]);
+
+  const addBacklogItem = () => {
+    const newBacklogItems = [...backlogItems, { description: '' }];
+    setBacklogItems(newBacklogItems);
+  };
+
+  // TODO: update Placeholder functions/variables with actual data
+  const sprintPlanClick = () => console.log('Clicked Sprint Plan');
+  const scrumBoardClick = () => console.log('Clicked Scrum Board');
+  const burnupChartClick = () => console.log('Clicked Burnup Chart');
+  const allSprintsClick = () => console.log('Clicked All Sprints');
+  const revisionsClick = () => console.log('Revision Placeholder');
+  const problemStatement = `We noticed that there are currently no good 
+    websites for Professor Jullig to run CSE 115 on. All the existing 
+    ones are lacking in functionality or have high cost.`
+  const highLevelGoals = `In this release, we will implement the ability 
+    for students to join their class, join or create projects, create 
+    accounts, and be able to reset their password. There will be users of 
+    different types and they will be able to interact with one 
+    another in real time.`
+  const userStoryText = `As a student I want to be able to reset my password 
+    in case I forget so that I do not lost access to all my account and data.`
+  const allUserStories = [userStoryText, userStoryText, problemStatement, highLevelGoals, 
+    highLevelGoals, problemStatement, "add testing", userStoryText];
+  
   return (
-    <Grid
-      container
-      spacing={2}
-    >
-      <Grid 
-        item
-        xs={open ? 2 : 'auto'}
-      >
-        <Sidebar open={open} toggleDrawer={toggleDrawer} />
+    <Grid container spacing={2}>
+      {/* Revision Sidebar */}
+      <Grid item xs={open ? 2 : 'auto'}>
+        {/* TODO: replace the revisions */}
+        <Sidebar 
+          open={open} 
+          toggleDrawer={toggleDrawer} 
+          title={'Revisions'}
+          items={[{revisionDate: 'Revision 4 2/20/24', locked: false}, {revisionDate: 'Revision 3 2/10/24', locked: true}]}
+          itemClick={revisionsClick}
+        />
       </Grid>
 
-      <Grid item xs>
+      <Grid item xs={open ? 10 : 11}>
+        {/* Current Sprint */}
         {/* TODO: update Sprint Number */}
         <Typography
           variant="h6"
@@ -143,65 +66,26 @@ const ReleasePlan = () => {
           textAlign={'left'}
           sx={{
             fontWeight: 'bold',
-            fontSize: 32,
           }}
         >
-          Sprint 3:
+          Current Sprint (#3):
         </Typography>
+
         <Box
           display="flex"
           justifyContent={'flex-start'}
         >
-          <ButtonGroup 
-            fullWidth
-            variant="contained" 
-            sx={{
-              margin: '5px 10px',
-              height: '60px',
-            }}
-          >
-            {/* TODO: Handle button clicks */}
-            <Button
-              onClick={() => console.log('Clicked Sprint Plan')}
-            >
-              <Typography
-                fontWeight="bold"
-              >
-                Sprint Plan
-              </Typography>
-              
-            </Button>
-
-            <Button
-              onClick={() => console.log('Clicked Scrum Board')}
-            >
-              <Typography
-                fontWeight="bold"
-              >
-                Scrum Board
-              </Typography>
-            </Button>
-
-            <Button
-              onClick={() => console.log('Clicked Burnup Chart')}
-            >
-              <Typography
-                fontWeight="bold"
-              >
-                Burnup Chart
-              </Typography>
-            </Button>
-
-            <Button
-              onClick={() => console.log('Clicked All Sprints')}
-            >
-              <Typography
-                fontWeight="bold"
-              >
-                All Sprints
-              </Typography>
-            </Button>
-          </ButtonGroup>
+          {/* Handle Button Clicks */}
+          <ButtonBar 
+            text1={'Sprint Plan'}
+            text2={'Scrum Board'}
+            text3={'Burnup Chart'}
+            text4={'All Sprints'}
+            text1Click={sprintPlanClick}
+            text2Click={scrumBoardClick}
+            text3Click={burnupChartClick}
+            text4Click={allSprintsClick}
+          />
         </Box>
         
         <Divider 
@@ -213,12 +97,11 @@ const ReleasePlan = () => {
         />
 
         <Typography
-          variant="h6"
           marginBottom={2}
           marginLeft={1}
           textAlign={'left'}
           fontWeight="bold"
-          fontSize={32}
+          fontSize={14}
         >
           Release Plan:
         </Typography>
@@ -228,195 +111,100 @@ const ReleasePlan = () => {
           textAlign="left"
           marginLeft={2}
           marginBottom={2}
+          fontSize={14}
         >
           v1.0.0
         </Typography>
         
-
         {/* Problem Statement */}
-        <Typography
-          variant="h6"
-          marginBottom={2}
-          marginLeft={2}
-          textAlign={'left'}
-          fontWeight="bold"
-          fontSize={18}
-          
-        >
-          Problem Statement
-        </Typography>
-
-        <Card
-          sx={{
-            minHeight: 100,
-            maxWidth: '95%',
-            marginLeft: 2,
-            marginBottom: 2,
-            backgroundColor: 'lightgray',
-            borderRadius: 5,
-          }}
-        >
-          <CardContent>
-            <Typography textAlign='left'>
-              {/* TODO: Add problem statement */}
-              We noticed that there are currently no good websites for Professor Jullig to run CSE 115 on. 
-              All the existing ones are lacking in functionality or have high cost.
-            </Typography>
-          </CardContent>
-        </Card>
+        {/* TODO: replace problem statement */}
+        <ContentBox title={'Problem Statement'} content={problemStatement} />
 
         {/* High Level Goals */}
-        <Typography
-          variant="h6"
-          marginBottom={2}
-          marginLeft={2}
-          textAlign={'left'}
-          fontWeight="bold"
-          fontSize={18}
-        >
-          High Level Goals
-        </Typography>
-
-        <Card
-          sx={{
-            minHeight: 100,
-            maxWidth: '95%',
-            marginLeft: 2,
-            marginBottom: 2,
-            backgroundColor: 'lightgray',
-            borderRadius: 5,
-          }}
-        >
-          <CardContent>
-            <Typography textAlign='left'>
-              {/* TODO: Add high level goals */}
-              In this release, we will implement the ability for students to join their class, join or create projects, create accounts, 
-              and be able to reset their password. There will be users of different types and they will be able to interact with one 
-              another in real time.
-            </Typography>
-          </CardContent>
-        </Card>
-
+        {/* TODO: high level goals */}
+        <ContentBox title={'High Level Goals'} content={highLevelGoals} />
+        
         <Grid container spacing={2}>
-          <Grid item xs={2.5}>
+          {/* Sprints */}
+          <Grid item xs={9}>
+            <Typography
+              marginLeft={2}
+              textAlign="left"
+              fontWeight="bold"
+              fontSize={14}
+            >
+              Sprints
+            </Typography>
+
+            <Sprint userStories={allUserStories} />
+            <Sprint userStories={allUserStories.reverse()} />
+          </Grid>
+
+          <Grid item xs={3}>
             <Typography
               variant="h6"
               marginLeft={2}
               textAlign={'left'}
               fontWeight="bold"
-              fontSize={24}
-              
+              fontSize={14}
             >
               Backlog
             </Typography>
 
             <Paper
               sx={{
+                maxWidth: '90%',
                 marginLeft: 2,
                 backgroundColor: 'lightgray',
-                borderRadius: 6,
               }}
             >
-              {/* TODO: add Backlog items */}
               <List>
-                <ListItem>
-                  <Card
-                    sx={{
-                      marginBottom: 1,
-                      borderRadius: 6,
-                    }}
-                  >
-                    <CardContent>
-                      <Typography
-                        variant="h6"
-                        textAlign={'left'}
-                        fontSize={16}
-                      >
-                        As a student I want to be able to reset my password in case I forget so that 
-                        I do not lost access to all my account and data.
-                      </Typography>
-                    </CardContent>
-                  </Card>
-                </ListItem>
-                <ListItem>
-                  <Card
-                    sx={{
-                      marginBottom: 1,
-                      borderRadius: 6,
-                    }}
-                  >
-                    <CardContent>
-                      <Typography
-                        variant="h6"
-                        textAlign={'left'}
-                        fontSize={16}
-                      >
-                        As a student I want to be able to reset my password in case I forget so that 
-                        I do not lost access to all my account and data.
-                      </Typography>
-                    </CardContent>
-                  </Card>
-                </ListItem>
+                {backlogItems.map((item, index) => (
+                  <ListItem key={index}>
+                    <Card
+                      sx={{
+                        marginBottom: 1,
+                      }}
+                    >
+                      <CardContent>
+                        <Typography
+                          variant="body1"
+                          fontSize={14}
+                        >
+                          <Input
+                            type="text"
+                            value={item.description}
+                            onChange={(e) => {
+                              const newBacklogItems = [...backlogItems];
+                              newBacklogItems[index].description = e.target.value;
+                              setBacklogItems(newBacklogItems);
+                            }}
+                            placeholder="Enter backlog item"
+                            style={{ border: 'none', width: '100%', padding: '4px' }}
+                          />
+                        </Typography>
+                      </CardContent>
+                    </Card>
+                  </ListItem>
+                ))}
               </List>
+              {/* Button to add new backlog item */}
+              <Button
+                variant="contained"
+                onClick={addBacklogItem}
+                sx={{bgcolor: 'grey',
+                    '&:hover': {
+                      bgcolor: 'darkgrey', // Background color on hover
+                    },
+                  }}
+                >
+                Add Backlog Item +
+              </Button>
             </Paper>
           </Grid>
-
-          <Grid item xs>
-            <Typography
-              variant="h6"
-              marginLeft={2}
-              textAlign={'left'}
-              fontWeight="bold"
-              fontSize={24}
-              
-            >
-              Sprints
-            </Typography>
-
-            <Paper
-              sx={{
-                maxWidth: '95%',
-                marginLeft: 2,
-                backgroundColor: 'lightgray',
-                borderRadius: 6,
-              }}
-            >
-              {/* TODO: add Sprints */}
-              <List>
-                <ListItem>
-                  <Card
-                    sx={{
-                      maxWidth: '25%',
-                      marginBottom: 1,
-                      borderRadius: 6,
-                    }}
-                  >
-                    <CardContent>
-                      <Typography
-                        variant="h6"
-                        textAlign={'left'}
-                        fontSize={16}
-                      >
-                        As a student I want to be able to reset my password in case I forget so that 
-                        I do not lost access to all my account and data.
-                      </Typography>
-                    </CardContent>
-                  </Card>
-                </ListItem>
-                {/*Test the drag/drop feature here*/}                    
-              </List>
-            </Paper>
-          </Grid>
-
         </Grid>
-
       </Grid>
     </Grid>
-
-    
-
-
-    
   );
 };
 
