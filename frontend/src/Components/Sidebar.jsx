@@ -75,6 +75,7 @@ const Sidebar = ({ open, toggleDrawer, title, items, itemClick }) => {
 					<Grid item>
 						<IconButton 
 							onClick={addRevisions}
+						>
 							<AddCircleOutlineIcon fontSize="small"/>
 						</IconButton>
 					</Grid>
