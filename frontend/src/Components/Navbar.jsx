@@ -1,11 +1,32 @@
-import React from 'react';
+import React, {useState, useEffect} from 'react';
+import { BrowserRouter as useParams } from 'react-router-dom';
+import useFetch from '../useFetch';
 import { AppBar, Toolbar, Typography, Button, Box } from '@mui/material';
 import { Link, Outlet, useLocation } from 'react-router-dom';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import MenuIcon from '@mui/icons-material/Menu';
 import { IconButton } from '@mui/material';
 
-const Navbar = ({ isLoggedIn, onSignOut }) => {
+const Navbar = ({ isLoggedIn, onSignOut, projectId }) => {
+
+  const [name, setName] = useState('');
+
+  useEffect(() => {
+
+    var options = {
+      method: 'get',
+      credentials:'include'
+    }
+    fetch(`https://localhost:8080/project/${projectId}/getName`)
+    .then (response => response.json())
+    .then(data => {
+      console.log(data)
+      setName(data);
+    })
+    .catch(error => {
+      console.error('Error', error);
+    });
+  }, []);
 
   // const textOutline = `
   //   -1px -1px 0 #000, 
@@ -36,7 +57,9 @@ const Navbar = ({ isLoggedIn, onSignOut }) => {
             {/* ScrumMate Logo */}
             <Link exact to="/" style={{ textDecoration: 'none', color: 'white' }}>ScrumMate</Link>
           </Typography>
-
+              <Typography>
+                {name}
+              </Typography>
           {/* Avatar Button */}
           {isLoggedIn && 
             <IconButton
