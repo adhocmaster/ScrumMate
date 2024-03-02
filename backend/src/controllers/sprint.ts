@@ -25,6 +25,6 @@ export const editSprint = async(req: express.Request, res: express.Response) => 
 		endDate,
 		goal,
 	} = req.body
-	const sprint = await db.createNewSprint(parseInt(sprintId), sprintNumber, startDate, endDate, goal)
+	const sprint = await db.updateSprint(parseInt(sprintId), sprintNumber, startDate, endDate, goal)
 	return res.json(sprint)
 }

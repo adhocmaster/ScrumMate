@@ -111,7 +111,6 @@ describe("Release API tests", () => {
 			expect(res.body.id).toBeDefined();
 			releaseId = res.body.id;
 			expect(res.body.goalStatement).toBeDefined();
-			console.log(res.body);
 		});
 	});
 
@@ -130,27 +129,43 @@ describe("Release API tests", () => {
 		});
 	});
 
-	test('New sprint missing data', async () => {
-		const body = {"startDate": "1709330028", "endDate": "1709330028", "goal": "New sprint goal"}
-		await request(app)
-		.post(`api/release/${releaseId}/sprint`)
-		.set('Cookie', [`user-auth=${sessionToken}`])
-		.send(body)
-		.expect(400);
-	});
+	let backlogId: Number;
 
-	test('Edit Sprint', async () => {
-		const body = {"goal": "New sprint goal"}
+	test('New Backlog Item', async () => {
+		const body = {"userTypes": "people",
+			"functionalityDescription": "backlog item",
+			"reasoning": "why not",
+			"acceptanceCriteria": "complete task",
+			"storyPoints": 10,
+			"priority": 4}
 		await request(app)
-		.post(`api/sprint/${sprintId}/edit`)
+		.post(`/api/sprint/${sprintId}`)
 		.set('Cookie', [`user-auth=${sessionToken}`])
 		.send(body)
 		.expect(200)
 		.then((res) => {
+			console.log(res.body);
+
 			expect(res.body).toBeDefined();
-			expect(res.body.goal).toBeDefined();
-			expect(res.body.goal).toEqual("New sprint goal")
-			expect(res.body.sprintNumber);
+			expect(res.body.id).toBeDefined();
+			backlogId = res.body.id;
+		});
+	});
+
+	test('Edit Backlog Item', async () => {
+		const body = {
+			"priority": 3}
+		await request(app)
+		.post(`/api/sprint/${sprintId}/story/${backlogId}/edit`)
+		.set('Cookie', [`user-auth=${sessionToken}`])
+		.send(body)
+		.expect(200)
+		.then((res) => {
+			console.log(res.body);
+			expect(res.body).toBeDefined();
+			expect(res.body.id).toBeDefined();
+			backlogId = res.body.id;
+			expect(res.body.priority).toEqual(3);
 		});
 	});
 });

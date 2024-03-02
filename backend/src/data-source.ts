@@ -332,12 +332,12 @@ export class Database {
 		newStory.storyPoints = storyPoints
 		newStory.priority = priority
 		newStory.sprint = sprint
-		sprint.addTODO(newStory) // not sure if need to do. need to load sprint's relation?
+		// sprint.addTODO(newStory) // not sure if need to do. need to load sprint's relation?
 		await this.save(newStory)
 		return newStory
 	}
 
-	public async updateStory(storyId: number, sprintId?: number, userTypes?: string, functionalityDescription?: string, reasoning?: string, acceptanceCriteria?: string, storyPoints?: number, priority?: Priority): Promise<Sprint> {
+	public async updateStory(storyId: number, sprintId?: number, userTypes?: string, functionalityDescription?: string, reasoning?: string, acceptanceCriteria?: string, storyPoints?: number, priority?: Priority): Promise<Story> {
 		const sprint = await this.lookupSprintById(sprintId)
 		const story = await this.lookupStoryById(storyId)
 		story.userTypes = userTypes ?? story.userTypes
@@ -346,13 +346,13 @@ export class Database {
 		story.acceptanceCriteria = acceptanceCriteria ?? story.acceptanceCriteria
 		story.storyPoints = storyPoints ?? story.storyPoints
 		story.priority = priority ?? story.priority
-		if (sprint) {
-		  story.sprint.removeTODO(story) // may need to fix the remove method, match on id
-		  story.sprint = sprint
-		  sprint.addTODO(story) // again, might break
-		}
-		await this.save(sprint)
-		return sprint
+		// if (sprint) {
+		//   story.sprint.removeTODO(story) // may need to fix the remove method, match on id
+		//   story.sprint = sprint
+		//   sprint.addTODO(story) // again, might break
+		// }
+		await this.save(story)
+		return story;
 	}
 
 	// TODO: more methods for stories, tasks, etc

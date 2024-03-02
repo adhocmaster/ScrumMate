@@ -111,7 +111,6 @@ describe("Release API tests", () => {
 			expect(res.body.id).toBeDefined();
 			releaseId = res.body.id;
 			expect(res.body.goalStatement).toBeDefined();
-			console.log(res.body);
 		});
 	});
 
@@ -127,6 +126,8 @@ describe("Release API tests", () => {
 			expect(res.body.id).toBeDefined();
 			sprintId = res.body.id;
 			expect(res.body.startDate).toBeDefined();
+			console.log(res.body);
+
 		});
 	});
 
@@ -151,6 +152,7 @@ describe("Release API tests", () => {
 			expect(res.body.goal).toBeDefined();
 			expect(res.body.goal).toEqual("New sprint goal")
 			expect(res.body.sprintNumber);
+
 		});
 	});
 });
