@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from "react-router-dom";
 import { useLocation } from "react-router-dom"
 import { Typography, Button, Box, Paper } from '@mui/material';
 import { List, ListItem, ListItemText } from '@mui/material';
@@ -32,7 +31,6 @@ const ReleasePlan = () => {
   const [problemStatement, setProblem] = useState("");
   const [highLevelGoals, setGoals] = useState("");
   const [releaseId, setId] = useState(1);
-  const navigate = useNavigate(); // Initialize hook
 
   useEffect(() => {
 	fetchRelease(releaseId, setProblem, setGoals);
@@ -56,7 +54,6 @@ const ReleasePlan = () => {
   const allSprintsClick = () => console.log('Clicked All Sprints');
   const revisionsClick = (newReleaseId) => {
     setId(newReleaseId);
-    navigate(`/release/${newReleaseId}`); // Navigate to the specified release page
   };
   const userStoryText = `As a student I want to be able to reset my password 
     in case I forget so that I do not lost access to all my account and data.`
