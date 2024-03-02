@@ -1,207 +1,253 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation } from "react-router-dom"
-import { AppBar, Typography, Button, Box, Paper } from '@mui/material';
+import { Typography, Button, Box, Paper } from '@mui/material';
 import { List, ListItem, ListItemText } from '@mui/material';
-import CreateReleasePlan from '../Components/CreateReleasePlan'; // Adjust the import path as necessary
-
+import { Grid, Input, Divider, Card, CardContent, IconButton } from '@mui/material';
+import Sidebar from '../Components/Sidebar';
+import ButtonBar from '../Components/ButtonBar';
+import ContentBox from '../Components/ContentBox';
+import Sprint from '../Components/Sprint';
 
 const ReleasePlan = () => {
-  const [showCreateReleasePlan, setShowCreateReleasePlan] = useState(false);
-  const [showReleasePlan, setShowReleasePlan] = useState(false);
-  const [releasePlanText, setReleasePlanText] = useState([]);
-  const [formSubmitted, setFormSubmitted] = useState(false);
+	const projectId = 1;
+	
+	function fetchMostRecentRelease(projectId, setProblem, setGoals, setId) {
+		console.log("about to most recent release")
+		var options = {
+			method:'get',
+			credentials:'include'
+		  }
+		fetch(`http://localhost:8080/api/project/${projectId}/recentRelease`, options).then((result)=>{
+			if(result.status == 200){
+				console.log(result)
+			}
+			result.json().then((response)=>{
+				console.log(response)
+				setProblem(response.problemStatement)
+				setGoals(response.goalStatement)
+				setId(response.id)
+			})
+		})
+	}
 
-  const location = useLocation()
-  const [project,setProject] = useState(location.state.currentProject)
-  console.log(project)
+	function fetchRelease(releaseId, setProblem, setGoals) {
+		console.log("about to fetch a release")
+		var options = {
+			method:'get',
+			credentials:'include'
+		  }
+		fetch(`http://localhost:8080/api/release/${releaseId}`, options).then((result)=>{
+			if(result.status == 200){
+				console.log(result)
+			}
+			result.json().then((response)=>{
+				console.log(response)
+				setProblem(response.problemStatement)
+				setGoals(response.goalStatement)
+			})
+		})
+	}
 
-  // Fetch release plans on page open
+  const [open, setOpen] = useState(true);
+  const [problemStatement, setProblem] = useState("");
+  const [highLevelGoals, setGoals] = useState("");
+  const [releaseId, setId] = useState(1);
+
   useEffect(() => {
-    const options = {
-      method: "GET",
-      url: `http://localhost:3001/projects/${project._id}`,
-      credentials: 'include'
-    }
-    fetch(`http://localhost:3001/projects/${project._id}`, options).then((result) => {
-      result.json().then((response) => {
-        console.log(response)
-        setProject(response)
-        setReleasePlanText(response.releases || []);
-      })
-    })
-  }, [project._id]);
-  useEffect(()=>{
-    console.log(project._id)
-    if(formSubmitted){
-      //add fetch here
-      const options = {
-        method:"GET",
-        url:`http://localhost:3001/projects/${project._id}`,
-        credentials:'include'
-      }
-      fetch(`http://localhost:3001/projects/${project._id}`,options).then((result)=>{
-        result.json().then((response)=>{
-          console.log(response)
-          setProject(response)
-        })
-      })
-      console.log("ITS SUBMITTED")
-      setFormSubmitted(false);
-      toggleCreateReleasePlan()
-      toggleViewReleasePlan()
-      setReleasePlanText(savedReleasePlans || 'No release plan found.');
-    }
+    fetchMostRecentRelease(1, setProblem, setGoals, setId);
+  }, []);
 
-  },[formSubmitted]);
-  function formatStories(stories){
-    
-    // Display stories
-    if (stories.length>0){
-      return(
-        <Paper>
-          <List>
-          {stories.map((story,index)=>(
-            <div key = {index}>
-            <ListItem>
-              <Typography sx={{ textAlign: 'center', marginTop: 1, fontSize:16 }}>
-                User Story {index+1}
-              </Typography>
-            </ListItem>
-            <ListItem>
+  useEffect(() => {
+	fetchRelease(releaseId, setProblem, setGoals);
+  }, [releaseId]);
 
-              <Typography sx={{ textAlign: 'left', fontSize:12 }}>
-                Description: {story.description}                
-              </Typography>
-            </ListItem>
-            <ListItem>
-              <Typography sx={{ textAlign: 'left', fontSize:12 }}>
-                  Notes: {story.notes}                
-              </Typography>
-            </ListItem>
-            <ListItem>
-              <Typography sx={{ textAlign: 'left', fontSize:12 }}>
-                Points: {story.points}
-              </Typography>
-            </ListItem>
-
-            </div> 
-          ))}
-        </List>
-      </Paper>
-      )
-    }else{
-      return(
-        <Typography>
-          No Stories Added Yet
-        </Typography>
-      )
-    }
-
-  }
-  const savedReleasePlans = project.releases
-
-  // Show create release plan form
-  const toggleCreateReleasePlan = () => {
-    setShowCreateReleasePlan(!showCreateReleasePlan);
+  const toggleDrawer = () => {
+    setOpen(!open);
   };
 
-  // Show release plan
-  const toggleViewReleasePlan = () => {
-    if (!showReleasePlan) {
-      console.log(savedReleasePlans);
-      setReleasePlanText(savedReleasePlans || 'No release plan found.');
-    }
-    setShowReleasePlan(!showReleasePlan);
+  const [backlogItems, setBacklogItems] = useState([]);
+
+  const addBacklogItem = () => {
+    const newBacklogItems = [...backlogItems, { description: '' }];
+    setBacklogItems(newBacklogItems);
   };
 
+  // TODO: update Placeholder functions/variables with actual data
+  const sprintPlanClick = () => console.log('Clicked Sprint Plan');
+  const scrumBoardClick = () => console.log('Clicked Scrum Board');
+  const burnupChartClick = () => console.log('Clicked Burnup Chart');
+  const allSprintsClick = () => console.log('Clicked All Sprints');
+  const revisionsClick = (newReleaseId) => {
+    setId(newReleaseId);
+  };
+  const userStoryText = `As a student I want to be able to reset my password 
+    in case I forget so that I do not lost access to all my account and data.`
+  const allUserStories = [userStoryText, userStoryText, "add testing", userStoryText];	
+		
   return (
-    <Box sx={{ flexGrow: 1 }}>
-      <Box display="flex" justifyContent="center" p={7}>
-        <Paper elevation={3} sx={{ width: '80%', padding: 2 }}>
-          <Typography variant="h4" sx={{ textAlign: 'center', marginBottom: 2 }}>
-            Release Plans
-          </Typography>
-          <Box display="flex" justifyContent="space-between" marginBottom={2}>
-            <Button variant="contained" color="primary" onClick={toggleCreateReleasePlan}>
-              {showCreateReleasePlan ? 'Hide Create Form' : 'Create Release Plan'}
-            </Button>
-          </Box>
+    <Grid container spacing={2}>
+      {/* Revision Sidebar */}
+      <Grid item xs={open ? 2 : 'auto'}>
+        {/* TODO: replace the revisions */}
+        <Sidebar 
+          open={open} 
+          toggleDrawer={toggleDrawer} 
+          title={'Revisions'}
+          items={[]}
+          itemClick={revisionsClick}
+        />
+      </Grid>
 
-          {/* Conditionally render the CreateReleasePlan component */}
-          {showCreateReleasePlan && <CreateReleasePlan projectId={project._id} onFormSubmit = {()=>setFormSubmitted(true)}/>}
+      <Grid item xs={open ? 10 : 11}>
+        {/* Current Sprint */}
+        {/* TODO: update Sprint Number */}
+        <Typography
+          variant="h6"
+          marginTop={8}
+          marginBottom={2}
+          marginLeft={1}
+          textAlign={'left'}
+          sx={{
+            fontWeight: 'bold',
+          }}
+        >
+          Current Sprint (#3):
+        </Typography>
 
-          {/* Display Release Plans */}
-          <Paper elevation={2} sx={{ backgroundColor: '#e0e0e0', padding: 2, marginTop: 2 }}>
-            {releasePlanText.length > 0 ? (
-              // If there are release plans, map and display them
-              releasePlanText.map((line, index) => (
-                <Paper key={index}>
-                  <Typography
-                    variant="body1"
-                    sx={{
-                      whiteSpace: 'pre-wrap',
-                      textAlign: 'center',
-                      marginTop: 2,
-                      marginBottom: 2
-                    }}
-                  >
-                    {line.name}
-                  </Typography>
-                  <Typography
-                    variant="body1"
-                    sx={{
-                      whiteSpace: 'pre-wrap',
-                      textAlign: 'center'
-                    }}
-                  >
-                    High Level Goals:
-                  </Typography>
-                  <List>
-                    {line.high_level_goals.map((goal, goalIndex) => (
-                      <ListItem key={goalIndex}>
-                        <ListItemText primary={goal} />
-                      </ListItem>
-                    ))}
-                  </List>
-                  <Typography
-                    variant="body1"
-                    sx={{
-                      whiteSpace: 'pre-wrap',
-                      textAlign: 'center'
-                    }}
-                  >
-                    Stories
-                  </Typography>
-                  {formatStories(line.stories)}
-                  <Typography
-                    variant="body1"
-                    sx={{
-                      whiteSpace: 'pre-wrap',
-                      textAlign: 'center'
-                    }}
-                  >
-                    Status: {line.status}
-                  </Typography>
-                </Paper>
-              ))
-            ) : (
-              // If there are no release plans, display a message
-              <Typography
-                variant="body1"
-                sx={{
-                  whiteSpace: 'pre-wrap',
-                  textAlign: 'center',
-                  marginTop: 2,
-                  marginBottom: 2
-                }}
-              >
-                No Release Plans to display
-              </Typography>
-            )}
-          </Paper>
-        </Paper>
-      </Box>
-    </Box>
+        <Box
+          display="flex"
+          justifyContent={'flex-start'}
+        >
+          {/* Handle Button Clicks */}
+          <ButtonBar 
+            text1={'Sprint Plan'}
+            text2={'Scrum Board'}
+            text3={'Burnup Chart'}
+            text4={'All Sprints'}
+            text1Click={sprintPlanClick}
+            text2Click={scrumBoardClick}
+            text3Click={burnupChartClick}
+            text4Click={allSprintsClick}
+          />
+        </Box>
+        
+        <Divider 
+          sx={{
+            margin: '20px 0px', 
+            backgroundColor: 'rgba(0, 0, 0, 0.5)',
+            height: '1.5px'
+          }}
+        />
+
+        <Typography
+          marginBottom={2}
+          marginLeft={1}
+          textAlign={'left'}
+          fontWeight="bold"
+          fontSize={14}
+        >
+          Release Plan:
+        </Typography>
+
+        {/* TODO: Change version number */}
+        <Typography
+          textAlign="left"
+          marginLeft={2}
+          marginBottom={2}
+          fontSize={14}
+        >
+          v1.0.0
+        </Typography>
+        
+        {/* Problem Statement */}
+        {/* TODO: replace problem statement */}
+        <ContentBox title={'Problem Statement'} content={problemStatement} />
+
+        {/* High Level Goals */}
+        {/* TODO: high level goals */}
+        <ContentBox title={'High Level Goals'} content={highLevelGoals} />
+        
+        <Grid container spacing={2}>
+          {/* Sprints */}
+          <Grid item xs={9}>
+            <Typography
+              marginLeft={2}
+              textAlign="left"
+              fontWeight="bold"
+              fontSize={14}
+            >
+              Sprints
+            </Typography>
+
+            <Sprint userStories={allUserStories} />
+            <Sprint userStories={allUserStories.reverse()} />
+          </Grid>
+
+          <Grid item xs={3}>
+            <Typography
+              variant="h6"
+              marginLeft={2}
+              textAlign={'left'}
+              fontWeight="bold"
+              fontSize={14}
+            >
+              Backlog
+            </Typography>
+
+            <Paper
+              sx={{
+                maxWidth: '90%',
+                marginLeft: 2,
+                backgroundColor: 'lightgray',
+              }}
+            >
+              <List>
+                {backlogItems.map((item, index) => (
+                  <ListItem key={index}>
+                    <Card
+                      sx={{
+                        marginBottom: 1,
+                      }}
+                    >
+                      <CardContent>
+                        <Typography
+                          variant="body1"
+                          fontSize={14}
+                        >
+                          <Input
+                            type="text"
+                            value={item.description}
+                            onChange={(e) => {
+                              const newBacklogItems = [...backlogItems];
+                              newBacklogItems[index].description = e.target.value;
+                              setBacklogItems(newBacklogItems);
+                            }}
+                            placeholder="Enter backlog item"
+                            style={{ border: 'none', width: '100%', padding: '4px' }}
+                          />
+                        </Typography>
+                      </CardContent>
+                    </Card>
+                  </ListItem>
+                ))}
+              </List>
+              {/* Button to add new backlog item */}
+              <Button
+                variant="contained"
+                onClick={addBacklogItem}
+                sx={{bgcolor: 'grey',
+                    '&:hover': {
+                      bgcolor: 'darkgrey', // Background color on hover
+                    },
+                  }}
+                >
+                Add Backlog Item +
+              </Button>
+            </Paper>
+          </Grid>
+        </Grid>
+      </Grid>
+    </Grid>
   );
 };
 

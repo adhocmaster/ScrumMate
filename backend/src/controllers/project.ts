@@ -41,3 +41,9 @@ export const getReleases = async (req: express.Request, res: express.Response) =
   	if(!verifyParameters(projectId)) return res.sendStatus(400);
 	return res.json(await db.fetchProjectWithReleases(parseInt(projectId)))
 };
+
+export const getRecentRelease = async (req: express.Request, res: express.Response) => {
+	const db = Database.getInstance()
+	const { projectId } = req.params
+	return res.json(await db.fetchMostRecentRelease(parseInt(projectId)))
+};
