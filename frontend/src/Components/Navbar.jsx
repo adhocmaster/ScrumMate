@@ -7,16 +7,21 @@ import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import MenuIcon from '@mui/icons-material/Menu';
 import { IconButton } from '@mui/material';
 
-const Navbar = ({ isLoggedIn, onSignOut }) => {
+const Navbar = ({ isLoggedIn, onSignOut, projectId }) => {
 
   const [name, setName] = useState('');
 
   useEffect(() => {
 
-    fetch('https://localhost:8080/project/:projectId/getName')
+    var options = {
+      method: 'get',
+      credentials:'include'
+    }
+    fetch(`https://localhost:8080/project/${projectId}/getName`)
     .then (response => response.json())
     .then(data => {
-        setName(data);
+      console.log(data)
+      setName(data);
     })
     .catch(error => {
       console.error('Error', error);
