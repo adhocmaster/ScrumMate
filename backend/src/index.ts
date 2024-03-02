@@ -22,8 +22,8 @@ AppDataSource.initialize().then(async () => {
 	/// TEMPORARY CODE UNTIL THE SIGNIN AND PROJECT SELECTION PAGES ARE DONE
 	const db = Database.setAndGetInstance(AppDataSource)
 	const productOwner1 = new User()
-	productOwner1.username = "richard"
-	productOwner1.email = "rjullig@ucsc.edu"
+	productOwner1.username = "mr. fakeperson"
+	productOwner1.email = "fakeperson@nonexistent.mmm"
 	productOwner1.password = "scrum123"
 	productOwner1.salt = "salt"
 	productOwner1.id = 1
