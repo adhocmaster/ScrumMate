@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from "react-router-dom";
 import { useLocation } from "react-router-dom"
 import { Typography, Button, Box, Paper } from '@mui/material';
 import { List, ListItem, ListItemText } from '@mui/material';
@@ -8,8 +9,34 @@ import ButtonBar from '../Components/ButtonBar';
 import ContentBox from '../Components/ContentBox';
 import Sprint from '../Components/Sprint';
 
+function fetchRelease(releaseId, setProblem, setGoals) {
+	console.log("about to fetch")
+	var options = {
+		method:'get',
+		credentials:'include'
+	  }
+	fetch(`http://localhost:8080/api/release/${releaseId}`, options).then((result)=>{
+		if(result.status == 200){
+			console.log(result)
+		}
+		result.json().then((response)=>{
+			console.log(response)
+			setProblem(response.problemStatement)
+			setGoals(response.goalStatement)
+		})
+	})
+}
+
 const ReleasePlan = () => {
   const [open, setOpen] = useState(true);
+  const [problemStatement, setProblem] = useState("");
+  const [highLevelGoals, setGoals] = useState("");
+  const [releaseId, setId] = useState(1);
+  const navigate = useNavigate(); // Initialize hook
+
+  useEffect(() => {
+	fetchRelease(releaseId, setProblem, setGoals);
+  }, [releaseId]);
 
   const toggleDrawer = () => {
     setOpen(!open);
@@ -27,15 +54,10 @@ const ReleasePlan = () => {
   const scrumBoardClick = () => console.log('Clicked Scrum Board');
   const burnupChartClick = () => console.log('Clicked Burnup Chart');
   const allSprintsClick = () => console.log('Clicked All Sprints');
-  const revisionsClick = () => console.log('Revision Placeholder');
-  const problemStatement = `We noticed that there are currently no good 
-    websites for Professor Jullig to run CSE 115 on. All the existing 
-    ones are lacking in functionality or have high cost.`
-  const highLevelGoals = `In this release, we will implement the ability 
-    for students to join their class, join or create projects, create 
-    accounts, and be able to reset their password. There will be users of 
-    different types and they will be able to interact with one 
-    another in real time.`
+  const revisionsClick = (newReleaseId) => {
+    setId(newReleaseId);
+    navigate(`/release/${newReleaseId}`); // Navigate to the specified release page
+  };
   const userStoryText = `As a student I want to be able to reset my password 
     in case I forget so that I do not lost access to all my account and data.`
   const allUserStories = [userStoryText, userStoryText, problemStatement, highLevelGoals, 

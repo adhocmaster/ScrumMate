@@ -33,3 +33,10 @@ export const copyRelease = async (req: express.Request, res: express.Response) =
 	const release = await db.copyRelease(parseInt(releaseId))
 	return res.json(release)
 };
+
+export const getRelease = async (req: express.Request, res: express.Response) => {
+	const db = Database.getInstance()
+	const {releaseId} = req.params;
+	const release = await db.lookupReleaseWithProject(parseInt(releaseId))
+	return res.json(release)
+};
