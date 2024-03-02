@@ -1,45 +1,51 @@
 import express from "express";
-import { UserModel } from "../db/user";
+import { authentication, random } from "../helpers/index";
+import { Database } from "../data-source";
+import { verifyParameters } from './utils/verifyParams';
 
-export class UserController {
-    static async getAllUsers(req: express.Request, res: express.Response) {
-        try {
-            const users = await UserModel.getUsers();
-            return res.status(200).json(users);
-        } catch (error) {
-            console.log(error);
-            return res.sendStatus(400);
-        }
-    }
+export const createUser = async (req: express.Request, res: express.Response) => {
+	const db = Database.getInstance()
+	const {
+		username,
+		email,
+		password,
+	} = req.body
+	if(!verifyParameters(username, email, password)) return res.sendStatus(400);
+	const newUser = await db.createNewUser(username, email, password)
+	return res.json(newUser);
+};
 
-    static async deleteUser(req: express.Request, res: express.Response) {
-        try {
-            const { id } = req.params;
-            const deletedUser = await UserModel.deleteUserById(id);
-            return res.json(deletedUser);
-        } catch (error) {
-            console.log(error);
-            return res.sendStatus(400);
-        }
-    }
+export const login = async (req: express.Request, res: express.Response) => {
+	const db = Database.getInstance()
+	const {
+			email,
+			password,
+		} = req.body
+	if(!verifyParameters(email, password)) return res.sendStatus(400);
+	const user = await db.lookupUserByEmail(email);
+	const expectedHash = authentication(user.salt, password);
+	if(expectedHash !== user.password) return res.sendStatus(403);
 
-    static async updateUser(req: express.Request, res: express.Response) {
-        try {
-            const { id } = req.params;
-            const { username } = req.body;
+	const newSalt = random();
+	user.salt = newSalt;
+	user.sessionToken = authentication(newSalt, user.username);
 
-            if (!username) {
-                res.sendStatus(400);
-            }
+	await db.save(user);
 
-            const user = await UserModel.getUserById(id);
-            user.username = username;
-            await user.save();
+	res.cookie('user-auth', user.sessionToken, { domain: "localhost", path: "/" });
+	return res.sendStatus(200);
+};
 
-            return res.status(200).json(user);
-        } catch (error) {
-            console.log(error);
-            return res.sendStatus(400);
-        }
-    }
-}
+export const edit = async (req: express.Request, res: express.Response) => {
+	const db = Database.getInstance()
+	const { userId } = req.params
+	const {
+		username,
+		email,
+		password,
+		salt,
+		sessionToken
+	} = req.body
+	const user = await db.updateUser(parseInt(userId), username, email, password, salt, sessionToken)
+	return res.json(user)
+};

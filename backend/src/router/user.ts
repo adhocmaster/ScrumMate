@@ -1,9 +1,10 @@
-import express from 'express';
-import { UserController } from '../controllers/user';
-import { isAuthenticated, isOwner } from '../middleware';
+import express from "express";
+import { createUser, login, edit } from "../controllers/user";
+import { errorWrapper } from "../helpers/errors";
 
-export default (router: express.Router) => {
-    router.get('/users', isAuthenticated, UserController.getAllUsers);
-    router.delete('/users/:id', isAuthenticated, isOwner, UserController.deleteUser);
-    router.patch('/users/:id', isAuthenticated, isOwner, UserController.updateUser);
-}
+export default (router:express.Router) =>{
+  router.post('/api/user/create', errorWrapper(createUser));
+  router.post('/api/user/login', errorWrapper(login));
+  router.post('/api/user/:userId/edit', errorWrapper(edit));
+};
+
