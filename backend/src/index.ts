@@ -3,6 +3,8 @@ import { AppDataSource, Database } from './data-source';
 import { Release } from "./entity/release"
 import { Project } from './entity/project';
 import router from './router/index';
+import cookieParser from 'cookie-parser';
+import cors from 'cors';
 import { User } from './entity/User';
 import { Spike, Story, Task } from './entity/backlogItem';
 import { UserRole } from './entity/roles';
@@ -51,7 +53,12 @@ AppDataSource.initialize().then(async () => {
 
 	/// Start express
 	app.use(express.json())
-  	app.use('/api', router());
+  app.use(cors({
+    origin:"http://localhost:3000",
+    credentials: true,
+  }));
+  app.use(cookieParser());
+  app.use('/api', router());
 	app.listen(8080, () => {
 		console.log("Running on port 8080")
 	})

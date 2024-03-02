@@ -14,9 +14,10 @@ export const createStory = async(req: express.Request, res: express.Response) =>
 		priority,
 	} = req.body
 	// what to do if some are null?
-	// if (!verifyParameters()) res.sendStatus(403)
+	if (!verifyParameters(userTypes, functionalityDescription, reasoning, acceptanceCriteria, storyPoints, 
+		priority)) res.sendStatus(400);
 	const newStory = await db.createNewStory(parseInt(sprintId), userTypes, functionalityDescription, reasoning, acceptanceCriteria, storyPoints, priority)
-	return res.json(newStory)
+	return res.json(newStory);
 }
 
 export const editStory = async(req: express.Request, res: express.Response) => {
@@ -30,6 +31,6 @@ export const editStory = async(req: express.Request, res: express.Response) => {
 		storyPoints,
 		priority,
 	} = req.body
-	const story = await db.updateStory(parseInt(sprintId), parseInt(sprintId), userTypes, functionalityDescription, reasoning, acceptanceCriteria, storyPoints, priority)
+	const story = await db.updateStory(parseInt(storyId), parseInt(sprintId), userTypes, functionalityDescription, reasoning, acceptanceCriteria, storyPoints, priority)
 	return res.json(story)
 };

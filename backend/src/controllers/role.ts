@@ -8,7 +8,7 @@ export const createRole = async (req: express.Request, res: express.Response) =>
 	const {
 		role,
 	} = req.body
-	if (!verifyParameters(role)) res.sendStatus(403)
+	if (!verifyParameters(role)) res.sendStatus(400);
 	const newRole = await db.createNewRole(parseInt(userId), parseInt(sprintId), role)
 	return res.json(newRole);
 };

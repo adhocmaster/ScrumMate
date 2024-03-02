@@ -115,6 +115,14 @@ export class Database {
 		return maybeUser
 	}
 
+  public async lookupUserBySessionToken(sessionToken: string): Promise<User> {
+    const maybeUser = await this.dataSource.manager.findOneBy(User, {sessionToken: sessionToken});
+		if (!maybeUser) {
+			throw new NotFoundError(`User not found`)
+		}
+		return maybeUser;
+  }
+
 	public async fetchUserWithProjects(id: number): Promise<User> {
 		const maybeUserList = (await this.dataSource.getRepository(User).find({where: {id: id}, relations:{ownedProjects: true, joinedProjects: true}}))
 		if (!maybeUserList || maybeUserList.length === 0) {
@@ -141,9 +149,11 @@ export class Database {
 		newProject.name = projectName
 		newProject.nextRevision = 1
 		newProject.productOwner = user
+    newProject.releases = [];
 		// user.addOwnedProject(newProject)
 		// await this.save(user) // DO NOT DO THIS! if dont fetch all old projects, saving just 1 project erases
 		await this.save(newProject)
+    // await this.save(user);
 		return newProject
 	}
 
@@ -305,7 +315,7 @@ export class Database {
 		newSprint.endDate = endDate
 		newSprint.goal = goal
 		newSprint.release = release
-		release.addSprint(newSprint)
+		// release.addSprint(newSprint)
 		await this.save(newSprint)
 		return newSprint
 	}
@@ -340,12 +350,12 @@ export class Database {
 		newStory.storyPoints = storyPoints
 		newStory.priority = priority
 		newStory.sprint = sprint
-		sprint.addTODO(newStory) // not sure if need to do. need to load sprint's relation?
+		// sprint.addTODO(newStory) // not sure if need to do. need to load sprint's relation?
 		await this.save(newStory)
 		return newStory
 	}
 
-	public async updateStory(storyId: number, sprintId?: number, userTypes?: string, functionalityDescription?: string, reasoning?: string, acceptanceCriteria?: string, storyPoints?: number, priority?: Priority): Promise<Sprint> {
+	public async updateStory(storyId: number, sprintId?: number, userTypes?: string, functionalityDescription?: string, reasoning?: string, acceptanceCriteria?: string, storyPoints?: number, priority?: Priority): Promise<Story> {
 		const sprint = await this.lookupSprintById(sprintId)
 		const story = await this.lookupStoryById(storyId)
 		story.userTypes = userTypes ?? story.userTypes
@@ -354,13 +364,13 @@ export class Database {
 		story.acceptanceCriteria = acceptanceCriteria ?? story.acceptanceCriteria
 		story.storyPoints = storyPoints ?? story.storyPoints
 		story.priority = priority ?? story.priority
-		if (sprint) {
-		  story.sprint.removeTODO(story) // may need to fix the remove method, match on id
-		  story.sprint = sprint
-		  sprint.addTODO(story) // again, might break
-		}
-		await this.save(sprint)
-		return sprint
+		// if (sprint) {
+		//   story.sprint.removeTODO(story) // may need to fix the remove method, match on id
+		//   story.sprint = sprint
+		//   sprint.addTODO(story) // again, might break
+		// }
+		await this.save(story)
+		return story;
 	}
 
 	// TODO: more methods for stories, tasks, etc
