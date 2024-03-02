@@ -9,13 +9,15 @@ import ContentBox from '../Components/ContentBox';
 import Sprint from '../Components/Sprint';
 
 const ReleasePlan = () => {
-	function fetchMostRecentRelease(projectId, setId) {
+	const projectId = 1;
+	
+	function fetchMostRecentRelease(projectId, setProblem, setGoals, setId) {
 		console.log("about to most recent release")
 		var options = {
 			method:'get',
 			credentials:'include'
 		  }
-		fetch(`http://localhost:8080/api/${projectId}/recentRelease`, options).then((result)=>{
+		fetch(`http://localhost:8080/api/project/${projectId}/recentRelease`, options).then((result)=>{
 			if(result.status == 200){
 				console.log(result)
 			}
@@ -23,6 +25,7 @@ const ReleasePlan = () => {
 				console.log(response)
 				setProblem(response.problemStatement)
 				setGoals(response.goalStatement)
+				setId(response.id)
 			})
 		})
 	}
@@ -51,6 +54,10 @@ const ReleasePlan = () => {
   const [releaseId, setId] = useState(1);
 
   useEffect(() => {
+    fetchMostRecentRelease(1, setProblem, setGoals, setId);
+  }, []);
+
+  useEffect(() => {
 	fetchRelease(releaseId, setProblem, setGoals);
   }, [releaseId]);
 
@@ -75,8 +82,7 @@ const ReleasePlan = () => {
   };
   const userStoryText = `As a student I want to be able to reset my password 
     in case I forget so that I do not lost access to all my account and data.`
-  const allUserStories = [userStoryText, userStoryText, problemStatement, highLevelGoals, 
-    highLevelGoals, problemStatement, "add testing", userStoryText];	
+  const allUserStories = [userStoryText, userStoryText, "add testing", userStoryText];	
 		
   return (
     <Grid container spacing={2}>
