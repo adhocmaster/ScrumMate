@@ -8,75 +8,74 @@ import LockIcon from '@mui/icons-material/Lock';
 import LockOpenIcon from '@mui/icons-material/LockOpen';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 
-function convertRevisionAndDate(release) {
-	release.revision = `Revision ${release.revision}`
-	release.revisionDate = new Date(release.revisionDate).toLocaleString().split(',')[0]
-	return release
-}
-
-function fetchReleases(projectId, setRevisions) {
-	console.log("about to fetch")
-	var options = {
-		method:'get',
-		credentials:'include'
-	  }
-	fetch(`http://localhost:8080/api/api/project/${projectId}/releases`, options).then((result)=>{
-		if(result.status == 200){
-			console.log(result)
-		}
-		result.json().then((response)=>{
-			console.log(response)
-			setRevisions(response.releases.map((release) => convertRevisionAndDate(release)))
-		})
-	})
-}
-
-function createNewRelease(projectId, addRevisions) {
-    try {
-        console.log("about to create");
-        const options = {
-            method: 'POST',
-            credentials: 'include',
-        };
-        fetch(`http://localhost:8080/api/project/${projectId}/newRelease`, options).then((result)=>{
-			if(result.status == 200){
-				console.log(result)
-			}
-			result.json().then((response)=>{
-				console.log(response)
-				addRevisions(response);
-			})
-		})
-    } catch (error) {
-        console.error(error);
-        return null; // Return null or handle the error as needed
-    }
-}
-
-function copyRelease(releaseId, addRevisions) {
-    try {
-        console.log("about to copy");
-        const options = {
-            method: 'POST',
-            credentials: 'include',
-        };
-        fetch(`http://localhost:8080/api/release/${releaseId}/copy`, options).then((result)=>{
-			if(result.status == 200){
-				console.log(result)
-			}
-			result.json().then((response)=>{
-				console.log(response)
-				addRevisions(response);
-			})
-		})
-    } catch (error) {
-        console.error(error);
-        return null; // Return null or handle the error as needed
-    }
-}
-
-
 const Sidebar = ({ open, toggleDrawer, title, items, itemClick }) => {
+	function convertRevisionAndDate(release) {
+		release.revision = `Revision ${release.revision}`
+		release.revisionDate = new Date(release.revisionDate).toLocaleString().split(',')[0]
+		return release
+	}
+	
+	function fetchReleases(projectId, setRevisions) {
+		console.log("about to fetch")
+		var options = {
+			method:'get',
+			credentials:'include'
+		  }
+		fetch(`http://localhost:8080/api/api/project/${projectId}/releases`, options).then((result)=>{
+			if(result.status == 200){
+				console.log(result)
+			}
+			result.json().then((response)=>{
+				console.log(response)
+				setRevisions(response.releases.map((release) => convertRevisionAndDate(release)))
+			})
+		})
+	}
+	
+	function createNewRelease(projectId, addRevisions) {
+		try {
+			console.log("about to create");
+			const options = {
+				method: 'POST',
+				credentials: 'include',
+			};
+			fetch(`http://localhost:8080/api/project/${projectId}/newRelease`, options).then((result)=>{
+				if(result.status == 200){
+					console.log(result)
+				}
+				result.json().then((response)=>{
+					console.log(response)
+					addRevisions(response);
+				})
+			})
+		} catch (error) {
+			console.error(error);
+			return null; // Return null or handle the error as needed
+		}
+	}
+	
+	function copyRelease(releaseId, addRevisions) {
+		try {
+			console.log("about to copy");
+			const options = {
+				method: 'POST',
+				credentials: 'include',
+			};
+			fetch(`http://localhost:8080/api/release/${releaseId}/copy`, options).then((result)=>{
+				if(result.status == 200){
+					console.log(result)
+				}
+				result.json().then((response)=>{
+					console.log(response)
+					addRevisions(response);
+				})
+			})
+		} catch (error) {
+			console.error(error);
+			return null; // Return null or handle the error as needed
+		}
+	}
+	
 	const [revisions, setRevisions] = useState(items || []);
 	console.log("running sidebar")
 

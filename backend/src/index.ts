@@ -14,6 +14,8 @@ AppDataSource.initialize().then(async () => {
 	/// Initializing som basic information for the frontend
 	/// TEMPORARY CODE UNTIL THE SIGNIN AND PROJECT SELECTION PAGES ARE DONE
 	const db = Database.setAndGetInstance(AppDataSource)
+	await db.deleteAll()
+	
 	const productOwner1 = new User()
 	productOwner1.username = "mr. fakeperson"
 	productOwner1.email = "fakeperson@nonexistent.mmm"

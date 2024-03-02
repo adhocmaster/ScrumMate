@@ -8,25 +8,25 @@ import ButtonBar from '../Components/ButtonBar';
 import ContentBox from '../Components/ContentBox';
 import Sprint from '../Components/Sprint';
 
-function fetchRelease(releaseId, setProblem, setGoals) {
-	console.log("about to fetch")
-	var options = {
-		method:'get',
-		credentials:'include'
-	  }
-	fetch(`http://localhost:8080/api/release/${releaseId}`, options).then((result)=>{
-		if(result.status == 200){
-			console.log(result)
-		}
-		result.json().then((response)=>{
-			console.log(response)
-			setProblem(response.problemStatement)
-			setGoals(response.goalStatement)
-		})
-	})
-}
-
 const ReleasePlan = () => {
+	function fetchRelease(releaseId, setProblem, setGoals) {
+		console.log("about to fetch")
+		var options = {
+			method:'get',
+			credentials:'include'
+		  }
+		fetch(`http://localhost:8080/api/release/${releaseId}`, options).then((result)=>{
+			if(result.status == 200){
+				console.log(result)
+			}
+			result.json().then((response)=>{
+				console.log(response)
+				setProblem(response.problemStatement)
+				setGoals(response.goalStatement)
+			})
+		})
+	}
+
   const [open, setOpen] = useState(true);
   const [problemStatement, setProblem] = useState("");
   const [highLevelGoals, setGoals] = useState("");
