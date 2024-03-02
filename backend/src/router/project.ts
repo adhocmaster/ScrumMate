@@ -7,5 +7,5 @@ export default (router:express.Router) => {
   router.post('/api/project/:userId/newProject', errorWrapper(newProject));
   router.post('/api/project/:userId/joinProject/:projectId', errorWrapper(joinProject));
   router.post('/api/project/:projectId/edit', errorWrapper(editProject))
-  router.post('/api/project/:projectId/releases', errorWrapper(getReleases));
+  router.get('/api/project/:projectId/releases', errorWrapper(getReleases));
 };
