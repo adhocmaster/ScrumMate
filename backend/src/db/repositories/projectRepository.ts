@@ -1,5 +1,5 @@
-import { Project } from "../entity/project";
-import { DataSourceWrapper } from "./dataSourceWrapper";
+import { Project } from "../../entity/project";
+import { DataSourceWrapper } from "../dataSourceWrapper";
 
 export class ProjectRepository {
 	dataSource: DataSourceWrapper

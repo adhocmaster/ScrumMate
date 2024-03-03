@@ -1,5 +1,5 @@
-import { Release } from "../entity/release";
-import { DataSourceWrapper } from "./dataSourceWrapper";
+import { Release } from "../../entity/release";
+import { DataSourceWrapper } from "../dataSourceWrapper";
 
 export class ReleaseRepository {
 	dataSource: DataSourceWrapper

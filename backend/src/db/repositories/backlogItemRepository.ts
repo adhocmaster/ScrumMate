@@ -1,5 +1,5 @@
-import { Priority, Story } from "../entity/backlogItem";
-import { DataSourceWrapper } from "./dataSourceWrapper";
+import { Priority, Story } from "../../entity/backlogItem";
+import { DataSourceWrapper } from "../dataSourceWrapper";
 
 export class BacklogItemRepository {
 	dataSource: DataSourceWrapper

@@ -1,8 +1,8 @@
-import { User } from "../entity/User";
-import { Project } from "../entity/project";
-import { authentication, random } from "../helpers";
-import { ExistingUserError } from "../helpers/errors";
-import { DataSourceWrapper } from "./dataSourceWrapper";
+import { User } from "../../entity/User";
+import { Project } from "../../entity/project";
+import { authentication, random } from "../../helpers";
+import { ExistingUserError } from "../../helpers/errors";
+import { DataSourceWrapper } from "../dataSourceWrapper";
 
 export class UserRepository {
 	dataSource: DataSourceWrapper

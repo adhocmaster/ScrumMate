@@ -1,5 +1,5 @@
-import { Sprint } from "../entity/sprint";
-import { DataSourceWrapper } from "./dataSourceWrapper";
+import { Sprint } from "../../entity/sprint";
+import { DataSourceWrapper } from "../dataSourceWrapper";
 
 export class SprintRepository {
 	dataSource: DataSourceWrapper

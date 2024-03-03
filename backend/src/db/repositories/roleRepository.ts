@@ -1,5 +1,5 @@
-import { UserRole } from "../entity/roles";
-import { DataSourceWrapper } from "./dataSourceWrapper";
+import { UserRole } from "../../entity/roles";
+import { DataSourceWrapper } from "../dataSourceWrapper";
 
 export class UserRoleRepository {
 	dataSource: DataSourceWrapper

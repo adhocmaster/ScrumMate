@@ -8,12 +8,12 @@ import { Story, BacklogItem, Priority } from "../entity/backlogItem"
 import "reflect-metadata"
 import { DataSourceWrapper } from "./dataSourceWrapper"
 import { AppDataSource } from "../data-source"
-import { UserRepository } from "./userRepository"
-import { ProjectRepository } from "./projectRepository"
-import { ReleaseRepository } from "./releaseRepository"
-import { SprintRepository } from "./sprintRepository"
-import { UserRoleRepository } from "./roleRepository"
-import { BacklogItemRepository } from "./backlogItemRepository"
+import { UserRepository } from "./repositories/userRepository"
+import { ProjectRepository } from "./repositories/projectRepository"
+import { ReleaseRepository } from "./repositories/releaseRepository"
+import { SprintRepository } from "./repositories/sprintRepository"
+import { UserRoleRepository } from "./repositories/roleRepository"
+import { BacklogItemRepository } from "./repositories/backlogItemRepository"
 
 export class Database {
 
