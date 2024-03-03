@@ -7,6 +7,7 @@ import router from './router/index';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import { User } from './entity/User';
+import { authentication } from './helpers';
 
 const app = express();
 
