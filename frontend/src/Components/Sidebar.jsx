@@ -21,7 +21,7 @@ const Sidebar = ({ open, toggleDrawer, title, items, itemClick }) => {
 			method:'get',
 			credentials:'include'
 		  }
-		fetch(`http://localhost:8080/api/api/project/${projectId}/releases`, options).then((result)=>{
+		fetch(`http://localhost:8080/api/project/${projectId}/releases`, options).then((result)=>{
 			if(result.status == 200){
 				console.log(result)
 			}
@@ -39,7 +39,7 @@ const Sidebar = ({ open, toggleDrawer, title, items, itemClick }) => {
 				method: 'POST',
 				credentials: 'include',
 			};
-			fetch(`http://localhost:8080/api/project/${projectId}/newRelease`, options).then((result)=>{
+			fetch(`http://localhost:8080/api/project/${projectId}/release`, options).then((result)=>{
 				if(result.status == 200){
 					console.log(result)
 				}
