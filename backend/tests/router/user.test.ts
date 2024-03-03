@@ -1,5 +1,6 @@
 import express from 'express';
-import { AppDataSource, Database } from '../../src/data-source';
+import { AppDataSource } from '../../src/data-source';
+import { Database } from '../../src/db/database';
 import { Release } from "../../src/entity/release"
 import request from 'supertest'
 // import { newReleaseRouter } from '../src/router/release';
@@ -14,7 +15,7 @@ import { BacklogItem } from '../../src/entity/backlogItem';
 import { Codes, ExistingUserError } from '../../src/helpers/errors';
 let app = express();
 var appData: { app: any; server: any; destroy?: any; };
-let server;
+let server: { close: () => any; };
 
 beforeAll(async () => {
 	if (AppDataSource.isInitialized) await AppDataSource.destroy();
@@ -49,6 +50,7 @@ async function deleteAll() {
 afterAll(async () => {
 	await deleteAll();
 	await AppDataSource.destroy();
+	await server.close()
 });
 
 describe("User API tests", () => {

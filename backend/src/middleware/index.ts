@@ -1,8 +1,7 @@
 import express from 'express';
 import {get, merge} from 'lodash'
-import { Database } from '../../src/data-source';
+import { Database } from '../db/database';
 
-import { UserModel } from '../db/user';
 declare module 'express' {
   export interface Request {
     userId?: number; // Use the appropriate type for userId
