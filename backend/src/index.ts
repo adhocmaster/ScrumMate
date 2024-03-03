@@ -1,14 +1,12 @@
 import express from 'express';
-import { AppDataSource, Database } from './data-source';
+import { AppDataSource } from './data-source';
+import { Database } from './db/database';
 import { Release } from "./entity/release"
 import { Project } from './entity/project';
 import router from './router/index';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import { User } from './entity/User';
-import { Spike, Story, Task } from './entity/backlogItem';
-import { UserRole } from './entity/roles';
-import { Sprint } from './entity/sprint';
 
 const app = express();
 
