@@ -6,7 +6,7 @@ import { UserRole } from "../entity/roles";
 import { Sprint } from "../entity/sprint";
 import { NotFoundError, NotSavedError } from "../helpers/errors";
 import { reverse } from "lodash"
-import { DataSource, EntityTarget, FindManyOptions, ObjectLiteral } from "typeorm";
+import { DataSource } from "typeorm";
 
 export class DataSourceWrapper {
 	userList: User[]
@@ -24,7 +24,7 @@ export class DataSourceWrapper {
 
 	///// Initialization /////
 
-	public constructor(dataSource: DataSource) {
+	public constructor(dataSource?: DataSource) {
 		this.userList = []
 		this.userIdNext = 1
 		this.projectList = []
@@ -45,7 +45,7 @@ export class DataSourceWrapper {
 
 	///// User Methods /////
 
-	public async lookupUserById(id: number): Promise<User> {
+	public lookupUserById(id: number): User {
 		console.log(id)
 		console.log(this.userList)
 		const maybeUser = this.userList.find(i => i.id === id);
@@ -58,7 +58,7 @@ export class DataSourceWrapper {
 		return maybeUser
 	}
 
-	public async lookupUserByEmail(email: string): Promise<User> {
+	public lookupUserByEmail(email: string): User {
 		const maybeUser = this.userList.find(i => i.email === email);
 		if (!maybeUser) {
 			throw new NotFoundError(`User with email ${email} not found`)
@@ -69,7 +69,7 @@ export class DataSourceWrapper {
 		return maybeUser
 	}
 
-	public async lookupUserBySessionToken(sessionToken: string): Promise<User> {
+	public lookupUserBySessionToken(sessionToken: string): User {
 		const maybeUser = this.userList.find(i => i.sessionToken === sessionToken);
 		if (!maybeUser) {
 			throw new NotFoundError(`User not found`)
@@ -80,7 +80,7 @@ export class DataSourceWrapper {
 		return maybeUser;
 	}
 
-	public async fetchUserWithProjects(id: number): Promise<User> {
+	public fetchUserWithProjects(id: number): User {
 		const maybeUser = this.userList.find(i => i.id === id);
 		if (!maybeUser) {
 			throw new NotFoundError(`User with id ${id} not found`)
@@ -92,7 +92,7 @@ export class DataSourceWrapper {
 
 	///// Project Methods /////
 
-	public async lookupProjectById(id: number): Promise<Project> {
+	public lookupProjectById(id: number): Project {
 		const maybeProject = this.projectList.find(i => i.id === id);
 		if (!maybeProject) {
 			throw new NotFoundError(`Project with id ${id} not found`)
@@ -104,7 +104,7 @@ export class DataSourceWrapper {
 		return maybeProject
 	}
 
-	public async lookupProjectByIdWithUsers(id: number): Promise<Project> {
+	public lookupProjectByIdWithUsers(id: number): Project {
 		const maybeProject = this.projectList.find(i => i.id === id);
 		if (!maybeProject) {
 			throw new NotFoundError(`Project with id ${id} not found`)
@@ -114,7 +114,7 @@ export class DataSourceWrapper {
 		return maybeProject
 	}
 
-	public async fetchProjectWithReleases(id: number): Promise<Project> {
+	public fetchProjectWithReleases(id: number): Project {
 		const maybeProject = this.projectList.find(i => i.id === id);
 		if (!maybeProject) {
 			throw new NotFoundError(`Project with id ${id} not found`)
@@ -134,13 +134,13 @@ export class DataSourceWrapper {
 		return maybeProject
 	}
 
-	public async fetchMostRecentRelease(id: number): Promise<Release> {
-		return (await this.fetchProjectWithReleases(id)).releases[0]
+	public fetchMostRecentRelease(id: number): Release {
+		return this.fetchProjectWithReleases(id).releases[0]
 	}
 
 	///// Release Methods /////
 
-	public async lookupReleaseById(id: number): Promise<Release> {
+	public lookupReleaseById(id: number): Release {
 		const maybeRelease = this.releaseList.find(i => i.id === id);
 		if (!maybeRelease) {
 			throw new NotFoundError(`Release with id ${id} not found`)
@@ -151,7 +151,7 @@ export class DataSourceWrapper {
 		return maybeRelease
 	}
 
-	public async lookupReleaseWithProject(releaseId: number): Promise<Release> {
+	public lookupReleaseWithProject(releaseId: number): Release {
 		const maybeRelease = this.releaseList.find(i => i.id === releaseId);
 		if (!maybeRelease) {
 			throw new NotFoundError(`Release with id ${releaseId} not found`)
@@ -163,7 +163,7 @@ export class DataSourceWrapper {
 
 	///// Role Methods /////
 	
-	public async lookupRoleById(id: number): Promise<UserRole> {
+	public lookupRoleById(id: number): UserRole {
 		const maybeRole = this.roleList.find(i => i.id === id);
 		if (!maybeRole) {
 			throw new NotFoundError(`Role with id ${id} not found`)
@@ -176,7 +176,7 @@ export class DataSourceWrapper {
 
 	///// Sprint Methods /////
 	
-	public async lookupSprintById(id: number): Promise<Sprint> {
+	public lookupSprintById(id: number): Sprint {
 		const maybeSprint = this.sprintList.find(i => i.id === id);
 		if (!maybeSprint) {
 			throw new NotFoundError(`Sprint with id ${id} not found`)
@@ -192,7 +192,7 @@ export class DataSourceWrapper {
 
 	// TODO: more methods for stories, tasks, etc
 	// Some details TBD because of sponsor saying avoid duplication of data
-	public async lookupBacklogById(id: number): Promise<BacklogItem> {
+	public lookupBacklogById(id: number): BacklogItem {
 		const maybeBacklog = this.backlogItemList.find(i => i.id === id);
 		if (!maybeBacklog) {
 			throw new NotFoundError(`BacklogItem with id ${id} not found`)
@@ -203,7 +203,7 @@ export class DataSourceWrapper {
 		return maybeBacklog
 	}
 	
-	public async lookupStoryById(id: number): Promise<Story> {
+	public lookupStoryById(id: number): Story {
 		const maybeStory = this.backlogItemList.find(i => i.id === id);
 		if (!maybeStory) {
 			throw new NotFoundError(`BacklogItem with id ${id} not found`)
@@ -219,7 +219,7 @@ export class DataSourceWrapper {
 	///// General Methods - Only use if there is not a method above to use /////
 
 	// must give it an id...
-	public async save(item: UserRole | Sprint | BacklogItem | User | Project | Release) {
+	public save(item: UserRole | Sprint | BacklogItem | User | Project | Release) {
 		try {
 			if (item instanceof User) {
 				console.log(`saving ${item.id}`)
@@ -232,38 +232,74 @@ export class DataSourceWrapper {
 					if (index !== -1) {
 						this.userList[index] = item;
 					} else {
-						throw new NotFoundError(`User with id ${item.id} not found`);
+						this.userList.push(item)
 					}
 				}
 			} else if (item instanceof Project) {
 				if (!item.id) {
 					item.id = this.projectIdNext++
+					this.projectList.push(item)
+				} else {
+					const index = this.projectList.findIndex(u => u.id === item.id);
+					if (index !== -1) {
+						this.projectList[index] = item;
+					} else {
+						this.projectList.push(item)
+					}
 				}
-				this.projectList.push(item)
 			} else if (item instanceof Release) {
 				if (!item.id) {
 					item.id = this.releaseIdNext++
+					this.releaseList.push(item)
+				} else {
+					const index = this.releaseList.findIndex(u => u.id === item.id);
+					if (index !== -1) {
+						this.releaseList[index] = item;
+					} else {
+						this.releaseList.push(item)
+					}
 				}
-				this.releaseList.push(item)
 			} else if (item instanceof Sprint) {
 				if (!item.id) {
 					item.id = this.sprintIdNext++
+					this.sprintList.push(item)
+				} else {
+					const index = this.sprintList.findIndex(u => u.id === item.id);
+					if (index !== -1) {
+						this.sprintList[index] = item;
+					} else {
+						this.sprintList.push(item)
+					}
 				}
-				this.sprintList.push(item)
 			} else if (item instanceof UserRole) {
 				if (!item.id) {
 					item.id = this.roleIdNext++
+					this.roleList.push(item)
+				} else {
+					const index = this.roleList.findIndex(u => u.id === item.id);
+					if (index !== -1) {
+						this.roleList[index] = item;
+					} else {
+						this.roleList.push(item)
+					}
 				}
-				this.roleList.push(item)
 			} else if (item instanceof BacklogItem) {
 				if (!item.id) {
 					item.id = this.backlogItemIdNext++
+					this.backlogItemList.push(item)
+				} else {
+					const index = this.backlogItemList.findIndex(u => u.id === item.id);
+					if (index !== -1) {
+						this.backlogItemList[index] = item;
+					} else {
+						this.backlogItemList.push(item)
+					}
 				}
-				this.backlogItemList.push(item)
 			} else if (!item) {
 				// do nothing?
 				console.log("item is not there")
 			} else {
+				console.log("throwing error cuz not a type")
 				throw new Error("Type not recognized")
 			}
 		return item
@@ -273,13 +309,13 @@ export class DataSourceWrapper {
 	}
 
 	// hopefully we wont need this method
-	// public async find(entity: EntityTarget<ObjectLiteral>, findOptions: FindManyOptions<ObjectLiteral>) {
+	// public find(entity: EntityTarget<ObjectLiteral>, findOptions: FindManyOptions<ObjectLiteral>) {
 	// 	if (entity ==== User) {
 	// 		return this.lo
 	// 	}
 	// }
 
-	public async deleteAll(): Promise<void> {
+	public deleteAll(): void {
 		this.userList = []
 		this.userIdNext = 1
 		this.projectList = []
