@@ -6,37 +6,31 @@ import { UserRole } from "../entity/roles";
 import { Sprint } from "../entity/sprint";
 import { NotFoundError, NotSavedError } from "../helpers/errors";
 import { reverse } from "lodash"
-import { DataSource } from "typeorm";
+import { DataSource, EntityTarget, FindManyOptions, ObjectLiteral } from "typeorm";
 
-export class DataSourceWrapper {
-	userList: User[]
-	userIdNext: number = 1
-	projectList: Project[]
-	projectIdNext: number = 1
-	releaseList: Release[]
-	releaseIdNext: number = 1
-	sprintList: Sprint[]
-	sprintIdNext: number = 1
-	roleList: UserRole[]
-	roleIdNext: number = 1
-	backlogItemList: BacklogItem[]
-	backlogItemIdNext: number = 1
+export class FakeDataSourceWrapper {
+	typeMap: Map<any, any[]>
+	typeNextIdMap: Map<any, number>
 
 	///// Initialization /////
 
 	public constructor(dataSource?: DataSource) {
-		this.userList = []
-		this.userIdNext = 1
-		this.projectList = []
-		this.projectIdNext = 1
-		this.releaseList = []
-		this.releaseIdNext = 1
-		this.sprintList = []
-		this.sprintIdNext = 1
-		this.roleList = []
-		this.roleIdNext = 1
-		this.backlogItemList = []
-		this.backlogItemIdNext = 1
+		this.typeMap = new Map<any, any[]>([
+			[User, []],
+			[Project, []],
+			[Release, []],
+			[Sprint, []],
+			[UserRole, []],
+			[BacklogItem, []],
+		])
+		this.typeNextIdMap = new Map<any, number>([
+			[User, 1],
+			[Project, 1],
+			[Release, 1],
+			[Sprint, 1],
+			[UserRole, 1],
+			[BacklogItem, 1],
+		])
 	}
 
 	public get isInitialized(): boolean {
@@ -46,9 +40,7 @@ export class DataSourceWrapper {
 	///// User Methods /////
 
 	public lookupUserById(id: number): User {
-		console.log(id)
-		console.log(this.userList)
-		const maybeUser = this.userList.find(i => i.id === id);
+		const maybeUser = this.typeMap.get(User).find(i => i.id === id);
 		if (!maybeUser) {
 			throw new NotFoundError(`User with id ${id} not found`)
 		}
@@ -59,7 +51,7 @@ export class DataSourceWrapper {
 	}
 
 	public lookupUserByEmail(email: string): User {
-		const maybeUser = this.userList.find(i => i.email === email);
+		const maybeUser = this.typeMap.get(User).find(i => i.email === email);
 		if (!maybeUser) {
 			throw new NotFoundError(`User with email ${email} not found`)
 		}
@@ -70,7 +62,7 @@ export class DataSourceWrapper {
 	}
 
 	public lookupUserBySessionToken(sessionToken: string): User {
-		const maybeUser = this.userList.find(i => i.sessionToken === sessionToken);
+		const maybeUser = this.typeMap.get(User).find(i => i.sessionToken === sessionToken);
 		if (!maybeUser) {
 			throw new NotFoundError(`User not found`)
 		}
@@ -81,7 +73,7 @@ export class DataSourceWrapper {
 	}
 
 	public fetchUserWithProjects(id: number): User {
-		const maybeUser = this.userList.find(i => i.id === id);
+		const maybeUser = this.typeMap.get(User).find(i => i.id === id);
 		if (!maybeUser) {
 			throw new NotFoundError(`User with id ${id} not found`)
 		}
@@ -93,7 +85,7 @@ export class DataSourceWrapper {
 	///// Project Methods /////
 
 	public lookupProjectById(id: number): Project {
-		const maybeProject = this.projectList.find(i => i.id === id);
+		const maybeProject = this.typeMap.get(Project).find(i => i.id === id);
 		if (!maybeProject) {
 			throw new NotFoundError(`Project with id ${id} not found`)
 		}
@@ -105,7 +97,7 @@ export class DataSourceWrapper {
 	}
 
 	public lookupProjectByIdWithUsers(id: number): Project {
-		const maybeProject = this.projectList.find(i => i.id === id);
+		const maybeProject = this.typeMap.get(Project).find(i => i.id === id);
 		if (!maybeProject) {
 			throw new NotFoundError(`Project with id ${id} not found`)
 		}
@@ -115,7 +107,7 @@ export class DataSourceWrapper {
 	}
 
 	public fetchProjectWithReleases(id: number): Project {
-		const maybeProject = this.projectList.find(i => i.id === id);
+		const maybeProject = this.typeMap.get(Project).find(i => i.id === id);
 		if (!maybeProject) {
 			throw new NotFoundError(`Project with id ${id} not found`)
 		}
@@ -141,7 +133,7 @@ export class DataSourceWrapper {
 	///// Release Methods /////
 
 	public lookupReleaseById(id: number): Release {
-		const maybeRelease = this.releaseList.find(i => i.id === id);
+		const maybeRelease = this.typeMap.get(Release).find(i => i.id === id);
 		if (!maybeRelease) {
 			throw new NotFoundError(`Release with id ${id} not found`)
 		}
@@ -152,7 +144,7 @@ export class DataSourceWrapper {
 	}
 
 	public lookupReleaseWithProject(releaseId: number): Release {
-		const maybeRelease = this.releaseList.find(i => i.id === releaseId);
+		const maybeRelease = this.typeMap.get(Release).find(i => i.id === releaseId);
 		if (!maybeRelease) {
 			throw new NotFoundError(`Release with id ${releaseId} not found`)
 		}
@@ -164,7 +156,7 @@ export class DataSourceWrapper {
 	///// Role Methods /////
 	
 	public lookupRoleById(id: number): UserRole {
-		const maybeRole = this.roleList.find(i => i.id === id);
+		const maybeRole = this.typeMap.get(UserRole).find(i => i.id === id);
 		if (!maybeRole) {
 			throw new NotFoundError(`Role with id ${id} not found`)
 		}
@@ -177,7 +169,7 @@ export class DataSourceWrapper {
 	///// Sprint Methods /////
 	
 	public lookupSprintById(id: number): Sprint {
-		const maybeSprint = this.sprintList.find(i => i.id === id);
+		const maybeSprint = this.typeMap.get(Sprint).find(i => i.id === id);
 		if (!maybeSprint) {
 			throw new NotFoundError(`Sprint with id ${id} not found`)
 		}
@@ -193,7 +185,7 @@ export class DataSourceWrapper {
 	// TODO: more methods for stories, tasks, etc
 	// Some details TBD because of sponsor saying avoid duplication of data
 	public lookupBacklogById(id: number): BacklogItem {
-		const maybeBacklog = this.backlogItemList.find(i => i.id === id);
+		const maybeBacklog = this.typeMap.get(BacklogItem).find(i => i.id === id);
 		if (!maybeBacklog) {
 			throw new NotFoundError(`BacklogItem with id ${id} not found`)
 		}
@@ -204,7 +196,7 @@ export class DataSourceWrapper {
 	}
 	
 	public lookupStoryById(id: number): Story {
-		const maybeStory = this.backlogItemList.find(i => i.id === id);
+		const maybeStory = this.typeMap.get(BacklogItem).find(i => i.id === id);
 		if (!maybeStory) {
 			throw new NotFoundError(`BacklogItem with id ${id} not found`)
 		}
@@ -218,89 +210,43 @@ export class DataSourceWrapper {
 
 	///// General Methods - Only use if there is not a method above to use /////
 
+	private saveUser(user: User) {
+		if (!user.id) {
+			user.id = this.typeNextIdMap.get(User)
+			this.typeNextIdMap.set(User, this.typeNextIdMap.get(User)+1)
+			this.typeMap.get(User).push(user)
+		} else {
+			const index = this.typeMap.get(User).findIndex(u => u.id === user.id);
+			if (index !== -1) {
+				this.typeMap.get(User)[index] = user;
+			} else {
+				this.typeMap.get(User).push(user)
+			}
+		}
+	}
+
 	// must give it an id...
-	public save(item: UserRole | Sprint | BacklogItem | User | Project | Release) {
+	public save(item?: UserRole | Sprint | BacklogItem | User | Project | Release) {
+		const typeOfItem = typeof item
 		try {
 			if (item instanceof User) {
-				console.log(`saving ${item.id}`)
-				console.log(`userList ${this.userList.map((item) => item.id)}`)
-				if (!item.id) {
-					item.id = this.userIdNext++
-					this.userList.push(item)
-				} else {
-					const index = this.userList.findIndex(u => u.id === item.id);
-					if (index !== -1) {
-						this.userList[index] = item;
-					} else {
-						this.userList.push(item)
-					}
-				}
-			} else if (item instanceof Project) {
-				if (!item.id) {
-					item.id = this.projectIdNext++
-					this.projectList.push(item)
-				} else {
-					const index = this.projectList.findIndex(u => u.id === item.id);
-					if (index !== -1) {
-						this.projectList[index] = item;
-					} else {
-						this.projectList.push(item)
-					}
-				}
-			} else if (item instanceof Release) {
-				if (!item.id) {
-					item.id = this.releaseIdNext++
-					this.releaseList.push(item)
-				} else {
-					const index = this.releaseList.findIndex(u => u.id === item.id);
-					if (index !== -1) {
-						this.releaseList[index] = item;
-					} else {
-						this.releaseList.push(item)
-					}
-				}
-			} else if (item instanceof Sprint) {
-				if (!item.id) {
-					item.id = this.sprintIdNext++
-					this.sprintList.push(item)
-				} else {
-					const index = this.sprintList.findIndex(u => u.id === item.id);
-					if (index !== -1) {
-						this.sprintList[index] = item;
-					} else {
-						this.sprintList.push(item)
-					}
-				}
-			} else if (item instanceof UserRole) {
-				if (!item.id) {
-					item.id = this.roleIdNext++
-					this.roleList.push(item)
-				} else {
-					const index = this.roleList.findIndex(u => u.id === item.id);
-					if (index !== -1) {
-						this.roleList[index] = item;
-					} else {
-						this.roleList.push(item)
-					}
-				}
-			} else if (item instanceof BacklogItem) {
-				if (!item.id) {
-					item.id = this.backlogItemIdNext++
-					this.backlogItemList.push(item)
-				} else {
-					const index = this.backlogItemList.findIndex(u => u.id === item.id);
-					if (index !== -1) {
-						this.backlogItemList[index] = item;
-					} else {
-						this.backlogItemList.push(item)
-					}
-				}
+				this.saveUser(item)
 			} else if (!item) {
 				// do nothing?
 				console.log("item is not there")
 			} else {
-				console.log("throwing error cuz not a type")
-				throw new Error("Type not recognized")
+				if (!item.id) {
+					item.id = this.typeNextIdMap.get(typeOfItem)
+					this.typeNextIdMap.set(typeOfItem, this.typeNextIdMap.get(typeOfItem) + 1)
+					this.typeMap.get(typeOfItem).push(item)
+				} else {
+					const index = this.typeMap.get(typeOfItem).findIndex(u => u.id === item.id);
+					if (index !== -1) {
+						this.typeMap.get(typeOfItem)[index] = item;
+					} else {
+						this.typeMap.get(typeOfItem).push(item)
+					}
+				}
 			}
 		return item
 		} catch {
@@ -309,24 +255,26 @@ export class DataSourceWrapper {
 	}
 
 	// hopefully we wont need this method
-	// public find(entity: EntityTarget<ObjectLiteral>, findOptions: FindManyOptions<ObjectLiteral>) {
-	// 	if (entity ==== User) {
-	// 		return this.lo
-	// 	}
-	// }
+	public find(entity: EntityTarget<ObjectLiteral>, findOptions: FindManyOptions<ObjectLiteral>) {
+		throw new Error("find not implemented")
+	}
 
 	public deleteAll(): void {
-		this.userList = []
-		this.userIdNext = 1
-		this.projectList = []
-		this.projectIdNext = 1
-		this.releaseList = []
-		this.releaseIdNext = 1
-		this.sprintList = []
-		this.sprintIdNext = 1
-		this.roleList = []
-		this.roleIdNext = 1
-		this.backlogItemList = []
-		this.backlogItemIdNext = 1
+		this.typeMap = new Map<any, any[]>([
+			[User, []],
+			[Project, []],
+			[Release, []],
+			[Sprint, []],
+			[UserRole, []],
+			[BacklogItem, []],
+		])
+		this.typeNextIdMap = new Map<any, number>([
+			[User, 1],
+			[Project, 1],
+			[Release, 1],
+			[Sprint, 1],
+			[UserRole, 1],
+			[BacklogItem, 1],
+		])
 	}
 }
