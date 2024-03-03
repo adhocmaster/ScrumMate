@@ -3,13 +3,15 @@ import { Project } from "../entity/project"
 import { Release } from "../entity/release"
 import { UserRole } from "../entity/roles"
 import { Sprint } from "../entity/sprint"
-import { EntityTarget, FindManyOptions, FindOptionsWhere, ObjectLiteral, QueryFailedError } from "typeorm"
+import { DataSource, EntityTarget, FindManyOptions, FindOptionsWhere, ObjectLiteral, QueryFailedError } from "typeorm"
 import { Bug, Epic, Infrastructure, Spike, Story, Task, BacklogItem, Priority } from "../entity/backlogItem"
 import { authentication, random } from "../helpers"
 import "reflect-metadata"
 import { ExistingUserError, NotFoundError, NotSavedError } from "../helpers/errors"
 import { reverse } from "lodash"
-import { DataSourceWrapper } from "./data_source_wrapper"
+import { DataSourceWrapper } from "./dataSourceWrapper"
+import { AppDataSource } from "../data-source"
+import { UserRepository } from "./userRepository"
 
 export class Database {
 
@@ -17,9 +19,14 @@ export class Database {
 
 	private static instance: Database;
 	private dataSource: DataSourceWrapper | null = null
+	private userRepository: UserRepository
 
-	private constructor(dataSource: DataSourceWrapper) {
-		this.dataSource = dataSource;
+	private constructor(dataSource: DataSourceWrapper | DataSource) { // can assume initialized
+		if (dataSource instanceof DataSourceWrapper)
+			this.dataSource = dataSource;
+		else if (dataSource instanceof DataSource)
+			this.dataSource = new DataSourceWrapper(AppDataSource)
+		this.userRepository = new UserRepository(this.dataSource)
 	}
 
 	public static getInstance(): Database {
@@ -29,7 +36,7 @@ export class Database {
 		return Database.instance;
 	}
 
-	public static setAndGetInstance(dataSource: DataSourceWrapper): Database {
+	public static setAndGetInstance(dataSource: DataSourceWrapper | DataSource): Database {
 		if (!Database.instance) {
 			if (!dataSource.isInitialized)
 				throw new Error("Database's DataSource is not initialized! Use setAndGetInstance first.")
@@ -44,6 +51,40 @@ export class Database {
 
 	public get dataSourceIsInitialized(): boolean {
 		return this.dataSource != null && this.dataSource.isInitialized;
+	}
+
+	///// User Methods /////
+	
+	public async createNewUser(username: string, email: string, password: string, salt?: string, sessionToken?: string): Promise<User> {
+		return await this.userRepository.createNewUser(username, email, password, salt, sessionToken)
+	}
+
+	public async updateUser(id: number, username?: string, email?: string, password?: string, salt?: string, sessionToken?: string): Promise<User> {
+		return await this.userRepository.updateUser(id, username, email, password, salt, sessionToken)
+
+	}
+
+	public async joinProject(userId: number, projectId: number): Promise<Project> {
+		return await this.userRepository.joinProject(userId, projectId)
+	}
+
+	public async lookupUserById(id: number): Promise<User> {
+		return await this.dataSource.lookupUserById(id)
+	}
+
+	public async lookupUserByEmail(email: string): Promise<User> {
+		return await this.dataSource.lookupUserByEmail(email)
+
+	}
+
+	public async lookupUserBySessionToken(sessionToken: string): Promise<User> {
+		return await this.dataSource.lookupUserBySessionToken(sessionToken)
+
+	}
+
+	public async fetchUserWithProjects(id: number): Promise<User> {
+		return await this.dataSource.fetchUserWithProjects(id)
+
 	}
 
 	///// Project Methods /////
@@ -67,6 +108,22 @@ export class Database {
 		project.name = name ?? project.name
 		await this.save(project)
 		return project
+	}
+
+	public async lookupProjectById(id: number): Promise<Project> {
+		return await this.dataSource.lookupProjectById(id);
+	}
+
+	public async lookupProjectByIdWithUsers(id: number): Promise<Project> {
+		return await this.dataSource.lookupProjectByIdWithUsers(id);
+	}
+
+	public async fetchProjectWithReleases(id: number): Promise<Project> {
+		return await this.dataSource.fetchProjectWithReleases(id);
+	}
+
+	public async fetchMostRecentRelease(id: number): Promise<Release> {
+		return await this.dataSource.fetchMostRecentRelease(id);
 	}
 
 	///// Release Methods /////
@@ -114,6 +171,14 @@ export class Database {
 		return releaseCopy
 	}
 
+	public async lookupReleaseById(id: number): Promise<Release> {
+		return this.dataSource.lookupReleaseById(id)
+	}
+
+	public async lookupReleaseWithProject(releaseId: number): Promise<Release> {
+		return this.dataSource.lookupReleaseWithProject(releaseId)
+	}
+
 	///// Role Methods /////
 
 	public async createNewRole(userId: number, sprintId: number, role: string): Promise<UserRole> {
@@ -134,6 +199,10 @@ export class Database {
 		userRole.user = user ?? userRole.user // may break if relational not loaded?
 		await this.save(userRole)
 		return userRole
+	}
+
+	public async lookupRoleById(id: number): Promise<UserRole> {
+		return await this.dataSource.lookupRoleById(id);
 	}
 
 	///// Sprint Methods /////
@@ -159,6 +228,10 @@ export class Database {
 		sprint.goal = goal ?? sprint.goal
 		await this.save(sprint)
 		return sprint
+	}
+		
+	public async lookupSprintById(id: number): Promise<Sprint> {
+		return await this.dataSource.lookupSprintById(id);
 	}
 
 	///// Todo Methods /////
@@ -194,6 +267,14 @@ export class Database {
 		// }
 		await this.save(story)
 		return story;
+	}
+
+	public async lookupBacklogById(id: number): Promise<BacklogItem> {
+		return await this.dataSource.lookupBacklogById(id)
+	}
+	
+	public async lookupStoryById(id: number): Promise<Story> {
+		return await this.dataSource.lookupStoryById(id)
 	}
 
 	///// General Methods - Only use if there is not a method above to use /////

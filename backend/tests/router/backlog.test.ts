@@ -1,5 +1,6 @@
 import express from 'express';
-import { AppDataSource, Database } from '../../src/data-source';
+import { AppDataSource } from '../../src/data-source';
+import { Database } from '../../src/db/database';
 import { Release } from "../../src/entity/release"
 import request from 'supertest'
 import router from '../../src/router/index';

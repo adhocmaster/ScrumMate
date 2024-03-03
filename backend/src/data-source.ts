@@ -3,12 +3,9 @@ import { Project } from "./entity/project"
 import { Release } from "./entity/release"
 import { UserRole } from "./entity/roles"
 import { Sprint } from "./entity/sprint"
-import { DataSource, EntityTarget, FindManyOptions, FindOptionsWhere, ObjectLiteral, QueryFailedError } from "typeorm"
-import { Bug, Epic, Infrastructure, Spike, Story, Task, BacklogItem, Priority } from "./entity/backlogItem"
-import { authentication, random } from "./helpers"
+import { DataSource } from "typeorm"
+import { Bug, Epic, Infrastructure, Spike, Story, Task, BacklogItem } from "./entity/backlogItem"
 import "reflect-metadata"
-import { ExistingUserError, NotFoundError, NotSavedError } from "./helpers/errors"
-import { reverse } from "lodash"
 
 export const AppDataSource = new DataSource({
     type: "postgres",

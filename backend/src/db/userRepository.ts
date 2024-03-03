@@ -2,12 +2,12 @@ import { User } from "../entity/User";
 import { Project } from "../entity/project";
 import { authentication, random } from "../helpers";
 import { ExistingUserError } from "../helpers/errors";
-import { DataSourceWrapper } from "./data_source_wrapper";
+import { DataSourceWrapper } from "./dataSourceWrapper";
 
 export class UserRepository {
 	dataSource: DataSourceWrapper
 
-	init(dataSource: DataSourceWrapper) {
+	constructor (dataSource: DataSourceWrapper) {
 		this.dataSource = dataSource
 	}
 

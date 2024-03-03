@@ -9,7 +9,6 @@ export const newProject =  async (req: express.Request, res: express.Response) =
 		name,
     	userId
 	} = req.body
-	console.log()
   	if(!verifyParameters(name)) return res.sendStatus(400);
 	const newProject = await db.createNewProject(userId, name)
 	return res.json(newProject)

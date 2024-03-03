@@ -8,15 +8,13 @@ import { NotFoundError, NotSavedError } from "../helpers/errors";
 import { reverse } from "lodash"
 import { DataSource, EntityTarget, FindManyOptions, ObjectLiteral } from "typeorm";
 
-type dbItem = new (...args: any[]) => (User | Project | Release | Sprint | BacklogItem | UserRole);
-
 export class DataSourceWrapper {
 
 	///// Initialization /////
 
 	private dataSource?: DataSource = null
 
-	private constructor(dataSource: DataSource) {
+	public constructor(dataSource: DataSource) {
 		this.dataSource = dataSource;
 	}
 
