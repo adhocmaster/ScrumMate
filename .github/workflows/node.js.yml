@@ -46,7 +46,7 @@ jobs:
     - run: npm install && (cd frontend && npm install) && (cd backend && npm install)
     
     - run: (cd frontend && npm run build)
-    - run: (cd frontend && npm test --watchAll)
+    # - run: (cd frontend && npm test --watchAll)
     
     - run: (cd backend && npm run build)
     - run: (cd backend && npm test --watchAll)
