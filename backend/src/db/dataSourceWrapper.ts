@@ -173,14 +173,6 @@ export class DataSourceWrapper {
 		return result
 	}
 
-	public async lookupById(type: any, id: number) { // issues with type :(
-		const maybeItem =  await this.dataSource.manager.findOneBy(type, {id: id});
-		if (!maybeItem) {
-			throw new NotFoundError(`${type} with id ${id} not found`)
-		}
-		return maybeItem
-	}
-
 	public async deleteAll(): Promise<void> {
 		const loadedReleases = await this.dataSource.getRepository(Release).find({
 			relations: ['project', 'sprints', 'backlog'],
@@ -214,6 +206,14 @@ export class DataSourceWrapper {
 		await this.dataSource.getRepository(User).delete({})
 	}
 
+	// public async lookupById(type: any, id: number) { // issues with type :(
+	// 	const maybeItem =  await this.dataSource.manager.findOneBy(type, {id: id});
+	// 	if (!maybeItem) {
+	// 		throw new NotFoundError(`${type} with id ${id} not found`)
+	// 	}
+	// 	return maybeItem
+	// }
+	
 	// /// Like save, but guaranteed to not exist in the db
 	// /// for performance purposes
 	// /// WARNING: behaves differently than save somehow... doesnt save into original entity?
