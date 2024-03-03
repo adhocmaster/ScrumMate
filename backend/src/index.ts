@@ -9,6 +9,7 @@ import { User } from './entity/User';
 import { Spike, Story, Task } from './entity/backlogItem';
 import { UserRole } from './entity/roles';
 import { Sprint } from './entity/sprint';
+import { authentication } from './helpers';
 
 const app = express();
 
@@ -19,10 +20,10 @@ AppDataSource.initialize().then(async () => {
 	// await db.deleteAll() // not working
 
 	const productOwner1 = new User()
-	productOwner1.username = "mr. fakeperson"
-	productOwner1.email = "fakeperson@nonexistent.mmm"
-	productOwner1.password = "hamburger"
+	productOwner1.username = "bob"
+	productOwner1.email = "bob@gmail.com"
 	productOwner1.salt = "salt"
+	productOwner1.password = authentication(productOwner1.salt, "pass")
 	productOwner1.id = 1
 	await db.save(productOwner1)
 
@@ -53,12 +54,12 @@ AppDataSource.initialize().then(async () => {
 
 	/// Start express
 	app.use(express.json())
-  app.use(cors({
-    origin:"http://localhost:3000",
-    credentials: true,
-  }));
-  app.use(cookieParser());
-  app.use('/api', router());
+	app.use(cors({
+		origin:"http://localhost:3000",
+		credentials: true,
+	}));
+	app.use(cookieParser());
+	app.use('/api', router());
 	app.listen(8080, () => {
 		console.log("Running on port 8080")
 	})

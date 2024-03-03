@@ -8,10 +8,11 @@ import MenuIcon from '@mui/icons-material/Menu';
 import { IconButton } from '@mui/material';
 
 const Navbar = ({ isLoggedIn, onSignOut, projectId }) => {
+	console.log("getting name")
 
-  const [name, setName] = useState('');
+	const [name, setName] = useState('');
 
-  useEffect(() => {
+	useEffect(() => {
 
     var options = {
       method: 'get',
@@ -20,11 +21,11 @@ const Navbar = ({ isLoggedIn, onSignOut, projectId }) => {
     fetch(`https://localhost:8080/project/${projectId}/getName`)
     .then (response => response.json())
     .then(data => {
-      console.log(data)
-      setName(data);
+		console.log(data)
+		setName(data);
     })
     .catch(error => {
-      console.error('Error', error);
+     	console.error('Error', error);
     });
   }, []);
 
