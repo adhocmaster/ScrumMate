@@ -47,3 +47,10 @@ export const getRecentRelease = async (req: express.Request, res: express.Respon
 	const { projectId } = req.params
 	return res.json(await db.fetchMostRecentRelease(parseInt(projectId)))
 };
+
+export const getName = async (req: express.Request, res: express.Response) => {
+	const db = Database.getInstance()
+	const { projectId } = req.params
+	const project = await db.lookupProjectById(parseInt(projectId))
+	return res.json(project.name)
+};
