@@ -32,7 +32,7 @@ export const login = async (req: express.Request, res: express.Response) => {
 	await db.save(user);
 
 	res.cookie('user-auth', user.sessionToken, { domain: "localhost", path: "/" });
-  delete user.password; 
+	delete user.password; 
 	return res.json(user);
 };
 
