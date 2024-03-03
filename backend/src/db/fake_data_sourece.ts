@@ -10,11 +10,17 @@ import { DataSource, EntityTarget, FindManyOptions, ObjectLiteral } from "typeor
 
 export class FakeWrapper {
 	userList: User[]
+	userIdNext: number = 1
 	projectList: Project[]
+	projectIdNext: number = 1
 	releaseList: Release[]
+	releaseIdNext: number = 1
 	sprintList: Sprint[]
+	sprintIdNext: number = 1
 	roleList: UserRole[]
+	roleIdNext: number = 1
 	backlogItemList: BacklogItem[]
+	backlogItemIdNext: number = 1
 
 	///// Initialization /////
 
@@ -174,19 +180,27 @@ export class FakeWrapper {
 	// TODO: more methods for stories, tasks, etc
 	// Some details TBD because of sponsor saying avoid duplication of data
 	public async lookupBacklogById(id: number): Promise<BacklogItem> {
-		const maybeBacklog =  await this.dataSource.manager.findOneBy(BacklogItem, {id: id});
+		const maybeBacklog = this.backlogItemList.find(i => i.id == id);
 		if (!maybeBacklog) {
 			throw new NotFoundError(`BacklogItem with id ${id} not found`)
 		}
+		delete maybeBacklog.release
+		delete maybeBacklog.sprint
+		delete maybeBacklog.assignees
 		return maybeBacklog
 	}
 	
 	public async lookupStoryById(id: number): Promise<Story> {
-		const maybeStory = (await this.lookupBacklogById(id));
-		if (maybeStory instanceof Story) {
-			return maybeStory;
+		const maybeStory = this.backlogItemList.find(i => i.id == id);
+		if (!maybeStory) {
+			throw new NotFoundError(`BacklogItem with id ${id} not found`)
 		}
-		throw new NotFoundError(`Story with id ${id} not found`)
+		delete maybeStory.release
+		delete maybeStory.sprint
+		delete maybeStory.assignees
+		if (!(maybeStory instanceof Story))
+			throw new Error("not story")
+		return maybeStory
 	}
 
 	///// General Methods - Only use if there is not a method above to use /////
@@ -195,9 +209,39 @@ export class FakeWrapper {
 	public async save(item: any) {
 		try {
 			if (item instanceof User) {
-				
+				if (!item.id) {
+					item.id = this.userIdNext++
+				}
+				this.userList.push(item)
+			} else if (item instanceof Project) {
+				if (!item.id) {
+					item.id = this.projectIdNext++
+				}
+				this.projectList.push(item)
+			} else if (item instanceof Release) {
+				if (!item.id) {
+					item.id = this.releaseIdNext++
+				}
+				this.releaseList.push(item)
+			} else if (item instanceof Sprint) {
+				if (!item.id) {
+					item.id = this.sprintIdNext++
+				}
+				this.sprintList.push(item)
+			} else if (item instanceof UserRole) {
+				if (!item.id) {
+					item.id = this.roleIdNext++
+				}
+				this.roleList.push(item)
+			} else if (item instanceof BacklogItem || item instanceof Story) {
+				if (!item.id) {
+					item.id = this.backlogItemIdNext++
+				}
+				this.backlogItemList.push(item)
+			} else {
+				throw new Error("Type not recognized")
 			}
-			return await this.dataSource.manager.save(item);
+			return item
 		} catch {
 			throw new NotSavedError(`Failed to save ${item}`)
 		}
