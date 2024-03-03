@@ -1,5 +1,5 @@
 import express from "express";
-import { Database } from "../data-source";
+import { Database } from "../db/database";
 import { verifyParameters } from './utils/verifyParams';
 
 export const newRelease = async (req: express.Request, res: express.Response) => {

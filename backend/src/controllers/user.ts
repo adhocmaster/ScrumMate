@@ -1,6 +1,6 @@
 import express from "express";
 import { authentication, random } from "../helpers/index";
-import { Database } from "../data-source";
+import { Database } from "../db/database";
 import { verifyParameters } from './utils/verifyParams';
 
 export const createUser = async (req: express.Request, res: express.Response) => {

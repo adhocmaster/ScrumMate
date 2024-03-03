@@ -1,6 +1,6 @@
 import express from 'express';
 import {get, merge} from 'lodash'
-import { Database } from '../../src/data-source';
+import { Database } from '../db/database';
 
 declare module 'express' {
   export interface Request {
