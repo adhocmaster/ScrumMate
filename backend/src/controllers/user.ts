@@ -49,3 +49,13 @@ export const edit = async (req: express.Request, res: express.Response) => {
 // 	const user = await db.updateUser(parseInt(userId), username, email, password, salt, sessionToken)
 // 	return res.json(user)
 // };
+
+export const getProjects = async (req: express.Request, res: express.Response) => {
+	console.log("getting projects")
+	const db = Database.getInstance()
+	console.log(req.userId)
+	if(!verifyParameters(req.userId)) return res.sendStatus(400);
+	const userWithProjects = await db.fetchUserWithProjects(req.userId)
+	console.log(userWithProjects)
+	return res.json([...userWithProjects.getOwnedProjects(), ...userWithProjects.getJoinedProjects()]);
+};
