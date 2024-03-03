@@ -12,7 +12,6 @@ const UserStory = ({userStoryText, storyPoints}) => {
 
     return truncatedWithEllipsis;
   };
-
   return (
     <Card
       sx={{
@@ -34,6 +33,19 @@ const UserStory = ({userStoryText, storyPoints}) => {
           variant="body1"
           textAlign={'right'}
           fontSize={14}
+          sx={{
+            position: 'absolute',
+            bottom: 10,
+            right: 12,
+          }}
+        >
+          {storyPoints}
+        </Typography>
+        
+        <Typography
+          variant="body1"
+          textAlign={'right'}
+          fontSize={16}
           sx={{
             position: 'absolute',
             bottom: 10,

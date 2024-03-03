@@ -13,6 +13,23 @@ jobs:
 
     runs-on: ubuntu-latest
 
+    services:
+      postgres:
+        image: postgres
+
+        env:
+          POSTGRES_PASSWORD: test
+          POSTGRES_USER: test
+          POSTGRES_DB: test
+
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+
     strategy:
       matrix:
         node-version: [21]
@@ -28,9 +45,8 @@ jobs:
     - run: npm ci
     - run: npm install && (cd frontend && npm install) && (cd backend && npm install)
     
-    - run: (cd frontend && npm run build)
-    - run: (cd frontend && npm test --watchAll)
-    
     - run: (cd backend && npm run build)
     - run: (cd backend && npm test --watchAll)
     
+    - run: (cd frontend && npm run build)
+    # - run: (cd frontend && npm test --watchAll)

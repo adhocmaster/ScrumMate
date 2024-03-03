@@ -39,7 +39,6 @@ erDiagram
         BIGINT scrum_master_id FK
 
         INT sequence
-        BIGINT[] actions
         
         INT duration_days
         datetime date_created
@@ -52,6 +51,8 @@ erDiagram
         BIGINT project_id FK
         BIGINT creator_id FK
 
+        BIGINT parent_id FK "nullable. Possibly a story id if the current one is a task"
+
         datetime date_created
         datetime date_updated
 
@@ -61,10 +62,6 @@ erDiagram
 
         BIGINT responsible_person
         BIGINT[] members
-    }
-
-    Story {
-        BIGINT action_id
     }
 
 
@@ -77,11 +74,13 @@ erDiagram
     ReleasePlan ||--|{ SprintPlan: has
     ReleasePlan ||--|{ ProductBacklog: has
 
-    SprintPlan }|--|{ Story: has
+    SprintPlan }|--|{ ProductBacklog: "has sprint backlog"
     SprintPlan }|--|| User: "Scrum Master"
 
     
     ProductBacklog ||--|{ ProjectUserRoles: "epic/stories have"
+
+    ProductBacklog ||--|{ ProductBacklog: "a story has tasks"
 
 
 

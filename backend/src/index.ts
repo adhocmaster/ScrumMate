@@ -1,37 +1,64 @@
 import express from 'express';
-import http from 'http';
-import bodyParser from 'body-parser';
+import { AppDataSource } from './data-source';
+import { Database } from './db/database';
+import { Release } from "./entity/release"
+import { Project } from './entity/project';
+import router from './router/index';
 import cookieParser from 'cookie-parser';
-import compression from 'compression';
 import cors from 'cors';
-import mongoose from 'mongoose';
-import router from './router'
-import {Entity, PrimaryGeneratedColumn, Column, BaseEntity} from "typeorm"
-import "reflect-metadata"
+import { User } from './entity/User';
+import { authentication } from './helpers';
 
 const app = express();
 
-app.use(cors({
-    origin:"http://localhost:3000",
-    credentials: true,
-}));
+AppDataSource.initialize().then(async () => {
+	/// Initializing som basic information for the frontend
+	/// TEMPORARY CODE UNTIL THE SIGNIN AND PROJECT SELECTION PAGES ARE DONE
+	const db = Database.setAndGetInstance(AppDataSource)
+	// await db.deleteAll() // not working
 
-app.use(compression());
-app.use(cookieParser());
-app.use(bodyParser.json());
+	const productOwner1 = new User()
+	productOwner1.username = "bob"
+	productOwner1.email = "bob@gmail.com"
+	productOwner1.salt = "salt"
+	productOwner1.password = authentication(productOwner1.salt, "pass")
+	productOwner1.id = 1
+	await db.save(productOwner1)
 
-const server = http.createServer(app)
+	var project1 = new Project()
+	project1.name = "scrum tools"
+	project1.nextRevision = 3
+	project1.productOwner = productOwner1
+	project1.id = 1
+	await db.save(project1)
 
-server.listen(3001, ()=>{
-    console.log("server running on http://localhost:3001")
-})
+	const release1 = new Release()
+	release1.revision = 1
+	release1.revisionDate = new Date()
+	release1.problemStatement = "There are no problems"
+	release1.goalStatement = "Keep everything fine"
+	release1.project = project1
+	release1.id = 1
+	await db.save(release1)
 
-const MONGODB_URI = 'mongodb+srv://rojwilli:8Rosemont@cluster0.mit0tdn.mongodb.net/?retryWrites=true&w=majority'  || 'mongodb://127.0.0.1:27017/scrum_mate'
+	const release2 = new Release()
+	release2.revision = 2
+	release2.revisionDate = new Date()
+	release2.problemStatement = "There are many problems"
+	release2.goalStatement = "Must fix all the problems"
+	release2.project = project1
+	release2.id = 2
+	await db.save(release2)
 
-mongoose.Promise = Promise
-mongoose.connect(MONGODB_URI)
-mongoose.connection.on('error',(error:Error)=>{
-    console.log(error)
-})
-
-app.use('/',router())
+	/// Start express
+	app.use(express.json())
+	app.use(cors({
+		origin:"http://localhost:3000",
+		credentials: true,
+	}));
+	app.use(cookieParser());
+	app.use('/api', router());
+	app.listen(8080, () => {
+		console.log("Running on port 8080")
+	})
+}).catch(error => console.log(error))

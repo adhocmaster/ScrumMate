@@ -46,7 +46,6 @@ const Sprint = ({userStories}) => {
               8
             </Typography>
           </Box>
-
           <Box sx={{height: '100%'}}>
             <Divider 
               orientation='vertical'

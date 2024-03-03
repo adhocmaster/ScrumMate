@@ -34,12 +34,11 @@ const Dashboard = ({ isLoggedIn }) => {
         },
         body: JSON.stringify({
           name: newProjectName,
-          members:memberEmails
         }),
         credentials: 'include',
       };
   
-      const response = await fetch('http://localhost:3001/projects', options);
+      const response = await fetch('http://localhost:3000/project', options);
       console.log(response)
       if (response.status === 200) {
         console.log('New project created successfully!');
@@ -57,9 +56,6 @@ const Dashboard = ({ isLoggedIn }) => {
     }
   };
   
-  
-  
-
 
   // Functionality for navigation clicks will need to be implemented
   const [projectNames, setProjectNames] = useState([]);
@@ -74,14 +70,10 @@ const Dashboard = ({ isLoggedIn }) => {
   useEffect( ()=>{
      try{
       var options = {
-        url: `http://localhost:3001/projects`,
         method:'get',
-        // headers: {
-        //   'Content-Type': 'application/json'
-        // }
         credentials:'include'
       }
-      fetch(`http://localhost:3001/projects`,options).then((result)=>{
+      fetch(`http://localhost:8080/api/user/projects`,options).then((result)=>{
         console.log(result)
         if(result.status == 200){
           console.log(result)
