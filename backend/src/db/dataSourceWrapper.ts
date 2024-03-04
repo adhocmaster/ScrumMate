@@ -103,7 +103,7 @@ export class DataSourceWrapper {
 		return maybeRelease
 	}
 
-	public async lookupReleaseWithProject(releaseId: number): Promise<Release> {
+	public async fetchReleaseWithProject(releaseId: number): Promise<Release> {
 		const releaseWithProject = (await this.dataSource.getRepository(Release).find({
 			where: {id: releaseId},
 			relations:{
@@ -113,6 +113,18 @@ export class DataSourceWrapper {
 			throw new NotFoundError(`Release with releaseId ${releaseId} not found`)
 		}
 		return releaseWithProject[0]
+	}
+
+	public async fetchReleaseWithSprints(releaseId: number): Promise<Release> {
+		const releaseWithSprints = (await this.dataSource.getRepository(Release).find({
+			where: {id: releaseId},
+			relations:{
+				sprints: true
+			}}))
+		if (!releaseWithSprints || releaseWithSprints.length === 0) {
+			throw new NotFoundError(`Release with releaseId ${releaseId} not found`)
+		}
+		return releaseWithSprints[0]
 	}
 
 	///// Role Methods /////

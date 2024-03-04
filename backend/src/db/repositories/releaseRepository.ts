@@ -1,3 +1,4 @@
+import { Sprint } from "../../entity/sprint";
 import { Release } from "../../entity/release";
 import { DataSourceWrapper } from "../dataSourceWrapper";
 
@@ -28,7 +29,7 @@ export class ReleaseRepository {
 
 	public async updateRelease(releaseId: number, revisionDate?: Date, problemStatement?: string, goalStatement?: string): Promise<Release> {
 		const release = await this.dataSource.lookupReleaseById(releaseId)
-		// const releaseWithProject = await this.dataSource.lookupReleaseWithProject(releaseId)
+		// const releaseWithProject = await this.dataSource.fetchReleaseWithProject(releaseId)
 		// release.revision = revision ?? release.revision // shouldnt change
 		release.revisionDate = revisionDate ?? release.revisionDate
 		release.problemStatement = problemStatement ?? release.problemStatement
@@ -42,13 +43,18 @@ export class ReleaseRepository {
 		const releaseCopy = new Release();
 		// need to get the whole list of releases in this project so we can get the new version #
 		// should we just make a new variable to count the max version
-		const releaseWithProject = await this.dataSource.lookupReleaseWithProject(releaseId)
+		const releaseWithProject = await this.dataSource.fetchReleaseWithProject(releaseId)
 		releaseCopy.copy(releaseWithProject)
 		releaseCopy.revision = releaseCopy.project.nextRevision;
 		releaseCopy.project.nextRevision += 1;
 		await this.dataSource.save(releaseCopy.project)
 		await this.dataSource.save(releaseCopy)
 		return releaseCopy
+	}
+
+	public async getReleaseSprints(releaseId: number): Promise<Sprint[]> {
+		const releaseWithSprints = await this.dataSource.fetchReleaseWithSprints(releaseId)
+		return releaseWithSprints.sprints
 	}
 
 }

@@ -142,12 +142,20 @@ export class Database {
 		return await this.releaseRepository.copyRelease(releaseId);
 	}
 
+	public async getReleaseSprints(releaseId: number): Promise<Sprint[]> {
+		return await this.releaseRepository.getReleaseSprints(releaseId)
+	}
+
 	public async lookupReleaseById(id: number): Promise<Release> {
 		return this.dataSource.lookupReleaseById(id);
 	}
 
-	public async lookupReleaseWithProject(releaseId: number): Promise<Release> {
-		return this.dataSource.lookupReleaseWithProject(releaseId);
+	public async fetchReleaseWithProject(releaseId: number): Promise<Release> {
+		return this.dataSource.fetchReleaseWithProject(releaseId);
+	}
+
+	public async fetchReleaseWithSprints(releaseId: number): Promise<Release> {
+		return this.dataSource.fetchReleaseWithSprints(releaseId);
 	}
 
 	///// Role Methods /////

@@ -28,3 +28,11 @@ export const editSprint = async(req: express.Request, res: express.Response) => 
 	const sprint = await db.updateSprint(parseInt(sprintId), sprintNumber, startDate, endDate, goal)
 	return res.json(sprint)
 }
+
+export const getSprints = async(req: express.Request, res: express.Response) => {
+	const db = Database.getInstance()
+	const { releaseId } = req.params
+	if (!verifyParameters(releaseId)) return res.sendStatus(400)
+	const sprintList = await db.getReleaseSprints(parseInt(releaseId))
+	return res.json(sprintList)
+}
