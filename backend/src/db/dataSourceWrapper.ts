@@ -49,7 +49,12 @@ export class DataSourceWrapper {
 	}
 
 	public async fetchUserWithProjects(id: number): Promise<User> {
-		const maybeUserList = (await this.dataSource.getRepository(User).find({where: {id: id}, relations:{ownedProjects: true, joinedProjects: true}}))
+		const maybeUserList = await this.dataSource.getRepository(User).find({
+			where: {id: id},
+			relations:{
+				ownedProjects: true,
+				joinedProjects: true
+			}})
 		if (!maybeUserList || maybeUserList.length === 0) {
 			throw new NotFoundError(`User with id ${id} not found`)
 		}
@@ -67,11 +72,16 @@ export class DataSourceWrapper {
 	}
 
 	public async lookupProjectByIdWithUsers(id: number): Promise<Project> {
-		const maybeProject =  (await this.dataSource.getRepository(Project).find({where: {id: id}, relations:{productOwner: true, teamMembers: true}}))[0]
-		if (!maybeProject) {
+		const maybeProject =  await this.dataSource.getRepository(Project).find({
+			where: {id: id},
+			relations:{
+				productOwner: true,
+				teamMembers: true
+			}})
+		if (!maybeProject || maybeProject.length === 0) {
 			throw new NotFoundError(`Project with id ${id} not found`)
 		}
-		return maybeProject
+		return maybeProject[0]
 	}
 
 	public async fetchProjectWithReleases(id: number): Promise<Project> {
@@ -117,12 +127,12 @@ export class DataSourceWrapper {
 	}
 
 	public async fetchReleaseWithSprints(releaseId: number): Promise<Release> {
-		const releaseWithSprints = (await this.dataSource.getRepository(Release).find({
+		const releaseWithSprints = await this.dataSource.getRepository(Release).find({
 			where: {id: releaseId},
 			relations:{
 				sprints: true // must sort by sprint.sprintNumber later
 			},
-		}))
+		})
 		if (!releaseWithSprints || releaseWithSprints.length === 0) {
 			throw new NotFoundError(`Release with releaseId ${releaseId} not found`)
 		}
@@ -147,6 +157,19 @@ export class DataSourceWrapper {
 			throw new NotFoundError(`Sprint with id ${id} not found`)
 		}
 		return maybeSprint
+	}
+	
+	public async lookupSprintByIdWithRelease(id: number): Promise<Sprint> {
+		const maybeSprint = await this.dataSource.getRepository(Sprint).find({
+			where: {id: id},
+			relations:{
+				release: true // must sort by sprint.sprintNumber later
+			},
+		})
+		if (!maybeSprint || maybeSprint.length === 0) {
+			throw new NotFoundError(`Sprint with id ${id} not found`)
+		}
+		return maybeSprint[0]
 	}
 
 	///// Todo Methods /////

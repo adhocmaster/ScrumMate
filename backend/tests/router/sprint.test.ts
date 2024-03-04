@@ -233,19 +233,16 @@ describe("Sprint API tests", () => {
 		});
 	});
 
-	test("Sprints still hav relation to the release", async () => {
+	test("Sprints still have relation to the release", async () => {
 		await request(app)
-		.get(`/api/release/${releaseId}/sprints`)
+		.get(`/api/sprint/${sprintId}`)
 		.set('Cookie', [`user-auth=${sessionToken}`])
 		.expect(200)
 		.then((res) => {
 			expect(res.body).toBeDefined();
-			expect(res.body[0].id).toBe(sprint3Id);
-			expect(res.body[0].sprintNumber).toBe(1);
-			expect(res.body[1].id).toBe(sprintId);
-			expect(res.body[1].sprintNumber).toBe(2);
-			expect(res.body[2].id).toBe(sprint2Id);
-			expect(res.body[2].sprintNumber).toBe(3);
+			expect(res.body.id).toBe(sprintId);
+			expect(res.body.sprintNumber).toBe(2);
+			expect(res.body.release.id).toBe(releaseId);
 		});
 	});
 

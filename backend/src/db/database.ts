@@ -151,15 +151,15 @@ export class Database {
 	}
 
 	public async lookupReleaseById(id: number): Promise<Release> {
-		return this.dataSource.lookupReleaseById(id);
+		return await this.dataSource.lookupReleaseById(id);
 	}
 
 	public async fetchReleaseWithProject(releaseId: number): Promise<Release> {
-		return this.dataSource.fetchReleaseWithProject(releaseId);
+		return await this.dataSource.fetchReleaseWithProject(releaseId);
 	}
 
 	public async fetchReleaseWithSprints(releaseId: number): Promise<Release> {
-		return this.dataSource.fetchReleaseWithSprints(releaseId);
+		return await this.dataSource.fetchReleaseWithSprints(releaseId);
 	}
 
 	///// Role Methods /////
@@ -188,6 +188,10 @@ export class Database {
 		
 	public async lookupSprintById(id: number): Promise<Sprint> {
 		return await this.dataSource.lookupSprintById(id);
+	}
+		
+	public async lookupSprintByIdWithRelease(id: number): Promise<Sprint> {
+		return await this.dataSource.lookupSprintByIdWithRelease(id);
 	}
 
 	///// BacklogItem Methods /////

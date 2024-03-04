@@ -39,9 +39,9 @@ export const getSprints = async(req: express.Request, res: express.Response) => 
 
 export const getSprintWithRelease = async(req: express.Request, res: express.Response) => {
 	const db = Database.getInstance()
-	const { releaseId } = req.params
-	if (!verifyParameters(releaseId)) return res.sendStatus(400)
-	const sprintList = await db.getReleaseSprints(parseInt(releaseId))
+	const { sprintId } = req.params
+	if (!verifyParameters(sprintId)) return res.sendStatus(400)
+	const sprintList = await db.lookupSprintByIdWithRelease(parseInt(sprintId))
 	return res.json(sprintList)
 }
 
