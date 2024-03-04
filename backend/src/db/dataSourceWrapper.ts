@@ -108,7 +108,8 @@ export class DataSourceWrapper {
 			where: {id: releaseId},
 			relations:{
 				project: true
-			}}))
+			},
+		}))
 		if (!releaseWithProject || releaseWithProject.length === 0) {
 			throw new NotFoundError(`Release with releaseId ${releaseId} not found`)
 		}
@@ -119,8 +120,9 @@ export class DataSourceWrapper {
 		const releaseWithSprints = (await this.dataSource.getRepository(Release).find({
 			where: {id: releaseId},
 			relations:{
-				sprints: true
-			}}))
+				sprints: true // must sort by sprint.sprintNumber later
+			},
+		}))
 		if (!releaseWithSprints || releaseWithSprints.length === 0) {
 			throw new NotFoundError(`Release with releaseId ${releaseId} not found`)
 		}

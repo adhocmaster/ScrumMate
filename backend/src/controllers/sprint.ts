@@ -36,3 +36,23 @@ export const getSprints = async(req: express.Request, res: express.Response) => 
 	const sprintList = await db.getReleaseSprints(parseInt(releaseId))
 	return res.json(sprintList)
 }
+
+export const getSprintWithRelease = async(req: express.Request, res: express.Response) => {
+	const db = Database.getInstance()
+	const { releaseId } = req.params
+	if (!verifyParameters(releaseId)) return res.sendStatus(400)
+	const sprintList = await db.getReleaseSprints(parseInt(releaseId))
+	return res.json(sprintList)
+}
+
+export const moveSprint = async(req: express.Request, res: express.Response) => {
+	const db = Database.getInstance()
+	const { releaseId } = req.params
+	const {
+		sprintStartIndex,
+		sprintEndIndex
+	} = req.body
+	if (!verifyParameters(releaseId, sprintStartIndex, sprintEndIndex)) return res.sendStatus(400)
+	const sprintList = await db.reorderSprints(parseInt(releaseId), parseInt(sprintStartIndex), parseInt(sprintEndIndex))
+	return res.json(sprintList)
+}

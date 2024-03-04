@@ -54,7 +54,7 @@ afterAll(async () => {
 	await server.close()
 });
 
-describe("Release API tests", () => {
+describe("Sprint API tests", () => {
   let sessionToken: string;
 	test("CREATE USER", async () => {
 		const body = {username: "sallyg", email: "sallys@gmail.com", password: "password123"}
@@ -184,17 +184,69 @@ describe("Release API tests", () => {
 		});
 	});
 
-	test("The order of sprints is preserved", async () => {
+	test("The order of sprints is ascending when getting sprints", async () => {
 		await request(app)
 		.get(`/api/release/${releaseId}/sprints`)
 		.set('Cookie', [`user-auth=${sessionToken}`])
 		.expect(200)
 		.then((res) => {
 			expect(res.body).toBeDefined();
-			console.log(res.body)
 			expect(res.body[0].id).toBe(sprintId);
 			expect(res.body[1].id).toBe(sprint2Id);
 			expect(res.body[2].id).toBe(sprint3Id);
 		});
 	});
+
+	test("Reorder sprints to be 3, 1, 2", async () => {
+		await request(app)
+		.post(`/api/release/${releaseId}/reorder`)
+		.set('Cookie', [`user-auth=${sessionToken}`])
+		.send({
+			sprintStartIndex: 2,
+            sprintEndIndex: 0
+		})
+		.expect(200)
+		.then((res) => {
+			expect(res.body).toBeDefined();
+			expect(res.body[0].id).toBe(sprint3Id);
+			expect(res.body[0].sprintNumber).toBe(1);
+			expect(res.body[1].id).toBe(sprintId);
+			expect(res.body[1].sprintNumber).toBe(2);
+			expect(res.body[2].id).toBe(sprint2Id);
+			expect(res.body[2].sprintNumber).toBe(3);
+		});
+	});
+
+	test("The new order of sprints is saved", async () => {
+		await request(app)
+		.get(`/api/release/${releaseId}/sprints`)
+		.set('Cookie', [`user-auth=${sessionToken}`])
+		.expect(200)
+		.then((res) => {
+			expect(res.body).toBeDefined();
+			expect(res.body[0].id).toBe(sprint3Id);
+			expect(res.body[0].sprintNumber).toBe(1);
+			expect(res.body[1].id).toBe(sprintId);
+			expect(res.body[1].sprintNumber).toBe(2);
+			expect(res.body[2].id).toBe(sprint2Id);
+			expect(res.body[2].sprintNumber).toBe(3);
+		});
+	});
+
+	test("Sprints still hav relation to the release", async () => {
+		await request(app)
+		.get(`/api/release/${releaseId}/sprints`)
+		.set('Cookie', [`user-auth=${sessionToken}`])
+		.expect(200)
+		.then((res) => {
+			expect(res.body).toBeDefined();
+			expect(res.body[0].id).toBe(sprint3Id);
+			expect(res.body[0].sprintNumber).toBe(1);
+			expect(res.body[1].id).toBe(sprintId);
+			expect(res.body[1].sprintNumber).toBe(2);
+			expect(res.body[2].id).toBe(sprint2Id);
+			expect(res.body[2].sprintNumber).toBe(3);
+		});
+	});
+
 });

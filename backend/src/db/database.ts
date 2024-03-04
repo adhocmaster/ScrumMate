@@ -146,6 +146,10 @@ export class Database {
 		return await this.releaseRepository.getReleaseSprints(releaseId)
 	}
 
+	public async reorderSprints(releaseId: number, startIndex: number, destinationIndex: number): Promise<Sprint[]> {
+		return await this.releaseRepository.reorderSprints(releaseId, startIndex, destinationIndex)
+	}
+
 	public async lookupReleaseById(id: number): Promise<Release> {
 		return this.dataSource.lookupReleaseById(id);
 	}

@@ -52,9 +52,26 @@ export class ReleaseRepository {
 		return releaseCopy
 	}
 
+	/// Sorted by ascending sprint number
 	public async getReleaseSprints(releaseId: number): Promise<Sprint[]> {
 		const releaseWithSprints = await this.dataSource.fetchReleaseWithSprints(releaseId)
-		return releaseWithSprints.sprints
+		return releaseWithSprints.sprints.sort((a: Sprint, b: Sprint) => a.sprintNumber - b.sprintNumber)
+	}
+
+	/// Sorted by ascending sprint number
+	public async reorderSprints(releaseId: number, startIndex: number, destinationIndex: number): Promise<Sprint[]> {
+		const releaseWithSprints = await this.dataSource.fetchReleaseWithSprints(releaseId)
+		// unfortunately cant call getReleaseSprints() because we need the release too
+		// otherwise we need to take a performance hit looking up the release again
+		releaseWithSprints.sprints.sort((a: Sprint, b: Sprint) => a.sprintNumber - b.sprintNumber)
+		const [item] = releaseWithSprints.sprints.splice(startIndex, 1)
+		releaseWithSprints.sprints.splice(destinationIndex, 0, item)
+		releaseWithSprints.sprints.forEach(async (sprint, index) => {
+			sprint.sprintNumber = index+1;
+			await this.dataSource.save(sprint)
+		})
+		await this.dataSource.save(releaseWithSprints)
+		return releaseWithSprints.sprints;
 	}
 
 }
