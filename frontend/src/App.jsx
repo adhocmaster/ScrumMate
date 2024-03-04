@@ -68,8 +68,9 @@ function App() {
         <Route
           path="/releases"
           element={
-            isLoggedIn ? <ReleasePlan /> : <Navigate replace to="/" />
-          }
+            //isLoggedIn ? <ReleasePlan /> : <Navigate replace to="/" />
+            <ReleasePlan/>
+        }
         />
         <Route
           path="/sprints"

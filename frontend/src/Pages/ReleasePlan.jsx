@@ -179,8 +179,14 @@ const ReleasePlan = () => {
               Sprints
             </Typography>
 
+
+            {/*1. Rearrange theses stories first.
+               2. Add different user stories.*/}
             <Sprint userStories={allUserStories} />
-            <Sprint userStories={allUserStories.reverse()} />
+            <Sprint userStories={allUserStories} />
+            
+
+            
           </Grid>
 
           <Grid item xs={3}>
