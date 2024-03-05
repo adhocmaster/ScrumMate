@@ -2,7 +2,7 @@ import { Box, Divider, IconButton, Typography, Paper, List, ListItem } from '@mu
 import MenuIcon from '@mui/icons-material/Menu';
 import UserStory from './UserStory';
 
-const Sprint = ({userStories}) => {
+const Sprint = ({userStories, sprintNumber}) => {
   return (
     <>
       <Box 
@@ -33,7 +33,7 @@ const Sprint = ({userStories}) => {
           >
             {/* TODO: replace with sprint number */}
             <Typography sx={{marginTop: 2}} fontSize={14}>
-              1
+              {sprintNumber}
             </Typography>
             
             {/* TODO: handle button click/drag */}

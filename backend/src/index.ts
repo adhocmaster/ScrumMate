@@ -60,14 +60,59 @@ AppDataSource.initialize().then(async () => {
 	sprint1.goal = "finsih sprint"
 	await db.save(sprint1);
 
+	const sprint2 = new Sprint()
+	sprint2.release = release1;
+	sprint2.sprintNumber = 2;
+	sprint2.startDate = new Date();
+	sprint2.endDate = new Date();
+	sprint2.goal = "finsih sprint"
+	await db.save(sprint2);
+
+	const sprint3 = new Sprint()
+	sprint3.release = release1;
+	sprint3.sprintNumber = 3;
+	sprint3.startDate = new Date();
+	sprint3.endDate = new Date();
+	sprint3.goal = "finsih sprint"
+	await db.save(sprint3);
+
 	const backlog1 = new Story()
 	backlog1.sprint = sprint1;
 	backlog1.userTypes = "none";
 	backlog1.reasoning = "there is no reasoning at all"
 	backlog1.acceptanceCriteria = "There is no acceptance criteria"
-	backlog1.storyPoints = 10;
-	backlog1.functionalityDescription = "This is the functionality."
+	backlog1.storyPoints = 8;
+	backlog1.functionalityDescription = "This is the first backlog item"
 	await db.save(backlog1);
+
+	const backlog2 = new Story()
+	backlog2.sprint = sprint1;
+	backlog2.userTypes = "none";
+	backlog2.reasoning = "there is no reasoning at all"
+	backlog2.acceptanceCriteria = "There is no acceptance criteria"
+	backlog2.storyPoints = 10;
+	backlog2.functionalityDescription = "This is the functionality."
+	await db.save(backlog2);
+
+
+	const backlog3 = new Story()
+	backlog3.sprint = sprint2;
+	backlog3.userTypes = "none";
+	backlog3.reasoning = "there is no reasoning at all"
+	backlog3.acceptanceCriteria = "There is no acceptance criteria"
+	backlog3.storyPoints = 12;
+	backlog3.functionalityDescription = "Backlog Item for sprint2."
+	await db.save(backlog3);
+
+	const backlog4 = new Story()
+	backlog4.sprint = sprint2;
+	backlog4.userTypes = "none";
+	backlog4.reasoning = "there is no reasoning at all"
+	backlog4.acceptanceCriteria = "There is no acceptance criteria"
+	backlog4.storyPoints = 12;
+	backlog4.functionalityDescription = "Second Backlog Item for sprint2."
+	await db.save(backlog4);
+
 
 	/// Start express
 	app.use(express.json())

@@ -3,20 +3,25 @@ import { useState } from "react";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import Sprint from "./Sprint";
 
+	async function reorderFetch(releaseId, sprintStartIndex, sprintEndIndex, setItems) {
+		fetch(`http://localhost:8080/api/release/${releaseId}/reorder`, {
+			method: 'POST',
+			credentials:'include',
+			headers: {
+			'Content-Type': 'application/json',
+			},
+			body:JSON.stringify({sprintStartIndex, sprintEndIndex})})
+		.then(response => response.json())
+		.then(data => {
+			console.log(data);
+			setItems(data);
+		})
+		.catch(error => {
+			;
+		});	
+	}
 
-const getItem = count =>
-		Array.from({ length: count }, (v, k) => k).map(k => ({
-	  	id: `item-${k}`,
-	  	content: `item ${k}`
-	}));
-
-
-const userStoryText = `As a student I want to be able to reset my password 
-    in case I forget so that I do not lost access to all my account and data.`
-const allUserStories = [userStoryText, userStoryText, "add testing", userStoryText];	
-
-const all = [allUserStories, allUserStories, allUserStories];
-export default function DragList({items, setItems}) {
+export default function DragList({items, setItems, releaseId}) {
 	// a little function to help us with reordering the result
 	const reorder = (list, startIndex, endIndex) => {
 		const result = Array.from(list);
@@ -51,14 +56,14 @@ export default function DragList({items, setItems}) {
 		if (!result.destination) {
 		return;
 		}
-
 		const items2 = reorder(
 			items, 
 			result.source.index,
 			result.destination.index
 		);
-
-		setItems(items2)
+		setItems(items2);
+		reorderFetch(releaseId, result.source.index,
+			result.destination.index, setItems);
 	}
 
     return (
@@ -82,7 +87,7 @@ export default function DragList({items, setItems}) {
                         provided.draggableProps.style
                       )}
                     >
-                      <Sprint userStories={item.todos}/>
+                      <Sprint sprintNumber={item.sprintNumber} userStories={item.todos}/>
                     </div>
                   )}
                 </Draggable>

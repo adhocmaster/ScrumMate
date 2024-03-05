@@ -55,21 +55,18 @@ const ReleasePlan = () => {
   const [sprints, setSprints] = useState([]);
 
   function fetchSprints(releaseId) {
-	console.log("about to fetch a release")
 		var options = {
 			method:'get',
 			credentials:'include'
 		  }
 		fetch(`http://localhost:8080/api/release/${releaseId}/sprints`, options).then((result)=>{
 			if(result.status == 200){
-				console.log(result)
+				result.json().then((response)=>{
+					setSprints(response)});
+			} else {
+				setSprints([]);
 			}
-			result.json().then((response)=>{
-				console.log('Sprints');
-				console.log(response);
-				setSprints(response)
-			})
-		})
+			});
   }
 
 
@@ -201,7 +198,7 @@ const ReleasePlan = () => {
             </Typography>
 
 
-			<DragList items={sprints} setItems={setSprints}/>
+			<DragList items={sprints} setItems={setSprints} releaseId={releaseId}/>
 		  	{/* {sprints != [] ? <DragList items={sprints} setItems={setSprints}/>: ''} */}
 		  	
           </Grid>
