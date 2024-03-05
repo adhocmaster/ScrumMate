@@ -7,7 +7,7 @@ import Sidebar from '../Components/Sidebar';
 import ButtonBar from '../Components/ButtonBar';
 import ContentBox from '../Components/ContentBox';
 import Sprint from '../Components/Sprint';
-
+import DragList from '../Components/DragList';
 const ReleasePlan = () => {
 	const projectId = 1;
 	
@@ -52,6 +52,26 @@ const ReleasePlan = () => {
   const [problemStatement, setProblem] = useState("");
   const [highLevelGoals, setGoals] = useState("");
   const [releaseId, setId] = useState(1);
+  const [sprints, setSprints] = useState([]);
+
+  function fetchSprints(releaseId) {
+	console.log("about to fetch a release")
+		var options = {
+			method:'get',
+			credentials:'include'
+		  }
+		fetch(`http://localhost:8080/api/release/${releaseId}/sprints`, options).then((result)=>{
+			if(result.status == 200){
+				console.log(result)
+			}
+			result.json().then((response)=>{
+				console.log('Sprints');
+				console.log(response);
+				setSprints(response)
+			})
+		})
+  }
+
 
   useEffect(() => {
     fetchMostRecentRelease(1, setProblem, setGoals, setId);
@@ -59,6 +79,7 @@ const ReleasePlan = () => {
 
   useEffect(() => {
 	fetchRelease(releaseId, setProblem, setGoals);
+	fetchSprints(releaseId)
   }, [releaseId]);
 
   const toggleDrawer = () => {
@@ -179,8 +200,10 @@ const ReleasePlan = () => {
               Sprints
             </Typography>
 
-            <Sprint userStories={allUserStories} />
-            <Sprint userStories={allUserStories.reverse()} />
+
+			<DragList items={sprints} setItems={setSprints}/>
+		  	{/* {sprints != [] ? <DragList items={sprints} setItems={setSprints}/>: ''} */}
+		  	
           </Grid>
 
           <Grid item xs={3}>

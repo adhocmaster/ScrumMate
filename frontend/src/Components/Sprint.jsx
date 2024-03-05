@@ -78,7 +78,7 @@ const Sprint = ({userStories}) => {
                   padding: '8px 0px 8px 12px',
                 }}
               >
-                <UserStory userStoryText={userStory} storyPoints={5}/>
+                <UserStory userStoryText={userStory.functionalityDescription} storyPoints={userStory.storyPoints}/>
               </ListItem>
             ))}
           </List>

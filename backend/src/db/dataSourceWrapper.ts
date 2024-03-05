@@ -131,13 +131,29 @@ export class DataSourceWrapper {
 		const releaseWithSprints = await this.dataSource.getRepository(Release).find({
 			where: {id: releaseId},
 			relations:{
-				sprints: true // must sort by sprint.sprintNumber later
+				sprints: true,
 			},
 		})
 		if (!releaseWithSprints || releaseWithSprints.length === 0) {
 			throw new NotFoundError(`Release with releaseId ${releaseId} not found`)
 		}
 		return releaseWithSprints[0]
+	}
+
+	public async getSprintWithBacklog(releaseId: number): Promise<Sprint[]> {
+		const sprints = await this.dataSource.getRepository(Sprint).find({
+			relations:{
+				release: true,
+				todos: true,
+			},
+			where: {
+				release: {id: releaseId}
+			},
+		})
+		if (!sprints || sprints.length === 0) {
+			throw new NotFoundError(`Release with releaseId ${releaseId} not found`)
+		}
+		return sprints;
 	}
 
 	///// Role Methods /////

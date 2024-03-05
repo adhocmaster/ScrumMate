@@ -26,7 +26,7 @@ const UserStory = ({userStoryText, storyPoints}) => {
           textAlign={'left'}
           fontSize={14}
         >
-          {truncateText(userStoryText, 120)}
+          {userStoryText ? truncateText(userStoryText, 120): ''}
         </Typography>
         
         <Typography

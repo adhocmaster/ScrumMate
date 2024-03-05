@@ -54,8 +54,8 @@ export class ReleaseRepository {
 
 	/// return list sorted by ascending sprint number
 	public async getReleaseSprints(releaseId: number): Promise<Sprint[]> {
-		const releaseWithSprints = await this.dataSource.fetchReleaseWithSprints(releaseId)
-		return releaseWithSprints.sprints.sort((a: Sprint, b: Sprint) => a.sprintNumber - b.sprintNumber)
+		const sprints = await this.dataSource.getSprintWithBacklog(releaseId);
+		return sprints.sort((a: Sprint, b: Sprint) => a.sprintNumber - b.sprintNumber)
 	}
 
 	/// return new order sorted by ascending sprint number

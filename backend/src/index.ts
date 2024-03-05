@@ -2,6 +2,8 @@ import express from 'express';
 import { AppDataSource } from './data-source';
 import { Database } from './db/database';
 import { Release } from "./entity/release"
+import {Sprint} from './entity/sprint';
+import {Story} from './entity/backlogItem';
 import { Project } from './entity/project';
 import router from './router/index';
 import cookieParser from 'cookie-parser';
@@ -49,6 +51,23 @@ AppDataSource.initialize().then(async () => {
 	release2.project = project1
 	release2.id = 2
 	await db.save(release2)
+
+	const sprint1 = new Sprint()
+	sprint1.release = release1;
+	sprint1.sprintNumber = 1;
+	sprint1.startDate = new Date();
+	sprint1.endDate = new Date();
+	sprint1.goal = "finsih sprint"
+	await db.save(sprint1);
+
+	const backlog1 = new Story()
+	backlog1.sprint = sprint1;
+	backlog1.userTypes = "none";
+	backlog1.reasoning = "there is no reasoning at all"
+	backlog1.acceptanceCriteria = "There is no acceptance criteria"
+	backlog1.storyPoints = 10;
+	backlog1.functionalityDescription = "This is the functionality."
+	await db.save(backlog1);
 
 	/// Start express
 	app.use(express.json())
