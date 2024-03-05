@@ -1,3 +1,4 @@
+import sprint from "router/sprint";
 import { User } from "../entity/User";
 import { BacklogItem, Story } from "../entity/backlogItem";
 import { Project } from "../entity/project";
@@ -170,6 +171,12 @@ export class DataSourceWrapper {
 			throw new NotFoundError(`Sprint with id ${id} not found`)
 		}
 		return maybeSprint[0]
+	}
+	
+	// TODO: handle stories in the sprint
+	// Maybe we can make it soft-delete if we ever implement undo feature
+	public async deleteSprint(id: number): Promise<void> {
+		await this.dataSource.getRepository(Sprint).delete(id)
 	}
 
 	///// Todo Methods /////

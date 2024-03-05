@@ -150,6 +150,10 @@ export class Database {
 		return await this.releaseRepository.reorderSprints(releaseId, startIndex, destinationIndex)
 	}
 
+	public async removeSprintFromRelease(sprintId: number): Promise<Sprint[]> {
+		return await this.releaseRepository.removeSprintFromRelease(sprintId);
+	}
+
 	public async lookupReleaseById(id: number): Promise<Release> {
 		return await this.dataSource.lookupReleaseById(id);
 	}
@@ -189,9 +193,13 @@ export class Database {
 	public async lookupSprintById(id: number): Promise<Sprint> {
 		return await this.dataSource.lookupSprintById(id);
 	}
-		
+	
 	public async lookupSprintByIdWithRelease(id: number): Promise<Sprint> {
 		return await this.dataSource.lookupSprintByIdWithRelease(id);
+	}
+	
+	public async deleteSprint(id: number): Promise<void> {
+		return await this.dataSource.deleteSprint(id);
 	}
 
 	///// BacklogItem Methods /////

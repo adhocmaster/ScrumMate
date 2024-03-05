@@ -56,3 +56,11 @@ export const moveSprint = async(req: express.Request, res: express.Response) => 
 	const sprintList = await db.reorderSprints(parseInt(releaseId), parseInt(sprintStartIndex), parseInt(sprintEndIndex))
 	return res.json(sprintList)
 }
+
+export const deleteSprint = async(req: express.Request, res: express.Response) => {
+	const db = Database.getInstance()
+	const { sprintId } = req.params
+	if (!verifyParameters(sprintId)) return res.sendStatus(400)
+	const newSprintList = await db.removeSprintFromRelease(parseInt(sprintId))
+	return res.json(newSprintList)
+}
