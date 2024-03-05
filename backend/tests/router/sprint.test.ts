@@ -246,4 +246,17 @@ describe("Sprint API tests", () => {
 		});
 	});
 
+	test("Deleting a middle sprint so its just 3 2", async () => {
+		await request(app)
+		.delete(`/api/sprint/${sprintId}`)
+		.set('Cookie', [`user-auth=${sessionToken}`])
+		.expect(200)
+		.then((res) => {
+			expect(res.body).toBeDefined();
+			expect(res.body.length).toBe(2);
+			expect(res.body[0].id).toBe(sprint3Id);
+			expect(res.body[1].id).toBe(sprint2Id);
+		});
+	});
+
 });
