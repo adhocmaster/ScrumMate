@@ -6,7 +6,6 @@ import UserStory from './UserStory';
 
 const Sprint = ({index, items, setItems, userStories}) => {
   const deleteSprint = (sprintId, index) => {
-    // console.log(sprintId);
 		fetch(`http://localhost:8080/api/sprint/${sprintId}`, {
       method: 'DELETE',
       credentials: 'include',
@@ -14,13 +13,8 @@ const Sprint = ({index, items, setItems, userStories}) => {
           'Content-Type': 'application/json'
       },
     })
-		// .then(response => response.json())
-		// .then(data => {
-			// console.log(`data: ${JSON.stringify(data)}`);
-      // fetchSprints(releaseId);
-		// })
 		.catch(error => {
-			
+			console.log('error');
 		});	
 
     const updatedSprints = items.filter((_, i) => index !== i);
