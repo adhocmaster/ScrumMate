@@ -162,6 +162,10 @@ export class Database {
 		return await this.dataSource.fetchReleaseWithProject(releaseId);
 	}
 
+	public async fetchReleaseWithBacklog(releaseId: number): Promise<Release> {
+		return await this.dataSource.fetchReleaseWithBacklog(releaseId);
+	}
+
 	public async fetchReleaseWithSprints(releaseId: number): Promise<Release> {
 		return await this.dataSource.fetchReleaseWithSprints(releaseId);
 	}
@@ -196,6 +200,18 @@ export class Database {
 	
 	public async lookupSprintByIdWithRelease(id: number): Promise<Sprint> {
 		return await this.dataSource.lookupSprintByIdWithRelease(id);
+	}
+	
+	public async lookupSprintByIdWithTodos(id: number): Promise<Sprint> {
+		return await this.dataSource.lookupSprintByIdWithTodos(id);
+	}
+	
+	public async moveSprintTodosToBacklog(releaseId: number, sprintId: number): Promise<void> {
+		return await this.dataSource.moveSprintTodosToBacklog(releaseId, sprintId);
+	}
+	
+	public async getSprintWithBacklog(releaseId: number): Promise<Sprint[]> {
+		return await this.dataSource.getSprintWithBacklog(releaseId);
 	}
 	
 	public async deleteSprint(id: number): Promise<void> {

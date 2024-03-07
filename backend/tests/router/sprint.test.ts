@@ -85,6 +85,7 @@ describe("Sprint API tests", () => {
 	let sprint2Id: Number;
 	let sprint3Id: Number;
 	let releaseId: Number;
+	let backlogId: Number;
 
 	test('Create project', async () => {
 		const body = {name: "new Project"};
@@ -272,6 +273,50 @@ describe("Sprint API tests", () => {
 			expect(res.body[0].sprintNumber).toBe(1);
 			expect(res.body[1].id).toBe(sprint2Id);
 			expect(res.body[1].sprintNumber).toBe(2);
+		});
+	});
+
+	test('Adding new story to sprint', async () => {
+		const body = {
+			"userTypes": "any user",
+			"functionalityDescription": "backlog item",
+			"reasoning": "why not",
+			"acceptanceCriteria": "complete task",
+			"storyPoints": 10,
+			"priority": 4}
+		await request(app)
+		.post(`/api/sprint/${sprint3Id}`)
+		.set('Cookie', [`user-auth=${sessionToken}`])
+		.send(body)
+		.expect(200)
+		.then((res) => {
+			expect(res.body).toBeDefined();
+			expect(res.body.id).toBeDefined();
+			backlogId = res.body.id;
+		});
+	});
+
+	test("Can delete a sprint with a story", async () => {
+		await request(app)
+		.delete(`/api/sprint/${sprint3Id}`)
+		.set('Cookie', [`user-auth=${sessionToken}`])
+		.expect(200)
+		.then((res) => {
+			expect(res.body).toBeDefined();
+			expect(res.body.length).toBe(1);
+			expect(res.body[0].id).toBe(sprint2Id);
+		});
+	});
+
+	test("The story from the deleted sprint is in the backlog", async () => {
+		await request(app)
+		.get(`/api/release/${releaseId}/backlog`)
+		.set('Cookie', [`user-auth=${sessionToken}`])
+		.expect(200)
+		.then((res) => {
+			expect(res.body).toBeDefined();
+			expect(res.body.backlog.length).toBe(1)
+			expect(res.body.backlog[0].id).toBe(backlogId)
 		});
 	});
 

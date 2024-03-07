@@ -43,3 +43,10 @@ export const getRelease = async (req: express.Request, res: express.Response) =>
 	const release = await db.fetchReleaseWithProject(parseInt(releaseId))
 	return res.json(release)
 };
+
+export const getReleaseAndBacklog = async (req: express.Request, res: express.Response) => {
+	const db = Database.getInstance()
+	const {releaseId} = req.params;
+	const release = await db.fetchReleaseWithBacklog(parseInt(releaseId))
+	return res.json(release)
+};

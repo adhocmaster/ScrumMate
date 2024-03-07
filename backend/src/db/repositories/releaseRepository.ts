@@ -77,6 +77,7 @@ export class ReleaseRepository {
 	/// return new list sorted by ascending sprint number
 	public async removeSprintFromRelease(sprintId: number): Promise<Sprint[]> {
 		const sprintWithRelease = await this.dataSource.lookupSprintByIdWithRelease(sprintId)
+		await this.dataSource.moveSprintTodosToBacklog(sprintWithRelease.release.id, sprintId)
 		await this.dataSource.deleteSprint(sprintId)
 		const releaseWithSprints = await this.dataSource.fetchReleaseWithSprints(sprintWithRelease.release.id)
 		for (const {sprint, index} of releaseWithSprints.sprints.map((sprint, index) => ({sprint, index}))) {

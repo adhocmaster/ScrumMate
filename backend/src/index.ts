@@ -58,6 +58,7 @@ AppDataSource.initialize().then(async () => {
 	sprint1.startDate = new Date();
 	sprint1.endDate = new Date();
 	sprint1.goal = "finsih sprint"
+	sprint1.id = 1
 	await db.save(sprint1);
 
 	const sprint2 = new Sprint()
@@ -66,6 +67,7 @@ AppDataSource.initialize().then(async () => {
 	sprint2.startDate = new Date();
 	sprint2.endDate = new Date();
 	sprint2.goal = "finsih sprint"
+	sprint2.id = 2
 	await db.save(sprint2);
 
 	const sprint3 = new Sprint()
@@ -74,6 +76,7 @@ AppDataSource.initialize().then(async () => {
 	sprint3.startDate = new Date();
 	sprint3.endDate = new Date();
 	sprint3.goal = "finsih sprint"
+	sprint3.id = 3
 	await db.save(sprint3);
 
 	const backlog1 = new Story()
