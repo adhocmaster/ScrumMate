@@ -3,6 +3,7 @@ import { Box, Divider, IconButton, Typography, Paper, List, ListItem } from '@mu
 import MenuIcon from '@mui/icons-material/Menu';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import UserStory from './UserStory';
+import DeleteSprintConfirmationMenu from './DeleteSprintConfirmationMenu';
 
 const Sprint = ({index, items, setItems, userStories}) => {
   const deleteSprint = (sprintId, index) => {
@@ -14,7 +15,7 @@ const Sprint = ({index, items, setItems, userStories}) => {
       },
     })
 		.catch(error => {
-			console.log('error');
+			console.log('error deleting sprint:');
 		});	
 
     const updatedSprints = items.filter((_, i) => index !== i);
@@ -58,14 +59,12 @@ const Sprint = ({index, items, setItems, userStories}) => {
               <MenuIcon fontSize='medium'/>
             </IconButton>
 
-            <IconButton 
-              onClick={() => {
+            <DeleteSprintConfirmationMenu 
+              onDelete={() => {
                 const sprintId = items[index].id;
                 deleteSprint(sprintId, index);
-              }}
-            >
-              <DeleteOutlineIcon fontSize='medium'/>
-            </IconButton>
+              }} 
+            />
 
             {/* TODO: replace with total number of story points */}
             <Typography sx={{marginBottom: 2}} fontSize={14}>
