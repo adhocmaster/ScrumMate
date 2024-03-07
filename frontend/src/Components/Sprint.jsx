@@ -1,7 +1,6 @@
 // import { useState } from 'react';
 import { Box, Divider, IconButton, Typography, Paper, List, ListItem } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
-import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import UserStory from './UserStory';
 import DeleteSprintConfirmationMenu from './DeleteSprintConfirmationMenu';
 
@@ -50,15 +49,17 @@ const Sprint = ({index, items, setItems, userStories}) => {
               marginLeft: 2,
             }}
           >
+            {/* Sprint Number */}
             <Typography sx={{marginTop: 2}} fontSize={14}>
               {index + 1}
             </Typography>
             
             {/* TODO: handle button click/drag */}
-            <IconButton onClick={() => console.log(`${JSON.stringify(items[index])}`)}>
+            <IconButton onClick={() => console.log(`Clicked Sprint Menu Icon`)}>
               <MenuIcon fontSize='medium'/>
             </IconButton>
 
+            {/* Delete Sprint Icon w/ Confirmation Menu*/}
             <DeleteSprintConfirmationMenu 
               onDelete={() => {
                 const sprintId = items[index].id;
@@ -66,11 +67,14 @@ const Sprint = ({index, items, setItems, userStories}) => {
               }} 
             />
 
+            {/* Total Story Points */}
             {/* TODO: replace with total number of story points */}
             <Typography sx={{marginBottom: 2}} fontSize={14}>
               8
             </Typography>
           </Box>
+
+          {/* Divider */}
           <Box sx={{height: '100%'}}>
             <Divider 
               orientation='vertical'

@@ -20,18 +20,24 @@ const DeleteSprintConfirmationMenu = ({onDelete}) => {
       <IconButton onClick={() => setOpen(true)}>
         <DeleteOutlineIcon fontSize='medium'/>
       </IconButton>
+
       <Dialog open={open} onClose={handleClose}>
-        <DialogTitle>Delete Sprint?</DialogTitle>
+        <DialogTitle>
+          Delete Sprint?
+        </DialogTitle>
+
         <DialogContent>
           <DialogContentText>
             Are you sure you want to delete this sprint?
           </DialogContentText>
         </DialogContent>
+
         <DialogActions>
           <Button onClick={handleClose} color="primary">
             Cancel
           </Button>
-          <Button variant="contained" onClick={handleDelete} color="error">
+
+          <Button variant="contained" color="error" onClick={handleDelete} >
             Delete
           </Button>
         </DialogActions>
