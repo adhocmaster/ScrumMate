@@ -66,10 +66,10 @@ export class ReleaseRepository {
 		sprints.sort((a: Sprint, b: Sprint) => a.sprintNumber - b.sprintNumber)
 		const [item] = sprints.splice(startIndex, 1)
 		sprints.splice(destinationIndex, 0, item)
-		sprints.forEach(async (sprint, index) => {
+		for (const {sprint, index} of sprints.map((sprint, index) => ({sprint, index}))) {
 			sprint.sprintNumber = index+1;
 			await this.dataSource.save(sprint)
-		})
+		}
 		// await this.dataSource.save(sprints)
 		return sprints;
 	}
