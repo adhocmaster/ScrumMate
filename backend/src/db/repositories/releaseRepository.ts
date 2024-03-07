@@ -79,10 +79,10 @@ export class ReleaseRepository {
 		const sprintWithRelease = await this.dataSource.lookupSprintByIdWithRelease(sprintId)
 		await this.dataSource.deleteSprint(sprintId)
 		const releaseWithSprints = await this.dataSource.fetchReleaseWithSprints(sprintWithRelease.release.id)
-		releaseWithSprints.sprints.forEach(async (sprint, index) => {
+		for (const {sprint, index} of releaseWithSprints.sprints.map((sprint, index) => ({sprint, index}))) {
 			sprint.sprintNumber = index+1;
 			await this.dataSource.save(sprint)
-		})
+		}
 		await this.dataSource.save(releaseWithSprints)
 		return releaseWithSprints.sprints;
 	}
