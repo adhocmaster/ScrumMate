@@ -224,6 +224,8 @@ describe("Sprint API tests", () => {
 		.expect(200)
 		.then((res) => {
 			expect(res.body).toBeDefined();
+			console.log(res.body)
+			expect(res.body.length).toBe(3)
 			expect(res.body[0].id).toBe(sprint3Id);
 			expect(res.body[0].sprintNumber).toBe(1);
 			expect(res.body[1].id).toBe(sprintId);
