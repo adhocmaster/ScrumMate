@@ -4,33 +4,31 @@ import MenuIcon from '@mui/icons-material/Menu';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import UserStory from './UserStory';
 
-const Sprint = ({index, items, setItems, userStories, sprintNumber}) => {
-  // console.log(items);
-  // const [sprintNumberState, setSprintNumberState] = useState(sprintNumber);
-
-  async function updateSprint(sprintId) {
-    console.log(sprintId);
-		await fetch(`http://localhost:8080/api/sprint/${sprintId}`, {
+const Sprint = ({index, items, setItems, userStories}) => {
+  function deleteSprintFetch(sprintId) {
+    // console.log(sprintId);
+		fetch(`http://localhost:8080/api/sprint/${sprintId}`, {
       method: 'DELETE',
       credentials: 'include',
       headers: {
           'Content-Type': 'application/json'
       },
     })
-		.then(response => response.json())
-		.then(data => {
-			console.log(data);
-			setItems(data);
-		})
+		// .then(response => response.json())
+		// .then(data => {
+			// console.log(`data: ${JSON.stringify(data)}`);
+      // fetchSprints(releaseId);
+		// })
 		.catch(error => {
 			
 		});	
 	}
 
-  // const deleteSprint = (sprintIndex) => {
-  //   const newSprints = items.filter((_, index) => index !== sprintIndex);
-  //   setItems(newSprints);
-  // };
+  const deleteSprint = (index) => {
+    const updatedSprints = items.filter((_, i) => index !== i);
+    setItems(updatedSprints);
+
+  };
 
   return (
     <>
@@ -61,7 +59,7 @@ const Sprint = ({index, items, setItems, userStories, sprintNumber}) => {
             }}
           >
             <Typography sx={{marginTop: 2}} fontSize={14}>
-              {sprintNumber}
+              {index + 1}
             </Typography>
             
             {/* TODO: handle button click/drag */}
@@ -71,8 +69,8 @@ const Sprint = ({index, items, setItems, userStories, sprintNumber}) => {
 
             <IconButton 
               onClick={() => {
-                // deleteSprint(index);
-                updateSprint(items[index].id);
+                deleteSprintFetch(items[index].id);
+                deleteSprint(index);
               }}
             >
               <DeleteOutlineIcon fontSize='medium'/>
@@ -105,8 +103,7 @@ const Sprint = ({index, items, setItems, userStories, sprintNumber}) => {
           }}
         >
           <List sx={{display: 'flex'}}>
-            {/* TODO: add Sprint's User Stories */}
-            {userStories.map((userStory, index) => (
+            {userStories && userStories.map((userStory, index) => (
               <ListItem 
                 key={index} 
                 sx={{
