@@ -5,7 +5,7 @@ import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import UserStory from './UserStory';
 
 const Sprint = ({index, items, setItems, userStories}) => {
-  function deleteSprintFetch(sprintId) {
+  const deleteSprint = (sprintId, index) => {
     // console.log(sprintId);
 		fetch(`http://localhost:8080/api/sprint/${sprintId}`, {
       method: 'DELETE',
@@ -22,12 +22,9 @@ const Sprint = ({index, items, setItems, userStories}) => {
 		.catch(error => {
 			
 		});	
-	}
 
-  const deleteSprint = (index) => {
     const updatedSprints = items.filter((_, i) => index !== i);
     setItems(updatedSprints);
-
   };
 
   return (
@@ -69,8 +66,8 @@ const Sprint = ({index, items, setItems, userStories}) => {
 
             <IconButton 
               onClick={() => {
-                deleteSprintFetch(items[index].id);
-                deleteSprint(index);
+                const sprintId = items[index].id;
+                deleteSprint(sprintId, index);
               }}
             >
               <DeleteOutlineIcon fontSize='medium'/>
