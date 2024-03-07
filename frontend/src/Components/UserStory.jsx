@@ -41,22 +41,9 @@ const UserStory = ({userStoryText, storyPoints}) => {
         >
           {storyPoints}
         </Typography>
-        
-        <Typography
-          variant="body1"
-          textAlign={'right'}
-          fontSize={16}
-          sx={{
-            position: 'absolute',
-            bottom: 10,
-            right: 12,
-          }}
-        >
-          {storyPoints}
-        </Typography>
       </CardContent>
     </Card>
   )
-}
+};
 
-export default UserStory
+export default UserStory;

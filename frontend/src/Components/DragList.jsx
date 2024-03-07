@@ -87,7 +87,7 @@ export default function DragList({items, setItems, releaseId}) {
                         provided.draggableProps.style
                       )}
                     >
-                      <Sprint sprintNumber={item.sprintNumber} userStories={item.todos}/>
+                      <Sprint index={index} items={items} setItems={setItems} sprintNumber={item.sprintNumber} userStories={item.todos}/>
                     </div>
                   )}
                 </Draggable>

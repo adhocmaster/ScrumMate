@@ -1,8 +1,37 @@
+// import { useState } from 'react';
 import { Box, Divider, IconButton, Typography, Paper, List, ListItem } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
+import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import UserStory from './UserStory';
 
-const Sprint = ({userStories, sprintNumber}) => {
+const Sprint = ({index, items, setItems, userStories, sprintNumber}) => {
+  // console.log(items);
+  // const [sprintNumberState, setSprintNumberState] = useState(sprintNumber);
+
+  async function updateSprint(sprintId) {
+    console.log(sprintId);
+		await fetch(`http://localhost:8080/api/sprint/${sprintId}`, {
+      method: 'DELETE',
+      credentials: 'include',
+      headers: {
+          'Content-Type': 'application/json'
+      },
+    })
+		.then(response => response.json())
+		.then(data => {
+			console.log(data);
+			setItems(data);
+		})
+		.catch(error => {
+			
+		});	
+	}
+
+  // const deleteSprint = (sprintIndex) => {
+  //   const newSprints = items.filter((_, index) => index !== sprintIndex);
+  //   setItems(newSprints);
+  // };
+
   return (
     <>
       <Box 
@@ -31,14 +60,22 @@ const Sprint = ({userStories, sprintNumber}) => {
               marginLeft: 2,
             }}
           >
-            {/* TODO: replace with sprint number */}
             <Typography sx={{marginTop: 2}} fontSize={14}>
               {sprintNumber}
             </Typography>
             
             {/* TODO: handle button click/drag */}
-            <IconButton onClick={() => console.log('Clicked Sprint Menu')}>
+            <IconButton onClick={() => console.log(`${JSON.stringify(items[index])}`)}>
               <MenuIcon fontSize='medium'/>
+            </IconButton>
+
+            <IconButton 
+              onClick={() => {
+                // deleteSprint(index);
+                updateSprint(items[index].id);
+              }}
+            >
+              <DeleteOutlineIcon fontSize='medium'/>
             </IconButton>
 
             {/* TODO: replace with total number of story points */}
