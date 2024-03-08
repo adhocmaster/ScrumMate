@@ -275,7 +275,7 @@ const ReleasePlan = () => {
             <Typography variant="h5" align="left" fontWeight="bold" gutterBottom>
               Sanity Check
             </Typography>
-            <Paper elevation={3} style={{ padding: '20px', marginTop: '20px', width: 400 }}>
+            <Paper elevation={3} style={{ padding: '20px', marginTop: '20px'}}>
               <Box display="flex" flexDirection="column" alignItems="flex-start">
                 {barData.map((data, index) => (
                   <Box key={index} display="flex" alignItems="center" marginBottom={1}>
