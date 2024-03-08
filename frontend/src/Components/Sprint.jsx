@@ -1,6 +1,5 @@
 // import { useState } from 'react';
-import { Box, Divider, IconButton, Typography, Paper, List, ListItem } from '@mui/material';
-import MenuIcon from '@mui/icons-material/Menu';
+import { Box, Divider, Typography, Paper, List, ListItem } from '@mui/material';
 import UserStory from './UserStory';
 import DeleteSprintConfirmationMenu from './DeleteSprintConfirmationMenu';
 
@@ -55,9 +54,10 @@ const Sprint = ({index, items, setItems, userStories}) => {
             </Typography>
             
             {/* TODO: handle button click/drag */}
-            <IconButton onClick={() => console.log(`Clicked Sprint Menu Icon`)}>
+            {/* Not sure if we still need */}
+            {/* <IconButton onClick={() => console.log(`Clicked Sprint Menu Icon`)}>
               <MenuIcon fontSize='medium'/>
-            </IconButton>
+            </IconButton> */}
 
             {/* Delete Sprint Icon w/ Confirmation Menu*/}
             <DeleteSprintConfirmationMenu 
