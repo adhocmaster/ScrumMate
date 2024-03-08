@@ -8,8 +8,18 @@ import ButtonBar from '../Components/ButtonBar';
 import ContentBox from '../Components/ContentBox';
 import Sprint from '../Components/Sprint';
 
+
 const ReleasePlan = () => {
-	const projectId = 1;
+	
+  const [sprints, setSprints] = useState([]);
+
+  const addSprints = () =>{
+    const newSprints = <Sprint userStories = {allUserStories} sprintValue = {sprints.length+1} key={sprints.length}/>
+    setSprints(prevSprints => [...prevSprints, newSprints])
+  }
+  
+  
+  const projectId = 1;
 	
 	function fetchMostRecentRelease(projectId, setProblem, setGoals, setId) {
 		console.log("about to most recent release")
@@ -112,6 +122,7 @@ const ReleasePlan = () => {
           }}
         >
           Current Sprint (#3):
+          <button onClick={addSprints}>Add Sprint</button>
         </Typography>
 
         <Box
@@ -179,8 +190,11 @@ const ReleasePlan = () => {
               Sprints
             </Typography>
 
-            <Sprint userStories={allUserStories} />
-            <Sprint userStories={allUserStories.reverse()} />
+            
+            {sprints.map((sprint, index) =>(
+              <div key={index}>{sprint}</div>
+            ))}
+        
           </Grid>
 
           <Grid item xs={3}>
