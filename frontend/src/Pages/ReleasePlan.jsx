@@ -270,7 +270,7 @@ const ReleasePlan = () => {
         </Grid>
 
         {/* Sanity Checks */}
-        <Grid container spacing={2}> 
+        <Grid container spacing={20}> 
           <Grid item xs={4}>
             <Typography variant="h5" align="left" fontWeight="bold" gutterBottom>
               Sanity Check
