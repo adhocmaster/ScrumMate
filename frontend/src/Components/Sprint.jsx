@@ -1,7 +1,7 @@
 // import { useState } from 'react';
 import { Box, Divider, Typography, Paper, List, ListItem } from '@mui/material';
 import UserStory from './UserStory';
-import DeleteSprintConfirmationMenu from './DeleteSprintConfirmationMenu';
+import DeleteConfirmation from './DeleteConfirmation';
 
 const Sprint = ({index, items, setItems, userStories}) => {
   const deleteSprint = (sprintId, index) => {
@@ -60,7 +60,7 @@ const Sprint = ({index, items, setItems, userStories}) => {
             </IconButton> */}
 
             {/* Delete Sprint Icon w/ Confirmation Menu*/}
-            <DeleteSprintConfirmationMenu 
+            <DeleteConfirmation 
               onDelete={() => {
                 const sprintId = items[index].id;
                 deleteSprint(sprintId, index);

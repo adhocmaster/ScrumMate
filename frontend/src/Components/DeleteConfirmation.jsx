@@ -3,7 +3,7 @@ import { Button, Dialog, DialogActions, DialogContent, DialogContentText, Dialog
 import IconButton from '@mui/material/IconButton';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 
-const DeleteSprintConfirmationMenu = ({onDelete}) => {
+const DeleteConfirmation = ({onDelete}) => {
   const [open, setOpen] = useState(false);
 
   const handleDelete = () => {
@@ -46,4 +46,4 @@ const DeleteSprintConfirmationMenu = ({onDelete}) => {
   );
 }
 
-export default DeleteSprintConfirmationMenu;
+export default DeleteConfirmation;
