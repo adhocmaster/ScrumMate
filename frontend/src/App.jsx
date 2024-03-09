@@ -71,6 +71,7 @@ function App() {
             isLoggedIn ? <ReleasePlan /> : <Navigate replace to="/" />
           }
         />
+        
         <Route
           path="/sprints"
           element={

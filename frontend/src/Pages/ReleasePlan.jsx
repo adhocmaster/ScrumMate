@@ -5,6 +5,8 @@ import { Grid, Input, Divider, Card, CardContent } from '@mui/material';
 import Sidebar from '../Components/Sidebar';
 import ButtonBar from '../Components/ButtonBar';
 import ContentBox from '../Components/ContentBox';
+import Sprint from '../Components/Sprint';
+import { Dialog, DialogTitle, DialogContent, DialogActions, TextField, Select, MenuItem, FormControl, InputLabel } from '@mui/material';
 import DragList from '../Components/DragList';
 
 const ReleasePlan = () => {
@@ -14,6 +16,9 @@ const ReleasePlan = () => {
   const [highLevelGoals, setGoals] = useState("");
   const [releaseId, setId] = useState(1);
   const [backlogItems, setBacklogItems] = useState([]);
+  const [newBacklogType, setNewBacklogType] = useState('story');
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [newBacklogDescription, setNewBacklogDescription] = useState('');
 
 
 	const projectId = 1;
@@ -84,9 +89,25 @@ const ReleasePlan = () => {
   };
 
   const addBacklogItem = () => {
-    const newBacklogItems = [...backlogItems, { description: '' }];
-    setBacklogItems(newBacklogItems);
+    setDialogOpen(true); // This triggers the dialog to open
   };
+
+  const handleAddBacklogItem = () => {
+    const newBacklogItems = [...backlogItems, { type: newBacklogType, description: newBacklogDescription }];
+    setBacklogItems(newBacklogItems);
+    setDialogOpen(false); // Close the dialog
+    setNewBacklogDescription(''); // Reset for the next item
+    setNewBacklogType('story'); // Reset the type for the next item
+  };
+
+  //data for sanity check
+  const barData = [
+    {pointsCompleted: 20 },
+    {pointsCompleted: 30 },
+    {pointsCompleted: 40 },
+    {pointsCompleted: 35 },
+    {pointsCompleted: 45 },
+  ];
 
   // TODO: update Placeholder functions/variables with actual data
   const sprintPlanClick = () => console.log('Clicked Sprint Plan');
@@ -260,7 +281,69 @@ const ReleasePlan = () => {
             </Paper>
           </Grid>
         </Grid>
+
+        {/* Sanity Checks */}
+        <Typography variant="h5" align="left" fontWeight="bold" gutterBottom>
+          Sanity Check
+        </Typography>
+        <Grid container spacing={2}>
+          <Grid item xs={12} sm={4}>
+            <Paper elevation={3} style={{ padding: '20px', marginTop: '20px' }}>
+              <Box display="flex" flexDirection="column" alignItems="flex-start">
+                {barData.map((data, index) => (
+                  <Box key={index} display="flex" alignItems="center" marginBottom={1}>
+                    <Box width={data.pointsCompleted * 5} height={30} bgcolor="darkgrey" />
+                    <Typography marginLeft={2} variant="body2">
+                      {data.pointsCompleted}
+                    </Typography>
+                  </Box>
+                ))}
+              </Box>
+            </Paper>
+          </Grid>
+
+          <Grid item xs={12} sm={7}> 
+            <Paper elevation={3} style={{ padding: '20px', marginTop: '20px', backgroundColor: 'lightgray', height: '200px' }}>
+              <Typography variant="body1" align="left">
+                Yes we can do it because no sprint looks like too much work. Lorem ipsum dolor sit amet …
+              </Typography>
+            </Paper>
+          </Grid>
+        </Grid>
       </Grid>
+      <Dialog open={dialogOpen} onClose={() => setDialogOpen(false)}>
+        <DialogTitle>Add New</DialogTitle>
+        <DialogContent>
+          <FormControl fullWidth margin="normal">
+            <InputLabel>Type</InputLabel>
+            <Select
+              value={newBacklogType}
+              label="Type"
+              onChange={(e) => setNewBacklogType(e.target.value)}
+            >
+              <MenuItem value="story">Story</MenuItem>
+              <MenuItem value="spike">Spike</MenuItem>
+              <MenuItem value="infrastructure">Infrastructure</MenuItem>
+            </Select>
+          </FormControl>
+          <TextField
+            margin="dense"
+            id="description"
+            label="As a user..."
+            type="text"
+            fullWidth
+            multiline
+            rows={4}
+            variant="outlined"
+            value={newBacklogDescription}
+            onChange={(e) => setNewBacklogDescription(e.target.value)}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setDialogOpen(false)}>Cancel</Button>
+          <Button onClick={handleAddBacklogItem}>Add Item</Button>
+        </DialogActions>
+      </Dialog>
     </Grid>
   );
 };
