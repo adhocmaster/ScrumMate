@@ -270,12 +270,12 @@ const ReleasePlan = () => {
         </Grid>
 
         {/* Sanity Checks */}
-        <Grid container spacing={20}> 
-          <Grid item xs={4}>
-            <Typography variant="h5" align="left" fontWeight="bold" gutterBottom>
-              Sanity Check
-            </Typography>
-            <Paper elevation={3} style={{ padding: '20px', marginTop: '20px'}}>
+        <Typography variant="h5" align="left" fontWeight="bold" gutterBottom>
+          Sanity Check
+        </Typography>
+        <Grid container spacing={2}>
+          <Grid item xs={12} sm={4}>
+            <Paper elevation={3} style={{ padding: '20px', marginTop: '20px' }}>
               <Box display="flex" flexDirection="column" alignItems="flex-start">
                 {barData.map((data, index) => (
                   <Box key={index} display="flex" alignItems="center" marginBottom={1}>
@@ -286,8 +286,8 @@ const ReleasePlan = () => {
             </Paper>
           </Grid>
 
-          <Grid item xs={7}>
-            <Paper elevation={3} style={{ padding: '20px', marginTop: '20px', backgroundColor: 'lightgray', height: '200px'}}>
+          <Grid item xs={12} sm={7}> 
+            <Paper elevation={3} style={{ padding: '20px', marginTop: '20px', backgroundColor: 'lightgray', height: '200px' }}>
               <Typography variant="body1" align="left">
                 Yes we can do it because no sprint looks like too much work. Lorem ipsum dolor sit amet …
               </Typography>
