@@ -1,10 +1,11 @@
+import sprint from "router/sprint";
 import { User } from "../entity/User";
 import { BacklogItem, Story } from "../entity/backlogItem";
 import { Project } from "../entity/project";
 import { Release } from "../entity/release";
 import { UserRole } from "../entity/roles";
 import { Sprint } from "../entity/sprint";
-import { NotFoundError, NotSavedError } from "../helpers/errors";
+import { DeletionError, NotFoundError, NotSavedError } from "../helpers/errors";
 import { reverse } from "lodash"
 import { DataSource, EntityTarget, FindManyOptions, ObjectLiteral } from "typeorm";
 
@@ -49,7 +50,12 @@ export class DataSourceWrapper {
 	}
 
 	public async fetchUserWithProjects(id: number): Promise<User> {
-		const maybeUserList = (await this.dataSource.getRepository(User).find({where: {id: id}, relations:{ownedProjects: true, joinedProjects: true}}))
+		const maybeUserList = await this.dataSource.getRepository(User).find({
+			where: {id: id},
+			relations:{
+				ownedProjects: true,
+				joinedProjects: true
+			}})
 		if (!maybeUserList || maybeUserList.length === 0) {
 			throw new NotFoundError(`User with id ${id} not found`)
 		}
@@ -67,11 +73,16 @@ export class DataSourceWrapper {
 	}
 
 	public async lookupProjectByIdWithUsers(id: number): Promise<Project> {
-		const maybeProject =  (await this.dataSource.getRepository(Project).find({where: {id: id}, relations:{productOwner: true, teamMembers: true}}))[0]
-		if (!maybeProject) {
+		const maybeProject =  await this.dataSource.getRepository(Project).find({
+			where: {id: id},
+			relations:{
+				productOwner: true,
+				teamMembers: true
+			}})
+		if (!maybeProject || maybeProject.length === 0) {
 			throw new NotFoundError(`Project with id ${id} not found`)
 		}
-		return maybeProject
+		return maybeProject[0]
 	}
 
 	public async fetchProjectWithReleases(id: number): Promise<Project> {
@@ -103,16 +114,43 @@ export class DataSourceWrapper {
 		return maybeRelease
 	}
 
-	public async lookupReleaseWithProject(releaseId: number): Promise<Release> {
+	public async fetchReleaseWithProject(releaseId: number): Promise<Release> {
 		const releaseWithProject = (await this.dataSource.getRepository(Release).find({
 			where: {id: releaseId},
 			relations:{
 				project: true
-			}}))
+			},
+		}))
 		if (!releaseWithProject || releaseWithProject.length === 0) {
 			throw new NotFoundError(`Release with releaseId ${releaseId} not found`)
 		}
 		return releaseWithProject[0]
+	}
+
+	public async fetchReleaseWithSprints(releaseId: number): Promise<Release> {
+		const releaseWithSprints = await this.dataSource.getRepository(Release).find({
+			where: {id: releaseId},
+			relations:{
+				sprints: true,
+			},
+		})
+		if (!releaseWithSprints || releaseWithSprints.length === 0) {
+			throw new NotFoundError(`Release with releaseId ${releaseId} not found`)
+		}
+		return releaseWithSprints[0]
+	}
+
+	public async fetchReleaseWithBacklog(releaseId: number): Promise<Release> {
+		const releaseWithSprints = await this.dataSource.getRepository(Release).find({
+			where: {id: releaseId},
+			relations:{
+				backlog: true,
+			},
+		})
+		if (!releaseWithSprints || releaseWithSprints.length === 0) {
+			throw new NotFoundError(`Release with releaseId ${releaseId} not found`)
+		}
+		return releaseWithSprints[0]
 	}
 
 	///// Role Methods /////
@@ -133,6 +171,77 @@ export class DataSourceWrapper {
 			throw new NotFoundError(`Sprint with id ${id} not found`)
 		}
 		return maybeSprint
+	}
+	
+	public async lookupSprintByIdWithRelease(id: number): Promise<Sprint> {
+		const maybeSprint = await this.dataSource.getRepository(Sprint).find({
+			where: {id: id},
+			relations: {
+				release: true // must sort by sprint.sprintNumber later
+			},
+		})
+		if (!maybeSprint || maybeSprint.length === 0) {
+			throw new NotFoundError(`Sprint with id ${id} not found`)
+		}
+		return maybeSprint[0]
+	}
+	
+	public async lookupSprintByIdWithTodos(id: number): Promise<Sprint> {
+		const maybeSprint = await this.dataSource.getRepository(Sprint).find({
+			where: {id: id},
+			relations: {
+				todos: true // must sort by sprint.sprintNumber later
+			},
+		})
+		if (!maybeSprint || maybeSprint.length === 0) {
+			throw new NotFoundError(`Sprint with id ${id} not found`)
+		}
+		return maybeSprint[0]
+	}
+	
+	public async moveSprintTodosToBacklog(releaseId: number, sprintId: number): Promise<void> {
+		const maybeSprintWithTodos = await this.lookupSprintByIdWithTodos(sprintId);
+		const maybeRelease = await this.dataSource.getRepository(Release).find({
+			where: {id: releaseId},
+			relations: {
+				sprints: true,
+				backlog: true
+			}
+		})
+		if (!maybeRelease || maybeRelease.length === 0) {
+			throw new NotFoundError(`Release with id ${releaseId} not found`)
+		}
+		maybeRelease[0].backlog = [...maybeSprintWithTodos.todos, ...maybeRelease[0].backlog]
+		await this.save(maybeRelease)
+		maybeSprintWithTodos.todos = []
+		await this.save(maybeSprintWithTodos)
+	}
+	
+	public async getSprintWithBacklog(releaseId: number): Promise<Sprint[]> {
+		const sprints = await this.dataSource.getRepository(Sprint).find({
+			relations:{
+				release: true,
+				todos: true,
+			},
+			where: {
+				release: {id: releaseId}
+			},
+		})
+		if (!sprints || sprints.length === 0) {
+			throw new NotFoundError(`Release with releaseId ${releaseId} not found`)
+		}
+		return sprints;
+	}
+	
+	// TODO: handle stories in the sprint
+	// Maybe we can make it soft-delete if we ever implement undo feature
+	public async deleteSprint(id: number): Promise<void> {
+		try {
+			await this.dataSource.getRepository(Sprint).delete(id)
+		} catch (e) {
+			console.log(e)
+			throw new DeletionError(`Sprint with id ${id} failed to delete`)
+		}
 	}
 
 	///// Todo Methods /////

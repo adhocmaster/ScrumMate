@@ -1,16 +1,26 @@
-import React, { useState, useEffect, useCallback, Component } from 'react';
-import { useLocation } from "react-router-dom"
+import React, { useState, useEffect } from 'react';
 import { Typography, Button, Box, Paper } from '@mui/material';
-import { List, ListItem, ListItemText } from '@mui/material';
-import { Grid, Input, Divider, Card, CardContent, IconButton } from '@mui/material';
+import { List, ListItem } from '@mui/material';
+import { Grid, Input, Divider, Card, CardContent } from '@mui/material';
 import Sidebar from '../Components/Sidebar';
 import ButtonBar from '../Components/ButtonBar';
 import ContentBox from '../Components/ContentBox';
 import Sprint from '../Components/Sprint';
 import { Dialog, DialogTitle, DialogContent, DialogActions, TextField, Select, MenuItem, FormControl, InputLabel } from '@mui/material';
-
+import DragList from '../Components/DragList';
 
 const ReleasePlan = () => {
+  const [sprints, setSprints] = useState([]);
+  const [open, setOpen] = useState(true);
+  const [problemStatement, setProblem] = useState("");
+  const [highLevelGoals, setGoals] = useState("");
+  const [releaseId, setId] = useState(1);
+  const [backlogItems, setBacklogItems] = useState([]);
+  const [newBacklogType, setNewBacklogType] = useState('story');
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [newBacklogDescription, setNewBacklogDescription] = useState('');
+
+
 	const projectId = 1;
 	
 	function fetchMostRecentRelease(projectId, setProblem, setGoals, setId) {
@@ -20,7 +30,7 @@ const ReleasePlan = () => {
 			credentials:'include'
 		  }
 		fetch(`http://localhost:8080/api/project/${projectId}/recentRelease`, options).then((result)=>{
-			if(result.status == 200){
+			if(result.status === 200){
 				console.log(result)
 			}
 			result.json().then((response)=>{
@@ -39,7 +49,7 @@ const ReleasePlan = () => {
 			credentials:'include'
 		  }
 		fetch(`http://localhost:8080/api/release/${releaseId}`, options).then((result)=>{
-			if(result.status == 200){
+			if(result.status === 200){
 				console.log(result)
 			}
 			result.json().then((response)=>{
@@ -50,28 +60,33 @@ const ReleasePlan = () => {
 		})
 	}
 
-  const [open, setOpen] = useState(true);
-
-  const [dialogOpen, setDialogOpen] = useState(false);
-  const [newBacklogType, setNewBacklogType] = useState('story');
-  const [newBacklogDescription, setNewBacklogDescription] = useState('');
-  const [problemStatement, setProblem] = useState("");
-  const [highLevelGoals, setGoals] = useState("");
-  const [releaseId, setId] = useState(1);
+  function fetchSprints(releaseId) {
+		var options = {
+			method:'get',
+			credentials:'include'
+		  }
+		fetch(`http://localhost:8080/api/release/${releaseId}/sprints`, options).then((result)=>{
+			if(result.status === 200){
+				result.json().then((response)=>{
+					setSprints(response)});
+			} else {
+				setSprints([]);
+			}
+			});
+  }
 
   useEffect(() => {
     fetchMostRecentRelease(1, setProblem, setGoals, setId);
   }, []);
 
   useEffect(() => {
-	fetchRelease(releaseId, setProblem, setGoals);
+    fetchRelease(releaseId, setProblem, setGoals);
+    fetchSprints(releaseId)
   }, [releaseId]);
 
   const toggleDrawer = () => {
     setOpen(!open);
   };
-
-  const [backlogItems, setBacklogItems] = useState([]);
 
   const addBacklogItem = () => {
     setDialogOpen(true); // This triggers the dialog to open
@@ -99,21 +114,18 @@ const ReleasePlan = () => {
   const scrumBoardClick = () => console.log('Clicked Scrum Board');
   const burnupChartClick = () => console.log('Clicked Burnup Chart');
   const allSprintsClick = () => console.log('Clicked All Sprints');
+  
   const revisionsClick = (newReleaseId) => {
     setId(newReleaseId);
   };
-  const userStoryText = `As a student I want to be able to reset my password 
-    in case I forget so that I do not lost access to all my account and data.`
-  const allUserStories = [userStoryText, userStoryText, "add testing", userStoryText];	
-		
+
   return (
     <Grid container spacing={2}>
       {/* Revision Sidebar */}
       <Grid item xs={open ? 2 : 'auto'}>
-        {/* TODO: replace the revisions */}
-        <Sidebar 
-          open={open} 
-          toggleDrawer={toggleDrawer} 
+        <Sidebar
+          open={open}
+          toggleDrawer={toggleDrawer}
           title={'Revisions'}
           items={[]}
           itemClick={revisionsClick}
@@ -140,8 +152,8 @@ const ReleasePlan = () => {
           display="flex"
           justifyContent={'flex-start'}
         >
-          {/* Handle Button Clicks */}
-          <ButtonBar 
+          {/* TODO: Handle Button Clicks */}
+          <ButtonBar
             text1={'Sprint Plan'}
             text2={'Scrum Board'}
             text3={'Burnup Chart'}
@@ -152,10 +164,10 @@ const ReleasePlan = () => {
             text4Click={allSprintsClick}
           />
         </Box>
-        
-        <Divider 
+
+        <Divider
           sx={{
-            margin: '20px 0px', 
+            margin: '20px 0px',
             backgroundColor: 'rgba(0, 0, 0, 0.5)',
             height: '1.5px'
           }}
@@ -180,7 +192,7 @@ const ReleasePlan = () => {
         >
           v1.0.0
         </Typography>
-        
+
         {/* Problem Statement */}
         {/* TODO: replace problem statement */}
         <ContentBox title={'Problem Statement'} content={problemStatement} />
@@ -188,7 +200,7 @@ const ReleasePlan = () => {
         {/* High Level Goals */}
         {/* TODO: high level goals */}
         <ContentBox title={'High Level Goals'} content={highLevelGoals} />
-        
+
         <Grid container spacing={2}>
           {/* Sprints */}
           <Grid item xs={9}>
@@ -201,8 +213,8 @@ const ReleasePlan = () => {
               Sprints
             </Typography>
 
-            <Sprint userStories={allUserStories} />
-            <Sprint userStories={allUserStories.reverse()} />
+            <DragList items={sprints} setItems={setSprints} releaseId={releaseId}/>
+            {/* {sprints != [] ? <DragList items={sprints} setItems={setSprints}/>: ''} */}
           </Grid>
 
           <Grid item xs={3}>
@@ -257,7 +269,8 @@ const ReleasePlan = () => {
               <Button
                 variant="contained"
                 onClick={addBacklogItem}
-                sx={{bgcolor: 'grey',
+                sx={{
+                  bgcolor: 'grey',
                     '&:hover': {
                       bgcolor: 'darkgrey', // Background color on hover
                     },

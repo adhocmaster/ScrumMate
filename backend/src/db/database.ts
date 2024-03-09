@@ -142,12 +142,32 @@ export class Database {
 		return await this.releaseRepository.copyRelease(releaseId);
 	}
 
-	public async lookupReleaseById(id: number): Promise<Release> {
-		return this.dataSource.lookupReleaseById(id);
+	public async getReleaseSprints(releaseId: number): Promise<Sprint[]> {
+		return await this.releaseRepository.getReleaseSprints(releaseId)
 	}
 
-	public async lookupReleaseWithProject(releaseId: number): Promise<Release> {
-		return this.dataSource.lookupReleaseWithProject(releaseId);
+	public async reorderSprints(releaseId: number, startIndex: number, destinationIndex: number): Promise<Sprint[]> {
+		return await this.releaseRepository.reorderSprints(releaseId, startIndex, destinationIndex)
+	}
+
+	public async removeSprintFromRelease(sprintId: number): Promise<Sprint[]> {
+		return await this.releaseRepository.removeSprintFromRelease(sprintId);
+	}
+
+	public async lookupReleaseById(id: number): Promise<Release> {
+		return await this.dataSource.lookupReleaseById(id);
+	}
+
+	public async fetchReleaseWithProject(releaseId: number): Promise<Release> {
+		return await this.dataSource.fetchReleaseWithProject(releaseId);
+	}
+
+	public async fetchReleaseWithBacklog(releaseId: number): Promise<Release> {
+		return await this.dataSource.fetchReleaseWithBacklog(releaseId);
+	}
+
+	public async fetchReleaseWithSprints(releaseId: number): Promise<Release> {
+		return await this.dataSource.fetchReleaseWithSprints(releaseId);
 	}
 
 	///// Role Methods /////
@@ -176,6 +196,26 @@ export class Database {
 		
 	public async lookupSprintById(id: number): Promise<Sprint> {
 		return await this.dataSource.lookupSprintById(id);
+	}
+	
+	public async lookupSprintByIdWithRelease(id: number): Promise<Sprint> {
+		return await this.dataSource.lookupSprintByIdWithRelease(id);
+	}
+	
+	public async lookupSprintByIdWithTodos(id: number): Promise<Sprint> {
+		return await this.dataSource.lookupSprintByIdWithTodos(id);
+	}
+	
+	public async moveSprintTodosToBacklog(releaseId: number, sprintId: number): Promise<void> {
+		return await this.dataSource.moveSprintTodosToBacklog(releaseId, sprintId);
+	}
+	
+	public async getSprintWithBacklog(releaseId: number): Promise<Sprint[]> {
+		return await this.dataSource.getSprintWithBacklog(releaseId);
+	}
+	
+	public async deleteSprint(id: number): Promise<void> {
+		return await this.dataSource.deleteSprint(id);
 	}
 
 	///// BacklogItem Methods /////

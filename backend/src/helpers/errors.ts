@@ -4,6 +4,7 @@ export const Codes = {
   NotFoundError: 404,
   NotSavedError: 500,
   ExistingUserError: 400,
+  DeletionError: 500,
   Success: 200,
 };
 
@@ -34,6 +35,16 @@ export class ExistingUserError extends Error {
     }
     public code() {
       return Codes.ExistingUserError;
+    }
+}
+
+export class DeletionError extends Error {
+    constructor(msg: string) {
+        super(msg);
+		this.name = "DeletionError"
+    }
+    public code() {
+      return Codes.DeletionError;
     }
 }
 
