@@ -3,6 +3,8 @@ import { useLocation } from "react-router-dom"
 import { Typography, Button, Box, Paper } from '@mui/material';
 import { List, ListItem, ListItemText } from '@mui/material';
 import { Grid, Input, Divider, Card, CardContent, IconButton } from '@mui/material';
+import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
+import { Add } from '@mui/icons-material';
 import Sidebar from '../Components/Sidebar';
 import ButtonBar from '../Components/ButtonBar';
 import ContentBox from '../Components/ContentBox';
@@ -57,6 +59,23 @@ const ReleasePlan = () => {
 			})
 		})
 	}
+
+  function fetchSprints(releaseId){
+    var options={
+      method: 'get',
+      credentials: 'include' 
+    }
+    fetch(`http://localhost:8080/api/sprint/${releaseId}`,options).then((result) =>{
+
+      if(result.status == 200){
+        console.log("works also")
+      }
+      result.json().then((response)=>{
+        console.log("works")
+      })
+
+    })
+  }
 
   const [open, setOpen] = useState(true);
   const [problemStatement, setProblem] = useState("");
@@ -122,7 +141,6 @@ const ReleasePlan = () => {
           }}
         >
           Current Sprint (#3):
-          <button onClick={addSprints}>Add Sprint</button>
         </Typography>
 
         <Box
@@ -187,7 +205,13 @@ const ReleasePlan = () => {
               fontWeight="bold"
               fontSize={14}
             >
-              Sprints
+              Sprints 
+              <IconButton 
+              sx={{ 
+              marginBottom: "3px" }}
+              onClick={addSprints}>
+                <AddCircleOutlineIcon fontSize="small"/>
+              </IconButton>
             </Typography>
 
             
