@@ -9,6 +9,8 @@ import LockOpenIcon from '@mui/icons-material/LockOpen';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 
 const Sidebar = ({ open, toggleDrawer, title, items, itemClick }) => {
+	const [selected, setSelected] = useState(0);
+
 	function convertRevisionAndDate(release) {
 		release.revision = `Revision ${release.revision}`
 		release.revisionDate = new Date(release.revisionDate).toLocaleString().split(',')[0]
@@ -124,29 +126,36 @@ const Sidebar = ({ open, toggleDrawer, title, items, itemClick }) => {
 
 		<List>
 			<ListItem disablePadding>
-			{open &&
-				<Typography
-					variant='body'
-					sx={{
-						marginLeft: 2,
-						fontWeight: 'bold',
-						fontSize: 14,
-					}}
-				>
-					{title}					
-				</Typography>
-			}
-		
-			{open &&
-				<Grid container justifyContent="flex-end">
-					<Grid item>
-						<IconButton 
-							onClick={() => {createNewRelease(1, addRevisions)}}
-						>
-							<AddCircleOutlineIcon fontSize="small"/>
-						</IconButton>
+				{open &&
+				<>
+					<Typography
+						variant='body'
+						sx={{
+							marginLeft: 2,
+							fontWeight: 'bold',
+							fontSize: 14,
+						}}
+					>
+						{title}					
+					</Typography>
+				
+					<Grid container justifyContent="flex-end">
+						<Grid item>
+							<IconButton 
+								onClick={() => {
+									createNewRelease(1, addRevisions);
+									// since creating a new release will not load the new release, selected stays the same
+									const newSelected = selected  + 1;
+									setSelected(newSelected);
+									// if creating a new one loads the new revision, set the selected to 0
+									// setSelected(0); 
+								}}
+							>
+								<AddCircleOutlineIcon fontSize="small"/>
+							</IconButton>
+						</Grid>
 					</Grid>
-				</Grid>
+				</>
 			}
 
 			{open ? 
@@ -172,11 +181,18 @@ const Sidebar = ({ open, toggleDrawer, title, items, itemClick }) => {
 
 			{open && revisions.map(({id, revision, revisionDate, locked}, index) => (
 				<ListItemButton
-					onClick={() => itemClick(id)}
+					onClick={() => {
+						itemClick(id);
+						setSelected(index);
+					}}
 					key={index}
+					sx={{backgroundColor: selected === index ? 'lightgray' : 'white',}}
 				>
 					<IconButton 
-						onClick={() => toggleLock(index)}
+						onClick={(e) => {
+							e.stopPropagation();
+							toggleLock(index);
+						}}
 						sx={{ 
 							marginRight: 'auto',
 						}}
@@ -189,7 +205,16 @@ const Sidebar = ({ open, toggleDrawer, title, items, itemClick }) => {
 					</Typography>
 					
 					<IconButton 
-						onClick={() => {copyRelease(id, addRevisions)}}
+						onClick={(e) => {
+							e.stopPropagation();
+							copyRelease(id, addRevisions);
+							// Sets the selected to the newest item but currently copying does not switch to the newest item 
+							// doesn't make sense to set the selected until that is done
+							const newSelected = selected  + 1;
+							setSelected(newSelected);
+							// when copying loads the new revision, set the selected to 0
+							// setSelected(0); 
+						}}
 						sx={{ 
 							marginLeft: 'auto',
 						}}
@@ -198,7 +223,6 @@ const Sidebar = ({ open, toggleDrawer, title, items, itemClick }) => {
 					</IconButton>
 				</ListItemButton>
 			))}
-
 		</List>
 		</Drawer>
 	);

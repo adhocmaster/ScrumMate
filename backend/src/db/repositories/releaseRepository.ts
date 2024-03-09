@@ -54,35 +54,36 @@ export class ReleaseRepository {
 
 	/// return list sorted by ascending sprint number
 	public async getReleaseSprints(releaseId: number): Promise<Sprint[]> {
-		const releaseWithSprints = await this.dataSource.fetchReleaseWithSprints(releaseId)
-		return releaseWithSprints.sprints.sort((a: Sprint, b: Sprint) => a.sprintNumber - b.sprintNumber)
+		const sprints = await this.dataSource.getSprintWithBacklog(releaseId);
+		return sprints.sort((a: Sprint, b: Sprint) => a.sprintNumber - b.sprintNumber)
 	}
 
 	/// return new order sorted by ascending sprint number
 	public async reorderSprints(releaseId: number, startIndex: number, destinationIndex: number): Promise<Sprint[]> {
-		const releaseWithSprints = await this.dataSource.fetchReleaseWithSprints(releaseId)
+		const sprints = await this.dataSource.getSprintWithBacklog(releaseId)
 		// unfortunately cant call getReleaseSprints() because we need the release too
 		// otherwise we need to take a performance hit looking up the release again
-		releaseWithSprints.sprints.sort((a: Sprint, b: Sprint) => a.sprintNumber - b.sprintNumber)
-		const [item] = releaseWithSprints.sprints.splice(startIndex, 1)
-		releaseWithSprints.sprints.splice(destinationIndex, 0, item)
-		releaseWithSprints.sprints.forEach(async (sprint, index) => {
+		sprints.sort((a: Sprint, b: Sprint) => a.sprintNumber - b.sprintNumber)
+		const [item] = sprints.splice(startIndex, 1)
+		sprints.splice(destinationIndex, 0, item)
+		for (const {sprint, index} of sprints.map((sprint, index) => ({sprint, index}))) {
 			sprint.sprintNumber = index+1;
 			await this.dataSource.save(sprint)
-		})
-		await this.dataSource.save(releaseWithSprints)
-		return releaseWithSprints.sprints;
+		}
+		// await this.dataSource.save(sprints)
+		return sprints;
 	}
 
 	/// return new list sorted by ascending sprint number
 	public async removeSprintFromRelease(sprintId: number): Promise<Sprint[]> {
 		const sprintWithRelease = await this.dataSource.lookupSprintByIdWithRelease(sprintId)
+		await this.dataSource.moveSprintTodosToBacklog(sprintWithRelease.release.id, sprintId)
 		await this.dataSource.deleteSprint(sprintId)
 		const releaseWithSprints = await this.dataSource.fetchReleaseWithSprints(sprintWithRelease.release.id)
-		releaseWithSprints.sprints.forEach(async (sprint, index) => {
+		for (const {sprint, index} of releaseWithSprints.sprints.map((sprint, index) => ({sprint, index}))) {
 			sprint.sprintNumber = index+1;
 			await this.dataSource.save(sprint)
-		})
+		}
 		await this.dataSource.save(releaseWithSprints)
 		return releaseWithSprints.sprints;
 	}
