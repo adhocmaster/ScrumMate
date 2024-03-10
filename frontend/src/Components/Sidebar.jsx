@@ -144,8 +144,6 @@ const Sidebar = ({ open, toggleDrawer, title, items, itemClick }) => {
 							<IconButton
 								onClick={() => {
 									createNewRelease(1, addRevisions);
-									const newSelected = selected  + 1;
-									setSelected(newSelected);
 									setSelected(0); 
 								}}
 							>
@@ -206,8 +204,6 @@ const Sidebar = ({ open, toggleDrawer, title, items, itemClick }) => {
 						onClick={(e) => {
 							e.stopPropagation();
 							copyRelease(id, addRevisions);
-							const newSelected = selected  + 1;
-							setSelected(newSelected);
 							setSelected(0); 
 						}}
 						sx={{ 
