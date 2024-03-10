@@ -1,7 +1,7 @@
 import { useState, useEffect  } from 'react';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
-import { Button, Drawer, Icon, IconButton, Typography, Grid } from "@mui/material";
+import { Drawer, IconButton, Typography, Grid } from "@mui/material";
 import { List, ListItem, ListItemButton } from "@mui/material";
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import LockIcon from '@mui/icons-material/Lock';
@@ -24,7 +24,7 @@ const Sidebar = ({ open, toggleDrawer, title, items, itemClick }) => {
 			credentials:'include'
 		  }
 		fetch(`http://localhost:8080/api/project/${projectId}/releases`, options).then((result)=>{
-			if(result.status == 200){
+			if(result.status === 200){
 				console.log(result)
 			}
 			result.json().then((response)=>{
@@ -41,7 +41,7 @@ const Sidebar = ({ open, toggleDrawer, title, items, itemClick }) => {
 				credentials: 'include',
 			};
 			fetch(`http://localhost:8080/api/project/${projectId}/release`, options).then((result)=>{
-				if(result.status == 200){
+				if(result.status === 200){
 					console.log(result)
 				}
 				result.json().then((response)=>{
@@ -63,7 +63,7 @@ const Sidebar = ({ open, toggleDrawer, title, items, itemClick }) => {
 				credentials: 'include',
 			};
 			fetch(`http://localhost:8080/api/release/${releaseId}/copy`, options).then((result)=>{
-				if(result.status == 200){
+				if(result.status === 200){
 					console.log(result)
 				}
 				result.json().then((response)=>{
@@ -103,7 +103,7 @@ const Sidebar = ({ open, toggleDrawer, title, items, itemClick }) => {
 	
 	const removeRevisions = (index) => {
 		const newRevisionArray = revisions.filter((_, i) => i !== index);
-    	setRevisions(newRevisionArray);
+		setRevisions(newRevisionArray);
 	};
 	
 	return (

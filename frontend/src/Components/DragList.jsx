@@ -1,5 +1,4 @@
-import React, { Component } from "react";
-import { useState } from "react";
+import React from "react";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import Sprint from "./Sprint";
 
@@ -66,41 +65,41 @@ export default function DragList({items, setItems, releaseId}) {
 			result.destination.index, setItems);
 	}
 
-    return (
-       <DragDropContext onDragEnd={onDragEnd}>
-        <Droppable droppableId="droppable">
-          {(provided, snapshot) => (
-            <div
-              {...provided.droppableProps}
-              ref={provided.innerRef}
-              style={getListStyle(snapshot.isDraggingOver)}
-            >
-              {items.map((item, index) => (
-                <Draggable key={index} draggableId={`here: ${index}`} index={index}>
-                  {(provided, snapshot) => (
-                    <div
-                      ref={provided.innerRef}
-                      {...provided.draggableProps}
-                      {...provided.dragHandleProps}
-                      style={getItemStyle(
-                        snapshot.isDragging,
-                        provided.draggableProps.style
-                      )}
-                    >
-                      <Sprint 
-												index={index} 
-												items={items} 
-												setItems={setItems} 
-												userStories={item.todos}
-											/>
-                    </div>
-                  )}
-                </Draggable>
-              ))}
-              {provided.placeholder}
-            </div>
-          )}
-        </Droppable>
-      </DragDropContext>
-    );
+	return (
+		<DragDropContext onDragEnd={onDragEnd}>
+			<Droppable droppableId="droppable">
+				{(provided, snapshot) => (
+					<div
+						{...provided.droppableProps}
+						ref={provided.innerRef}
+						style={getListStyle(snapshot.isDraggingOver)}
+					>
+						{items.map((item, index) => (
+							<Draggable key={index} draggableId={`here: ${index}`} index={index}>
+								{(provided, snapshot) => (
+									<div
+										ref={provided.innerRef}
+										{...provided.draggableProps}
+										{...provided.dragHandleProps}
+										style={getItemStyle(
+											snapshot.isDragging,
+											provided.draggableProps.style
+										)}
+									>
+										<Sprint 
+											index={index} 
+											items={items} 
+											setItems={setItems} 
+											userStories={item.todos}
+										/>
+									</div>
+								)}
+							</Draggable>
+						))}
+						{provided.placeholder}
+					</div>
+				)}
+			</Droppable>
+		</DragDropContext>
+	);
 }

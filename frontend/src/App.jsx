@@ -1,11 +1,9 @@
-// App.jsx
 import React, { useState } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import SignInBox from './Components/SignInBox';
 import Dashboard from './Pages/Dashboard';
 import ReleasePlan from './Pages/ReleasePlan';
-import SprintPlan from './Pages/SprintPage';
-import Navbar from './Components/Navbar'; // Make sure the path is correct
+import Navbar from './Components/Navbar';
 import Register from './Pages/Register';
 
 function App() {
@@ -23,7 +21,7 @@ function App() {
       }
       fetch('http://localhost:8080/api/user/login/',options).then((result)=>{
         console.log(result)
-        if(result.status == 200){
+        if(result.status === 200){
           
         }
         return result.json()
@@ -72,12 +70,6 @@ function App() {
           }
         />
         
-        <Route
-          path="/sprints"
-          element={
-            isLoggedIn ? <SprintPlan /> : <Navigate replace to="/" />
-          }
-        />
         <Route path="/register"
         element={
           <Register/>
