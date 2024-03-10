@@ -6,6 +6,12 @@ This is a fork from [Scrum_Tool](https://github.com/SlugScrum/Scrum_Tool) by a p
 
 It is now being worked on by a new team of students as part of UCSC's CSE115b/c courses.
 
+## Postgres
+
+To run the backend, you should download and install the [Postgres](https://www.postgresql.org/) database. We used v16.2, but other versions will likely work too. For development purposes, we expect there to be a database called `test` and a user with username and password `test` who has full permissions to access this database.
+
+We have seen issues with the Docker container for Postgres and when running the project from WSL. One workaround to this is to download Postgres directly to your system and running the project your operating system's terminal (e.g. Powershell).
+
 ## Available Scripts
 
 In the project directory, you can run:
@@ -51,7 +57,11 @@ You don't have to ever use `eject`. The curated feature set is suitable for smal
 
 The project is separated into separate frontend and backend projects, located in the `frontend/` and `backend/` directories. Each directory is its own node project. They will each start their own servers. The frontend will make API calls to the backend, and the backend will host the API and respond to API calls. The root directory contains some packages used in both the frontend and backend, as well as some documentation and files for GitHub automated tests.
 
-## Learn More
+## More information
+
+There are READMEs in both the fronend and backend directories which contain more information about their respective projects. Please see them for more information.
+
+## Learn More About Create React App
 
 You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started), although the project has now been modified extensively from it.
 
