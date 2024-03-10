@@ -15,6 +15,8 @@ In the project directory, you can run:
 Runs the app in the development mode.\
 Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
 
+Alternatively, you can run `npm start` in the frontend and backend directories separately.
+
 The page will reload when you make changes.\
 You may also see any lint errors in the console.
 
@@ -31,8 +33,7 @@ Currently, there are only backend tests, located in the `backend/tests` director
 Builds the app for production to the `build` folder.\
 It correctly bundles React in production mode and optimizes the build for the best performance.
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+The build is minified and the filenames include the hashes.
 
 See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
 
@@ -46,9 +47,13 @@ Instead, it will copy all the configuration files and the transitive dependencie
 
 You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
 
+## File structure
+
+The project is separated into separate frontend and backend projects, located in the `frontend/` and `backend/` directories. Each directory is its own node project. They will each start their own servers. The frontend will make API calls to the backend, and the backend will host the API and respond to API calls. The root directory contains some packages used in both the frontend and backend, as well as some documentation and files for GitHub automated tests.
+
 ## Learn More
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started), although the project has now been modified extensively from it.
 
 To learn React, check out the [React documentation](https://reactjs.org/).
 
