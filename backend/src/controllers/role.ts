@@ -9,7 +9,7 @@ export const createRole = async (req: express.Request, res: express.Response) =>
 		role,
 	} = req.body
 	if (!verifyParameters(role)) res.sendStatus(400);
-	const newRole = await db.createNewRole(parseInt(userId), parseInt(sprintId), role)
+	const newRole = await db.getUserRoleRepository.createNewRole(parseInt(userId), parseInt(sprintId), role)
 	return res.json(newRole);
 };
 
@@ -19,6 +19,6 @@ export const editRole = async (req: express.Request, res: express.Response) => {
 	const {
 		role,
 	} = req.body
-	const userRole = await db.updateRole(parseInt(roleId), parseInt(userId), role)
+	const userRole = await db.getUserRoleRepository.updateRole(parseInt(roleId), parseInt(userId), role)
 	return res.json(userRole)
 };
