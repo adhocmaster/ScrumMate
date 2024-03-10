@@ -1,6 +1,10 @@
-# Getting Started with Create React App
+# Getting Started with Scrum Tools
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+This project was initially bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+
+This is a fork from [Scrum_Tool](https://github.com/SlugScrum/Scrum_Tool) by a previous team who worked on it as part of UCSC's CSE115d course.
+
+It is now being worked on by a new team of students as part of UCSC's CSE115b/c courses.
 
 ## Available Scripts
 
@@ -14,11 +18,13 @@ Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
 The page will reload when you make changes.\
 You may also see any lint errors in the console.
 
-### `npm test` ![Node.js Cl](https://github.com/adhocmaster/ScrumMate/actions/workflows/node.js.yml/badge.svg)
+### `npm test`
+![Node.js Cl](https://github.com/adhocmaster/ScrumMate/actions/workflows/node.js.yml/badge.svg)
 
-https://github.com/adhocmaster/ScrumMate/actions/workflows/node.js.yml/badge.svg
 Launches the test runner in the interactive watch mode.\
 See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+
+Currently, there are only backend tests, located in the `backend/tests` directory.
 
 ### `npm run build`
 
