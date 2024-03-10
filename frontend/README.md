@@ -1,4 +1,4 @@
-# Frontend Guide for Scrum Mate
+# Frontend Guide for Scrum Tools
 
 The crux of the frontend app is mainly run through the src folder. There are two folders, Components and Pages. The main file that runs the frontend is the App.js file in src. 
 
