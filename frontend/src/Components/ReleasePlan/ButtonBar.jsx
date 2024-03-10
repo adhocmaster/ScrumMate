@@ -1,6 +1,12 @@
 import { Button, ButtonGroup, Typography } from '@mui/material';
 
-const ButtonBar = ({text1, text2, text3, text4, text1Click, text2Click, text3Click, text4Click}) => {
+const ButtonBar = () => {
+    // TODO: update Placeholder functions with actual data
+    const sprintPlanClick = () => console.log('Clicked Sprint Plan');
+    const scrumBoardClick = () => console.log('Clicked Scrum Board');
+    const burnupChartClick = () => console.log('Clicked Burnup Chart');
+    const allSprintsClick = () => console.log('Clicked All Sprints');
+
   return (
     <ButtonGroup 
       fullWidth
@@ -11,35 +17,35 @@ const ButtonBar = ({text1, text2, text3, text4, text1Click, text2Click, text3Cli
       }}
     >
       <Button
-        onClick={text1Click}
+        onClick={sprintPlanClick}
       >
         <Typography fontWeight="bold">
-          {text1}
+          Sprint Plan
         </Typography>
         
       </Button>
 
       <Button
-        onClick={text2Click}
+        onClick={scrumBoardClick}
       >
         <Typography fontWeight="bold">
-          {text2}
+          Scrum Board
         </Typography>
       </Button>
 
       <Button
-        onClick={text3Click}
+        onClick={burnupChartClick}
       >
         <Typography fontWeight="bold">
-          {text3}
+          Burnup Chart
         </Typography>
       </Button>
 
       <Button
-        onClick={text4Click}
+        onClick={allSprintsClick}
       >
         <Typography fontWeight="bold">
-          {text4}
+          All Sprints
         </Typography>
       </Button>
     </ButtonGroup>

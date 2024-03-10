@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { Typography, Box } from '@mui/material';
 import { Grid, Divider } from '@mui/material';
-import Sidebar from '../Components/Sidebar';
-import ButtonBar from '../Components/ButtonBar';
-import ContentBox from '../Components/ContentBox';
-import DragList from '../Components/DragList';
-import Backlog from '../Components/Backlog';
-import SanityCheckGraph from '../Components/SanityCheckGraph';
-import SanityCheckText from '../Components/SanityCheckText';
+import Sidebar from '../Components/ReleasePlan/Sidebar';
+import ButtonBar from '../Components/ReleasePlan/ButtonBar';
+import ContentBox from '../Components/common/ContentBox';
+import DragList from '../Components/ReleasePlan/DragList';
+import Backlog from '../Components/ReleasePlan/Backlog';
+import SanityCheckGraph from '../Components/ReleasePlan/SanityCheckGraph';
+import SanityCheckText from '../Components/ReleasePlan/SanityCheckText';
 
 const ReleasePlan = () => {
   const [sprints, setSprints] = useState([]);
@@ -83,12 +83,6 @@ const ReleasePlan = () => {
     setOpen(!open);
   };
 
-  // TODO: update Placeholder functions with actual data
-  const sprintPlanClick = () => console.log('Clicked Sprint Plan');
-  const scrumBoardClick = () => console.log('Clicked Scrum Board');
-  const burnupChartClick = () => console.log('Clicked Burnup Chart');
-  const allSprintsClick = () => console.log('Clicked All Sprints');
-  
   const revisionsClick = (newReleaseId) => {
     setId(newReleaseId);
   };
@@ -127,16 +121,7 @@ const ReleasePlan = () => {
           justifyContent={'flex-start'}
         >
           {/* TODO: Handle Button Clicks */}
-          <ButtonBar
-            text1={'Sprint Plan'}
-            text2={'Scrum Board'}
-            text3={'Burnup Chart'}
-            text4={'All Sprints'}
-            text1Click={sprintPlanClick}
-            text2Click={scrumBoardClick}
-            text3Click={burnupChartClick}
-            text4Click={allSprintsClick}
-          />
+          <ButtonBar />
         </Box>
 
         <Divider

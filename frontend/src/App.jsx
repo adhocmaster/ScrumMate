@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
-import SignInBox from './Components/SignInBox';
+import SignInBox from './Components/SignIn/SignInBox';
 import Dashboard from './Pages/Dashboard';
 import ReleasePlan from './Pages/ReleasePlan';
-import Navbar from './Components/Navbar';
+import Navbar from './Components/common/Navbar';
 import Register from './Pages/Register';
 
 function App() {
