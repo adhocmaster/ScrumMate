@@ -36,7 +36,6 @@ const Sidebar = ({ open, toggleDrawer, title, items, itemClick }) => {
 	
 	function createNewRelease(projectId, addRevisions) {
 		try {
-			console.log("about to create");
 			const options = {
 				method: 'POST',
 				credentials: 'include',
@@ -46,8 +45,8 @@ const Sidebar = ({ open, toggleDrawer, title, items, itemClick }) => {
 					console.log(result)
 				}
 				result.json().then((response)=>{
-					console.log(response)
 					addRevisions(response);
+					itemClick(response.id)
 				})
 			})
 		} catch (error) {
@@ -70,6 +69,7 @@ const Sidebar = ({ open, toggleDrawer, title, items, itemClick }) => {
 				result.json().then((response)=>{
 					console.log(response)
 					addRevisions(response);
+					itemClick(response.id)
 				})
 			})
 		} catch (error) {
@@ -79,7 +79,6 @@ const Sidebar = ({ open, toggleDrawer, title, items, itemClick }) => {
 	}
 	
 	const [revisions, setRevisions] = useState(items || []);
-	console.log("running sidebar")
 
 	useEffect(() => {
 		fetchReleases(1, setRevisions);
@@ -141,14 +140,11 @@ const Sidebar = ({ open, toggleDrawer, title, items, itemClick }) => {
 				
 					<Grid container justifyContent="flex-end">
 						<Grid item>
-							<IconButton 
+							{/* Add new blank revision */}
+							<IconButton
 								onClick={() => {
 									createNewRelease(1, addRevisions);
-									// since creating a new release will not load the new release, selected stays the same
-									const newSelected = selected  + 1;
-									setSelected(newSelected);
-									// if creating a new one loads the new revision, set the selected to 0
-									// setSelected(0); 
+									setSelected(0); 
 								}}
 							>
 								<AddCircleOutlineIcon fontSize="small"/>
@@ -208,12 +204,7 @@ const Sidebar = ({ open, toggleDrawer, title, items, itemClick }) => {
 						onClick={(e) => {
 							e.stopPropagation();
 							copyRelease(id, addRevisions);
-							// Sets the selected to the newest item but currently copying does not switch to the newest item 
-							// doesn't make sense to set the selected until that is done
-							const newSelected = selected  + 1;
-							setSelected(newSelected);
-							// when copying loads the new revision, set the selected to 0
-							// setSelected(0); 
+							setSelected(0); 
 						}}
 						sx={{ 
 							marginLeft: 'auto',
