@@ -1,8 +1,8 @@
 # API Documentation
 
 ## Contents
- - [Specification](#project) 
- - [Dependencies Title](#here)
+ - [Project](#project) 
+ - [Release](#release)
 
 
 ## Project
@@ -27,88 +27,37 @@
     Body: {}
 
   GET: /project/:projectId/getName
-    Body: {}
-
-
-
-
-    adsfklasjdf
-
-
-
-    
-  POST: /project/:userId/joinProject/:projectId
-
-    Body: {}
-
-  PATCH: /project/:projectId
-
-    Body: {name: string}
-    
-  GET: /project/:projectId/releases
-
+  
     Body: {}
     
-  GET: /project/:projectId/recentRelease
+## Release
+  POST: /project/:projectId/release
+
+    Body: {
+     revision?: number,
+     revisionDate?: Date,
+     problemStatement?: string,
+     goalStatement?: string,
+    }
+
+  POST: /release/:releaseId/edit
+
+    Body: {
+     revisionDate?: Date,
+     problemStatement?: string,
+     goalStatement?: string
+    }
+
+  POST: /release/:releaseId/copy
 
     Body: {}
 
-  GET: /project/:projectId/getName
-    Body: {}
-  POST: /project/:userId/joinProject/:projectId
+  GET: /release/:releaseId
 
     Body: {}
 
-  PATCH: /project/:projectId
-
-    Body: {name: string}
-    
-  GET: /project/:projectId/releases
-
-    Body: {}
-    
-  GET: /project/:projectId/recentRelease
+  GET: /release/:releaseId/backlog
 
     Body: {}
 
-  GET: /project/:projectId/getName
-    Body: {}
-  POST: /project/:userId/joinProject/:projectId
 
-    Body: {}
-
-  PATCH: /project/:projectId
-
-    Body: {name: string}
-    
-  GET: /project/:projectId/releases
-
-    Body: {}
-    
-  GET: /project/:projectId/recentRelease
-
-    Body: {}
-
-  GET: /project/:projectId/getName
-    Body: {}
-    
-  POST: /project/:userId/joinProject/:projectId
-
-    Body: {}
-
-  PATCH: /project/:projectId
-
-    Body: {name: string}
-    
-  GET: /project/:projectId/releases
-
-    Body: {}
-    
-  GET: /project/:projectId/recentRelease
-
-    Body: {}
-
-  GET: /project/:projectId/getName
-    Body: {}
-# Here
-sdlfakdjflskdf
