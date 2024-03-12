@@ -2,7 +2,7 @@ import { Box, Divider, IconButton, Typography, Paper, List, ListItem } from '@mu
 import MenuIcon from '@mui/icons-material/Menu';
 import UserStory from './UserStory';
 
-const Sprint = ({userStories, sprintValue}) => {
+const Sprint = ({userStories, sprintValue, startDate, endDate, goal}) => {
   return (
     <>
       <Box 

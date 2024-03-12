@@ -60,27 +60,52 @@ const ReleasePlan = () => {
 		})
 	}
 
-  function fetchSprints(releaseId){
-    var options={
-      method: 'get',
-      credentials: 'include' 
-    }
-    fetch(`http://localhost:8080/api/sprint/${releaseId}`,options).then((result) =>{
-
-      if(result.status == 200){
-        console.log("works also")
-      }
-      result.json().then((response)=>{
-        console.log("works")
+  function createNewSprints(e) {
+    e.preventDefault();
+    addSprints();
+    var options = {
+      method: 'POST',
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        sprintNumber: sprintNumber,
+        startDate: startDate,
+        endDate: endDate,
+        goal: sprintGoal
       })
+    };
+  
+    fetch(`http://localhost:8080/api/release/${releaseId}/sprint`, options)
+      .then((result) => {
+        if (result.status === 200) {
+          console.log(result);
+        }
+        return result.json();
+      })
+      .then((response) => {
+        console.log(response);
+      })
+      .catch((error) => {
+        console.error('Error:', error);
+      });
+  }
 
-    })
+  const updateSprintValues = () =>{
+
   }
 
   const [open, setOpen] = useState(true);
   const [problemStatement, setProblem] = useState("");
   const [highLevelGoals, setGoals] = useState("");
   const [releaseId, setId] = useState(1);
+
+  //variables for the creating sprints (post).
+  const [sprintNumber, setSprintNumber] = useState("");
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
+  const [sprintGoal, setSprintGoal] = useState("");
 
   useEffect(() => {
     fetchMostRecentRelease(1, setProblem, setGoals, setId);
@@ -209,7 +234,7 @@ const ReleasePlan = () => {
               <IconButton 
               sx={{ 
               marginBottom: "3px" }}
-              onClick={addSprints}>
+              onClick={createNewSprints}>
                 <AddCircleOutlineIcon fontSize="small"/>
               </IconButton>
             </Typography>
