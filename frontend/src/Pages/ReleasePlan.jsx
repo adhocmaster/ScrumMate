@@ -226,11 +226,10 @@ const ReleasePlan = () => {
 
             <Paper
               sx={{
-                maxWidth: '90%',
+                // maxWidth: '90%',
                 // marginLeft: 2,
                 backgroundColor: 'lightgray',
                 overflow: 'auto', // scrollable
-                
               }}
             >
               <List>
