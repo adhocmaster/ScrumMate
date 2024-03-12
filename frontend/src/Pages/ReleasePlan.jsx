@@ -16,7 +16,17 @@ const ReleasePlan = () => {
   const [sprints, setSprints] = useState([]);
 
   const addSprints = () =>{
-    const newSprints = <Sprint userStories = {allUserStories} sprintValue = {sprints.length+1} key={sprints.length}/>
+
+    const sprintsNum = sprints.length+1;
+
+    const newSprints = <Sprint
+    userStories = {allUserStories} 
+    sprintValue = {sprintsnum}
+    value = {sprintNumber}
+    onChange={(e) => setSprintNumber(e.target.value)} 
+    key={sprints.length}/>
+    
+    
     setSprints(prevSprints => [...prevSprints, newSprints])
   }
   
@@ -62,6 +72,7 @@ const ReleasePlan = () => {
 
   function createNewSprints(e) {
     e.preventDefault();
+    const sprintNum = sprintsNumber
     addSprints();
     var options = {
       method: 'POST',
@@ -69,12 +80,7 @@ const ReleasePlan = () => {
       headers: {
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify({
-        sprintNumber: sprintNumber,
-        startDate: startDate,
-        endDate: endDate,
-        goal: sprintGoal
-      })
+      body: JSON.stringify(sprintNum) //sends value to the backend.
     };
   
     fetch(`http://localhost:8080/api/release/${releaseId}/sprint`, options)
