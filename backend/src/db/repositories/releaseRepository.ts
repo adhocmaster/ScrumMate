@@ -1,6 +1,7 @@
 import { Sprint } from "../../entity/sprint";
 import { Release } from "../../entity/release";
 import { ModelRepository } from "./modelRepository";
+import { BacklogItem, Story } from "../../entity/backlogItem";
 
 export class ReleaseRepository extends ModelRepository {
 
@@ -33,17 +34,69 @@ export class ReleaseRepository extends ModelRepository {
 		return release
 	}
 
-	/// Copies the columns only, but not the relations. TODO: copy relations
 	public async copyRelease(releaseId: number): Promise<Release> {
 		const releaseCopy = new Release();
-		// need to get the whole list of releases in this project so we can get the new version #
-		// should we just make a new variable to count the max version
-		const releaseWithProject = await this.releaseSource.fetchReleaseWithProject(releaseId)
-		releaseCopy.copy(releaseWithProject)
-		releaseCopy.revision = releaseCopy.project.nextRevision;
-		releaseCopy.project.nextRevision += 1;
-		await this.projectSource.save(releaseCopy.project)
+		const releaseWithEverything = await this.releaseSource.fetchReleaseWithEverything(releaseId);
+		// copy the sprint columns
+		releaseCopy.copy(releaseWithEverything);
+
+		// set the new revision number
+		releaseCopy.revision = releaseWithEverything.project.nextRevision;
+		releaseWithEverything.project.nextRevision += 1;
+		await this.projectSource.save(releaseWithEverything.project);
 		await this.releaseSource.save(releaseCopy)
+
+		// copy the sprints
+		for (const sprint of releaseWithEverything.getSprints()) {
+			const sprintCopy = new Sprint();
+			sprintCopy.release = releaseCopy;
+
+			// copy the columns
+			sprintCopy.copy(sprint);
+			await this.sprintSource.save(sprintCopy); 
+			sprintCopy.release = undefined;
+
+			// copy the stories
+			for (const backlogItem of sprint.getTODOs()) {
+				if (backlogItem instanceof Story) {
+					const storyCopy = new Story();
+					storyCopy.copy(backlogItem);
+					storyCopy.sprint = sprintCopy;
+					await this.backlogSource.save(storyCopy);
+					storyCopy.sprint = undefined;
+					sprintCopy.addTODO(storyCopy);
+			} else if (backlogItem instanceof BacklogItem) {
+					const backlogItemCopy = new BacklogItem();
+					backlogItemCopy.copy(backlogItem);
+					backlogItemCopy.sprint = sprintCopy;
+					await this.backlogSource.save(backlogItemCopy);
+					backlogItemCopy.sprint = undefined;
+					sprintCopy.addTODO(backlogItemCopy);
+				}
+			}
+			
+			releaseCopy.addSprint(sprintCopy);
+		}
+
+		// copy the backlog
+		for (const backlogItem of releaseWithEverything.getBacklog()) {
+			if (backlogItem instanceof Story) {
+				const storyCopy = new Story();
+				storyCopy.copy(backlogItem);
+				storyCopy.release = releaseCopy;
+				await this.backlogSource.save(storyCopy);
+				storyCopy.release = undefined;
+				releaseCopy.addToBacklog(storyCopy);
+			} else if (backlogItem instanceof BacklogItem) {
+				const backlogItemCopy = new BacklogItem();
+				backlogItemCopy.copy(backlogItem);
+				backlogItemCopy.release = releaseCopy;
+				await this.backlogSource.save(backlogItemCopy);
+				backlogItemCopy.release = undefined;
+				releaseCopy.addToBacklog(backlogItemCopy);
+			}
+		}
+
 		return releaseCopy
 	}
 

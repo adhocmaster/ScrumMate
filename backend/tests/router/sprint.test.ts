@@ -112,6 +112,7 @@ describe("Sprint API tests", () => {
 		.then((res) => {
 			expect(res.body).toBeDefined();
 			expect(res.body.revision).toBeDefined();
+			expect(res.body.revision).toBe(2);
 			expect(res.body.id).toBeDefined();
 			releaseId = res.body.id;
 			expect(res.body.goalStatement).toBeDefined();
@@ -296,6 +297,23 @@ describe("Sprint API tests", () => {
 		});
 	});
 
+	test('Copy Release Plan and sprints and sprint stories', async () => {
+		await request(app)
+		.post(`/api/release/${releaseId}/copy`)
+		.set('Cookie', [`user-auth=${sessionToken}`])
+		.expect(200)
+		.then((res) => {
+			expect(res.body).toBeDefined();
+			expect(res.body.revision).toBeDefined();
+			expect(res.body.revision).toBe(1);
+			expect(res.body.goalStatement).toBeDefined();
+			expect(res.body.sprints).toBeDefined();
+			expect(res.body.sprints.length).toBe(2);
+			expect(res.body.sprints[0].todos).toBeDefined();
+			expect(res.body.sprints[0].todos.length).toBe(1);
+		});
+	});
+
 	test("Can delete a sprint with a story", async () => {
 		await request(app)
 		.delete(`/api/sprint/${sprint3Id}`)
@@ -317,6 +335,23 @@ describe("Sprint API tests", () => {
 			expect(res.body).toBeDefined();
 			expect(res.body.backlog.length).toBe(1)
 			expect(res.body.backlog[0].id).toBe(backlogId)
+		});
+	});
+
+	test('Copy Release Plan and sprints and backlog', async () => {
+		await request(app)
+		.post(`/api/release/${releaseId}/copy`)
+		.set('Cookie', [`user-auth=${sessionToken}`])
+		.expect(200)
+		.then((res) => {
+			expect(res.body).toBeDefined();
+			expect(res.body.revision).toBeDefined();
+			expect(res.body.revision).toBe(2);
+			expect(res.body.goalStatement).toBeDefined();
+			expect(res.body.sprints).toBeDefined();
+			expect(res.body.sprints.length).toBe(1);
+			expect(res.body.backlog).toBeDefined();
+			expect(res.body.backlog.length).toBe(1);
 		});
 	});
 
