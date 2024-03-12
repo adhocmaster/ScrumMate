@@ -60,4 +60,17 @@
 
     Body: {}
 
+## User
+  POST: /user/create
 
+    Body: {
+      username: string,
+      email: string, 
+      password: string
+    }
+
+  POST: /user/login
+
+  POST: /user/edit
+
+  GET: /user/projects
