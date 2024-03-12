@@ -193,19 +193,27 @@ const ReleasePlan = () => {
           v1.0.0
         </Typography>
 
-        {/* Problem Statement */}
+        {/* Problem Statement
         {/* TODO: replace problem statement */}
-        <ContentBox title={'Problem Statement'} content={problemStatement} />
+        {/* <ContentBox title={'Problem Statement'} content={problemStatement} /> */}
 
         {/* High Level Goals */}
         {/* TODO: high level goals */}
-        <ContentBox title={'High Level Goals'} content={highLevelGoals} />
-
+        {/* <ContentBox title={'High Level Goals'} content={highLevelGoals} /> */}
+        <Grid container spacing={2}>
+          <Grid item xs={12}>
+            <ContentBox sx={{width: '100%'}} title={'Problem Statement'} content={problemStatement} />
+          </Grid>
+          <Grid item xs={12}>
+            <ContentBox sx={{width: '100%'}} title={'High Level Goals'} content={highLevelGoals} />
+          </Grid>
+        </Grid>
+        
         <Grid container spacing={2}>
           {/* Sprints */}
           <Grid item xs={9}>
             <Typography
-              marginLeft={2}
+              marginLeft={1}
               textAlign="left"
               fontWeight="bold"
               fontSize={14}
@@ -220,7 +228,7 @@ const ReleasePlan = () => {
           <Grid item xs={3}>
             <Typography
               variant="h6"
-              marginLeft={2}
+              // marginLeft={2}
               textAlign={'left'}
               fontWeight="bold"
               fontSize={14}
@@ -231,8 +239,10 @@ const ReleasePlan = () => {
             <Paper
               sx={{
                 maxWidth: '90%',
-                marginLeft: 2,
+                // marginLeft: 2,
                 backgroundColor: 'lightgray',
+                overflow: 'auto', // scrollable
+                
               }}
             >
               <List>
@@ -244,6 +254,11 @@ const ReleasePlan = () => {
                       }}
                     >
                       <CardContent>
+                        sx={{
+                          display: 'flex',
+                          alignItems: 'center', // alignment
+                          justifyContent: 'space-between', // Adjust based on your layout needs
+                        }}
                         <Typography
                           variant="body1"
                           fontSize={14}
@@ -283,15 +298,17 @@ const ReleasePlan = () => {
         </Grid>
 
         {/* Sanity Checks */}
-        <Typography variant="h5" align="left" fontWeight="bold" gutterBottom>
+        <Typography variant="h5" fontWeight="bold" gutterBottom fontSize={14} textAlign="left" marginLeft={2}>
           Sanity Check
         </Typography>
         <Grid container spacing={2}>
-          <Grid item xs={12} sm={4}>
-            <Paper elevation={3} style={{ padding: '20px', marginTop: '20px' }}>
-              <Box display="flex" flexDirection="column" alignItems="flex-start">
+          <Grid item xs={6} 
+          // marginLeft={1}
+          >
+            <Paper elevation={3} style={{ padding: '20px', marginTop: '20px' ,height: '200px' }}>
+              <Box display="flex" flexDirection="column" alignItems="flex-start" marginLeft={2}>
                 {barData.map((data, index) => (
-                  <Box key={index} display="flex" alignItems="center" marginBottom={1}>
+                  <Box key={index} display="flex" alignItems="center" marginBottom={1} >
                     <Box width={data.pointsCompleted * 5} height={30} bgcolor="darkgrey" />
                     <Typography marginLeft={2} variant="body2">
                       {data.pointsCompleted}
@@ -302,7 +319,7 @@ const ReleasePlan = () => {
             </Paper>
           </Grid>
 
-          <Grid item xs={12} sm={7}> 
+          <Grid item xs={6}> 
             <Paper elevation={3} style={{ padding: '20px', marginTop: '20px', backgroundColor: 'lightgray', height: '200px' }}>
               <Typography variant="body1" align="left">
                 Yes we can do it because no sprint looks like too much work. Lorem ipsum dolor sit amet …

@@ -23,7 +23,7 @@ function App() {
       }
       fetch('http://localhost:8080/api/user/login/',options).then((result)=>{
         console.log(result)
-        if(result.status == 200){
+        if(result.status === 200){
           
         }
         return result.json()
@@ -71,7 +71,6 @@ function App() {
             isLoggedIn ? <ReleasePlan /> : <Navigate replace to="/" />
           }
         />
-        
         <Route
           path="/sprints"
           element={
