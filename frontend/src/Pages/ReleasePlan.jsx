@@ -205,7 +205,7 @@ const ReleasePlan = () => {
           {/* Sprints */}
           <Grid item xs={9}>
             <Typography
-              marginLeft={2}
+              marginLeft={4}
               textAlign="left"
               fontWeight="bold"
               fontSize={14}
@@ -213,7 +213,7 @@ const ReleasePlan = () => {
               Sprints
             </Typography>
 
-            <DragList items={sprints} setItems={setSprints} releaseId={releaseId}/>
+            <DragList marginLeft={2} items={sprints} setItems={setSprints} releaseId={releaseId}/>
             {/* {sprints != [] ? <DragList items={sprints} setItems={setSprints}/>: ''} */}
           </Grid>
 
@@ -230,7 +230,7 @@ const ReleasePlan = () => {
 
             <Paper
               sx={{
-                maxWidth: '90%',
+                // maxWidth: '90%',
                 marginLeft: 2,
                 backgroundColor: 'lightgray',
               }}
@@ -283,11 +283,11 @@ const ReleasePlan = () => {
         </Grid>
 
         {/* Sanity Checks */}
-        <Typography variant="h5" align="left" fontWeight="bold" gutterBottom>
+        <Typography variant="h5" align="left" fontWeight="bold" fontSize={14} gutterBottom>
           Sanity Check
         </Typography>
         <Grid container spacing={2}>
-          <Grid item xs={12} sm={4}>
+          <Grid item xs={6}>
             <Paper elevation={3} style={{ padding: '20px', marginTop: '20px' }}>
               <Box display="flex" flexDirection="column" alignItems="flex-start">
                 {barData.map((data, index) => (
@@ -302,7 +302,7 @@ const ReleasePlan = () => {
             </Paper>
           </Grid>
 
-          <Grid item xs={12} sm={7}> 
+          <Grid item xs={6}> 
             <Paper elevation={3} style={{ padding: '20px', marginTop: '20px', backgroundColor: 'lightgray', height: '200px' }}>
               <Typography variant="body1" align="left">
                 Yes we can do it because no sprint looks like too much work. Lorem ipsum dolor sit amet …
