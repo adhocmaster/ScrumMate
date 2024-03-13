@@ -6,6 +6,8 @@ This is a fork from [Scrum_Tool](https://github.com/SlugScrum/Scrum_Tool) by a p
 
 It is now being worked on by a new team of students as part of UCSC's CSE115b/c courses.
 
+Documetation for the API can be found at `/documentation/api_documentation.md`.
+
 ## Postgres
 
 To run the backend, you should download and install the [Postgres](https://www.postgresql.org/) database. We used v16.2, but other versions will likely work too. For development purposes, we expect there to be a database called `test` and a user with username and password `test` who has full permissions to access this database.
