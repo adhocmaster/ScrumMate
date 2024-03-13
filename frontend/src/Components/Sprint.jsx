@@ -2,7 +2,7 @@ import { Box, Divider, IconButton, Typography, Paper, List, ListItem } from '@mu
 import MenuIcon from '@mui/icons-material/Menu';
 import UserStory from './UserStory';
 
-const Sprint = ({userStories, sprintValue}) => {
+const SprintComponent = ({userStories, sprintValue}) => {
   return (
     <>
       <Box 
@@ -88,4 +88,4 @@ const Sprint = ({userStories, sprintValue}) => {
   );
 };
 
-export default Sprint;
+export default SprintComponent;
