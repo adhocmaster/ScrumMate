@@ -33,7 +33,6 @@ const ReleasePlan = () => {
   
   const projectId = 1;
   const [sprints, setSprints] = useState([]);
-  const [open, setOpen] = useState(true);
   const [problemStatement, setProblem] = useState("");
   const [highLevelGoals, setGoals] = useState("");
   const [releaseId, setId] = useState(1);
