@@ -47,7 +47,7 @@ export default function DragList({items, setItems, releaseId}) {
 	const getListStyle = isDraggingOver => ({
 		background: isDraggingOver ? "lightblue" : "lightgrey",
 		padding: grid,
-		width: 1000
+		// width: 1000
 	});
 
 	const onDragEnd = (result) => {

@@ -162,7 +162,7 @@ const ReleasePlan = () => {
           {/* Sprints */}
           <Grid item xs={9}>
             <Typography
-              marginLeft={2}
+              marginLeft={4}
               textAlign="left"
               fontWeight="bold"
               fontSize={14}
@@ -170,7 +170,7 @@ const ReleasePlan = () => {
               Sprints
             </Typography>
 
-            <DragList items={sprints} setItems={setSprints} releaseId={releaseId}/>
+            <DragList marginLeft={2} items={sprints} setItems={setSprints} releaseId={releaseId}/>
             {/* {sprints != [] ? <DragList items={sprints} setItems={setSprints}/>: ''} */}
           </Grid>
 

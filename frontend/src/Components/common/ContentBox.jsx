@@ -17,7 +17,7 @@ const ContentBox = ({title, content}) => {
       <Card
         sx={{
           minHeight: 100,
-          maxWidth: '95%',
+          // maxWidth: '95%',
           marginLeft: 2,
           marginBottom: 2,
           backgroundColor: 'lightgray',
