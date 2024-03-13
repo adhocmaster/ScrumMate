@@ -67,5 +67,12 @@ export class Sprint {
     removeTODO(story: BacklogItem): void {
         this.todos = removeMaybeUndefined(story, this.todos);
     }
+	copy(sprint: Sprint): void {
+		this.sprintNumber = sprint.sprintNumber;
+		this.startDate = sprint.startDate;
+		this.endDate = sprint.endDate;
+		this.createdDate = sprint.createdDate;
+		this.goal = sprint.goal;
+	}
 
 }

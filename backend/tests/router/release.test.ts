@@ -166,19 +166,4 @@ describe("Release API tests", () => {
 	});
   });
 
-//   test('Copy Release Plan', async () => {
-// 	const body = {"goalStatement": "release EDITEd"}
-//     await request(app)
-//     .post(`/api/project/${projectId}/release`)
-// 	.set('Cookie', [`user-auth=${sessionToken}`])
-// 	.send(body)
-// 	.expect(200)
-// 	.then((res) => {
-// 		expect(res.body).toBeDefined();
-// 		expect(res.body.revision).toBeDefined();
-// 		expect(res.body.goalStatement).toBeDefined();
-// 		expect(res.body.goalStatement).toEqual("release EDITEd");
-// 		console.log(res.body);
-// 	});
-//   })
 });

@@ -39,16 +39,33 @@ export class ReleaseDataSourceWrapper extends ModelDataSourceWrapper {
 	}
 
 	public async fetchReleaseWithBacklog(releaseId: number): Promise<Release> {
-		const releaseWithSprints = await this.dataSource.getRepository(Release).find({
+		const releaseWithBacklog = await this.dataSource.getRepository(Release).find({
 			where: {id: releaseId},
 			relations:{
 				backlog: true,
 			},
 		})
-		if (!releaseWithSprints || releaseWithSprints.length === 0) {
+		if (!releaseWithBacklog || releaseWithBacklog.length === 0) {
 			throw new NotFoundError(`Release with releaseId ${releaseId} not found`)
 		}
-		return releaseWithSprints[0]
+		return releaseWithBacklog[0]
+	}
+
+	public async fetchReleaseWithEverything(releaseId: number): Promise<Release> {
+		const releaseWithSprints = await this.dataSource.getRepository(Release).findOne({
+			where: {id: releaseId},
+			relations:{
+				project: true,
+				sprints: {
+					todos: true,
+				},
+				backlog: true,
+			},
+		})
+		if (!releaseWithSprints) {
+			throw new NotFoundError(`Release with releaseId ${releaseId} not found`)
+		}
+		return releaseWithSprints
 	}
 	
 }

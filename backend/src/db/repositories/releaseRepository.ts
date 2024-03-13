@@ -1,6 +1,7 @@
 import { Sprint } from "../../entity/sprint";
 import { Release } from "../../entity/release";
 import { ModelRepository } from "./modelRepository";
+import { BacklogItem, Story } from "../../entity/backlogItem";
 
 export class ReleaseRepository extends ModelRepository {
 
@@ -33,17 +34,72 @@ export class ReleaseRepository extends ModelRepository {
 		return release
 	}
 
-	/// Copies the columns only, but not the relations. TODO: copy relations
+	private async copyBacklogItems(sourceList: BacklogItem[], func: (arg0: BacklogItem) => any) {
+		// place in order so parents are later than children
+		// refactors so we dont need many if/else statements
+		const backlogItemTypes = [Story, BacklogItem];
+		for (const backlogItem of sourceList) {
+			for (const backlogType of backlogItemTypes) {
+				if (backlogItem instanceof backlogType) {
+					const copy = new backlogType();
+					copy.copy(backlogItem);
+					await func(copy);
+					// BacklogItem will always be matched later
+					// also good for perfomance
+					break;
+				}
+			}
+		}
+	}
+
+	private async copyReleaseBacklog(releaseCopy: Release, sourceList: BacklogItem[]) {
+		await this.copyBacklogItems(sourceList, async (backlogItemCopy) => {
+			backlogItemCopy.release = releaseCopy;
+			await this.backlogSource.save(backlogItemCopy);
+			backlogItemCopy.release = undefined;
+			releaseCopy.addToBacklog(backlogItemCopy);
+		});
+	}
+
+	private async copySprintTodos(sprintCopy: Sprint, sourceList: BacklogItem[]) {
+		await this.copyBacklogItems(sourceList, async (backlogItemCopy) => {
+			backlogItemCopy.sprint = sprintCopy;
+			await this.backlogSource.save(backlogItemCopy);
+			backlogItemCopy.sprint = undefined;
+			sprintCopy.addTODO(backlogItemCopy);
+		});
+	}
+
+	private async copySprints(releaseCopy: Release, sourceList: Sprint[]): Promise<void> {
+		for (const sprint of sourceList) {
+			const sprintCopy = new Sprint();
+			sprintCopy.release = releaseCopy;
+
+			// copy the columns
+			sprintCopy.copy(sprint);
+			await this.sprintSource.save(sprintCopy); 
+			sprintCopy.release = undefined;
+
+			await this.copySprintTodos(sprintCopy, sprint.getTODOs());
+			releaseCopy.addSprint(sprintCopy);
+		}
+	}
+
 	public async copyRelease(releaseId: number): Promise<Release> {
 		const releaseCopy = new Release();
-		// need to get the whole list of releases in this project so we can get the new version #
-		// should we just make a new variable to count the max version
-		const releaseWithProject = await this.releaseSource.fetchReleaseWithProject(releaseId)
-		releaseCopy.copy(releaseWithProject)
-		releaseCopy.revision = releaseCopy.project.nextRevision;
-		releaseCopy.project.nextRevision += 1;
-		await this.projectSource.save(releaseCopy.project)
+		const releaseWithEverything = await this.releaseSource.fetchReleaseWithEverything(releaseId);
+		// copy the sprint columns
+		releaseCopy.copy(releaseWithEverything);
+
+		// set the new revision number
+		releaseCopy.revision = releaseWithEverything.project.nextRevision;
+		releaseWithEverything.project.nextRevision += 1;
+		await this.projectSource.save(releaseWithEverything.project);
 		await this.releaseSource.save(releaseCopy)
+
+		await this.copySprints(releaseCopy, releaseWithEverything.getSprints());
+		await this.copyReleaseBacklog(releaseCopy, releaseWithEverything.getBacklog());
+
 		return releaseCopy
 	}
 
