@@ -4,7 +4,7 @@ import UserStory from './UserStory';
 import DeleteConfirmation from './DeleteConfirmation';
 
 
-export default function Sprint  ({index, items, setItems, userStories}) {
+const Sprint = ({index, items, setItems, userStories}) => {
   const deleteSprint = (sprintId, index) => {
 		fetch(`http://localhost:8080/api/sprint/${sprintId}`, {
       method: 'DELETE',
@@ -118,3 +118,6 @@ const Sprint = ({userStories, sprintValue}) => {
     </>
   );
 };
+
+export default Sprint;
+	
