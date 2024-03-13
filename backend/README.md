@@ -57,6 +57,8 @@ Finally, the router directory contains the Express routers. The routers are orga
 
 In index.ts, we export the routers as together, and will import them in `backend/index.ts`. That file will also prepend an "api/" to all the router endpoints.
 
+Documetation for the API can be found at `/documentation/api_documentation.md`.
+
 ### `backend/tests`
 
 These tests mirror the directories in `backend/src` and have about 70% coverage. It is recommended that you continue to add unit tests to this directory as you extend the backend.
