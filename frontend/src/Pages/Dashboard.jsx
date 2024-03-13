@@ -122,6 +122,7 @@ const Dashboard = ({ isLoggedIn }) => {
               </ListItem>
             ))}
           </List>
+
           {/* Create new project button */}
           <Button sx={{ margin: 2 }} variant="contained" color="primary" onClick={handleDialogOpen}>
             Create New Project
@@ -135,6 +136,7 @@ const Dashboard = ({ isLoggedIn }) => {
           <Typography variant="h5" gutterBottom>
             {currentProject.name}
           </Typography>
+
           <Paper sx={{ padding: 2, margin: '10px 0' }}>
             {/* Pie chart to be implemented */}
             <PieChart />
@@ -142,61 +144,65 @@ const Dashboard = ({ isLoggedIn }) => {
               Pie Graph of Completed Tasks vs Incomplete
             </Typography>
           </Paper>
-            {/* Buttons to view release plan and sprint pages */}
-            <Button
-              variant="contained"
-              color="secondary"
-              component={Link}
-              to="/releases"
-              state={{ currentProject }}
-            >
-              View Release Plan
-            </Button>
-            <Button
-              sx = {{marginLeft:2}}
-              variant="contained"
-              color="secondary"
-              component={Link}
-              to="/sprints"
-              state={{ currentProject }}
-            >
-              View Sprints
-            </Button>
+
+          {/* Buttons to view release plan and sprint pages */}
+          <Button
+            variant="contained"
+            color="secondary"
+            component={Link}
+            to="/releases"
+            state={{ currentProject }}
+          >
+            View Release Plan
+          </Button>
+
+          <Button
+            sx = {{marginLeft:2}}
+            variant="contained"
+            color="secondary"
+            component={Link}
+            to="/sprints"
+            state={{ currentProject }}
+          >
+            View Sprints
+          </Button>
         </Box>
       </Box>
 
       {/* Create a new project dialog */}
       <Dialog open={openDialog} onClose={handleDialogClose}>
-      <DialogTitle>Create New Project</DialogTitle>
-      <DialogContent>
-        <TextField
-          autoFocus
-          margin="dense"
-          id="project-name"
-          label="Project Name"
-          type="text"
-          fullWidth
-          variant="standard"
-          value={newProjectName}
-          onChange={(e) => setNewProjectName(e.target.value)}
-        />
-        <TextField
-          margin="dense"
-          id="project-members"
-          label="Add Members By Email, Separate Each One By a Coma"
-          type="text"
-          fullWidth
-          variant="standard"
-          value={newProjectMembers}
-          onChange={(e) => setNewProjectMembers(e.target.value)}
-        />
-      </DialogContent>
-      <DialogActions>
-        <Button onClick={handleDialogClose}>Cancel</Button>
-        <Button onClick={handleSubmit}>Create</Button>
-      </DialogActions>
-    </Dialog>
+        <DialogTitle>Create New Project</DialogTitle>
+        
+        <DialogContent>
+          <TextField
+            autoFocus
+            margin="dense"
+            id="project-name"
+            label="Project Name"
+            type="text"
+            fullWidth
+            variant="standard"
+            value={newProjectName}
+            onChange={(e) => setNewProjectName(e.target.value)}
+          />
 
+          <TextField
+            margin="dense"
+            id="project-members"
+            label="Add Members By Email, Separate Each One By a Coma"
+            type="text"
+            fullWidth
+            variant="standard"
+            value={newProjectMembers}
+            onChange={(e) => setNewProjectMembers(e.target.value)}
+          />
+        </DialogContent>
+
+        <DialogActions>
+          <Button onClick={handleDialogClose}>Cancel</Button>
+          <Button onClick={handleSubmit}>Create</Button>
+        </DialogActions>
+      </Dialog>
     </>
   );
 };

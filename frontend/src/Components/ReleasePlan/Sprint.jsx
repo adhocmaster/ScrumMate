@@ -52,12 +52,6 @@ const Sprint = ({index, items, setItems, userStories}) => {
             <Typography sx={{marginTop: 2}} fontSize={14}>
               {index + 1}
             </Typography>
-            
-            {/* TODO: handle button click/drag */}
-            {/* Not sure if we still need */}
-            {/* <IconButton onClick={() => console.log(`Clicked Sprint Menu Icon`)}>
-              <MenuIcon fontSize='medium'/>
-            </IconButton> */}
 
             {/* Delete Sprint Icon w/ Confirmation Menu*/}
             <DeleteConfirmation 
@@ -79,7 +73,7 @@ const Sprint = ({index, items, setItems, userStories}) => {
             <Divider 
               orientation='vertical'
               sx={{
-                marginTop: '16px',
+                marginTop: '10px',
                 marginLeft: '12px', 
                 backgroundColor: 'rgba(0, 0, 0, 0.5)',
                 width: '1.5px',
