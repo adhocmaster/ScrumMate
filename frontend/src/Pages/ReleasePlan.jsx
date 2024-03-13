@@ -15,12 +15,12 @@ import SanityCheckText from '../Components/ReleasePlan/SanityCheckText';
 const ReleasePlan = () => {
 
 
-  const addSprints = (sprintsnum) =>{
+  const addSprints = (i) =>{
 
     const sprintsNum = sprints.length+1;
 
     const newSprints = <Sprint
-    sprintValue = {sprintsnum}
+    sprintValue = {i}
     value = {sprintNumber}
     onChange={(e) => setSprintNumber(e.target.value)} 
     key={sprints.length}/>
@@ -91,15 +91,14 @@ const ReleasePlan = () => {
 
   function createNewSprints(e) {
     e.preventDefault();
-    const sprintNum = sprintNumber
-    addSprints(sprintNum);
+    addSprints(sprintNumber);
     var options = {
       method: 'POST',
       credentials: 'include',
       headers: {
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify(sprintNum) //sends value to the backend.
+      body: JSON.stringify(sprintNumber) //sends value to the backend.
     };
   
     fetch(`http://localhost:8080/api/release/${releaseId}/sprint`, options)
