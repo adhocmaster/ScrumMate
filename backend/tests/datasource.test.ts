@@ -1,5 +1,6 @@
 import { DataSource } from "typeorm";
-import { AppDataSource, Database } from "../src/data-source";
+import { AppDataSource } from '../src/data-source';
+import { Database } from '../src/db/database';
 import { User } from "../src/entity/User";
 import { Project } from "../src/entity/project";
 import { Release } from "../src/entity/release";

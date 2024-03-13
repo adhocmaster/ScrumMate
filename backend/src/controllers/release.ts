@@ -1,5 +1,5 @@
 import express from "express";
-import { Database } from "../data-source";
+import { Database } from "../db/database";
 import { verifyParameters } from './utils/verifyParams';
 
 export const newRelease = async (req: express.Request, res: express.Response) => {
@@ -40,6 +40,13 @@ export const copyRelease = async (req: express.Request, res: express.Response) =
 export const getRelease = async (req: express.Request, res: express.Response) => {
 	const db = Database.getInstance()
 	const {releaseId} = req.params;
-	const release = await db.lookupReleaseWithProject(parseInt(releaseId))
+	const release = await db.fetchReleaseWithProject(parseInt(releaseId))
+	return res.json(release)
+};
+
+export const getReleaseAndBacklog = async (req: express.Request, res: express.Response) => {
+	const db = Database.getInstance()
+	const {releaseId} = req.params;
+	const release = await db.fetchReleaseWithBacklog(parseInt(releaseId))
 	return res.json(release)
 };

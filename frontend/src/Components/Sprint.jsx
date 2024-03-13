@@ -1,6 +1,25 @@
-import { Box, Divider, IconButton, Typography, Paper, List, ListItem } from '@mui/material';
-import MenuIcon from '@mui/icons-material/Menu';
+// import { useState } from 'react';
+import { Box, Divider, Typography, Paper, List, ListItem } from '@mui/material';
 import UserStory from './UserStory';
+import DeleteConfirmation from './DeleteConfirmation';
+
+const Sprint = ({index, items, setItems, userStories}) => {
+  const deleteSprint = (sprintId, index) => {
+		fetch(`http://localhost:8080/api/sprint/${sprintId}`, {
+      method: 'DELETE',
+      credentials: 'include',
+      headers: {
+          'Content-Type': 'application/json'
+      },
+    })
+		.catch(error => {
+			console.log('error deleting sprint:');
+		});	
+
+    const updatedSprints = items.filter((_, i) => index !== i);
+    setItems(updatedSprints);
+  };
+
 
 const Sprint = ({userStories, sprintValue}) => {
   return (
@@ -31,21 +50,33 @@ const Sprint = ({userStories, sprintValue}) => {
               marginLeft: 2,
             }}
           >
-            {/* TODO: replace with sprint number */}
+            {/* Sprint Number */}
             <Typography sx={{marginTop: 2}} fontSize={14}>
               {sprintValue}
             </Typography>
             
             {/* TODO: handle button click/drag */}
-            <IconButton onClick={() => console.log('Clicked Sprint Menu')}>
+            {/* Not sure if we still need */}
+            {/* <IconButton onClick={() => console.log(`Clicked Sprint Menu Icon`)}>
               <MenuIcon fontSize='medium'/>
-            </IconButton>
+            </IconButton> */}
 
+            {/* Delete Sprint Icon w/ Confirmation Menu*/}
+            <DeleteConfirmation 
+              onDelete={() => {
+                const sprintId = items[index].id;
+                deleteSprint(sprintId, index);
+              }} 
+            />
+
+            {/* Total Story Points */}
             {/* TODO: replace with total number of story points */}
             <Typography sx={{marginBottom: 2}} fontSize={14}>
               8
             </Typography>
           </Box>
+
+          {/* Divider */}
           <Box sx={{height: '100%'}}>
             <Divider 
               orientation='vertical'
@@ -68,8 +99,7 @@ const Sprint = ({userStories, sprintValue}) => {
           }}
         >
           <List sx={{display: 'flex'}}>
-            {/* TODO: add Sprint's User Stories */}
-            {userStories.map((userStory, index) => (
+            {userStories && userStories.map((userStory, index) => (
               <ListItem 
                 key={index} 
                 sx={{
@@ -78,7 +108,7 @@ const Sprint = ({userStories, sprintValue}) => {
                   padding: '8px 0px 8px 12px',
                 }}
               >
-                <UserStory userStoryText={userStory} storyPoints={5}/>
+                <UserStory userStoryText={userStory.functionalityDescription} storyPoints={userStory.storyPoints}/>
               </ListItem>
             ))}
           </List>
