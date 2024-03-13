@@ -41,9 +41,6 @@ const ReleasePlan = () => {
   const [newBacklogType, setNewBacklogType] = useState('story');
   const [dialogOpen, setDialogOpen] = useState(false);
   const [newBacklogDescription, setNewBacklogDescription] = useState('');
-
-
-	const projectId = 1;
 	
 	function fetchMostRecentRelease(projectId, setProblem, setGoals, setId) {
 		console.log("about to most recent release")
