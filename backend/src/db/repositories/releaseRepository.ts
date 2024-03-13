@@ -35,15 +35,19 @@ export class ReleaseRepository extends ModelRepository {
 	}
 
 	private async copyBacklogItems(sourceList: BacklogItem[], func: (arg0: BacklogItem) => any) {
+		// place in order so parents are later than children
+		// refactors so we dont need many if/else statements
+		const backlogItemTypes = [Story, BacklogItem];
 		for (const backlogItem of sourceList) {
-			if (backlogItem instanceof Story) {
-				const storyCopy = new Story();
-				storyCopy.copy(backlogItem);
-				await func(storyCopy);
-			} else if (backlogItem instanceof BacklogItem) {
-				const backlogItemCopy = new BacklogItem();
-				backlogItemCopy.copy(backlogItem);
-				await func(backlogItemCopy);
+			for (const backlogType of backlogItemTypes) {
+				if (backlogItem instanceof backlogType) {
+					const copy = new backlogType();
+					copy.copy(backlogItem);
+					await func(copy);
+					// BacklogItem will always be matched later
+					// also good for perfomance
+					break;
+				}
 			}
 		}
 	}
