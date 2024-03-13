@@ -3,7 +3,10 @@
 ## Contents
  - [Project](#project) 
  - [Release](#release)
-
+ - [User](#user)
+ - [Sprint](#sprint)
+ - [Backlog Item](#backlog_item))
+ - [Role](#role)
 
 ## Project
   POST: /project
@@ -71,6 +74,94 @@
 
   POST: /user/login
 
+    Body: {
+     email: string, 
+     password: string
+    }
+    
   POST: /user/edit
 
+    Body: {
+     Todo
+    }
+    
   GET: /user/projects
+  
+    Body: {}
+
+## Sprint
+  POST: /release/:releaseId/sprint
+
+    Body: {
+      sprintNumber: number,
+      startDate: Date,
+      endDate: Date,
+      goal: string
+    }
+
+  POST: /sprint/:sprintId/edit
+  
+    Body: {
+        sprintNumber?: number,
+        startDate?: Date,
+        endDate?: Date,
+        goal?: string
+      }
+
+  GET: /release/:releaseId/sprints
+
+    Body: {}
+    
+  GET: /sprint/:sprintId
+
+    Body: {}
+    
+  POST: /release/:releaseId/reorder
+  
+    Body: {
+      sprintStartIndex: number,
+      sprintEndIndex: number
+    }
+    
+  DELETE: /sprint/:sprintId
+
+    Body: {}
+
+## Backlog Item
+  POST: /sprint/:sprintId
+  
+    Body: {
+      sprintId: number,
+      userTypes: string,
+      functionalityDescription: string, 
+      reasoning: string,
+      acceptanceCriteria: string,
+      storyPoints: number,
+      priority: Priority
+    }
+
+  POST: /sprint/:sprintId/story/edit
+
+  Body: {
+      sprintId?: number,
+      userTypes?: string,
+      functionalityDescription?: string, 
+      reasoning?: string,
+      acceptanceCriteria?: string,
+      storyPoints?: number,
+      priority?: Priority
+    }
+
+## Role
+
+POST: /user/:userId/sprint/:sprintId
+
+  Body: {
+    role: string
+  }
+  
+POST: /role/:roleId/edit/:userId
+
+ Body: {
+    role?: string
+  }
