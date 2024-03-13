@@ -11,7 +11,7 @@ export const createUser = async (req: express.Request, res: express.Response) =>
 		password,
 	} = req.body
 	if(!verifyParameters(username, email, password)) return res.sendStatus(400);
-	const newUser = await db.createNewUser(username, email, password)
+	const newUser = await db.getUserRepository.createNewUser(username, email, password)
 	return res.json(newUser);
 };
 
@@ -22,7 +22,7 @@ export const login = async (req: express.Request, res: express.Response) => {
 			password,
 		} = req.body
 	if(!verifyParameters(email, password)) return res.sendStatus(400);
-	const user = await db.lookupUserByEmail(email);
+	const user = await db.getUserRepository.lookupUserByEmail(email);
 	const expectedHash = authentication(user.salt, password);
 	if(expectedHash !== user.password) return res.sendStatus(403);
 
@@ -51,11 +51,8 @@ export const edit = async (req: express.Request, res: express.Response) => {
 // };
 
 export const getProjects = async (req: express.Request, res: express.Response) => {
-	console.log("getting projects")
 	const db = Database.getInstance()
-	console.log(req.userId)
 	if(!verifyParameters(req.userId)) return res.sendStatus(400);
-	const userWithProjects = await db.fetchUserWithProjects(req.userId)
-	console.log(userWithProjects)
+	const userWithProjects = await db.getUserRepository.fetchUserWithProjects(req.userId)
 	return res.json([...userWithProjects.getOwnedProjects(), ...userWithProjects.getJoinedProjects()]);
 };

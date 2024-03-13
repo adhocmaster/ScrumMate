@@ -32,7 +32,7 @@ export const isAuthenticated = async (req:express.Request, res: express.Response
   if(!sessionToken){
     return res.sendStatus(403);
   }
-  const existingUser = await db.lookupUserBySessionToken(sessionToken);
+  const existingUser = await db.getUserRepository.lookupUserBySessionToken(sessionToken);
   if(!existingUser){
     return res.sendStatus(403);
   }

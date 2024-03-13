@@ -16,7 +16,7 @@ export const createStory = async(req: express.Request, res: express.Response) =>
 	// what to do if some are null?
 	if (!verifyParameters(userTypes, functionalityDescription, reasoning, acceptanceCriteria, storyPoints, 
 		priority)) res.sendStatus(400);
-	const newStory = await db.createNewStory(parseInt(sprintId), userTypes, functionalityDescription, reasoning, acceptanceCriteria, storyPoints, priority)
+	const newStory = await db.getBacklogItemRepository.createNewStory(parseInt(sprintId), userTypes, functionalityDescription, reasoning, acceptanceCriteria, storyPoints, priority)
 	return res.json(newStory);
 }
 
@@ -31,6 +31,6 @@ export const editStory = async(req: express.Request, res: express.Response) => {
 		storyPoints,
 		priority,
 	} = req.body
-	const story = await db.updateStory(parseInt(storyId), parseInt(sprintId), userTypes, functionalityDescription, reasoning, acceptanceCriteria, storyPoints, priority)
+	const story = await db.getBacklogItemRepository.updateStory(parseInt(storyId), parseInt(sprintId), userTypes, functionalityDescription, reasoning, acceptanceCriteria, storyPoints, priority)
 	return res.json(story)
 };
