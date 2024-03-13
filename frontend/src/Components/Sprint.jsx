@@ -3,7 +3,8 @@ import { Box, Divider, Typography, Paper, List, ListItem } from '@mui/material';
 import UserStory from './UserStory';
 import DeleteConfirmation from './DeleteConfirmation';
 
-const Sprint = ({index, items, setItems, userStories}) => {
+
+export default function Sprint  ({index, items, setItems, userStories}) {
   const deleteSprint = (sprintId, index) => {
 		fetch(`http://localhost:8080/api/sprint/${sprintId}`, {
       method: 'DELETE',
@@ -117,5 +118,3 @@ const Sprint = ({userStories, sprintValue}) => {
     </>
   );
 };
-
-export default Sprint;
