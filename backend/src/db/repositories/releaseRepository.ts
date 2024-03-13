@@ -34,6 +34,53 @@ export class ReleaseRepository extends ModelRepository {
 		return release
 	}
 
+	private async copyBacklogItems(sourceList: BacklogItem[], func: (arg0: BacklogItem) => any) {
+		for (const backlogItem of sourceList) {
+			if (backlogItem instanceof Story) {
+				const storyCopy = new Story();
+				storyCopy.copy(backlogItem);
+				await func(storyCopy);
+			} else if (backlogItem instanceof BacklogItem) {
+				const backlogItemCopy = new BacklogItem();
+				backlogItemCopy.copy(backlogItem);
+				await func(backlogItemCopy);
+			}
+		}
+	}
+
+	private async copyReleaseBacklog(releaseCopy: Release, sourceList: BacklogItem[]) {
+		await this.copyBacklogItems(sourceList, async (backlogItemCopy) => {
+			backlogItemCopy.release = releaseCopy;
+			await this.backlogSource.save(backlogItemCopy);
+			backlogItemCopy.release = undefined;
+			releaseCopy.addToBacklog(backlogItemCopy);
+		});
+	}
+
+	private async copySprintTodos(sprintCopy: Sprint, sourceList: BacklogItem[]) {
+		await this.copyBacklogItems(sourceList, async (backlogItemCopy) => {
+			backlogItemCopy.sprint = sprintCopy;
+			await this.backlogSource.save(backlogItemCopy);
+			backlogItemCopy.sprint = undefined;
+			sprintCopy.addTODO(backlogItemCopy);
+		});
+	}
+
+	private async copySprints(releaseCopy: Release, sourceList: Sprint[]): Promise<void> {
+		for (const sprint of sourceList) {
+			const sprintCopy = new Sprint();
+			sprintCopy.release = releaseCopy;
+
+			// copy the columns
+			sprintCopy.copy(sprint);
+			await this.sprintSource.save(sprintCopy); 
+			sprintCopy.release = undefined;
+
+			await this.copySprintTodos(sprintCopy, sprint.getTODOs());
+			releaseCopy.addSprint(sprintCopy);
+		}
+	}
+
 	public async copyRelease(releaseId: number): Promise<Release> {
 		const releaseCopy = new Release();
 		const releaseWithEverything = await this.releaseSource.fetchReleaseWithEverything(releaseId);
@@ -46,56 +93,8 @@ export class ReleaseRepository extends ModelRepository {
 		await this.projectSource.save(releaseWithEverything.project);
 		await this.releaseSource.save(releaseCopy)
 
-		// copy the sprints
-		for (const sprint of releaseWithEverything.getSprints()) {
-			const sprintCopy = new Sprint();
-			sprintCopy.release = releaseCopy;
-
-			// copy the columns
-			sprintCopy.copy(sprint);
-			await this.sprintSource.save(sprintCopy); 
-			sprintCopy.release = undefined;
-
-			// copy the stories
-			for (const backlogItem of sprint.getTODOs()) {
-				if (backlogItem instanceof Story) {
-					const storyCopy = new Story();
-					storyCopy.copy(backlogItem);
-					storyCopy.sprint = sprintCopy;
-					await this.backlogSource.save(storyCopy);
-					storyCopy.sprint = undefined;
-					sprintCopy.addTODO(storyCopy);
-			} else if (backlogItem instanceof BacklogItem) {
-					const backlogItemCopy = new BacklogItem();
-					backlogItemCopy.copy(backlogItem);
-					backlogItemCopy.sprint = sprintCopy;
-					await this.backlogSource.save(backlogItemCopy);
-					backlogItemCopy.sprint = undefined;
-					sprintCopy.addTODO(backlogItemCopy);
-				}
-			}
-			
-			releaseCopy.addSprint(sprintCopy);
-		}
-
-		// copy the backlog
-		for (const backlogItem of releaseWithEverything.getBacklog()) {
-			if (backlogItem instanceof Story) {
-				const storyCopy = new Story();
-				storyCopy.copy(backlogItem);
-				storyCopy.release = releaseCopy;
-				await this.backlogSource.save(storyCopy);
-				storyCopy.release = undefined;
-				releaseCopy.addToBacklog(storyCopy);
-			} else if (backlogItem instanceof BacklogItem) {
-				const backlogItemCopy = new BacklogItem();
-				backlogItemCopy.copy(backlogItem);
-				backlogItemCopy.release = releaseCopy;
-				await this.backlogSource.save(backlogItemCopy);
-				backlogItemCopy.release = undefined;
-				releaseCopy.addToBacklog(backlogItemCopy);
-			}
-		}
+		await this.copySprints(releaseCopy, releaseWithEverything.getSprints());
+		await this.copyReleaseBacklog(releaseCopy, releaseWithEverything.getBacklog());
 
 		return releaseCopy
 	}
