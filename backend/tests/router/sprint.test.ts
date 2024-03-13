@@ -1,5 +1,6 @@
 import express from 'express';
-import { AppDataSource, Database } from '../../src/data-source';
+import { AppDataSource } from '../../src/data-source';
+import { Database } from '../../src/db/database';
 import { Release } from "../../src/entity/release"
 import request from 'supertest'
 import router from '../../src/router/index';
@@ -53,7 +54,7 @@ afterAll(async () => {
 	await server.close()
 });
 
-describe("Release API tests", () => {
+describe("Sprint API tests", () => {
   let sessionToken: string;
 	test("CREATE USER", async () => {
 		const body = {username: "sallyg", email: "sallys@gmail.com", password: "password123"}
@@ -81,7 +82,10 @@ describe("Release API tests", () => {
 
 	let projectId: Number;
 	let sprintId: Number;
+	let sprint2Id: Number;
+	let sprint3Id: Number;
 	let releaseId: Number;
+	let backlogId: Number;
 
 	test('Create project', async () => {
 		const body = {name: "new Project"};
@@ -108,6 +112,7 @@ describe("Release API tests", () => {
 		.then((res) => {
 			expect(res.body).toBeDefined();
 			expect(res.body.revision).toBeDefined();
+			expect(res.body.revision).toBe(2);
 			expect(res.body.id).toBeDefined();
 			releaseId = res.body.id;
 			expect(res.body.goalStatement).toBeDefined();
@@ -153,4 +158,201 @@ describe("Release API tests", () => {
 
 		});
 	});
+
+	test('More Sprints', async () => {
+		const body = {"sprintNumber": 2, "startDate": "03/24/2023", "endDate": "03/25/2023", "goal": "New new sprint goal"}
+		await request(app)
+		.post(`/api/release/${releaseId}/sprint`)
+		.set('Cookie', [`user-auth=${sessionToken}`])
+		.send(body)
+		.expect(200)
+		.then((res) => {
+			expect(res.body).toBeDefined();
+			expect(res.body.id).toBeDefined();
+			sprint2Id = res.body.id;
+			expect(res.body.startDate).toBeDefined();
+		});
+		const body2 = {"sprintNumber": 3, "startDate": "03/25/2023", "endDate": "03/26/2023", "goal": "New new new sprint goal"}
+		await request(app)
+		.post(`/api/release/${releaseId}/sprint`)
+		.set('Cookie', [`user-auth=${sessionToken}`])
+		.send(body2)
+		.expect(200)
+		.then((res) => {
+			expect(res.body).toBeDefined();
+			expect(res.body.id).toBeDefined();
+			sprint3Id = res.body.id;
+			expect(res.body.startDate).toBeDefined();
+		});
+	});
+
+	test("The order of sprints is ascending when getting sprints", async () => {
+		await request(app)
+		.get(`/api/release/${releaseId}/sprints`)
+		.set('Cookie', [`user-auth=${sessionToken}`])
+		.expect(200)
+		.then((res) => {
+			expect(res.body).toBeDefined();
+			expect(res.body[0].id).toBe(sprintId);
+			expect(res.body[1].id).toBe(sprint2Id);
+			expect(res.body[2].id).toBe(sprint3Id);
+		});
+	});
+
+	test("Reorder sprints to be 3, 1, 2", async () => {
+		await request(app)
+		.post(`/api/release/${releaseId}/reorder`)
+		.set('Cookie', [`user-auth=${sessionToken}`])
+		.send({
+			sprintStartIndex: 2,
+            sprintEndIndex: 0
+		})
+		.expect(200)
+		.then((res) => {
+			expect(res.body).toBeDefined();
+			expect(res.body[0].id).toBe(sprint3Id);
+			expect(res.body[0].sprintNumber).toBe(1);
+			expect(res.body[1].id).toBe(sprintId);
+			expect(res.body[1].sprintNumber).toBe(2);
+			expect(res.body[2].id).toBe(sprint2Id);
+			expect(res.body[2].sprintNumber).toBe(3);
+		});
+	});
+
+	test("The new order of sprints is saved", async () => {
+		await request(app)
+		.get(`/api/release/${releaseId}/sprints`)
+		.set('Cookie', [`user-auth=${sessionToken}`])
+		.expect(200)
+		.then((res) => {
+			expect(res.body).toBeDefined();
+			expect(res.body.length).toBe(3)
+			expect(res.body[0].id).toBe(sprint3Id);
+			expect(res.body[0].sprintNumber).toBe(1);
+			expect(res.body[1].id).toBe(sprintId);
+			expect(res.body[1].sprintNumber).toBe(2);
+			expect(res.body[2].id).toBe(sprint2Id);
+			expect(res.body[2].sprintNumber).toBe(3);
+		});
+	});
+
+	test("Sprints still have relation to the release", async () => {
+		await request(app)
+		.get(`/api/sprint/${sprintId}`)
+		.set('Cookie', [`user-auth=${sessionToken}`])
+		.expect(200)
+		.then((res) => {
+			expect(res.body).toBeDefined();
+			expect(res.body.id).toBe(sprintId);
+			expect(res.body.sprintNumber).toBe(2);
+			expect(res.body.release.id).toBe(releaseId);
+		});
+	});
+
+	test("Deleting a middle sprint so its just 3 2", async () => {
+		await request(app)
+		.delete(`/api/sprint/${sprintId}`)
+		.set('Cookie', [`user-auth=${sessionToken}`])
+		.expect(200)
+		.then((res) => {
+			expect(res.body).toBeDefined();
+			expect(res.body.length).toBe(2);
+			expect(res.body[0].id).toBe(sprint3Id);
+			expect(res.body[1].id).toBe(sprint2Id);
+		});
+	});
+
+	test("The sprint is also missing from the release", async () => {
+		await request(app)
+		.get(`/api/release/${releaseId}/sprints`)
+		.set('Cookie', [`user-auth=${sessionToken}`])
+		.expect(200)
+		.then((res) => {
+			expect(res.body).toBeDefined();
+			expect(res.body.length).toBe(2)
+			expect(res.body[0].id).toBe(sprint3Id);
+			expect(res.body[0].sprintNumber).toBe(1);
+			expect(res.body[1].id).toBe(sprint2Id);
+			expect(res.body[1].sprintNumber).toBe(2);
+		});
+	});
+
+	test('Adding new story to sprint', async () => {
+		const body = {
+			"userTypes": "any user",
+			"functionalityDescription": "backlog item",
+			"reasoning": "why not",
+			"acceptanceCriteria": "complete task",
+			"storyPoints": 10,
+			"priority": 4}
+		await request(app)
+		.post(`/api/sprint/${sprint3Id}`)
+		.set('Cookie', [`user-auth=${sessionToken}`])
+		.send(body)
+		.expect(200)
+		.then((res) => {
+			expect(res.body).toBeDefined();
+			expect(res.body.id).toBeDefined();
+			backlogId = res.body.id;
+		});
+	});
+
+	test('Copy Release Plan and sprints and sprint stories', async () => {
+		await request(app)
+		.post(`/api/release/${releaseId}/copy`)
+		.set('Cookie', [`user-auth=${sessionToken}`])
+		.expect(200)
+		.then((res) => {
+			expect(res.body).toBeDefined();
+			expect(res.body.revision).toBeDefined();
+			expect(res.body.revision).toBe(1);
+			expect(res.body.goalStatement).toBeDefined();
+			expect(res.body.sprints).toBeDefined();
+			expect(res.body.sprints.length).toBe(2);
+			expect(res.body.sprints[0].todos).toBeDefined();
+			expect(res.body.sprints[0].todos.length).toBe(1);
+		});
+	});
+
+	test("Can delete a sprint with a story", async () => {
+		await request(app)
+		.delete(`/api/sprint/${sprint3Id}`)
+		.set('Cookie', [`user-auth=${sessionToken}`])
+		.expect(200)
+		.then((res) => {
+			expect(res.body).toBeDefined();
+			expect(res.body.length).toBe(1);
+			expect(res.body[0].id).toBe(sprint2Id);
+		});
+	});
+
+	test("The story from the deleted sprint is in the backlog", async () => {
+		await request(app)
+		.get(`/api/release/${releaseId}/backlog`)
+		.set('Cookie', [`user-auth=${sessionToken}`])
+		.expect(200)
+		.then((res) => {
+			expect(res.body).toBeDefined();
+			expect(res.body.backlog.length).toBe(1)
+			expect(res.body.backlog[0].id).toBe(backlogId)
+		});
+	});
+
+	test('Copy Release Plan and sprints and backlog', async () => {
+		await request(app)
+		.post(`/api/release/${releaseId}/copy`)
+		.set('Cookie', [`user-auth=${sessionToken}`])
+		.expect(200)
+		.then((res) => {
+			expect(res.body).toBeDefined();
+			expect(res.body.revision).toBeDefined();
+			expect(res.body.revision).toBe(2);
+			expect(res.body.goalStatement).toBeDefined();
+			expect(res.body.sprints).toBeDefined();
+			expect(res.body.sprints.length).toBe(1);
+			expect(res.body.backlog).toBeDefined();
+			expect(res.body.backlog.length).toBe(1);
+		});
+	});
+
 });

@@ -1,5 +1,4 @@
-import React, { useState, useEffect, useCallback, Component } from 'react';
-import { useLocation } from "react-router-dom"
+import React, { useState, useEffect } from 'react';
 import { Typography, Button, Box, Paper } from '@mui/material';
 import { List, ListItem, ListItemText } from '@mui/material';
 import { Grid, Input, Divider, Card, CardContent, IconButton } from '@mui/material';
@@ -9,6 +8,8 @@ import Sidebar from '../Components/Sidebar';
 import ButtonBar from '../Components/ButtonBar';
 import ContentBox from '../Components/ContentBox';
 import Sprint from '../Components/Sprint';
+import { Dialog, DialogTitle, DialogContent, DialogActions, TextField, Select, MenuItem, FormControl, InputLabel } from '@mui/material';
+import DragList from '../Components/DragList';
 
 
 const ReleasePlan = () => {
@@ -30,8 +31,17 @@ const ReleasePlan = () => {
     setSprints(prevSprints => [...prevSprints, newSprints])
   }
   
-  
-  const projectId = 1;
+  const [sprints, setSprints] = useState([]);
+  const [open, setOpen] = useState(true);
+  const [problemStatement, setProblem] = useState("");
+  const [highLevelGoals, setGoals] = useState("");
+  const [releaseId, setId] = useState(1);
+  const [backlogItems, setBacklogItems] = useState([]);
+  const [newBacklogType, setNewBacklogType] = useState('story');
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [newBacklogDescription, setNewBacklogDescription] = useState('');
+
+	const projectId = 1;
 	
 	function fetchMostRecentRelease(projectId, setProblem, setGoals, setId) {
 		console.log("about to most recent release")
@@ -40,7 +50,7 @@ const ReleasePlan = () => {
 			credentials:'include'
 		  }
 		fetch(`http://localhost:8080/api/project/${projectId}/recentRelease`, options).then((result)=>{
-			if(result.status == 200){
+			if(result.status === 200){
 				console.log(result)
 			}
 			result.json().then((response)=>{
@@ -59,7 +69,7 @@ const ReleasePlan = () => {
 			credentials:'include'
 		  }
 		fetch(`http://localhost:8080/api/release/${releaseId}`, options).then((result)=>{
-			if(result.status == 200){
+			if(result.status === 200){
 				console.log(result)
 			}
 			result.json().then((response)=>{
@@ -102,10 +112,20 @@ const ReleasePlan = () => {
 
   }
 
-  const [open, setOpen] = useState(true);
-  const [problemStatement, setProblem] = useState("");
-  const [highLevelGoals, setGoals] = useState("");
-  const [releaseId, setId] = useState(1);
+  function fetchSprints(releaseId) {
+		var options = {
+			method:'get',
+			credentials:'include'
+		  }
+		fetch(`http://localhost:8080/api/release/${releaseId}/sprints`, options).then((result)=>{
+			if(result.status === 200){
+				result.json().then((response)=>{
+					setSprints(response)});
+			} else {
+				setSprints([]);
+			}
+			});
+  }
 
   //variables for the creating sprints (post).
   const [sprintNumber, setSprintNumber] = useState("");
@@ -118,40 +138,52 @@ const ReleasePlan = () => {
   }, []);
 
   useEffect(() => {
-	fetchRelease(releaseId, setProblem, setGoals);
+    fetchRelease(releaseId, setProblem, setGoals);
+    fetchSprints(releaseId)
   }, [releaseId]);
 
   const toggleDrawer = () => {
     setOpen(!open);
   };
 
-  const [backlogItems, setBacklogItems] = useState([]);
-
   const addBacklogItem = () => {
-    const newBacklogItems = [...backlogItems, { description: '' }];
-    setBacklogItems(newBacklogItems);
+    setDialogOpen(true); // This triggers the dialog to open
   };
+
+  const handleAddBacklogItem = () => {
+    const newBacklogItems = [...backlogItems, { type: newBacklogType, description: newBacklogDescription }];
+    setBacklogItems(newBacklogItems);
+    setDialogOpen(false); // Close the dialog
+    setNewBacklogDescription(''); // Reset for the next item
+    setNewBacklogType('story'); // Reset the type for the next item
+  };
+
+  //data for sanity check
+  const barData = [
+    {pointsCompleted: 20 },
+    {pointsCompleted: 30 },
+    {pointsCompleted: 40 },
+    {pointsCompleted: 35 },
+    {pointsCompleted: 45 },
+  ];
 
   // TODO: update Placeholder functions/variables with actual data
   const sprintPlanClick = () => console.log('Clicked Sprint Plan');
   const scrumBoardClick = () => console.log('Clicked Scrum Board');
   const burnupChartClick = () => console.log('Clicked Burnup Chart');
   const allSprintsClick = () => console.log('Clicked All Sprints');
+  
   const revisionsClick = (newReleaseId) => {
     setId(newReleaseId);
   };
-  const userStoryText = `As a student I want to be able to reset my password 
-    in case I forget so that I do not lost access to all my account and data.`
-  const allUserStories = [userStoryText, userStoryText, "add testing", userStoryText];	
-		
+
   return (
     <Grid container spacing={2}>
       {/* Revision Sidebar */}
       <Grid item xs={open ? 2 : 'auto'}>
-        {/* TODO: replace the revisions */}
-        <Sidebar 
-          open={open} 
-          toggleDrawer={toggleDrawer} 
+        <Sidebar
+          open={open}
+          toggleDrawer={toggleDrawer}
           title={'Revisions'}
           items={[]}
           itemClick={revisionsClick}
@@ -178,8 +210,8 @@ const ReleasePlan = () => {
           display="flex"
           justifyContent={'flex-start'}
         >
-          {/* Handle Button Clicks */}
-          <ButtonBar 
+          {/* TODO: Handle Button Clicks */}
+          <ButtonBar
             text1={'Sprint Plan'}
             text2={'Scrum Board'}
             text3={'Burnup Chart'}
@@ -190,10 +222,10 @@ const ReleasePlan = () => {
             text4Click={allSprintsClick}
           />
         </Box>
-        
-        <Divider 
+
+        <Divider
           sx={{
-            margin: '20px 0px', 
+            margin: '20px 0px',
             backgroundColor: 'rgba(0, 0, 0, 0.5)',
             height: '1.5px'
           }}
@@ -218,7 +250,7 @@ const ReleasePlan = () => {
         >
           v1.0.0
         </Typography>
-        
+
         {/* Problem Statement */}
         {/* TODO: replace problem statement */}
         <ContentBox title={'Problem Statement'} content={problemStatement} />
@@ -226,12 +258,12 @@ const ReleasePlan = () => {
         {/* High Level Goals */}
         {/* TODO: high level goals */}
         <ContentBox title={'High Level Goals'} content={highLevelGoals} />
-        
+
         <Grid container spacing={2}>
           {/* Sprints */}
           <Grid item xs={9}>
             <Typography
-              marginLeft={2}
+              marginLeft={4}
               textAlign="left"
               fontWeight="bold"
               fontSize={14}
@@ -244,12 +276,11 @@ const ReleasePlan = () => {
                 <AddCircleOutlineIcon fontSize="small"/>
               </IconButton>
             </Typography>
-
-            
-            {sprints.map((sprint, index) =>(
-              <div key={index}>{sprint}</div>
-            ))}
-        
+//             {sprints.map((sprint, index) =>(
+//               <div key={index}>{sprint}</div>
+//             ))}
+            <DragList marginLeft={2} items={sprints} setItems={setSprints} releaseId={releaseId}/>
+            {/* {sprints != [] ? <DragList items={sprints} setItems={setSprints}/>: ''} */}
           </Grid>
 
           <Grid item xs={3}>
@@ -265,7 +296,7 @@ const ReleasePlan = () => {
 
             <Paper
               sx={{
-                maxWidth: '90%',
+                // maxWidth: '90%',
                 marginLeft: 2,
                 backgroundColor: 'lightgray',
               }}
@@ -304,7 +335,8 @@ const ReleasePlan = () => {
               <Button
                 variant="contained"
                 onClick={addBacklogItem}
-                sx={{bgcolor: 'grey',
+                sx={{
+                  bgcolor: 'grey',
                     '&:hover': {
                       bgcolor: 'darkgrey', // Background color on hover
                     },
@@ -315,7 +347,69 @@ const ReleasePlan = () => {
             </Paper>
           </Grid>
         </Grid>
+
+        {/* Sanity Checks */}
+        <Typography variant="h5" align="left" fontWeight="bold" fontSize={14} gutterBottom>
+          Sanity Check
+        </Typography>
+        <Grid container spacing={2}>
+          <Grid item xs={6}>
+            <Paper elevation={3} style={{ padding: '20px', marginTop: '20px' }}>
+              <Box display="flex" flexDirection="column" alignItems="flex-start">
+                {barData.map((data, index) => (
+                  <Box key={index} display="flex" alignItems="center" marginBottom={1}>
+                    <Box width={data.pointsCompleted * 5} height={30} bgcolor="darkgrey" />
+                    <Typography marginLeft={2} variant="body2">
+                      {data.pointsCompleted}
+                    </Typography>
+                  </Box>
+                ))}
+              </Box>
+            </Paper>
+          </Grid>
+
+          <Grid item xs={6}> 
+            <Paper elevation={3} style={{ padding: '20px', marginTop: '20px', backgroundColor: 'lightgray', height: '200px' }}>
+              <Typography variant="body1" align="left">
+                Yes we can do it because no sprint looks like too much work. Lorem ipsum dolor sit amet …
+              </Typography>
+            </Paper>
+          </Grid>
+        </Grid>
       </Grid>
+      <Dialog open={dialogOpen} onClose={() => setDialogOpen(false)}>
+        <DialogTitle>Add New</DialogTitle>
+        <DialogContent>
+          <FormControl fullWidth margin="normal">
+            <InputLabel>Type</InputLabel>
+            <Select
+              value={newBacklogType}
+              label="Type"
+              onChange={(e) => setNewBacklogType(e.target.value)}
+            >
+              <MenuItem value="story">Story</MenuItem>
+              <MenuItem value="spike">Spike</MenuItem>
+              <MenuItem value="infrastructure">Infrastructure</MenuItem>
+            </Select>
+          </FormControl>
+          <TextField
+            margin="dense"
+            id="description"
+            label="As a user..."
+            type="text"
+            fullWidth
+            multiline
+            rows={4}
+            variant="outlined"
+            value={newBacklogDescription}
+            onChange={(e) => setNewBacklogDescription(e.target.value)}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setDialogOpen(false)}>Cancel</Button>
+          <Button onClick={handleAddBacklogItem}>Add Item</Button>
+        </DialogActions>
+      </Dialog>
     </Grid>
   );
 };

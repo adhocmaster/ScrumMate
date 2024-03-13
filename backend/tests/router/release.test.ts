@@ -1,5 +1,6 @@
 import express from 'express';
-import { AppDataSource, Database } from '../../src/data-source';
+import { AppDataSource } from '../../src/data-source';
+import { Database } from '../../src/db/database';
 import { Release } from "../../src/entity/release"
 import request from 'supertest'
 import router from '../../src/router/index';
@@ -165,19 +166,4 @@ describe("Release API tests", () => {
 	});
   });
 
-//   test('Copy Release Plan', async () => {
-// 	const body = {"goalStatement": "release EDITEd"}
-//     await request(app)
-//     .post(`/api/project/${projectId}/release`)
-// 	.set('Cookie', [`user-auth=${sessionToken}`])
-// 	.send(body)
-// 	.expect(200)
-// 	.then((res) => {
-// 		expect(res.body).toBeDefined();
-// 		expect(res.body.revision).toBeDefined();
-// 		expect(res.body.goalStatement).toBeDefined();
-// 		expect(res.body.goalStatement).toEqual("release EDITEd");
-// 		console.log(res.body);
-// 	});
-//   })
 });

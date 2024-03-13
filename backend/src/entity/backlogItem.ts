@@ -51,6 +51,10 @@ export class BacklogItem {
     removeAssignee(user: User): void {
         this.assignees = removeMaybeUndefined(user, this.assignees);
     }
+	copy(backlogItem: BacklogItem): void {
+		this.createdDate = backlogItem.createdDate;
+		this.updatedDate = backlogItem.updatedDate;
+	}
 }
 
 // How to handle these? display them in anything?
@@ -117,7 +121,15 @@ export class Story extends BacklogItem {
     removeTask(task: Task): void {
         this.tasks = removeMaybeUndefined(task, this.tasks);
     }
-
+	copy(story: Story): void {
+		super.copy(story);
+		this.userTypes = story.userTypes;
+		this.functionalityDescription = story.functionalityDescription;
+		this.reasoning = story.reasoning;
+		this.acceptanceCriteria = story.acceptanceCriteria;
+		this.storyPoints = story.storyPoints;
+		this.priority = story.priority;
+	}
 }
 
 @ChildEntity()
