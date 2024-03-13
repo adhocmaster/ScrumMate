@@ -15,7 +15,7 @@ const ReleasePlan = () => {
 	
   const [sprints, setSprints] = useState([]);
 
-  const addSprints = () =>{
+  const addSprints = (sprintsnum) =>{
 
     const sprintsNum = sprints.length+1;
 
@@ -72,8 +72,8 @@ const ReleasePlan = () => {
 
   function createNewSprints(e) {
     e.preventDefault();
-    const sprintNum = sprintsNumber
-    addSprints();
+    const sprintNum = sprintNumber
+    addSprints(sprintNum);
     var options = {
       method: 'POST',
       credentials: 'include',
