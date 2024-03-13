@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Typography, Box } from '@mui/material';
 import { Grid, Divider } from '@mui/material';
+import {IconButton} from '@mui/material';
+import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
+import Sprint from '../Components/ReleasePlan/Sprint';
 import Sidebar from '../Components/ReleasePlan/Sidebar';
 import ButtonBar from '../Components/ReleasePlan/ButtonBar';
 import ContentBox from '../Components/common/ContentBox';
@@ -10,6 +13,22 @@ import SanityCheckGraph from '../Components/ReleasePlan/SanityCheckGraph';
 import SanityCheckText from '../Components/ReleasePlan/SanityCheckText';
 
 const ReleasePlan = () => {
+
+
+  const addSprints = (sprintsnum) =>{
+
+    const sprintsNum = sprints.length+1;
+
+    const newSprints = <Sprint
+    sprintValue = {sprintsnum}
+    value = {sprintNumber}
+    onChange={(e) => setSprintNumber(e.target.value)} 
+    key={sprints.length}/>
+    
+    
+    setSprints(prevSprints => [...prevSprints, newSprints])
+  }
+
   const [sprints, setSprints] = useState([]);
   const [open, setOpen] = useState(true);
   const [problemStatement, setProblem] = useState("");
@@ -69,6 +88,37 @@ const ReleasePlan = () => {
 			}
     });
   }
+
+  function createNewSprints(e) {
+    e.preventDefault();
+    const sprintNum = sprintNumber
+    addSprints(sprintNum);
+    var options = {
+      method: 'POST',
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(sprintNum) //sends value to the backend.
+    };
+  
+    fetch(`http://localhost:8080/api/release/${releaseId}/sprint`, options)
+      .then((result) => {
+        if (result.status === 200) {
+          console.log(result);
+        }
+        return result.json();
+      })
+      .then((response) => {
+        console.log(response);
+      })
+      .catch((error) => {
+        console.error('Error:', error);
+      });
+  }
+
+  const [sprintNumber, setSprintNumber] = useState("");
+
 
   useEffect(() => {
     fetchMostRecentRelease(1, setProblem, setGoals, setId);
@@ -168,7 +218,24 @@ const ReleasePlan = () => {
               fontSize={14}
             >
               Sprints
+
+              
+              <IconButton 
+              sx={{ 
+              marginBottom: "3px" }}
+              onClick={createNewSprints}>
+                <AddCircleOutlineIcon fontSize="small"/>
+              </IconButton>
             </Typography>
+
+
+            
+            {sprints.map((sprint, index) =>(
+              <div key={index}>{sprint}</div>
+            ))}
+        
+
+
 
             <DragList marginLeft={2} items={sprints} setItems={setSprints} releaseId={releaseId}/>
             {/* {sprints != [] ? <DragList items={sprints} setItems={setSprints}/>: ''} */}
