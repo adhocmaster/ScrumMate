@@ -192,7 +192,6 @@ const ReleasePlan = () => {
         >
           v1.0.0
         </Typography>
-
         {/* Problem Statement
         {/* TODO: replace problem statement */}
         {/* <ContentBox title={'Problem Statement'} content={problemStatement} /> */}
