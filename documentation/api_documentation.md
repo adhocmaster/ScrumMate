@@ -5,35 +5,47 @@
  - [Release](#release)
  - [User](#user)
  - [Sprint](#sprint)
- - [Backlog Item](#backlog_item))
+ - [BacklogItem](#backlogitem))
  - [Role](#role)
 
 ## Project
+  ### Create Project
+  
   POST: /project
   
     Body: { userId: number, name: string}
 
+
+  ### Join Project
   POST: /project/:userId/joinProject/:projectId
 
     Body: {}
 
+
+  ### Edit Project
   PATCH: /project/:projectId
 
     Body: {name: string}
-    
+
+  ### Get Project Releases
   GET: /project/:projectId/releases
 
     Body: {}
-    
+
+
+  ### Get Recent Project Release
   GET: /project/:projectId/recentRelease
 
     Body: {}
 
+  ### Get Project Name
   GET: /project/:projectId/getName
   
     Body: {}
     
 ## Release
+
+  ### Create Release
   POST: /project/:projectId/release
 
     Body: {
@@ -42,7 +54,8 @@
      problemStatement?: string,
      goalStatement?: string,
     }
-
+    
+  ### Edit Release
   POST: /release/:releaseId/edit
 
     Body: {
@@ -51,19 +64,24 @@
      goalStatement?: string
     }
 
+  ### Copy Release
   POST: /release/:releaseId/copy
 
     Body: {}
 
+  ### Get Release
   GET: /release/:releaseId
 
     Body: {}
 
+  ### Get Release Backlog
   GET: /release/:releaseId/backlog
 
     Body: {}
 
 ## User
+
+  ### Create User
   POST: /user/create
 
     Body: {
@@ -72,24 +90,29 @@
       password: string
     }
 
+  ### Login
   POST: /user/login
 
     Body: {
      email: string, 
      password: string
     }
-    
+
+  ### Edit User Credentials
   POST: /user/edit
 
     Body: {
      Todo
     }
-    
+
+  ### Get User Projects
   GET: /user/projects
   
     Body: {}
 
 ## Sprint
+
+  ### Create Sprint
   POST: /release/:releaseId/sprint
 
     Body: {
@@ -98,7 +121,8 @@
       endDate: Date,
       goal: string
     }
-
+    
+  ### Edit Sprint
   POST: /sprint/:sprintId/edit
   
     Body: {
@@ -107,27 +131,33 @@
         endDate?: Date,
         goal?: string
       }
-
+      
+ ### Get Release Sprints
   GET: /release/:releaseId/sprints
 
     Body: {}
-    
+
+  ### Get Sprint
   GET: /sprint/:sprintId
 
     Body: {}
-    
+
+  ### Reorder Sprints
   POST: /release/:releaseId/reorder
   
     Body: {
       sprintStartIndex: number,
       sprintEndIndex: number
     }
-    
+
+  ### Delete Sprints
   DELETE: /sprint/:sprintId
 
     Body: {}
 
-## Backlog Item
+## BacklogItem
+
+  ### Create Backlog Item
   POST: /sprint/:sprintId
   
     Body: {
@@ -140,6 +170,7 @@
       priority: Priority
     }
 
+  ### Edit Backlog Item
   POST: /sprint/:sprintId/story/edit
 
   Body: {
@@ -154,14 +185,16 @@
 
 ## Role
 
-POST: /user/:userId/sprint/:sprintId
-
-  Body: {
-    role: string
-  }
+  ### Create User Role
+  POST: /user/:userId/sprint/:sprintId
   
-POST: /role/:roleId/edit/:userId
-
- Body: {
-    role?: string
-  }
+    Body: {
+      role: string
+    }
+  
+  ### Edit User Role
+  POST: /role/:roleId/edit/:userId
+  
+    Body: {
+       role?: string
+     }
