@@ -11,7 +11,7 @@ const SanityCheckGraph = () => {
     ];
 
   return (
-    <Paper elevation={3} style={{ padding: '20px', marginTop: '20px' }}>
+    <Paper elevation={3} style={{ padding: '20px' }}>
       <Box display="flex" flexDirection="column" alignItems="flex-start">
         {barData.map((data, index) => (
           <Box key={index} display="flex" alignItems="center" marginBottom={1}>

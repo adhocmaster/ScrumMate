@@ -162,7 +162,7 @@ const ReleasePlan = () => {
           {/* Sprints */}
           <Grid item xs={9}>
             <Typography
-              marginLeft={4}
+              marginLeft={2}
               textAlign="left"
               fontWeight="bold"
               fontSize={14}
@@ -181,17 +181,25 @@ const ReleasePlan = () => {
         </Grid>
 
         {/* Sanity Check */}
-        <Typography variant="h5" align="left" fontWeight="bold" gutterBottom>
+        <Typography 
+          variant="h5"
+          fontWeight="bold" 
+          gutterBottom
+          fontSize={14} 
+          textAlign="left"
+          marginLeft={2} 
+          marginTop={2}
+        >
           Sanity Check
         </Typography>
 
         <Grid container spacing={2}>
           {/* Sanity Check Graph */}
-          <Grid item xs={12} sm={4}>
+          <Grid item xs={6}>
             <SanityCheckGraph />
           </Grid>
 
-          <Grid item xs={12} sm={7}> 
+          <Grid item xs={6}> 
             <SanityCheckText 
               text={'Yes we can do it because no sprint looks like too much work. Lorem ipsum dolor sit amet …'}
             />

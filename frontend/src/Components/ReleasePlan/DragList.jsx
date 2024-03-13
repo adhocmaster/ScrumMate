@@ -72,7 +72,7 @@ export default function DragList({items, setItems, releaseId}) {
 					<div
 						{...provided.droppableProps}
 						ref={provided.innerRef}
-						style={getListStyle(snapshot.isDraggingOver)}
+						// style={getListStyle(snapshot.isDraggingOver)}
 					>
 						{items.map((item, index) => (
 							<Draggable key={index} draggableId={`here: ${index}`} index={index}>

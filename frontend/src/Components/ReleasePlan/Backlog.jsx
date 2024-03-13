@@ -50,59 +50,59 @@ const Backlog = () => {
 
       <Paper
         sx={{
-          maxWidth: '90%',
+          // maxWidth: '90%',
           marginLeft: 2,
           backgroundColor: 'lightgray',
         }}
       >
         <List>
-        {backlogItems.map((item, index) => (
-          <ListItem key={index}>
-            <Card
-              sx={{
-                marginBottom: 1,
-              }}
-            >
-              <CardContent>
-                <Typography
-                  variant="body1"
-                  fontSize={14}
-                >
-                  <Input
-                    type="text"
-                    value={item.description}
-                    onChange={(e) => {
-                      const newBacklogItems = [...backlogItems];
-                      newBacklogItems[index].description = e.target.value;
-                      setBacklogItems(newBacklogItems);
-                    }}
-                    placeholder="Enter backlog item"
-                    style={{ border: 'none', width: '100%', padding: '4px' }}
-                  />
-                </Typography>
-              </CardContent>
-            </Card>
-          </ListItem>
-        ))}
-      </List>
+          {backlogItems.map((item, index) => (
+            <ListItem key={index}>
+              <Card
+                sx={{
+                  marginBottom: 1,
+                }}
+              >
+                <CardContent>
+                  <Typography
+                    variant="body1"
+                    fontSize={14}
+                  >
+                    <Input
+                      type="text"
+                      value={item.description}
+                      onChange={(e) => {
+                        const newBacklogItems = [...backlogItems];
+                        newBacklogItems[index].description = e.target.value;
+                        setBacklogItems(newBacklogItems);
+                      }}
+                      placeholder="Enter backlog item"
+                      style={{ border: 'none', width: '100%', padding: '4px' }}
+                    />
+                  </Typography>
+                </CardContent>
+              </Card>
+            </ListItem>
+          ))}
+        </List>
 
-      {/* Button to add new backlog item */}
-      <Button
-        variant="contained"
-        onClick={addBacklogItem}
-        sx={{
-          bgcolor: 'grey',
-            '&:hover': {
-              bgcolor: 'darkgrey', // Background color on hover
-            },
-          }}
-        >
-        Add Backlog Item +
-      </Button>
-    </Paper>
+        {/* Button to add new backlog item */}
+        <Button
+          variant="contained"
+          onClick={addBacklogItem}
+          sx={{
+            bgcolor: 'grey',
+              '&:hover': {
+                bgcolor: 'darkgrey', // Background color on hover
+              },
+            }}
+          >
+          Add Backlog Item +
+        </Button>
+      </Paper>
 
-    {/* Dialog to add new backlog item */}
-    <Dialog open={dialogOpen} onClose={() => setDialogOpen(false)}>
+      {/* Dialog to add new backlog item */}
+      <Dialog open={dialogOpen} onClose={() => setDialogOpen(false)}>
         <DialogTitle>Add New</DialogTitle>
         <DialogContent>
           <FormControl fullWidth margin="normal">

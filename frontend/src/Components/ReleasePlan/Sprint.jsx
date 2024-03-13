@@ -73,7 +73,7 @@ const Sprint = ({index, items, setItems, userStories}) => {
             <Divider 
               orientation='vertical'
               sx={{
-                marginTop: '16px',
+                marginTop: '10px',
                 marginLeft: '12px', 
                 backgroundColor: 'rgba(0, 0, 0, 0.5)',
                 width: '1.5px',
