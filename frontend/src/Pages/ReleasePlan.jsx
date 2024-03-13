@@ -112,7 +112,6 @@ const ReleasePlan = () => {
   }
 
   const [open, setOpen] = useState(true);
-  const [problemStatement, setProblem] = useState("");
   const [highLevelGoals, setGoals] = useState("");
   const [releaseId, setId] = useState(1);
   function fetchSprints(releaseId) {
