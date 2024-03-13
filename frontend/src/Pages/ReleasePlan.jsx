@@ -162,7 +162,7 @@ const ReleasePlan = () => {
           {/* Sprints */}
           <Grid item xs={9}>
             <Typography
-              marginLeft={2}
+              marginLeft={4}
               textAlign="left"
               fontWeight="bold"
               fontSize={14}

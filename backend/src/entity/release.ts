@@ -54,12 +54,12 @@ export class Release {
 	removeFromBacklog(backlogItem: BacklogItem): void {
 		this.backlog = removeMaybeUndefined(backlogItem, this.backlog)
 	}
-  copy(release: Release): void {
-    this.revision = release.revision;
-    this.problemStatement = release.problemStatement;
-    this.goalStatement = release.goalStatement;
-    this.revisionDate = release.revisionDate;
-    this.project = release.project;
-  }
+	copy(release: Release): void {
+		this.revision = release.revision;
+		this.problemStatement = release.problemStatement;
+		this.goalStatement = release.goalStatement;
+		this.revisionDate = release.revisionDate;
+		this.project = release.project;
+	}
 	
 }

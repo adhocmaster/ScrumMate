@@ -4,8 +4,6 @@ import { Database } from '../../src/db/database';
 import { Release } from "../../src/entity/release"
 import request from 'supertest'
 // import { newReleaseRouter } from '../src/router/release';
-import user from '../../src/router/user';
-import project from '../../src/router/project';
 import router from '../../src/router/index';
 import { User } from '../../src/entity/User';
 import { Project } from '../../src/entity/project';
