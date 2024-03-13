@@ -173,15 +173,15 @@
   ### Edit Backlog Item
   POST: /sprint/:sprintId/story/edit
   
-   Body: {
-       sprintId?: number,
-       userTypes?: string,
-       functionalityDescription?: string, 
-       reasoning?: string,
-       acceptanceCriteria?: string,
-       storyPoints?: number,
-       priority?: Priority
-     }
+    Body: {
+      sprintId?: number,
+      userTypes?: string,
+      functionalityDescription?: string, 
+      reasoning?: string,
+      acceptanceCriteria?: string,
+      storyPoints?: number,
+      priority?: Priority
+    }
 
 ## Role
 
