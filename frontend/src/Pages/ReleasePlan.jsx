@@ -20,7 +20,6 @@ const ReleasePlan = () => {
     const sprintsNum = sprints.length+1;
 
     const newSprints = <Sprint
-    userStories = {allUserStories} 
     sprintValue = {sprintsnum}
     value = {sprintNumber}
     onChange={(e) => setSprintNumber(e.target.value)} 
