@@ -14,21 +14,6 @@ import SanityCheckText from '../Components/ReleasePlan/SanityCheckText';
 
 const ReleasePlan = () => {
 
-
-  /*const addSprints = (i) =>{
-
-    const sprintsNum = sprints.length+1;
-
-    const newSprints = <Sprint
-    sprintValue = {i}
-    value = {sprintNumber}
-    onChange={(e) => setSprintNumber(e.target.value)} 
-    key={sprints.length}/>
-    
-    
-    setSprints(prevSprints => [...prevSprints, newSprints])
-  }*/
-
   const [sprints, setSprints] = useState([]);
   const [open, setOpen] = useState(true);
   const [problemStatement, setProblem] = useState("");
@@ -91,7 +76,6 @@ const ReleasePlan = () => {
 
   function createNewSprints() {
 	console.log("creating new")
-    //addSprints(sprintNumber);
     var options = {
       method: 'POST',
       credentials: 'include',
@@ -230,11 +214,7 @@ const ReleasePlan = () => {
             </Typography>
 
 
-            
-            {/* {sprints.map((sprint, index) =>(
-              <div key={index}>{sprint}</div>
-            ))}
-         */}
+        
 
 
 
