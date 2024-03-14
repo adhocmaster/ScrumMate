@@ -102,9 +102,6 @@ const ReleasePlan = () => {
       });
   }
 
-  const [sprintNumber, setSprintNumber] = useState("");
-
-
   useEffect(() => {
     fetchMostRecentRelease(1, setProblem, setGoals, setId);
   }, []);
