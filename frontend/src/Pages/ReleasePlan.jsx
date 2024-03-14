@@ -15,7 +15,7 @@ import SanityCheckText from '../Components/ReleasePlan/SanityCheckText';
 const ReleasePlan = () => {
 
 
-  const addSprints = (i) =>{
+  /*const addSprints = (i) =>{
 
     const sprintsNum = sprints.length+1;
 
@@ -27,7 +27,7 @@ const ReleasePlan = () => {
     
     
     setSprints(prevSprints => [...prevSprints, newSprints])
-  }
+  }*/
 
   const [sprints, setSprints] = useState([]);
   const [open, setOpen] = useState(true);
@@ -91,7 +91,7 @@ const ReleasePlan = () => {
 
   function createNewSprints(e) {
     e.preventDefault();
-    addSprints(sprintNumber);
+    //addSprints(sprintNumber);
     var options = {
       method: 'POST',
       credentials: 'include',
@@ -110,6 +110,7 @@ const ReleasePlan = () => {
       })
       .then((response) => {
         console.log(response);
+        setSprints(prevSprints => [...prevSprints, response])
       })
       .catch((error) => {
         console.error('Error:', error);
