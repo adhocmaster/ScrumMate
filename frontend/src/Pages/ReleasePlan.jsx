@@ -89,8 +89,8 @@ const ReleasePlan = () => {
     });
   }
 
-  function createNewSprints(e) {
-    e.preventDefault();
+  function createNewSprints() {
+	console.log("creating new")
     //addSprints(sprintNumber);
     var options = {
       method: 'POST',
@@ -98,7 +98,7 @@ const ReleasePlan = () => {
       headers: {
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify(sprintNumber) //sends value to the backend.
+      body: JSON.stringify({"sprintNumber" : sprints.length + 1})
     };
   
     fetch(`http://localhost:8080/api/release/${releaseId}/sprint`, options)
@@ -106,6 +106,7 @@ const ReleasePlan = () => {
         if (result.status === 200) {
           console.log(result);
         }
+		console.log(result)
         return result.json();
       })
       .then((response) => {
@@ -230,10 +231,10 @@ const ReleasePlan = () => {
 
 
             
-            {sprints.map((sprint, index) =>(
+            {/* {sprints.map((sprint, index) =>(
               <div key={index}>{sprint}</div>
             ))}
-        
+         */}
 
 
 
