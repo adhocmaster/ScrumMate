@@ -3,13 +3,13 @@ import { ModelRepository } from "./modelRepository";
 
 export class SprintRepository extends ModelRepository {
 
-	public async createNewSprint(releaseId: number, sprintNumber: number, startDate: Date, endDate: Date, goal: string): Promise<Sprint> {
+	public async createNewSprint(releaseId: number, sprintNumber: number, startDate?: Date, endDate?: Date, goal?: string): Promise<Sprint> {
 		const release = await this.releaseSource.lookupReleaseById(releaseId)
 		const newSprint = new Sprint()
 		newSprint.sprintNumber = sprintNumber
-		newSprint.startDate = startDate
-		newSprint.endDate = endDate
-		newSprint.goal = goal
+		newSprint.startDate = startDate ?? new Date()
+		newSprint.endDate = endDate ?? new Date()
+		newSprint.goal = goal ?? ""
 		newSprint.release = release
 		await this.sprintSource.save(newSprint)
 		return newSprint

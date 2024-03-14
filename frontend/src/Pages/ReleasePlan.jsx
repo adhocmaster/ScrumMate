@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Typography, Box } from '@mui/material';
 import { Grid, Divider } from '@mui/material';
+import {IconButton} from '@mui/material';
+import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
+import Sprint from '../Components/ReleasePlan/Sprint';
 import Sidebar from '../Components/ReleasePlan/Sidebar';
 import ButtonBar from '../Components/ReleasePlan/ButtonBar';
 import ContentBox from '../Components/common/ContentBox';
@@ -10,6 +13,7 @@ import SanityCheckGraph from '../Components/ReleasePlan/SanityCheckGraph';
 import SanityCheckText from '../Components/ReleasePlan/SanityCheckText';
 
 const ReleasePlan = () => {
+
   const [sprints, setSprints] = useState([]);
   const [open, setOpen] = useState(true);
   const [problemStatement, setProblem] = useState("");
@@ -68,6 +72,34 @@ const ReleasePlan = () => {
 				setSprints([]);
 			}
     });
+  }
+
+  function createNewSprints() {
+	console.log("creating new")
+    var options = {
+      method: 'POST',
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({"sprintNumber" : sprints.length + 1})
+    };
+  
+    fetch(`http://localhost:8080/api/release/${releaseId}/sprint`, options)
+      .then((result) => {
+        if (result.status === 200) {
+          console.log(result);
+        }
+		console.log(result)
+        return result.json();
+      })
+      .then((response) => {
+        console.log(response);
+        setSprints(prevSprints => [...prevSprints, response])
+      })
+      .catch((error) => {
+        console.error('Error:', error);
+      });
   }
 
   useEffect(() => {
@@ -168,7 +200,20 @@ const ReleasePlan = () => {
               fontSize={14}
             >
               Sprints
+
+              
+              <IconButton 
+              sx={{ 
+              marginBottom: "3px" }}
+              onClick={createNewSprints}>
+                <AddCircleOutlineIcon fontSize="small"/>
+              </IconButton>
             </Typography>
+
+
+        
+
+
 
             <DragList marginLeft={2} items={sprints} setItems={setSprints} releaseId={releaseId}/>
             {/* {sprints != [] ? <DragList items={sprints} setItems={setSprints}/>: ''} */}

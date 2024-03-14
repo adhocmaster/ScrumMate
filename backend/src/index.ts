@@ -16,6 +16,8 @@ const app = express();
 AppDataSource.initialize().then(async () => {
 	/// Initializing som basic information for the frontend
 	/// TEMPORARY CODE UNTIL THE SIGNIN AND PROJECT SELECTION PAGES ARE DONE
+	console.log('initializing system')
+
 	const db = Database.setAndGetInstance(AppDataSource)
 	// await db.deleteAll() // not working
 

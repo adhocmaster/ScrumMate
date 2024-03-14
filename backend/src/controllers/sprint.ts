@@ -11,7 +11,7 @@ export const createSprint = async(req: express.Request, res: express.Response) =
 		endDate,
 		goal,
 	} = req.body
-	if(!verifyParameters(sprintNumber, startDate, endDate, goal)) return res.sendStatus(400);	
+	if(!verifyParameters(sprintNumber)) return res.sendStatus(400);	
 	const newSprint = await db.getSprintRepository.createNewSprint(parseInt(releaseId), sprintNumber, startDate, endDate, goal)
 	return res.json(newSprint)
 };
