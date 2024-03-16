@@ -1,6 +1,10 @@
 name: 'coverage'
 
-on: [push, workflow_dispatch]
+on:
+    pull_request:
+        branches:
+            - master
+            - main
 
 env: 
   CI: false # to not treat warnings as failures
@@ -30,4 +34,4 @@ jobs:
               with:
                 working-directory: ./backend
                 test-script: npm test
-        
+                annotations: none
