@@ -1,8 +1,29 @@
 name: 'coverage'
+
 on: [push, workflow_dispatch]
+
+env: 
+  CI: false # to not treat warnings as failures
+
 jobs:
     coverage:
         runs-on: ubuntu-latest
+
+        services:
+          postgres:
+            image: postgres
+            env:
+              POSTGRES_PASSWORD: test
+              POSTGRES_USER: test
+              POSTGRES_DB: test
+            options: >-
+              --health-cmd pg_isready
+              --health-interval 10s
+              --health-timeout 5s
+              --health-retries 5
+            ports:
+              - 5432:5432
+
         steps:
             - uses: actions/checkout@v3
             - uses: ArtiomTr/jest-coverage-report-action@v2
