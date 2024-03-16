@@ -14,6 +14,7 @@ export enum Priority {
 @Entity()
 @TableInheritance({ column: { type: "varchar", name: "type" } })
 export class BacklogItem {
+	public name = "BacklogItem";
 
     @PrimaryGeneratedColumn()
     id: number
@@ -34,7 +35,7 @@ export class BacklogItem {
 	// this way if you edit it in the new one, we don't change it in the previous sprints
 	// also, work in a sprint should be completed within that sprint.
 	@ManyToOne(() => Sprint, (sprint) => sprint.todos)
-	sprint: Sprint // nullable in case it is just in the backlog
+	sprint: Sprint // nullable in case it is just in the backlog?
 
 	@ManyToMany(() => User, (user) => user.assignments)
 	@JoinTable()
@@ -62,6 +63,7 @@ export class BacklogItem {
 // Maybe just leave this alone for now... we will surely get a US for it soon
 @ChildEntity()
 export class Epic extends BacklogItem {
+	public name = "Epic";
 
 	@Column()
 	userTypes: string
@@ -75,10 +77,16 @@ export class Epic extends BacklogItem {
 	@OneToMany(() => Story, (story) => story.epic)
 	stories: Story[]
 
+	copy(epic: Epic): void {
+		this.userTypes = epic.userTypes;
+		this.functionalityDescription = epic.functionalityDescription;
+		this.reasoning = epic.reasoning;
+	}
 }
 
 @ChildEntity()
 export class Story extends BacklogItem {
+	public name = "Story";
 
 	@Column()
 	userTypes: string
@@ -134,6 +142,7 @@ export class Story extends BacklogItem {
 
 @ChildEntity()
 export class Task extends BacklogItem {
+	public name = "Task";
 
 	@Column()
     description: string
@@ -144,28 +153,44 @@ export class Task extends BacklogItem {
 	@ManyToOne(() => Story, (story) => story.tasks) // for tasks only
 	story: Story
 
+	copy(task: Task): void {
+		this.description = task.description;
+		this.idealHours = task.idealHours;
+	}
 }
 
 @ChildEntity()
 export class Spike extends BacklogItem {
+	public name = "Spike";
 
 	@Column()
 	description: string
 	
+	copy(spike: Spike): void {
+		this.description = spike.description;
+	}
 }
 
 @ChildEntity()
 export class Infrastructure extends BacklogItem {
+	public name = "Infrastructure";
 
 	@Column()
 	description: string
 
+	copy(infrastructure: Infrastructure): void {
+		this.description = infrastructure.description;
+	}
 }
 
 @ChildEntity()
 export class Bug extends BacklogItem {
+	public name = "Bug";
 
 	@Column()
 	description: string
 
+	copy(bug: Bug): void {
+		this.description = bug.description;
+	}
 }

@@ -1,7 +1,7 @@
 import { Sprint } from "../../entity/sprint";
 import { Release } from "../../entity/release";
 import { ModelRepository } from "./modelRepository";
-import { BacklogItem, Story } from "../../entity/backlogItem";
+import { BacklogItem, Bug, Epic, Infrastructure, Spike, Story, Task } from "../../entity/backlogItem";
 
 export class ReleaseRepository extends ModelRepository {
 
@@ -35,20 +35,20 @@ export class ReleaseRepository extends ModelRepository {
 	}
 
 	private async copyBacklogItems(sourceList: BacklogItem[], func: (arg0: BacklogItem) => any) {
-		// place in order so parents are later than children
-		// refactors so we dont need many if/else statements
-		const backlogItemTypes = [Story, BacklogItem];
+		const nameToConstructor = new Map<String, any>([
+			["Epic", Epic],
+			["Story", Story],
+			["Task", Task],
+			["Spike", Spike],
+			["Infrastructure", Infrastructure],
+			["Bug", Bug],
+			["BacklogItem", BacklogItem],
+		])
 		for (const backlogItem of sourceList) {
-			for (const backlogType of backlogItemTypes) {
-				if (backlogItem instanceof backlogType) {
-					const copy = new backlogType();
-					copy.copy(backlogItem);
-					await func(copy);
-					// BacklogItem will always be matched later
-					// also good for perfomance
-					break;
-				}
-			}
+			const backlogType = nameToConstructor.get(backlogItem.name);
+			const copy = new backlogType();
+			copy.copy(backlogItem);
+			await func(copy);
 		}
 	}
 
