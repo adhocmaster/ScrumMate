@@ -9,7 +9,7 @@ env:
   CI: false # to not treat warnings as failures
 
 jobs:
-  buildTest:
+  build:
 
     runs-on: ubuntu-latest
 
@@ -42,54 +42,6 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
-        working-directory: ./backend
-        test-script: npm test
-        skip-step: all
-    - run: npm ci
-    - run: npm install && (cd frontend && npm install) && (cd backend && npm install)
-    
-    - run: (cd backend && npm run build)
-    - run: (cd backend && npm test --watchAll)
-    
-    - run: (cd frontend && npm run build)
-    # - run: (cd frontend && npm test --watchAll)
-  
-  coverage:
-
-    runs-on: ubuntu-latest
-
-    services:
-      postgres:
-        image: postgres
-
-        env:
-          POSTGRES_PASSWORD: test
-          POSTGRES_USER: test
-          POSTGRES_DB: test
-
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-        ports:
-          - 5432:5432
-
-    strategy:
-      matrix:
-        node-version: [21]
-        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
-
-    steps:
-    - uses: actions/checkout@v3
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: ArtiomTr/jest-coverage-report-action@v2
-      with:
-        node-version: ${{ matrix.node-version }}
-        cache: 'npm'
-        working-directory: ./backend
-        test-script: npm test
-        skip-step: all
     - run: npm ci
     - run: npm install && (cd frontend && npm install) && (cd backend && npm install)
     
