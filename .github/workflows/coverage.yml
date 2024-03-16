@@ -34,4 +34,4 @@ jobs:
               with:
                 working-directory: ./backend
                 test-script: npm test
-                annotations: none
+                annotations: failed-tests
