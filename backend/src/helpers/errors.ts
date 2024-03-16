@@ -1,12 +1,23 @@
 import express from "express";
 
 export const Codes = {
+  ParameterError: 400,
   NotFoundError: 404,
   NotSavedError: 500,
   ExistingUserError: 400,
   DeletionError: 500,
   Success: 200,
 };
+
+export class ParameterError extends Error {
+    constructor(msg: string) {
+        super(msg);
+		    this.name = "ParameterError";
+    }
+    public code() {
+      return Codes.ParameterError;
+    }
+}
 
 export class NotFoundError extends Error {
     constructor(msg: string) {
