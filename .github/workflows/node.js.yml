@@ -52,5 +52,5 @@ jobs:
     # - run: (cd frontend && npm test --watchAll)
 
     - uses: ArtiomTr/jest-coverage-report-action@v2
-      with:
-        coverage-file: ./backend/coverage/coverage-final.json
+        with:
+          test-script: npm test
