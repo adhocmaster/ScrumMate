@@ -44,6 +44,7 @@ jobs:
         cache: 'npm'
         working-directory: ./backend
         test-script: npm test
+        skip-step: install
     - run: npm ci
     - run: npm install && (cd frontend && npm install) && (cd backend && npm install)
     
