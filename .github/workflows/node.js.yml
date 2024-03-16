@@ -42,6 +42,8 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
+        working-directory: ./backend
+        test-script: npm test
     - run: npm ci
     - run: npm install && (cd frontend && npm install) && (cd backend && npm install)
     
@@ -52,6 +54,3 @@ jobs:
     # - run: (cd frontend && npm test --watchAll)
 
     - uses: ArtiomTr/jest-coverage-report-action@v2
-        with:
-          working-directory: ./backend
-          test-script: npm test
