@@ -123,98 +123,98 @@ const Sidebar = ({ open, toggleDrawer, title, items, itemClick }) => {
 			}}
 		>
 
-		<List>
-			<ListItem disablePadding>
-				{open &&
-				<>
-					<Typography
-						variant='body'
-						sx={{
-							marginLeft: 2,
-							fontWeight: 'bold',
-							fontSize: 14,
-						}}
-					>
-						{title}					
-					</Typography>
-				
-					<Grid container justifyContent="flex-end">
-						<Grid item>
-							{/* Add new blank revision */}
-							<IconButton
-								onClick={() => {
-									createNewRelease(1, addRevisions);
-									setSelected(0); 
-								}}
-							>
-								<AddCircleOutlineIcon fontSize="small"/>
-							</IconButton>
-						</Grid>
-					</Grid>
-				</>
-			}
-
-			{open ? 
-				<IconButton 
-					onClick={toggleDrawer}
-					sx={{ 
-						marginLeft: 'auto',
-					}}
-				>
-					<ChevronLeftIcon fontSize="small"/>
-				</IconButton> 
-				:
-				<IconButton 
-					onClick={toggleDrawer}
-					sx={{ 
-						marginLeft: 'auto',
-					}}
-				>
-					<ChevronRightIcon fontSize="small"/>
-				</IconButton>
-			}
-			</ListItem>
-
-			{open && revisions.map(({id, revision, revisionDate, locked}, index) => (
-				<ListItemButton
-					onClick={() => {
-						itemClick(id);
-						setSelected(index);
-					}}
-					key={index}
-					sx={{backgroundColor: selected === index ? 'lightgray' : 'white',}}
-				>
-					<IconButton 
-						onClick={(e) => {
-							e.stopPropagation();
-							toggleLock(index);
-						}}
-						sx={{ 
-							marginRight: 'auto',
-						}}
-					>
-						{locked ? <LockIcon fontSize="small"/> : <LockOpenIcon fontSize="small"/>}
-					</IconButton>
-
-					<Typography fontSize={14}>
-						{`${revision} ${revisionDate}`}
-					</Typography>
+			<List sx={{ overflowY: 'auto', height: 'calc(100vh - 100px)'}}>
+				<ListItem disablePadding>
+					{open &&
+					<>
+						<Typography
+							variant='body'
+							sx={{
+								marginLeft: 2,
+								fontWeight: 'bold',
+								fontSize: 14,
+							}}
+						>
+							{title}					
+						</Typography>
 					
+						<Grid container justifyContent="flex-end">
+							<Grid item>
+								{/* Add new blank revision */}
+								<IconButton
+									onClick={() => {
+										createNewRelease(1, addRevisions);
+										setSelected(0); 
+									}}
+								>
+									<AddCircleOutlineIcon fontSize="small"/>
+								</IconButton>
+							</Grid>
+						</Grid>
+					</>
+				}
+
+				{open ? 
 					<IconButton 
-						onClick={(e) => {
-							e.stopPropagation();
-							copyRelease(id, addRevisions);
-							setSelected(0); 
-						}}
+						onClick={toggleDrawer}
 						sx={{ 
 							marginLeft: 'auto',
 						}}
-						>
-						<ContentCopyIcon fontSize="small"/>
+					>
+						<ChevronLeftIcon fontSize="small"/>
+					</IconButton> 
+					:
+					<IconButton 
+						onClick={toggleDrawer}
+						sx={{ 
+							marginLeft: 'auto',
+						}}
+					>
+						<ChevronRightIcon fontSize="small"/>
 					</IconButton>
-				</ListItemButton>
-			))}
-		</List>
+				}
+				</ListItem>
+
+				{open && revisions.map(({id, revision, revisionDate, locked}, index) => (
+					<ListItemButton
+						onClick={() => {
+							itemClick(id);
+							setSelected(index);
+						}}
+						key={index}
+						sx={{backgroundColor: selected === index ? 'lightgray' : 'white',}}
+					>
+						<IconButton 
+							onClick={(e) => {
+								e.stopPropagation();
+								toggleLock(index);
+							}}
+							sx={{ 
+								marginRight: 'auto',
+							}}
+						>
+							{locked ? <LockIcon fontSize="small"/> : <LockOpenIcon fontSize="small"/>}
+						</IconButton>
+
+						<Typography fontSize={14}>
+							{`${revision} ${revisionDate}`}
+						</Typography>
+						
+						<IconButton 
+							onClick={(e) => {
+								e.stopPropagation();
+								copyRelease(id, addRevisions);
+								setSelected(0); 
+							}}
+							sx={{ 
+								marginLeft: 'auto',
+							}}
+							>
+							<ContentCopyIcon fontSize="small"/>
+						</IconButton>
+					</ListItemButton>
+				))}
+			</List>
 		</Drawer>
 	);
 }
