@@ -34,39 +34,12 @@ export class ReleaseRepository extends ModelRepository {
 		return release
 	}
 
-	private async copyBacklogItems(sourceList: BacklogItem[], func: (arg0: BacklogItem) => any) {
-		const nameToConstructor = new Map<String, any>([
-			["Epic", Epic],
-			["Story", Story],
-			["Task", Task],
-			["Spike", Spike],
-			["Infrastructure", Infrastructure],
-			["Bug", Bug],
-			["BacklogItem", BacklogItem],
-		])
-		for (const backlogItem of sourceList) {
-			const backlogType = nameToConstructor.get(backlogItem.name);
-			const copy = new backlogType();
-			copy.copy(backlogItem);
-			await func(copy);
-		}
-	}
-
 	private async copyReleaseBacklog(releaseCopy: Release, sourceList: BacklogItem[]) {
-		await this.copyBacklogItems(sourceList, async (backlogItemCopy) => {
+		await this.backlogItemRepository.copyBacklogItems(sourceList, async (backlogItemCopy) => {
 			backlogItemCopy.release = releaseCopy;
 			await this.backlogSource.save(backlogItemCopy);
 			backlogItemCopy.release = undefined;
 			releaseCopy.addToBacklog(backlogItemCopy);
-		});
-	}
-
-	private async copySprintTodos(sprintCopy: Sprint, sourceList: BacklogItem[]) {
-		await this.copyBacklogItems(sourceList, async (backlogItemCopy) => {
-			backlogItemCopy.sprint = sprintCopy;
-			await this.backlogSource.save(backlogItemCopy);
-			backlogItemCopy.sprint = undefined;
-			sprintCopy.addTODO(backlogItemCopy);
 		});
 	}
 
@@ -80,7 +53,7 @@ export class ReleaseRepository extends ModelRepository {
 			await this.sprintSource.save(sprintCopy); 
 			sprintCopy.release = undefined;
 
-			await this.copySprintTodos(sprintCopy, sprint.getTODOs());
+			await this.sprintRepository.copySprintTodos(sprintCopy, sprint.getTODOs());
 			releaseCopy.addSprint(sprintCopy);
 		}
 	}

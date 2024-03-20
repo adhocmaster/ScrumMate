@@ -1,3 +1,4 @@
+import { BacklogItem } from "../../entity/backlogItem";
 import { Sprint } from "../../entity/sprint";
 import { ModelRepository } from "./modelRepository";
 
@@ -23,6 +24,15 @@ export class SprintRepository extends ModelRepository {
 		sprint.goal = goal ?? sprint.goal
 		await this.sprintSource.save(sprint)
 		return sprint
+	}
+
+	public async copySprintTodos(sprintCopy: Sprint, sourceList: BacklogItem[]) {
+		await this.backlogItemRepository.copyBacklogItems(sourceList, async (backlogItemCopy) => {
+			backlogItemCopy.sprint = sprintCopy;
+			await this.backlogSource.save(backlogItemCopy);
+			backlogItemCopy.sprint = undefined;
+			sprintCopy.addTODO(backlogItemCopy);
+		});
 	}
 
 	public async lookupSprintById(id: number): Promise<Sprint> {

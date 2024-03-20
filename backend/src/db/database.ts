@@ -39,12 +39,12 @@ export class Database {
 			["role", new UserRoleDataSourceWrapper(dataSource)],
 			["backlog", new BacklogItemDataSourceWrapper(dataSource)],
 		])
-		this.userRepository = new UserRepository(dataSources);
-		this.projectRepository = new ProjectRepository(dataSources);
-		this.releaseRepository = new ReleaseRepository(dataSources);
-		this.sprintRepository = new SprintRepository(dataSources);
-		this.roleRepository = new UserRoleRepository(dataSources);
-		this.backlogItemRepository = new BacklogItemRepository(dataSources);
+		this.userRepository = new UserRepository(dataSources, this);
+		this.projectRepository = new ProjectRepository(dataSources, this);
+		this.releaseRepository = new ReleaseRepository(dataSources, this);
+		this.sprintRepository = new SprintRepository(dataSources, this);
+		this.roleRepository = new UserRoleRepository(dataSources, this);
+		this.backlogItemRepository = new BacklogItemRepository(dataSources, this);
 	}
 
 	public static getInstance(): Database {

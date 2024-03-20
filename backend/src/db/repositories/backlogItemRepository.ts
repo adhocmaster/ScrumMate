@@ -1,4 +1,4 @@
-import { BacklogItem, Priority, Story } from "../../entity/backlogItem";
+import { BacklogItem, Bug, Epic, Infrastructure, Priority, Spike, Story, Task } from "../../entity/backlogItem";
 import { ModelRepository } from "./modelRepository";
 
 export class BacklogItemRepository extends ModelRepository {
@@ -33,6 +33,24 @@ export class BacklogItemRepository extends ModelRepository {
 		// }
 		await this.backlogSource.save(story)
 		return story;
+	}
+
+	public async copyBacklogItems(sourceList: BacklogItem[], func: (arg0: BacklogItem) => any) {
+		const nameToConstructor = new Map<String, any>([
+			["Epic", Epic],
+			["Story", Story],
+			["Task", Task],
+			["Spike", Spike],
+			["Infrastructure", Infrastructure],
+			["Bug", Bug],
+			["BacklogItem", BacklogItem],
+		])
+		for (const backlogItem of sourceList) {
+			const backlogType = nameToConstructor.get(backlogItem.name);
+			const copy = new backlogType();
+			copy.copy(backlogItem);
+			await func(copy);
+		}
 	}
 
 	public async lookupBacklogById(id: number): Promise<BacklogItem> {

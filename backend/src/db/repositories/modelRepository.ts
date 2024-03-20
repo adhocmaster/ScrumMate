@@ -6,6 +6,13 @@ import { ProjectDataSourceWrapper } from "../dataSourceWrappers/projectDataSourc
 import { UserRoleDataSourceWrapper } from "../dataSourceWrappers/roleDataSourceWrapper";
 import { SprintDataSourceWrapper } from "../dataSourceWrappers/sprintDataSourceWrapper";
 import { ModelDataSourceWrapper } from "../dataSourceWrappers/modelDataSourceWrapper";
+import { Database } from "../database";
+import { BacklogItemRepository } from "./backlogItemRepository";
+import { ProjectRepository } from "./projectRepository";
+import { ReleaseRepository } from "./releaseRepository";
+import { UserRoleRepository } from "./roleRepository";
+import { SprintRepository } from "./sprintRepository";
+import { UserRepository } from "./userRepository";
 
 export class ModelRepository {
 	userSource: UserDataSourceWrapper;
@@ -15,13 +22,27 @@ export class ModelRepository {
 	roleSource: UserRoleDataSourceWrapper;
 	backlogSource: BacklogItemDataSourceWrapper;
 
-	constructor (dataSources: Map<String, ModelDataSourceWrapper>) {
+	userRepository: UserRepository;
+	projectRepository: ProjectRepository;
+	releaseRepository: ReleaseRepository;
+	sprintRepository: SprintRepository;
+	roleRepository: UserRoleRepository;
+	backlogItemRepository: BacklogItemRepository;
+
+	constructor (dataSources: Map<String, ModelDataSourceWrapper>, database: Database) {
 		this.userSource = dataSources.get('user') as UserDataSourceWrapper;
 		this.projectSource = dataSources.get('project') as ProjectDataSourceWrapper;
 		this.releaseSource = dataSources.get('release') as ReleaseDataSourceWrapper;
 		this.sprintSource = dataSources.get('sprint') as SprintDataSourceWrapper;
 		this.roleSource = dataSources.get('role') as UserRoleDataSourceWrapper;
 		this.backlogSource = dataSources.get('backlog') as BacklogItemDataSourceWrapper;
+		
+		this.userRepository = database.getUserRepository;
+		this.projectRepository = database.getProjectRepository;
+		this.releaseRepository = database.getReleaseRepository;
+		this.sprintRepository = database.getSprintRepository;
+		this.roleRepository = database.getUserRoleRepository;
+		this.backlogItemRepository = database.getBacklogItemRepository;
 	}
 
 }
