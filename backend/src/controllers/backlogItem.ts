@@ -3,8 +3,8 @@ import { Database } from "../db/database";
 import { verifyParameters } from './utils/verifyParams';
 
 export const createStory = async(req: express.Request, res: express.Response) => {
-	const db = Database.getInstance()
-	const { sprintId } = req.params
+	const db = Database.getInstance();
+	const { sprintId } = req.params;
 	const {
 		userTypes,
 		functionalityDescription,
@@ -12,11 +12,9 @@ export const createStory = async(req: express.Request, res: express.Response) =>
 		acceptanceCriteria,
 		storyPoints,
 		priority,
-	} = req.body
-	// what to do if some are null?
-	if (!verifyParameters(userTypes, functionalityDescription, reasoning, acceptanceCriteria, storyPoints, 
-		priority)) res.sendStatus(400);
-	const newStory = await db.getBacklogItemRepository.createNewStory(parseInt(sprintId), userTypes, functionalityDescription, reasoning, acceptanceCriteria, storyPoints, priority)
+	} = req.body;
+	verifyParameters(userTypes, functionalityDescription, reasoning, acceptanceCriteria, storyPoints, priority);
+	const newStory = await db.getBacklogItemRepository.createNewStory(parseInt(sprintId), userTypes, functionalityDescription, reasoning, acceptanceCriteria, storyPoints, priority);
 	return res.json(newStory);
 }
 
