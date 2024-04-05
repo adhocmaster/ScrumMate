@@ -2,14 +2,15 @@ import React from "react";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import Sprint from "./Sprint";
 
-	async function reorderFetch(releaseId, sprintStartIndex, sprintEndIndex, setItems) {
-		fetch(`http://localhost:8080/api/release/${releaseId}/reorder`, {
-			method: 'POST',
-			credentials:'include',
-			headers: {
+async function reorderFetch(releaseId, sprintStartIndex, sprintEndIndex, setItems) {
+	fetch(`http://localhost:8080/api/release/${releaseId}/reorder`, {
+		method: 'POST',
+		credentials: 'include',
+		headers: {
 			'Content-Type': 'application/json',
-			},
-			body:JSON.stringify({sprintStartIndex, sprintEndIndex})})
+		},
+		body: JSON.stringify({ sprintStartIndex, sprintEndIndex })
+	})
 		.then(response => response.json())
 		.then(data => {
 			console.log(data);
@@ -17,16 +18,16 @@ import Sprint from "./Sprint";
 		})
 		.catch(error => {
 			;
-		});	
-	}
+		});
+}
 
-export default function DragList({items, setItems, releaseId}) {
+export default function DragList({ items, setItems, releaseId }) {
 	// a little function to help us with reordering the result
 	const reorder = (list, startIndex, endIndex) => {
 		const result = Array.from(list);
 		const [removed] = result.splice(startIndex, 1);
 		result.splice(endIndex, 0, removed);
-		return result;	
+		return result;
 	};
 
 	const grid = 4;
@@ -53,10 +54,10 @@ export default function DragList({items, setItems, releaseId}) {
 	const onDragEnd = (result) => {
 		// dropped outside the list
 		if (!result.destination) {
-		return;
+			return;
 		}
 		const items2 = reorder(
-			items, 
+			items,
 			result.source.index,
 			result.destination.index
 		);
@@ -72,7 +73,7 @@ export default function DragList({items, setItems, releaseId}) {
 					<div
 						{...provided.droppableProps}
 						ref={provided.innerRef}
-						// style={getListStyle(snapshot.isDraggingOver)}
+					// style={getListStyle(snapshot.isDraggingOver)}
 					>
 						{items.map((item, index) => (
 							<Draggable key={index} draggableId={`here: ${index}`} index={index}>
@@ -86,10 +87,10 @@ export default function DragList({items, setItems, releaseId}) {
 											provided.draggableProps.style
 										)}
 									>
-										<Sprint 
-											index={index} 
-											items={items} 
-											setItems={setItems} 
+										<Sprint
+											index={index}
+											items={items}
+											setItems={setItems}
 											userStories={item.todos}
 										/>
 									</div>
