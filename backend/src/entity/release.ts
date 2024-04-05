@@ -7,8 +7,8 @@ import { addMaybeUndefined, getMaybeUndefined, removeMaybeUndefined } from "./ut
 @Entity()
 export class Release {
 
-    @PrimaryGeneratedColumn()
-    id: number
+	@PrimaryGeneratedColumn()
+	id: number
 
 	@Column()
 	revision: number
@@ -24,17 +24,17 @@ export class Release {
 
 	///// Relational /////
 
-	@ManyToOne(() => Project, (project) => project.releases, {nullable: false})
+	@ManyToOne(() => Project, (project) => project.releases, { nullable: false })
 	project: Project
-	
+
 	@OneToMany(() => Sprint, (sprint) => sprint.release)
 	sprints: Sprint[]
-	
+
 	@OneToMany(() => BacklogItem, (backlog) => backlog.release)
 	backlog: BacklogItem[]
 
 	///// Methods /////
-	
+
 	getSprints(): Sprint[] {
 		return getMaybeUndefined(this.sprints)
 	}
@@ -61,5 +61,5 @@ export class Release {
 		this.revisionDate = release.revisionDate;
 		this.project = release.project;
 	}
-	
+
 }

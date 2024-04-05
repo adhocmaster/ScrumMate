@@ -9,7 +9,7 @@ export class ReleaseRepository extends ModelRepository {
 	public async createNewRelease(projectId: number, revision?: number, revisionDate?: Date, problemStatement?: string, goalStatement?: string): Promise<Release> {
 		const project = await this.projectSource.lookupProjectById(projectId)
 		const release = new Release()
-		release.project = project 
+		release.project = project
 		if (!revision) {
 			revision = project.nextRevision
 			project.nextRevision = project.nextRevision + 1
@@ -77,7 +77,7 @@ export class ReleaseRepository extends ModelRepository {
 
 			// copy the columns
 			sprintCopy.copy(sprint);
-			await this.sprintSource.save(sprintCopy); 
+			await this.sprintSource.save(sprintCopy);
 			sprintCopy.release = undefined;
 
 			await this.copySprintTodos(sprintCopy, sprint.getTODOs());
@@ -117,8 +117,8 @@ export class ReleaseRepository extends ModelRepository {
 		sprints.sort((a: Sprint, b: Sprint) => a.sprintNumber - b.sprintNumber)
 		const [item] = sprints.splice(startIndex, 1)
 		sprints.splice(destinationIndex, 0, item)
-		for (const {sprint, index} of sprints.map((sprint, index) => ({sprint, index}))) {
-			sprint.sprintNumber = index+1;
+		for (const { sprint, index } of sprints.map((sprint, index) => ({ sprint, index }))) {
+			sprint.sprintNumber = index + 1;
 			await this.sprintSource.save(sprint)
 		}
 		// await this.dataSource.save(sprints)
@@ -131,8 +131,8 @@ export class ReleaseRepository extends ModelRepository {
 		await this.sprintSource.moveSprintTodosToBacklog(sprintWithRelease.release.id, sprintId)
 		await this.sprintSource.deleteSprint(sprintId)
 		const releaseWithSprints = await this.releaseSource.fetchReleaseWithSprints(sprintWithRelease.release.id)
-		for (const {sprint, index} of releaseWithSprints.sprints.map((sprint, index) => ({sprint, index}))) {
-			sprint.sprintNumber = index+1;
+		for (const { sprint, index } of releaseWithSprints.sprints.map((sprint, index) => ({ sprint, index }))) {
+			sprint.sprintNumber = index + 1;
 			await this.sprintSource.save(sprint)
 		}
 		await this.releaseSource.save(releaseWithSprints)

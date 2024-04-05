@@ -1,9 +1,9 @@
 import * as crypto from "crypto";
-const SECRET =  'SCRUM_IS_THE_WAY'
+const SECRET = 'SCRUM_IS_THE_WAY'
 
-export const random = ()=>crypto.randomBytes(128).toString('base64');
+export const random = () => crypto.randomBytes(128).toString('base64');
 
 
-export const authentication = (salt:string, password:string) =>{
-    return crypto.createHmac('sha256', [salt,password].join('/')).update(SECRET).digest('hex')
+export const authentication = (salt: string, password: string) => {
+	return crypto.createHmac('sha256', [salt, password].join('/')).update(SECRET).digest('hex')
 }

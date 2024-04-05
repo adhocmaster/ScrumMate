@@ -18,13 +18,13 @@ export const createUser = async (req: express.Request, res: express.Response) =>
 export const login = async (req: express.Request, res: express.Response) => {
 	const db = Database.getInstance();
 	const {
-			email,
-			password,
-		} = req.body;
+		email,
+		password,
+	} = req.body;
 	verifyParameters(email, password);
 	const user = await db.getUserRepository.lookupUserByEmail(email);
 	const expectedHash = authentication(user.salt, password);
-	if(expectedHash !== user.password) return res.sendStatus(403);
+	if (expectedHash !== user.password) return res.sendStatus(403);
 
 	const newSalt = random();
 	user.sessionToken = authentication(newSalt, user.username);
@@ -32,13 +32,13 @@ export const login = async (req: express.Request, res: express.Response) => {
 	await db.save(user);
 
 	res.cookie('user-auth', user.sessionToken, { domain: "localhost", path: "/" });
-	delete user.password; 
+	delete user.password;
 	return res.json(user);
 };
 
 //TODO
 export const edit = async (req: express.Request, res: express.Response) => {
-  return res.sendStatus(200);
+	return res.sendStatus(200);
 };
 // 	const db = Database.getInstance()
 // 	const {

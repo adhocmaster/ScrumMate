@@ -7,8 +7,8 @@ import { UserRole } from "./roles"
 @Entity()
 export class Project {
 
-    @PrimaryGeneratedColumn()
-    id: number
+	@PrimaryGeneratedColumn()
+	id: number
 
 	@Column()
 	name: string
@@ -17,12 +17,12 @@ export class Project {
 	nextRevision: number
 
 	///// Relational /////
-	
-    @ManyToOne(() => User, (user) => user.ownedProjects)
-    productOwner: User
-    
+
+	@ManyToOne(() => User, (user) => user.ownedProjects)
+	productOwner: User
+
 	@ManyToMany(() => User, (user) => user.joinedProjects)
-    teamMembers: User[]
+	teamMembers: User[]
 
 	@OneToMany(() => Release, (release) => release.project)
 	releases: Release[]
@@ -31,7 +31,7 @@ export class Project {
 	roles: UserRole[]
 
 	///// Methods /////
-	
+
 	getTeamMembers(): User[] {
 		return getMaybeUndefined(this.teamMembers)
 	}
@@ -41,7 +41,7 @@ export class Project {
 	removeTeamMember(member: User): void {
 		this.teamMembers = removeMaybeUndefined(member, this.teamMembers)
 	}
-	
+
 	getReleases(): Release[] {
 		return getMaybeUndefined(this.releases)
 	}
@@ -61,5 +61,5 @@ export class Project {
 	removeRole(role: UserRole): void {
 		this.roles = removeMaybeUndefined(role, this.roles)
 	}
-	
+
 }

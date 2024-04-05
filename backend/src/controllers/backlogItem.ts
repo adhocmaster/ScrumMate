@@ -2,7 +2,7 @@ import express from 'express';
 import { Database } from "../db/database";
 import { verifyParameters } from './utils/verifyParams';
 
-export const createStory = async(req: express.Request, res: express.Response) => {
+export const createStory = async (req: express.Request, res: express.Response) => {
 	const db = Database.getInstance();
 	const { sprintId } = req.params;
 	const {
@@ -18,7 +18,7 @@ export const createStory = async(req: express.Request, res: express.Response) =>
 	return res.json(newStory);
 }
 
-export const editStory = async(req: express.Request, res: express.Response) => {
+export const editStory = async (req: express.Request, res: express.Response) => {
 	const db = Database.getInstance()
 	const { sprintId, storyId } = req.params
 	const {

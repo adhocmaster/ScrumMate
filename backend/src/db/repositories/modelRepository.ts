@@ -15,7 +15,7 @@ export class ModelRepository {
 	roleSource: UserRoleDataSourceWrapper;
 	backlogSource: BacklogItemDataSourceWrapper;
 
-	constructor (dataSources: Map<String, ModelDataSourceWrapper>) {
+	constructor(dataSources: Map<String, ModelDataSourceWrapper>) {
 		this.userSource = dataSources.get('user') as UserDataSourceWrapper;
 		this.projectSource = dataSources.get('project') as ProjectDataSourceWrapper;
 		this.releaseSource = dataSources.get('release') as ReleaseDataSourceWrapper;
