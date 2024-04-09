@@ -1,4 +1,4 @@
-import { useState, useEffect  } from 'react';
+import { useState, useEffect } from 'react';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import { Drawer, IconButton, Typography, Grid } from "@mui/material";
@@ -16,35 +16,35 @@ const Sidebar = ({ open, toggleDrawer, title, items, itemClick }) => {
 		release.revisionDate = new Date(release.revisionDate).toLocaleString().split(',')[0]
 		return release
 	}
-	
+
 	function fetchReleases(projectId, setRevisions) {
 		console.log("about to fetch")
 		var options = {
-			method:'get',
-			credentials:'include'
-		  }
-		fetch(`http://localhost:8080/api/project/${projectId}/releases`, options).then((result)=>{
-			if(result.status === 200){
+			method: 'get',
+			credentials: 'include'
+		}
+		fetch(`http://localhost:8080/api/project/${projectId}/releases`, options).then((result) => {
+			if (result.status === 200) {
 				console.log(result)
 			}
-			result.json().then((response)=>{
+			result.json().then((response) => {
 				console.log(response)
 				setRevisions(response.releases.map((release) => convertRevisionAndDate(release)))
 			})
 		})
 	}
-	
+
 	function createNewRelease(projectId, addRevisions) {
 		try {
 			const options = {
 				method: 'POST',
 				credentials: 'include',
 			};
-			fetch(`http://localhost:8080/api/project/${projectId}/release`, options).then((result)=>{
-				if(result.status === 200){
+			fetch(`http://localhost:8080/api/project/${projectId}/release`, options).then((result) => {
+				if (result.status === 200) {
 					console.log(result)
 				}
-				result.json().then((response)=>{
+				result.json().then((response) => {
 					addRevisions(response);
 					itemClick(response.id)
 				})
@@ -54,7 +54,7 @@ const Sidebar = ({ open, toggleDrawer, title, items, itemClick }) => {
 			return null; // Return null or handle the error as needed
 		}
 	}
-	
+
 	function copyRelease(releaseId, addRevisions) {
 		try {
 			console.log("about to copy");
@@ -62,11 +62,11 @@ const Sidebar = ({ open, toggleDrawer, title, items, itemClick }) => {
 				method: 'POST',
 				credentials: 'include',
 			};
-			fetch(`http://localhost:8080/api/release/${releaseId}/copy`, options).then((result)=>{
-				if(result.status === 200){
+			fetch(`http://localhost:8080/api/release/${releaseId}/copy`, options).then((result) => {
+				if (result.status === 200) {
 					console.log(result)
 				}
-				result.json().then((response)=>{
+				result.json().then((response) => {
 					console.log(response)
 					addRevisions(response);
 					itemClick(response.id)
@@ -77,7 +77,7 @@ const Sidebar = ({ open, toggleDrawer, title, items, itemClick }) => {
 			return null; // Return null or handle the error as needed
 		}
 	}
-	
+
 	const [revisions, setRevisions] = useState(items || []);
 
 	useEffect(() => {
@@ -100,12 +100,12 @@ const Sidebar = ({ open, toggleDrawer, title, items, itemClick }) => {
 	const addRevisions = (item) => {
 		setRevisions([convertRevisionAndDate(item), ...revisions]);
 	};
-	
+
 	const removeRevisions = (index) => {
 		const newRevisionArray = revisions.filter((_, i) => i !== index);
 		setRevisions(newRevisionArray);
 	};
-	
+
 	return (
 		<Drawer
 			open={true}
@@ -123,94 +123,94 @@ const Sidebar = ({ open, toggleDrawer, title, items, itemClick }) => {
 			}}
 		>
 
-			<List sx={{ overflowY: 'auto', height: 'calc(100vh - 100px)'}}>
+			<List sx={{ overflowY: 'auto', height: 'calc(100vh - 100px)' }}>
 				<ListItem disablePadding>
 					{open &&
-					<>
-						<Typography
-							variant='body'
+						<>
+							<Typography
+								variant='body'
+								sx={{
+									marginLeft: 2,
+									fontWeight: 'bold',
+									fontSize: 14,
+								}}
+							>
+								{title}
+							</Typography>
+
+							<Grid container justifyContent="flex-end">
+								<Grid item>
+									{/* Add new blank revision */}
+									<IconButton
+										onClick={() => {
+											createNewRelease(1, addRevisions);
+											setSelected(0);
+										}}
+									>
+										<AddCircleOutlineIcon fontSize="small" />
+									</IconButton>
+								</Grid>
+							</Grid>
+						</>
+					}
+
+					{open ?
+						<IconButton
+							onClick={toggleDrawer}
 							sx={{
-								marginLeft: 2,
-								fontWeight: 'bold',
-								fontSize: 14,
+								marginLeft: 'auto',
 							}}
 						>
-							{title}					
-						</Typography>
-					
-						<Grid container justifyContent="flex-end">
-							<Grid item>
-								{/* Add new blank revision */}
-								<IconButton
-									onClick={() => {
-										createNewRelease(1, addRevisions);
-										setSelected(0); 
-									}}
-								>
-									<AddCircleOutlineIcon fontSize="small"/>
-								</IconButton>
-							</Grid>
-						</Grid>
-					</>
-				}
-
-				{open ? 
-					<IconButton 
-						onClick={toggleDrawer}
-						sx={{ 
-							marginLeft: 'auto',
-						}}
-					>
-						<ChevronLeftIcon fontSize="small"/>
-					</IconButton> 
-					:
-					<IconButton 
-						onClick={toggleDrawer}
-						sx={{ 
-							marginLeft: 'auto',
-						}}
-					>
-						<ChevronRightIcon fontSize="small"/>
-					</IconButton>
-				}
+							<ChevronLeftIcon fontSize="small" />
+						</IconButton>
+						:
+						<IconButton
+							onClick={toggleDrawer}
+							sx={{
+								marginLeft: 'auto',
+							}}
+						>
+							<ChevronRightIcon fontSize="small" />
+						</IconButton>
+					}
 				</ListItem>
 
-				{open && revisions.map(({id, revision, revisionDate, locked}, index) => (
+				{open && revisions.map(({ id, revision, revisionDate, locked }, index) => (
 					<ListItemButton
 						onClick={() => {
 							itemClick(id);
 							setSelected(index);
 						}}
 						key={index}
-						sx={{backgroundColor: selected === index ? 'lightgray' : 'white',}}
+						sx={{ backgroundColor: selected === index ? 'lightgray' : 'white', }}
 					>
-						<IconButton 
+						<IconButton
 							onClick={(e) => {
 								e.stopPropagation();
 								toggleLock(index);
 							}}
-							sx={{ 
+							sx={{
 								marginRight: 'auto',
 							}}
 						>
-							{locked ? <LockIcon fontSize="small"/> : <LockOpenIcon fontSize="small"/>}
+							{locked ? <LockIcon fontSize="small" /> : <LockOpenIcon fontSize="small" />}
 						</IconButton>
 
 						<Typography fontSize={14}>
 							{`${revision} ${revisionDate}`}
 						</Typography>
-						
-						<IconButton 
+
+						<IconButton
 							onClick={(e) => {
 								e.stopPropagation();
 								copyRelease(id, addRevisions);
-								setSelected(0); 
+								setSelected(0);
 							}}
-							sx={{ 
+							sx={{
 								marginLeft: 'auto',
 							}}
-							>
-							<ContentCopyIcon fontSize="small"/>
+						>
+							<ContentCopyIcon fontSize="small" />
 						</IconButton>
 					</ListItemButton>
 				))}

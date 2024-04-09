@@ -1,3 +1,4 @@
+/* eslint-disable import/no-anonymous-default-export */
 import express from 'express';
 import user from './user'
 import project from './project';
@@ -8,12 +9,12 @@ import backlogItem from './backlogItem';
 const router = express.Router();
 
 export default (): express.Router => {
-    user(router);
-    project(router);
-    release(router);
-    role(router);
-    sprint(router);
-    backlogItem(router);
+	user(router);
+	project(router);
+	release(router);
+	role(router);
+	sprint(router);
+	backlogItem(router);
 
-    return router;
+	return router;
 }

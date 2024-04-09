@@ -4,18 +4,18 @@ import { Release } from "../../entity/release";
 import { Sprint } from "../../entity/sprint";
 
 export class SprintDataSourceWrapper extends ModelDataSourceWrapper {
-	
+
 	public async lookupSprintById(id: number): Promise<Sprint> {
-		const maybeSprint =  await this.dataSource.manager.findOneBy(Sprint, {id: id});
+		const maybeSprint = await this.dataSource.manager.findOneBy(Sprint, { id: id });
 		if (!maybeSprint) {
 			throw new NotFoundError(`Sprint with id ${id} not found`)
 		}
 		return maybeSprint
 	}
-	
+
 	public async lookupSprintByIdWithRelease(id: number): Promise<Sprint> {
 		const maybeSprint = await this.dataSource.getRepository(Sprint).find({
-			where: {id: id},
+			where: { id: id },
 			relations: {
 				release: true // must sort by sprint.sprintNumber later
 			},
@@ -25,10 +25,10 @@ export class SprintDataSourceWrapper extends ModelDataSourceWrapper {
 		}
 		return maybeSprint[0]
 	}
-	
+
 	public async lookupSprintByIdWithTodos(id: number): Promise<Sprint> {
 		const maybeSprint = await this.dataSource.getRepository(Sprint).find({
-			where: {id: id},
+			where: { id: id },
 			relations: {
 				todos: true // must sort by sprint.sprintNumber later
 			},
@@ -38,11 +38,11 @@ export class SprintDataSourceWrapper extends ModelDataSourceWrapper {
 		}
 		return maybeSprint[0]
 	}
-	
+
 	public async moveSprintTodosToBacklog(releaseId: number, sprintId: number): Promise<void> {
 		const maybeSprintWithTodos = await this.lookupSprintByIdWithTodos(sprintId);
 		const maybeRelease = await this.dataSource.getRepository(Release).find({
-			where: {id: releaseId},
+			where: { id: releaseId },
 			relations: {
 				sprints: true,
 				backlog: true
@@ -56,15 +56,15 @@ export class SprintDataSourceWrapper extends ModelDataSourceWrapper {
 		maybeSprintWithTodos.todos = []
 		await this.save(maybeSprintWithTodos)
 	}
-	
+
 	public async getSprintWithBacklog(releaseId: number): Promise<Sprint[]> {
 		const sprints = await this.dataSource.getRepository(Sprint).find({
-			relations:{
+			relations: {
 				release: true,
 				todos: true,
 			},
 			where: {
-				release: {id: releaseId}
+				release: { id: releaseId }
 			},
 		})
 		if (!sprints || sprints.length === 0) {
@@ -72,7 +72,7 @@ export class SprintDataSourceWrapper extends ModelDataSourceWrapper {
 		}
 		return sprints;
 	}
-	
+
 	// TODO: handle stories in the sprint
 	// Maybe we can make it soft-delete if we ever implement undo feature
 	public async deleteSprint(id: number): Promise<void> {

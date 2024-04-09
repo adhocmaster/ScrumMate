@@ -7,7 +7,7 @@ import { ModelDataSourceWrapper } from "./modelDataSourceWrapper";
 export class ProjectDataSourceWrapper extends ModelDataSourceWrapper {
 
 	public async lookupProjectById(id: number): Promise<Project> {
-		const maybeProject = await this.dataSource.manager.findOneBy(Project, {id: id});
+		const maybeProject = await this.dataSource.manager.findOneBy(Project, { id: id });
 		if (!maybeProject) {
 			throw new NotFoundError(`Project with id ${id} not found`)
 		}
@@ -15,12 +15,13 @@ export class ProjectDataSourceWrapper extends ModelDataSourceWrapper {
 	}
 
 	public async lookupProjectByIdWithUsers(id: number): Promise<Project> {
-		const maybeProject =  await this.dataSource.getRepository(Project).find({
-			where: {id: id},
-			relations:{
+		const maybeProject = await this.dataSource.getRepository(Project).find({
+			where: { id: id },
+			relations: {
 				productOwner: true,
 				teamMembers: true
-			}})
+			}
+		})
 		if (!maybeProject || maybeProject.length === 0) {
 			throw new NotFoundError(`Project with id ${id} not found`)
 		}
@@ -31,7 +32,7 @@ export class ProjectDataSourceWrapper extends ModelDataSourceWrapper {
 		// Get the project with revisions' with only their numbers and dates
 		// avoids getting the problem/goal statements and saves on data
 		const maybeProject = await this.dataSource.getRepository(Project).createQueryBuilder("project")
-			.where("project.id = :projectId", {projectId: id})
+			.where("project.id = :projectId", { projectId: id })
 			.select(['project.id', 'release.id', 'release.revision', "release.revisionDate"])
 			.leftJoin('project.releases', 'release')  // releases is the joined table
 			.getMany();

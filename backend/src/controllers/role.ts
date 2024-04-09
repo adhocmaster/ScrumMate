@@ -4,7 +4,7 @@ import { verifyParameters } from './utils/verifyParams';
 
 export const createRole = async (req: express.Request, res: express.Response) => {
 	const db = Database.getInstance();
-  	const { userId, sprintId } = req.params;
+	const { userId, sprintId } = req.params;
 	const {
 		role,
 	} = req.body;

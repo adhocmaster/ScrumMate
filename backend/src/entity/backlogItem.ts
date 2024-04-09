@@ -16,8 +16,8 @@ export enum Priority {
 export class BacklogItem {
 	public name = "BacklogItem";
 
-    @PrimaryGeneratedColumn()
-    id: number
+	@PrimaryGeneratedColumn()
+	id: number
 
 	@CreateDateColumn()
 	createdDate: Date
@@ -26,7 +26,7 @@ export class BacklogItem {
 	updatedDate: Date
 
 	///// Relational /////
-	
+
 	@ManyToOne(() => Release, (release) => release.backlog) // have this whether it is in a backlog or not?
 	release: Release
 
@@ -42,16 +42,16 @@ export class BacklogItem {
 	assignees: User[]
 
 	///// Methods /////
-	
+
 	getAssignees(): User[] {
-        return getMaybeUndefined(this.assignees);
-    }
-    addAssignee(user: User): void {
-        this.assignees = addMaybeUndefined(user, this.assignees);
-    }
-    removeAssignee(user: User): void {
-        this.assignees = removeMaybeUndefined(user, this.assignees);
-    }
+		return getMaybeUndefined(this.assignees);
+	}
+	addAssignee(user: User): void {
+		this.assignees = addMaybeUndefined(user, this.assignees);
+	}
+	removeAssignee(user: User): void {
+		this.assignees = removeMaybeUndefined(user, this.assignees);
+	}
 	copy(backlogItem: BacklogItem): void {
 		this.createdDate = backlogItem.createdDate;
 		this.updatedDate = backlogItem.updatedDate;
@@ -114,21 +114,21 @@ export class Story extends BacklogItem {
 
 	@ManyToOne(() => Epic, (epic) => epic.stories)
 	epic?: Epic
-	
+
 	@OneToMany(() => Task, (task) => task.story)
 	tasks: Task[]
 
 	///// Methods /////
-	
+
 	getTasks(): Task[] {
-        return getMaybeUndefined(this.tasks);
-    }
-    addTask(task: Task): void {
-        this.tasks = addMaybeUndefined(task, this.tasks);
-    }
-    removeTask(task: Task): void {
-        this.tasks = removeMaybeUndefined(task, this.tasks);
-    }
+		return getMaybeUndefined(this.tasks);
+	}
+	addTask(task: Task): void {
+		this.tasks = addMaybeUndefined(task, this.tasks);
+	}
+	removeTask(task: Task): void {
+		this.tasks = removeMaybeUndefined(task, this.tasks);
+	}
 	copy(story: Story): void {
 		super.copy(story);
 		this.userTypes = story.userTypes;
@@ -145,10 +145,10 @@ export class Task extends BacklogItem {
 	public name = "Task";
 
 	@Column()
-    description: string
+	description: string
 
 	@Column()
-    idealHours: number // may need to specify float?
+	idealHours: number // may need to specify float?
 
 	@ManyToOne(() => Story, (story) => story.tasks) // for tasks only
 	story: Story
@@ -165,7 +165,7 @@ export class Spike extends BacklogItem {
 
 	@Column()
 	description: string
-	
+
 	copy(spike: Spike): void {
 		this.description = spike.description;
 	}

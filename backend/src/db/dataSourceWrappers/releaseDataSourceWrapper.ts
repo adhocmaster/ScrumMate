@@ -3,9 +3,9 @@ import { NotFoundError } from "../../helpers/errors";
 import { ModelDataSourceWrapper } from "./modelDataSourceWrapper";
 
 export class ReleaseDataSourceWrapper extends ModelDataSourceWrapper {
-	
+
 	public async lookupReleaseById(id: number): Promise<Release> {
-		const maybeRelease =  await this.dataSource.manager.findOneBy(Release, {id: id});
+		const maybeRelease = await this.dataSource.manager.findOneBy(Release, { id: id });
 		if (!maybeRelease) {
 			throw new NotFoundError(`Release with id ${id} not found`)
 		}
@@ -14,8 +14,8 @@ export class ReleaseDataSourceWrapper extends ModelDataSourceWrapper {
 
 	public async fetchReleaseWithProject(releaseId: number): Promise<Release> {
 		const releaseWithProject = (await this.dataSource.getRepository(Release).find({
-			where: {id: releaseId},
-			relations:{
+			where: { id: releaseId },
+			relations: {
 				project: true
 			},
 		}))
@@ -27,8 +27,8 @@ export class ReleaseDataSourceWrapper extends ModelDataSourceWrapper {
 
 	public async fetchReleaseWithSprints(releaseId: number): Promise<Release> {
 		const releaseWithSprints = await this.dataSource.getRepository(Release).find({
-			where: {id: releaseId},
-			relations:{
+			where: { id: releaseId },
+			relations: {
 				sprints: true,
 			},
 		})
@@ -40,8 +40,8 @@ export class ReleaseDataSourceWrapper extends ModelDataSourceWrapper {
 
 	public async fetchReleaseWithBacklog(releaseId: number): Promise<Release> {
 		const releaseWithBacklog = await this.dataSource.getRepository(Release).find({
-			where: {id: releaseId},
-			relations:{
+			where: { id: releaseId },
+			relations: {
 				backlog: true,
 			},
 		})
@@ -53,8 +53,8 @@ export class ReleaseDataSourceWrapper extends ModelDataSourceWrapper {
 
 	public async fetchReleaseWithEverything(releaseId: number): Promise<Release> {
 		const releaseWithSprints = await this.dataSource.getRepository(Release).findOne({
-			where: {id: releaseId},
-			relations:{
+			where: { id: releaseId },
+			relations: {
 				project: true,
 				sprints: {
 					todos: true,
@@ -67,5 +67,5 @@ export class ReleaseDataSourceWrapper extends ModelDataSourceWrapper {
 		}
 		return releaseWithSprints
 	}
-	
+
 }

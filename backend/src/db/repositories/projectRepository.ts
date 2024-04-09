@@ -10,7 +10,7 @@ export class ProjectRepository extends ModelRepository {
 		newProject.name = projectName
 		newProject.nextRevision = 1
 		newProject.productOwner = user
-    	newProject.releases = [];
+		newProject.releases = [];
 		await this.projectSource.save(newProject)
 		return newProject
 	}
@@ -34,7 +34,7 @@ export class ProjectRepository extends ModelRepository {
 		return await this.projectSource.fetchProjectWithReleases(id);
 	}
 
-	public async fetchMostRecentRelease(id: number): Promise<Release> {	
+	public async fetchMostRecentRelease(id: number): Promise<Release> {
 		return await this.projectSource.fetchMostRecentRelease(id);
 	}
 

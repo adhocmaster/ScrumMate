@@ -8,8 +8,8 @@ import { getMaybeUndefined, addMaybeUndefined, removeMaybeUndefined } from "./ut
 @Entity()
 export class Sprint {
 
-    @PrimaryGeneratedColumn()
-    id: number
+	@PrimaryGeneratedColumn()
+	id: number
 
 	@Column()
 	sprintNumber: number
@@ -22,12 +22,12 @@ export class Sprint {
 
 	get sprintDuration(): number {
 		var diff = this.startDate.getTime() - this.endDate.getTime()
-		return Math.ceil(diff / (1000 * 3600 * 24)); 
+		return Math.ceil(diff / (1000 * 3600 * 24));
 	}
 
 	@CreateDateColumn() // automatically set :D
 	createdDate: Date
-	
+
 	@Column()
 	goal: string
 
@@ -36,10 +36,10 @@ export class Sprint {
 	@OneToOne(() => User)
 	@JoinColumn()
 	scrumMaster: User
-	
-	@ManyToOne(() => Release, (release) => release.sprints, {nullable: false})
+
+	@ManyToOne(() => Release, (release) => release.sprints, { nullable: false })
 	release: Release
-	
+
 	@OneToMany(() => BacklogItem, (todo) => todo.sprint)
 	todos: BacklogItem[]
 
@@ -47,26 +47,26 @@ export class Sprint {
 	roles: UserRole[]
 
 	///// Methods /////
-	
-	getRoles(): UserRole[] {
-        return getMaybeUndefined(this.roles);
-    }
-    addRole(role: UserRole): void {
-        this.roles = addMaybeUndefined(role, this.roles);
-    }
-    removeRole(role: UserRole): void {
-        this.roles = removeMaybeUndefined(role, this.roles);
-    }
 
-    getTODOs(): BacklogItem[] {
-        return getMaybeUndefined(this.todos);
-    }
-    addTODO(story: BacklogItem): void {
-        this.todos = addMaybeUndefined(story, this.todos);
-    }
-    removeTODO(story: BacklogItem): void {
-        this.todos = removeMaybeUndefined(story, this.todos);
-    }
+	getRoles(): UserRole[] {
+		return getMaybeUndefined(this.roles);
+	}
+	addRole(role: UserRole): void {
+		this.roles = addMaybeUndefined(role, this.roles);
+	}
+	removeRole(role: UserRole): void {
+		this.roles = removeMaybeUndefined(role, this.roles);
+	}
+
+	getTODOs(): BacklogItem[] {
+		return getMaybeUndefined(this.todos);
+	}
+	addTODO(story: BacklogItem): void {
+		this.todos = addMaybeUndefined(story, this.todos);
+	}
+	removeTODO(story: BacklogItem): void {
+		this.todos = removeMaybeUndefined(story, this.todos);
+	}
 	copy(sprint: Sprint): void {
 		this.sprintNumber = sprint.sprintNumber;
 		this.startDate = sprint.startDate;

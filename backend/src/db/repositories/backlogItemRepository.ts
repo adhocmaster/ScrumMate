@@ -38,9 +38,9 @@ export class BacklogItemRepository extends ModelRepository {
 	public async lookupBacklogById(id: number): Promise<BacklogItem> {
 		return await this.backlogSource.lookupBacklogById(id);
 	}
-	
+
 	public async lookupStoryById(id: number): Promise<Story> {
 		return await this.backlogSource.lookupStoryById(id);
 	}
-	
+
 }

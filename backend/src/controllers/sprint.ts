@@ -2,7 +2,7 @@ import express from 'express';
 import { Database } from '../db/database';
 import { verifyParameters } from './utils/verifyParams';
 
-export const createSprint = async(req: express.Request, res: express.Response) => {
+export const createSprint = async (req: express.Request, res: express.Response) => {
 	const db = Database.getInstance();
 	const { releaseId } = req.params;
 	const {
@@ -16,7 +16,7 @@ export const createSprint = async(req: express.Request, res: express.Response) =
 	return res.json(newSprint);
 };
 
-export const editSprint = async(req: express.Request, res: express.Response) => {
+export const editSprint = async (req: express.Request, res: express.Response) => {
 	const db = Database.getInstance();
 	const { sprintId } = req.params;
 	const {
@@ -29,7 +29,7 @@ export const editSprint = async(req: express.Request, res: express.Response) => 
 	return res.json(sprint);
 }
 
-export const getSprints = async(req: express.Request, res: express.Response) => {
+export const getSprints = async (req: express.Request, res: express.Response) => {
 	const db = Database.getInstance();
 	const { releaseId } = req.params;
 	verifyParameters(releaseId);
@@ -37,7 +37,7 @@ export const getSprints = async(req: express.Request, res: express.Response) => 
 	return res.json(sprintList);
 }
 
-export const getSprintWithRelease = async(req: express.Request, res: express.Response) => {
+export const getSprintWithRelease = async (req: express.Request, res: express.Response) => {
 	const db = Database.getInstance();
 	const { sprintId } = req.params;
 	verifyParameters(sprintId);
@@ -45,7 +45,7 @@ export const getSprintWithRelease = async(req: express.Request, res: express.Res
 	return res.json(sprintList);
 }
 
-export const moveSprint = async(req: express.Request, res: express.Response) => {
+export const moveSprint = async (req: express.Request, res: express.Response) => {
 	const db = Database.getInstance();
 	const { releaseId } = req.params;
 	const {
@@ -57,7 +57,7 @@ export const moveSprint = async(req: express.Request, res: express.Response) => 
 	return res.json(sprintList);
 }
 
-export const deleteSprint = async(req: express.Request, res: express.Response) => {
+export const deleteSprint = async (req: express.Request, res: express.Response) => {
 	const db = Database.getInstance();
 	const { sprintId } = req.params;
 	verifyParameters(sprintId);

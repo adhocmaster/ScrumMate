@@ -17,7 +17,7 @@ export class ModelDataSourceWrapper {
 	public get dataSourceIsInitialized(): boolean {
 		return this.dataSource != null && this.dataSource.isInitialized;
 	}
-	
+
 	/// Works for any type
 	public async save(item: any) {
 		try {
@@ -37,7 +37,7 @@ export class ModelDataSourceWrapper {
 	}
 
 	public async lookupById(type: any, id: number) { // issues with type :(
-		const maybeItem =  await this.dataSource.manager.findOneBy(type, {id: id});
+		const maybeItem = await this.dataSource.manager.findOneBy(type, { id: id });
 		if (!maybeItem) {
 			throw new NotFoundError(`${type} with id ${id} not found`)
 		}

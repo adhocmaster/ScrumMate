@@ -1,62 +1,62 @@
 import express from "express";
 
 export const Codes = {
-  ParameterError: 400,
-  NotFoundError: 404,
-  NotSavedError: 500,
-  ExistingUserError: 400,
-  DeletionError: 500,
-  Success: 200,
+	ParameterError: 400,
+	NotFoundError: 404,
+	NotSavedError: 500,
+	ExistingUserError: 400,
+	DeletionError: 500,
+	Success: 200,
 };
 
 export class ParameterError extends Error {
-    constructor(msg: string) {
-        super(msg);
-		    this.name = "ParameterError";
-    }
-    public code() {
-      return Codes.ParameterError;
-    }
+	constructor(msg: string) {
+		super(msg);
+		this.name = "ParameterError";
+	}
+	public code() {
+		return Codes.ParameterError;
+	}
 }
 
 export class NotFoundError extends Error {
-    constructor(msg: string) {
-        super(msg);
-		    this.name = "NotFoundError";
-    }
-    public code() {
-      return Codes.NotFoundError;
-    }
+	constructor(msg: string) {
+		super(msg);
+		this.name = "NotFoundError";
+	}
+	public code() {
+		return Codes.NotFoundError;
+	}
 }
 
 export class NotSavedError extends Error {
-    constructor(msg: string) {
-        super(msg);
+	constructor(msg: string) {
+		super(msg);
 		this.name = "NotSavedError"
-    }
-    public code() {
-      return Codes.NotSavedError;
-    }
+	}
+	public code() {
+		return Codes.NotSavedError;
+	}
 }
 
 export class ExistingUserError extends Error {
-    constructor(msg: string) {
-        super(msg);
+	constructor(msg: string) {
+		super(msg);
 		this.name = "NotExistingError"
-    }
-    public code() {
-      return Codes.ExistingUserError;
-    }
+	}
+	public code() {
+		return Codes.ExistingUserError;
+	}
 }
 
 export class DeletionError extends Error {
-    constructor(msg: string) {
-        super(msg);
+	constructor(msg: string) {
+		super(msg);
 		this.name = "DeletionError"
-    }
-    public code() {
-      return Codes.DeletionError;
-    }
+	}
+	public code() {
+		return Codes.DeletionError;
+	}
 }
 
 export function errorWrapper(func: { (req: express.Request, res: express.Response): Promise<express.Response>; (arg0: express.Request, arg1: express.Response): any; }) {

@@ -30,21 +30,21 @@ export const editRelease = async (req: express.Request, res: express.Response) =
 
 export const copyRelease = async (req: express.Request, res: express.Response) => {
 	const db = Database.getInstance();
-	const {releaseId} = req.params;
+	const { releaseId } = req.params;
 	const release = await db.getReleaseRepository.copyRelease(parseInt(releaseId));
 	return res.json(release);
 };
 
 export const getRelease = async (req: express.Request, res: express.Response) => {
 	const db = Database.getInstance();
-	const {releaseId} = req.params;
+	const { releaseId } = req.params;
 	const release = await db.getReleaseRepository.fetchReleaseWithProject(parseInt(releaseId));
 	return res.json(release);
 };
 
 export const getReleaseAndBacklog = async (req: express.Request, res: express.Response) => {
 	const db = Database.getInstance();
-	const {releaseId} = req.params;
+	const { releaseId } = req.params;
 	const release = await db.getReleaseRepository.fetchReleaseWithBacklog(parseInt(releaseId));
 	return res.json(release);
 };
