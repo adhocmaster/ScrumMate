@@ -22,8 +22,6 @@ function SignInBox({ onLogin }) {
 		onLogin(email, password)
 	};
 
-	console.log("HIT THE SIGN IN BOX")
-
 	return (
 		<Box
 			sx={{
