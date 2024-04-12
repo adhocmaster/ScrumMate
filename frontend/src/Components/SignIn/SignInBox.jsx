@@ -143,6 +143,7 @@ function SignInBox({ onLogin }) {
 				<Button
 					type="submit"
 					variant="contained"
+					onClick={handleEnterClick}
 					sx={{
 						mt: 0,
 						bgcolor: '#0a81ff',

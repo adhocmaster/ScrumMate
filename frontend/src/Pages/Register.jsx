@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom';
 import { Box, Container, TextField, Button, Typography } from '@mui/material';
 
 const Register = () => {
-	console.log("IN REGISTER PAGE");
 	const [username, setUsername] = useState('');
 	const [email, setEmail] = useState('');
 	const [password, setPassword] = useState('');
