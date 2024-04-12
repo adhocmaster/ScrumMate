@@ -4,6 +4,7 @@ import Typography from '@mui/material/Typography';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import Link from '@mui/material/Link';
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 
 function SignInBox({ onLogin }) {
 	const [email, setEmail] = useState('');
@@ -30,24 +31,17 @@ function SignInBox({ onLogin }) {
 				justifyContent: 'flex-start',
 				alignItems: 'center',
 				height: 'calc(100vh - 60px)',
-				width: '100%',
-				paddingTop: '20px',
-				'@media (max-width: 600px)': {
-					paddingTop: '10px',
-				},
+				paddingTop: '55px',
 			}}
 		>
 			<Box
 				sx={{
-					width: '25%',
 					minWidth: '400px',
-					height: '70%',
-					bgcolor: '#d4d4d4',
-					color: 'white',
-					marginTop: '20px',
-					p: 3,
-					borderRadius: '10px',
-					boxShadow: '10px 10px 10px rgba(0, 0, 0, 0.7)',
+					minHeight: '450px',
+					bgcolor: '#f0f0f0',
+					p: 3, // padding inside the box
+					borderRadius: '4px', // box corner curvature
+					boxShadow: 10,
 					display: 'flex',
 					flexDirection: 'column',
 					alignItems: 'center',
@@ -96,13 +90,21 @@ function SignInBox({ onLogin }) {
 				<Typography
 					sx={{
 						typography: 'h5',
-						color: 'white',
+						color: 'black',
 						textAlign: 'center',
-						textShadow: '1px 1px black, -1px -1px black, 1px -1px black, -1px 1px black',
 					}}
 				>
-					Sign In
+					Log in to your account
 				</Typography>
+
+				<AccountCircleIcon
+					fontSize='large'
+					sx={{
+						fontSize: '100px', // Additional size adjustment
+						color: 'gray', // Optional: Change icon color
+					}}
+				/>
+
 				<TextField
 					label="Email"
 					variant="outlined"
