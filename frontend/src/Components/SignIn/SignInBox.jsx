@@ -39,9 +39,10 @@ function SignInBox({ onLogin }) {
 		>
 			<Box
 				sx={{
-					width: '90%',
-					maxWidth: '800px',
-					bgcolor: 'rgb(34, 19, 170)',
+					width: '25%',
+					minWidth: '400px',
+					height: '70%',
+					bgcolor: '#d4d4d4',
 					color: 'white',
 					marginTop: '20px',
 					p: 3,
