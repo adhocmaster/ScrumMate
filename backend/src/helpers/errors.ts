@@ -2,7 +2,7 @@ import express from "express";
 
 export const Codes = {
 	ParameterError: 400,
-	NotFoundError: 404,
+	NotFoundError: 400,
 	NotSavedError: 500,
 	ExistingUserError: 400,
 	DeletionError: 500,

@@ -6,11 +6,14 @@ import Button from '@mui/material/Button';
 import Link from '@mui/material/Link';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import Checkbox from '@mui/material/Checkbox';
+import Alert from '@mui/material/Alert';
 
-function SignInBox({ onLogin }) {
+
+function SignInBox({ setIsLoggedIn, setColor }) {
 	const [email, setEmail] = useState('');
 	const [password, setPassword] = useState('');
 	const [rememberMe, setRememberMe] = useState(false);
+	const [errorAlert, setErrorAlert] = useState(false);
 
 	const handleEmailChange = (event) => {
 		setEmail(event.target.value);
@@ -24,9 +27,46 @@ function SignInBox({ onLogin }) {
 		setRememberMe(event.target.checked);
 	};
 
+	const handleSignIn = (email, password) => {
+		// console.log("handling sign in")
+		console.log(email, password)
+		try {
+			var options = {
+				url: "https://localhost:8080/api/user/login/",
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify({ email, password }),
+				credentials: 'include'
+			}
+			var successfulLogin = false;
+			fetch('http://localhost:8080/api/user/login/', options).then((result) => {
+				// console.log("handling sign in 1")
+				console.log(result)
+				successfulLogin = result.status === 200
+				if (successfulLogin) {
+					console.log('setting logged in true')
+					setIsLoggedIn(true);
+					setColor('#ffffff')
+				} else {
+					setErrorAlert(true)
+				}
+			}).then((response) => {
+				// console.log("handling sign in 2")
+				console.log(response)
+			})
+			// console.log("handling sign in 3")
+		} catch (error) {
+			// console.log("handling sign in 4")
+			console.log(error)
+		}
+		// console.log("handling sign in 5")
+	};
+
 	const handleEnterClick = (e) => {
 		e.preventDefault();
-		onLogin(email, password)
+		handleSignIn(email, password);
 	};
 
 	return (
@@ -88,13 +128,20 @@ function SignInBox({ onLogin }) {
 					Log in to your account
 				</Typography>
 
-				<AccountCircleIcon
-					fontSize='large'
-					sx={{
-						fontSize: '120px', // Additional size adjustment
-						color: 'gray', // Optional: Change icon color
-					}}
-				/>
+				<>
+					<AccountCircleIcon
+						fontSize='large'
+						sx={{
+							fontSize: '120px', // Additional size adjustment
+							color: 'gray', // Optional: Change icon color
+						}}
+					/>
+					{errorAlert &&
+						<Alert severity="error" onClose={() => setErrorAlert(false)} >
+							Invalid username or password
+						</Alert>
+					}
+				</>
 
 				<TextField
 					label="Email"
