@@ -42,7 +42,7 @@ export class NotSavedError extends Error {
 export class ExistingUserError extends Error {
 	constructor(msg: string) {
 		super(msg);
-		this.name = "NotExistingError"
+		this.name = "ExistingUserError"
 	}
 	public code() {
 		return Codes.ExistingUserError;
@@ -65,7 +65,7 @@ export function errorWrapper(func: { (req: express.Request, res: express.Respons
 			// console.log(`running function ${func.name}`)
 			return await func(req, res)
 		} catch (err) {
-			// console.log("caught error")
+			console.log("caught error", err.name)
 			try {
 				return res.sendStatus(err.code());
 			} catch {

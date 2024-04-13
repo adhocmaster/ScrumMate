@@ -8,7 +8,6 @@ import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import Checkbox from '@mui/material/Checkbox';
 import Alert from '@mui/material/Alert';
 
-
 function SignInBox({ setIsLoggedIn, setColor }) {
 	const [email, setEmail] = useState('');
 	const [password, setPassword] = useState('');
