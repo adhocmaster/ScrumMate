@@ -127,7 +127,24 @@ function Register() {
 							'&.Mui-focused fieldset': {
 								borderColor: 'black',
 							},
-
+							'& input:-webkit-autofill': {
+								WebkitBoxShadow: '0 0 0 100px #fcf8ca inset',
+								WebkitTextFillColor: 'black',
+								WebkitBackgroundClip: 'text',
+								caretColor: 'black'
+							},
+							'& input:-webkit-autofill:hover': {
+								WebkitBoxShadow: '0 0 0 100px #fcf8ca inset',
+								WebkitTextFillColor: 'black',
+								WebkitBackgroundClip: 'text',
+								caretColor: 'black'
+							},
+							'& input:-webkit-autofill:focus': {
+								WebkitBoxShadow: '0 0 0 100px #fcf8ca inset',
+								WebkitTextFillColor: 'black',
+								WebkitBackgroundClip: 'text',
+								caretColor: 'black'
+							},
 						},
 					},
 				}}
@@ -183,21 +200,21 @@ function Register() {
 				<TextField
 					required='true'
 					error // just for red asterisk
-					label="Username"
-					variant="outlined"
-					autoComplete="off"
-					value={username}
-					onChange={handleUsernameChange}
-				/>
-
-				<TextField
-					required='true'
-					error // just for red asterisk
 					label="Email"
 					variant="outlined"
 					autoComplete="off"
 					value={email}
 					onChange={handleEmailChange}
+				/>
+
+				<TextField
+					required='true'
+					error // just for red asterisk
+					label="Username"
+					variant="outlined"
+					autoComplete="off"
+					value={username}
+					onChange={handleUsernameChange}
 				/>
 
 				<TextField

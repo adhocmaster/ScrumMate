@@ -27,7 +27,6 @@ function SignInBox({ setIsLoggedIn, setColor }) {
 	};
 
 	const handleSignIn = (email, password) => {
-		// console.log("handling sign in")
 		console.log(email, password)
 		try {
 			var options = {
@@ -41,7 +40,6 @@ function SignInBox({ setIsLoggedIn, setColor }) {
 			}
 			var successfulLogin = false;
 			fetch('http://localhost:8080/api/user/login/', options).then((result) => {
-				// console.log("handling sign in 1")
 				console.log(result)
 				successfulLogin = result.status === 200
 				if (successfulLogin) {
@@ -52,15 +50,11 @@ function SignInBox({ setIsLoggedIn, setColor }) {
 					setErrorAlert(true)
 				}
 			}).then((response) => {
-				// console.log("handling sign in 2")
 				console.log(response)
 			})
-			// console.log("handling sign in 3")
 		} catch (error) {
-			// console.log("handling sign in 4")
 			console.log(error)
 		}
-		// console.log("handling sign in 5")
 	};
 
 	const handleEnterClick = (e) => {
@@ -109,7 +103,24 @@ function SignInBox({ setIsLoggedIn, setColor }) {
 							'&.Mui-focused fieldset': {
 								borderColor: 'black',
 							},
-
+							'& input:-webkit-autofill': {
+								WebkitBoxShadow: '0 0 0 100px #fcf8ca inset',
+								WebkitTextFillColor: 'black',
+								WebkitBackgroundClip: 'text',
+								caretColor: 'black'
+							},
+							'& input:-webkit-autofill:hover': {
+								WebkitBoxShadow: '0 0 0 100px #fcf8ca inset',
+								WebkitTextFillColor: 'black',
+								WebkitBackgroundClip: 'text',
+								caretColor: 'black'
+							},
+							'& input:-webkit-autofill:focus': {
+								WebkitBoxShadow: '0 0 0 100px #fcf8ca inset',
+								WebkitTextFillColor: 'black',
+								WebkitBackgroundClip: 'text',
+								caretColor: 'black'
+							},
 						},
 					},
 				}}
@@ -223,8 +234,6 @@ function SignInBox({ setIsLoggedIn, setColor }) {
 						</Link>
 					</Typography>
 				</Box>
-
-
 			</Box>
 		</Box>
 	);
