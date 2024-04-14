@@ -169,12 +169,12 @@ function Register({ onLogin }) {
 					onClick={handleSubmit}
 					sx={{
 						mt: 0,
-						bgcolor: '#0a81ff',
+						bgcolor: '#98bad5',
 						color: 'white',
 						fontSize: '18px',
 						'&:hover': {
 							bgcolor: 'white',
-							color: '#0a81ff',
+							color: '#98bad5',
 						},
 					}}
 				>
@@ -194,7 +194,7 @@ function Register({ onLogin }) {
 						Already have an account?
 						<Link
 							href="/"
-							sx={{ color: 'blue', textDecoration: 'none', marginLeft: '0.2rem' }}
+							sx={{ color: '304674', textDecoration: 'none', marginLeft: '0.2rem' }}
 						>
 							Sign in
 						</Link>
