@@ -8,7 +8,7 @@ import Register from './Pages/Register';
 
 function App() {
 	const [isLoggedIn, setIsLoggedIn] = useState(false);
-	const [color, setColor] = useState('#E6EEFF')
+	const [color, setColor] = useState('#F8F8F8')
 
 	const handleSignIn = (email, password) => {
 		try {

@@ -29,7 +29,7 @@ const Navbar = ({ isLoggedIn, onSignOut, projectId }) => {
 	return (
 		<div>
 			<AppBar position="fixed" sx={{
-				backgroundColor: '#0a81ff',
+				backgroundColor: '#4682b4',
 				padding: '8px 16px',
 			}}>
 				<Toolbar

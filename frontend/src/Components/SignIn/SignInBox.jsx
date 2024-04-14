@@ -133,7 +133,7 @@ function SignInBox({ onLogin }) {
 						<Link
 							href="#" // Replace with password reset page link
 							onClick={() => window.open('/forgot-password', '_blank')}
-							sx={{ color: 'blue', textDecoration: 'none' }}
+							sx={{ color: '304674', textDecoration: 'none' }}
 						>
 							Forgot Password
 						</Link>
@@ -146,12 +146,12 @@ function SignInBox({ onLogin }) {
 					onClick={handleEnterClick}
 					sx={{
 						mt: 0,
-						bgcolor: '#0a81ff',
+						bgcolor: '#98bad5',
 						color: 'white',
 						fontSize: '18px',
 						'&:hover': {
 							bgcolor: 'white',
-							color: '#0a81ff',
+							color: '#98bad5',
 						},
 					}}
 				>
@@ -171,7 +171,7 @@ function SignInBox({ onLogin }) {
 						Don't have an account?
 						<Link
 							href="/register"
-							sx={{ color: 'blue', textDecoration: 'none', marginLeft: '0.2rem' }}
+							sx={{ color: '304674', textDecoration: 'none', marginLeft: '0.2rem' }}
 						>
 							Sign up
 						</Link>
