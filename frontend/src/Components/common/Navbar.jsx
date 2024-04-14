@@ -29,7 +29,7 @@ const Navbar = ({ isLoggedIn, onSignOut, projectId }) => {
 	return (
 		<div>
 			<AppBar position="fixed" sx={{
-				backgroundColor: '#3c88bf',
+				backgroundColor: '#0a81ff',
 				padding: '8px 16px',
 			}}>
 				<Toolbar
@@ -61,7 +61,7 @@ const Navbar = ({ isLoggedIn, onSignOut, projectId }) => {
 								marginLeft: 'auto'
 							}}
 							// TODO: Add click functionality
-							onClick={() => console.log('Clicked Avatar Icon')}
+							onClick={() => onSignOut}
 						>
 							<AccountCircleIcon />
 						</IconButton>

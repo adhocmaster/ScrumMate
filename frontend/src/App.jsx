@@ -8,6 +8,8 @@ import Register from './Pages/Register';
 
 function App() {
 	const [isLoggedIn, setIsLoggedIn] = useState(false);
+	const [color, setColor] = useState('#E6EEFF')
+
 	const handleSignIn = (email, password) => {
 		try {
 			var options = {
@@ -21,15 +23,12 @@ function App() {
 			}
 			fetch('http://localhost:8080/api/user/login/', options).then((result) => {
 				console.log(result)
-				if (result.status === 200) {
-
-				}
 				return result.json()
 
 			}).then((response) => {
 				console.log(response)
 				setIsLoggedIn(true);
-
+				setColor('#ffffff')
 			})
 
 		} catch (error) {
@@ -43,8 +42,9 @@ function App() {
 		setIsLoggedIn(false);
 	};
 
+
 	return (
-		<div className="App">
+		<div className="App" style={{ backgroundColor: color }}>
 			<Navbar isLoggedIn={isLoggedIn} onSignOut={handleSignOut} />
 			<Routes>
 				<Route
