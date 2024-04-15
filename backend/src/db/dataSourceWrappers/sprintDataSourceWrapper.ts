@@ -2,6 +2,7 @@ import { DeletionError, NotFoundError } from "../../helpers/errors";
 import { ModelDataSourceWrapper } from "./modelDataSourceWrapper";
 import { Release } from "../../entity/release";
 import { Sprint } from "../../entity/sprint";
+import { BacklogItem } from "entity/backlogItem";
 
 export class SprintDataSourceWrapper extends ModelDataSourceWrapper {
 
@@ -71,6 +72,19 @@ export class SprintDataSourceWrapper extends ModelDataSourceWrapper {
 			throw new NotFoundError(`Release with releaseId ${releaseId} not found`)
 		}
 		return sprints;
+	}
+	
+	public async getSprintBacklog(sprintId: number): Promise<BacklogItem[]> {
+		const maybeSprint = await this.dataSource.getRepository(Sprint).find({
+			where: { id: sprintId },
+			relations: {
+				todos: true
+			},
+		})
+		if (!maybeSprint || maybeSprint.length === 0) {
+			throw new NotFoundError(`Sprint with id ${sprintId} not found`)
+		}
+		return maybeSprint[0].todos
 	}
 
 	// TODO: handle stories in the sprint

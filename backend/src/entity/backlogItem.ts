@@ -25,6 +25,9 @@ export class BacklogItem {
 	@UpdateDateColumn()
 	updatedDate: Date
 
+	@Column()
+	rank: number // "index"
+
 	///// Relational /////
 
 	@ManyToOne(() => Release, (release) => release.backlog) // have this whether it is in a backlog or not?

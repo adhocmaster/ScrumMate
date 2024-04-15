@@ -35,6 +35,21 @@ export class BacklogItemRepository extends ModelRepository {
 		return story;
 	}
 
+	public async reorderBacklogItems(sprintId: number, startIndex: number, destinationIndex: number): Promise<BacklogItem[]> {
+		const backlogItems = await this.sprintSource.getSprintBacklog(sprintId)
+		// unfortunately cant call getReleaseSprints() because we need the release too
+		// otherwise we need to take a performance hit looking up the release again
+		backlogItems.sort((a: BacklogItem, b: BacklogItem) => a.rank - b.rank)
+		const [item] = backlogItems.splice(startIndex, 1)
+		backlogItems.splice(destinationIndex, 0, item)
+		for (const { backlogItem, index } of backlogItems.map((backlogItem, index) => ({ backlogItem, index }))) {
+			backlogItem.rank = index + 1;
+			await this.sprintSource.save(backlogItem)
+		}
+		// await this.dataSource.save(sprints)
+		return backlogItems;
+	}
+
 	public async lookupBacklogById(id: number): Promise<BacklogItem> {
 		return await this.backlogSource.lookupBacklogById(id);
 	}

@@ -32,3 +32,15 @@ export const editStory = async (req: express.Request, res: express.Response) => 
 	const story = await db.getBacklogItemRepository.updateStory(parseInt(storyId), parseInt(sprintId), userTypes, functionalityDescription, reasoning, acceptanceCriteria, storyPoints, priority)
 	return res.json(story)
 };
+
+export const moveBacklog = async (req: express.Request, res: express.Response) => {
+	const db = Database.getInstance();
+	const { sprintId } = req.params;
+	const {
+		backlogStartIndex,
+		backlogEndIndex
+	} = req.body;
+	verifyParameters(sprintId, backlogStartIndex, backlogEndIndex);
+	const backlogList = await db.getBacklogItemRepository.reorderBacklogItems(parseInt(sprintId), parseInt(backlogStartIndex), parseInt(backlogEndIndex));
+	return res.json(backlogList);
+}
