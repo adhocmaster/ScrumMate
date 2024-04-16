@@ -121,7 +121,10 @@ import DeleteConfirmation from './DeleteConfirmation';
 
 const Sprint = ({ index, items, setItems, userStories }) => {
 
+	//Dummy Data
 	const [stories, setStories] = useState(["backlog item 1", " backlog item 2", "backlog item 3"]);
+
+	//Function to handle the reordering of stories (content within the cards).
 	function reorderStories(result) {
 		const startIndex = result.source.index;
 		const endIndex = result.destination.index;
@@ -174,12 +177,12 @@ const Sprint = ({ index, items, setItems, userStories }) => {
 
 						<Paper sx={{ backgroundColor: 'lightgray', overflowX: 'auto' }}>
 							<List ref={provided.innerRef} {...provided.droppableProps} sx={{ display: 'flex', flexDirection: 'row' }}>
-								{stories.map((num, idx) => (
-									<Draggable key={num} draggableId={num.toString()} index={idx}>
+								{stories.map((storyText, idx) => (
+									<Draggable key={storyText} draggableId={storyText.toString()} index={idx}>
 										{(provided) => (
 											<div ref={provided.innerRef} {...provided.draggableProps} {...provided.dragHandleProps} sx={{ minWidth: 200, display: 'inline-block', padding: '8px 0px 8px 12px' }}>
 												<UserStory
-													userStoryText={num}
+													userStoryText={storyText}
 													storyPoints={"8"}
 												/>
 											</div>
