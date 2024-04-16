@@ -15,7 +15,23 @@ export const createStory = async (req: express.Request, res: express.Response) =
 		priority,
 	} = req.body;
 	verifyParameters(userTypes, functionalityDescription, reasoning, acceptanceCriteria, storyPoints, priority);
-	const newStory = await db.getBacklogItemRepository.createNewStory(parseInt(sprintId), userTypes, functionalityDescription, reasoning, acceptanceCriteria, storyPoints, priority);
+	const newStory = await db.getBacklogItemRepository.createNewSprintStory(parseInt(sprintId), userTypes, functionalityDescription, reasoning, acceptanceCriteria, storyPoints, priority);
+	return res.json(newStory);
+}
+
+export const createNewBacklogStory = async (req: express.Request, res: express.Response) => {
+	const db = Database.getInstance();
+	const { releaseId } = req.params;
+	const {
+		userTypes,
+		functionalityDescription,
+		reasoning,
+		acceptanceCriteria,
+		storyPoints,
+		priority,
+	} = req.body;
+	verifyParameters(userTypes, functionalityDescription, reasoning, acceptanceCriteria, storyPoints, priority);
+	const newStory = await db.getBacklogItemRepository.createNewBacklogStory(parseInt(releaseId), userTypes, functionalityDescription, reasoning, acceptanceCriteria, storyPoints, priority);
 	return res.json(newStory);
 }
 

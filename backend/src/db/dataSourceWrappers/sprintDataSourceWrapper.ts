@@ -58,7 +58,7 @@ export class SprintDataSourceWrapper extends ModelDataSourceWrapper {
 		await this.save(maybeSprintWithTodos)
 	}
 
-	public async getSprintWithBacklog(releaseId: number): Promise<Sprint[]> {
+	public async getSprintsWithBacklog(releaseId: number): Promise<Sprint[]> {
 		const sprints = await this.dataSource.getRepository(Sprint).find({
 			relations: {
 				release: true,
@@ -73,7 +73,7 @@ export class SprintDataSourceWrapper extends ModelDataSourceWrapper {
 		}
 		return sprints;
 	}
-	
+
 	public async getSprintBacklog(sprintId: number): Promise<BacklogItem[]> {
 		const maybeSprint = await this.dataSource.getRepository(Sprint).find({
 			where: { id: sprintId },
