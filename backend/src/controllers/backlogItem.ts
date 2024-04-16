@@ -64,6 +64,5 @@ export const moveBacklog = async (req: express.Request, res: express.Response) =
 	if ((sourceType !== "sprint" && sourceType !== "backlog") || (destinationType !== "sprint" && destinationType !== "backlog")) {
 		throw new ParameterError("destinationType or sourceType are invalid")
 	}
-	console.log('running')
-	return res.json(db.getBacklogItemRepository.reorderBacklog(parseInt(sourceId), sourceType, parseInt(sourceRank), parseInt(destinationId), destinationType, parseInt(destinationRank)));
+	return res.json(await db.getBacklogItemRepository.reorderBacklog(parseInt(sourceId), sourceType, parseInt(sourceRank), parseInt(destinationId), destinationType, parseInt(destinationRank)));
 }

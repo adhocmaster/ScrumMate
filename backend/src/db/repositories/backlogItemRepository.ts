@@ -2,6 +2,7 @@ import { Release } from "../../entity/release";
 import { BacklogItem, Priority, Story } from "../../entity/backlogItem";
 import { ModelRepository } from "./modelRepository";
 import { NotFoundError } from "../../helpers/errors";
+import { Sprint } from "../../entity/sprint";
 
 export class BacklogItemRepository extends ModelRepository {
 
@@ -59,23 +60,48 @@ export class BacklogItemRepository extends ModelRepository {
 
 	// for each reordering, just take it out of the source, renumber the source, put it in the destination with new rank, and renumber the destination
 	public async reorderBacklog(sourceId: number, sourceType: string, sourceIndex: number, destinationId: number, destinationType: string, destinationIndex: number): Promise<[BacklogItem[], BacklogItem[]]> {
-		const fromBacklog = Number(sourceType === "backlog");
-		const toBacklog = Number(destinationType === "backlog");
+		const getObj = async (backlog: boolean, id: number) => {
+			if (backlog) {
+				return await this.releaseSource.fetchReleaseWithBacklog(id);
+			} else {
+				return await this.sprintSource.lookupSprintByIdWithTodos(id)
+			}
+		}
+		const getObjList = (obj: Release | Sprint) => {
+			if (obj instanceof Release) {
+				return obj.backlog
+			} else {
+				return obj.todos
+			}
+		}
+		const saveObj = async (obj: Release | Sprint) => {
+			if (obj instanceof Release) {
+				await this.releaseSource.save(obj)
+			} else {
+				await this.sprintSource.save(obj)
+			}
+		}
+		const setParent = (backlogItem: BacklogItem, parent: Release | Sprint) => {
+			if (parent instanceof Release) {
+				backlogItem.release = parent
+				backlogItem.sprint = undefined
+			} else {
+				backlogItem.release = undefined
+				backlogItem.sprint = parent
+			}
+		}
 
-		const sourceLookup = [this.sprintSource.lookupSprintByIdWithTodos, this.releaseSource.fetchReleaseWithBacklog][fromBacklog]
-		const sourceSave = [this.sprintSource.save, this.releaseSource.save][fromBacklog]
-		const sourceObj = await sourceLookup(sourceId)
-		const sourceList = sourceObj instanceof Release ? sourceObj.backlog : sourceObj.todos; // cant use "fromBacklog" as condition because of Typescript :(
+		const fromBacklog = sourceType === "backlog";
+		const toBacklog = destinationType === "backlog";
+
+		const sourceObj = await getObj(fromBacklog, sourceId)
+		const sourceList = getObjList(sourceObj)
+		const destinationObj = await getObj(toBacklog, destinationId)
+		const destinationList = getObjList(destinationObj)
 
 		if (sourceIndex >= sourceList.length) {
 			throw new NotFoundError("Source index is out of bounds")
 		}
-
-		const destinationLookup = [this.sprintSource.lookupSprintByIdWithTodos, this.releaseSource.fetchReleaseWithBacklog][toBacklog]
-		const destinationSave = [this.sprintSource.save, this.releaseSource.save][toBacklog]
-		const destinationObj = await destinationLookup(destinationId)
-		const destinationList = destinationObj instanceof Release ? destinationObj.backlog : destinationObj.todos; // cant use "toBacklog" as condition because of Typescript :(
-
 		if (destinationIndex > destinationList.length) {
 			throw new NotFoundError("Destination index is out of bounds")
 		}
@@ -87,7 +113,7 @@ export class BacklogItemRepository extends ModelRepository {
 			await this.backlogSource.save(backlogItem)
 		}
 		sourceObj.backlogItemCount -= 1;
-		await sourceSave(sourceObj)
+		await saveObj(sourceObj)
 
 		destinationList.sort((a: BacklogItem, b: BacklogItem) => a.rank - b.rank)
 		destinationList.splice(destinationIndex, 0, item)
@@ -96,7 +122,12 @@ export class BacklogItemRepository extends ModelRepository {
 			await this.backlogSource.save(backlogItem)
 		}
 		destinationObj.backlogItemCount += 1;
-		await destinationSave(destinationObj)
+		await saveObj(destinationObj)
+
+		setParent(item, destinationObj)
+		await this.backlogSource.save(item)
+		item.sprint = undefined
+		item.release = undefined
 
 		return [sourceList, destinationList]
 	}

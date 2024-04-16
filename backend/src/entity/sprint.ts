@@ -14,7 +14,7 @@ export class Sprint {
 	@Column()
 	sprintNumber: number
 
-	@Column()
+	@Column({ default: 0 })
 	backlogItemCount: number = 0
 
 	@Column()
