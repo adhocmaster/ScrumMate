@@ -6,11 +6,13 @@ import Button from '@mui/material/Button';
 import Link from '@mui/material/Link';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import Checkbox from '@mui/material/Checkbox';
+import Alert from '@mui/material/Alert';
 
-function SignInBox({ onLogin }) {
+function SignInBox({ setIsLoggedIn, setColor }) {
 	const [email, setEmail] = useState('');
 	const [password, setPassword] = useState('');
 	const [rememberMe, setRememberMe] = useState(false);
+	const [errorAlert, setErrorAlert] = useState(false);
 
 	const handleEmailChange = (event) => {
 		setEmail(event.target.value);
@@ -24,9 +26,40 @@ function SignInBox({ onLogin }) {
 		setRememberMe(event.target.checked);
 	};
 
+	const handleSignIn = (email, password) => {
+		console.log(email, password)
+		try {
+			var options = {
+				url: "https://localhost:8080/api/user/login/",
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify({ email, password }),
+				credentials: 'include'
+			}
+			var successfulLogin = false;
+			fetch('http://localhost:8080/api/user/login/', options).then((result) => {
+				console.log(result)
+				successfulLogin = result.status === 200
+				if (successfulLogin) {
+					console.log('setting logged in true')
+					setIsLoggedIn(true);
+					setColor('#ffffff')
+				} else {
+					setErrorAlert(true)
+				}
+			}).then((response) => {
+				console.log(response)
+			})
+		} catch (error) {
+			console.log(error)
+		}
+	};
+
 	const handleEnterClick = (e) => {
 		e.preventDefault();
-		onLogin(email, password)
+		handleSignIn(email, password);
 	};
 
 	return (
@@ -70,7 +103,24 @@ function SignInBox({ onLogin }) {
 							'&.Mui-focused fieldset': {
 								borderColor: 'black',
 							},
-
+							'& input:-webkit-autofill': {
+								WebkitBoxShadow: '0 0 0 100px #fcf8ca inset',
+								WebkitTextFillColor: 'black',
+								WebkitBackgroundClip: 'text',
+								caretColor: 'black'
+							},
+							'& input:-webkit-autofill:hover': {
+								WebkitBoxShadow: '0 0 0 100px #fcf8ca inset',
+								WebkitTextFillColor: 'black',
+								WebkitBackgroundClip: 'text',
+								caretColor: 'black'
+							},
+							'& input:-webkit-autofill:focus': {
+								WebkitBoxShadow: '0 0 0 100px #fcf8ca inset',
+								WebkitTextFillColor: 'black',
+								WebkitBackgroundClip: 'text',
+								caretColor: 'black'
+							},
 						},
 					},
 				}}
@@ -88,13 +138,20 @@ function SignInBox({ onLogin }) {
 					Log in to your account
 				</Typography>
 
-				<AccountCircleIcon
-					fontSize='large'
-					sx={{
-						fontSize: '120px', // Additional size adjustment
-						color: 'gray', // Optional: Change icon color
-					}}
-				/>
+				<>
+					<AccountCircleIcon
+						fontSize='large'
+						sx={{
+							fontSize: '120px', // Additional size adjustment
+							color: 'gray', // Optional: Change icon color
+						}}
+					/>
+					{errorAlert &&
+						<Alert severity="error" onClose={() => setErrorAlert(false)} >
+							Invalid username or password
+						</Alert>
+					}
+				</>
 
 				<TextField
 					label="Email"
@@ -177,8 +234,6 @@ function SignInBox({ onLogin }) {
 						</Link>
 					</Typography>
 				</Box>
-
-
 			</Box>
 		</Box>
 	);

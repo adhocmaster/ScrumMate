@@ -10,38 +10,9 @@ function App() {
 	const [isLoggedIn, setIsLoggedIn] = useState(false);
 	const [color, setColor] = useState('#E6EEFF')
 
-	const handleSignIn = (email, password) => {
-		try {
-			var options = {
-				url: "https://localhost:8080/api/user/login/",
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json'
-				},
-				body: JSON.stringify({ email, password }),
-				credentials: 'include'
-			}
-			fetch('http://localhost:8080/api/user/login/', options).then((result) => {
-				console.log(result)
-				return result.json()
-
-			}).then((response) => {
-				console.log(response)
-				setIsLoggedIn(true);
-				setColor('#ffffff')
-			})
-
-		} catch (error) {
-			console.log(error)
-		}
-
-	};
-
-
 	const handleSignOut = () => {
 		setIsLoggedIn(false);
 	};
-
 
 	return (
 		<div className="App" style={{ backgroundColor: color }}>
@@ -53,7 +24,7 @@ function App() {
 						isLoggedIn ? (
 							<Navigate replace to="/dashboard" />
 						) : (
-							<SignInBox onLogin={handleSignIn} />
+							<SignInBox setIsLoggedIn={setIsLoggedIn} setColor={setColor} />
 						)
 					}
 				/>
