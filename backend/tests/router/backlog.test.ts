@@ -174,12 +174,12 @@ describe("Release API tests", () => {
 
 	test('Second Backlog Item', async () => {
 		const body = {
-			"userTypes": "people",
-			"functionalityDescription": "backlog item",
+			"userTypes": "plants",
+			"functionalityDescription": "allows plants to feel pain",
 			"reasoning": "why not",
-			"acceptanceCriteria": "complete task",
-			"storyPoints": 10,
-			"priority": 4
+			"acceptanceCriteria": "be able to hear their cries of agony",
+			"storyPoints": 100,
+			"priority": 1
 		}
 		await request(app)
 			.post(`/api/sprint/${sprintId}`)

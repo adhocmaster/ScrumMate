@@ -276,7 +276,7 @@ describe("Sprint API tests", () => {
 			});
 	});
 
-	test('Adding new story to sprint', async () => {
+	test('Adding new story to sprint 3', async () => {
 		const body = {
 			"userTypes": "any user",
 			"functionalityDescription": "backlog item",
@@ -294,6 +294,26 @@ describe("Sprint API tests", () => {
 				expect(res.body).toBeDefined();
 				expect(res.body.id).toBeDefined();
 				backlogId = res.body.id;
+			});
+	});
+
+	test('Adding new story to sprint 2', async () => {
+		const body = {
+			"userTypes": "any user",
+			"functionalityDescription": "backlog item",
+			"reasoning": "why not",
+			"acceptanceCriteria": "complete task",
+			"storyPoints": 10,
+			"priority": 4
+		}
+		await request(app)
+			.post(`/api/sprint/${sprint2Id}`)
+			.set('Cookie', [`user-auth=${sessionToken}`])
+			.send(body)
+			.expect(200)
+			.then((res) => {
+				expect(res.body).toBeDefined();
+				expect(res.body.id).toBeDefined();
 			});
 	});
 
