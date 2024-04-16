@@ -118,7 +118,22 @@ import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import UserStory from './UserStory';
 import DeleteConfirmation from './DeleteConfirmation';
 
+
 const Sprint = ({ index, items, setItems, userStories }) => {
+
+	const [stories, setStories] = useState(["backlog item 1", " backlog item 2", "backlog item 3"]);
+	function reorderStories(result) {
+		const startIndex = result.source.index;
+		const endIndex = result.destination.index;
+
+		setStories((stories) => {
+			const nums = [...stories];
+			const [removed] = nums.splice(startIndex, 1);
+			nums.splice(endIndex, 0, removed);
+			return nums;
+		})
+	}
+
 	const deleteSprint = (sprintId, index) => {
 		fetch(`http://localhost:8080/api/sprint/${sprintId}`, {
 			method: 'DELETE',
@@ -139,7 +154,7 @@ const Sprint = ({ index, items, setItems, userStories }) => {
 	};
 
 	return (
-		<DragDropContext onDragEnd={onDragEnd}>
+		<DragDropContext onDragEnd={reorderStories}>
 			<Droppable droppableId={`droppable-${index}`} direction="horizontal">
 				{(provided) => (
 					<Box sx={{ display: 'flex', marginLeft: 2, marginBottom: 2, backgroundColor: 'lightgray' }}>
@@ -159,11 +174,14 @@ const Sprint = ({ index, items, setItems, userStories }) => {
 
 						<Paper sx={{ backgroundColor: 'lightgray', overflowX: 'auto' }}>
 							<List ref={provided.innerRef} {...provided.droppableProps} sx={{ display: 'flex', flexDirection: 'row' }}>
-								{userStories.map((userStory, idx) => (
-									<Draggable key={userStory.id} draggableId={userStory.id.toString()} index={idx}>
+								{stories.map((num, idx) => (
+									<Draggable key={num} draggableId={num.toString()} index={idx}>
 										{(provided) => (
 											<div ref={provided.innerRef} {...provided.draggableProps} {...provided.dragHandleProps} sx={{ minWidth: 200, display: 'inline-block', padding: '8px 0px 8px 12px' }}>
-												<UserStory userStoryText={userStory.functionalityDescription} storyPoints={userStory.storyPoints} />
+												<UserStory
+													userStoryText={num}
+													storyPoints={"8"}
+												/>
 											</div>
 										)}
 									</Draggable>
