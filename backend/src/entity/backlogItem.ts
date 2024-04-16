@@ -58,6 +58,7 @@ export class BacklogItem {
 	copy(backlogItem: BacklogItem): void {
 		this.createdDate = backlogItem.createdDate;
 		this.updatedDate = backlogItem.updatedDate;
+		this.rank = backlogItem.rank;
 	}
 }
 

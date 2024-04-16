@@ -15,6 +15,9 @@ export class Sprint {
 	sprintNumber: number
 
 	@Column()
+	itemCount: number
+
+	@Column()
 	startDate: Date
 
 	@Column()
@@ -73,6 +76,7 @@ export class Sprint {
 		this.endDate = sprint.endDate;
 		this.createdDate = sprint.createdDate;
 		this.goal = sprint.goal;
+		this.itemCount = sprint.itemCount;
 	}
 
 }

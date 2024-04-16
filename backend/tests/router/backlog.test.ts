@@ -150,6 +150,7 @@ describe("Release API tests", () => {
 				expect(res.body).toBeDefined();
 				expect(res.body.id).toBeDefined();
 				backlogId = res.body.id;
+				expect(res.body.rank).toEqual(0);
 			});
 	});
 
@@ -167,6 +168,29 @@ describe("Release API tests", () => {
 				expect(res.body.id).toBeDefined();
 				backlogId = res.body.id;
 				expect(res.body.priority).toEqual(3);
+				expect(res.body.rank).toEqual(0);
+			});
+	});
+
+	test('Second Backlog Item', async () => {
+		const body = {
+			"userTypes": "people",
+			"functionalityDescription": "backlog item",
+			"reasoning": "why not",
+			"acceptanceCriteria": "complete task",
+			"storyPoints": 10,
+			"priority": 4
+		}
+		await request(app)
+			.post(`/api/sprint/${sprintId}`)
+			.set('Cookie', [`user-auth=${sessionToken}`])
+			.send(body)
+			.expect(200)
+			.then((res) => {
+				expect(res.body).toBeDefined();
+				expect(res.body.id).toBeDefined();
+				backlogId = res.body.id;
+				expect(res.body.rank).toEqual(1);
 			});
 	});
 });

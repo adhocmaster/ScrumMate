@@ -13,12 +13,15 @@ export class BacklogItemRepository extends ModelRepository {
 		newStory.storyPoints = storyPoints
 		newStory.priority = priority
 		newStory.sprint = sprint
+		newStory.rank = sprint.itemCount
 		await this.backlogSource.save(newStory)
+		sprint.itemCount += 1
+		await this.sprintSource.save(sprint)
 		return newStory
 	}
 
-	public async updateStory(storyId: number, sprintId?: number, userTypes?: string, functionalityDescription?: string, reasoning?: string, acceptanceCriteria?: string, storyPoints?: number, priority?: Priority): Promise<Story> {
-		const sprint = await this.sprintSource.lookupSprintById(sprintId)
+	public async updateStory(storyId: number, sprintId?: number, userTypes?: string, functionalityDescription?: string, reasoning?: string, acceptanceCriteria?: string, storyPoints?: number, priority?: Priority, rank?: number): Promise<Story> {
+		// const sprint = await this.sprintSource.lookupSprintById(sprintId)
 		const story = await this.backlogSource.lookupStoryById(storyId)
 		story.userTypes = userTypes ?? story.userTypes
 		story.functionalityDescription = functionalityDescription ?? story.functionalityDescription
@@ -46,7 +49,6 @@ export class BacklogItemRepository extends ModelRepository {
 			backlogItem.rank = index + 1;
 			await this.sprintSource.save(backlogItem)
 		}
-		// await this.dataSource.save(sprints)
 		return backlogItems;
 	}
 
