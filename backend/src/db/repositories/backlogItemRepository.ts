@@ -96,7 +96,7 @@ export class BacklogItemRepository extends ModelRepository {
 			await this.backlogSource.save(backlogItem)
 		}
 		destinationObj.backlogItemCount += 1;
-		await sourceSave(destinationObj)
+		await destinationSave(destinationObj)
 
 		return [sourceList, destinationList]
 	}

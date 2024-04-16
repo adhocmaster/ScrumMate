@@ -82,6 +82,7 @@ export class Epic extends BacklogItem {
 	stories: Story[]
 
 	copy(epic: Epic): void {
+		super.copy(epic)
 		this.userTypes = epic.userTypes;
 		this.functionalityDescription = epic.functionalityDescription;
 		this.reasoning = epic.reasoning;
@@ -158,6 +159,7 @@ export class Task extends BacklogItem {
 	story: Story
 
 	copy(task: Task): void {
+		super.copy(task)
 		this.description = task.description;
 		this.idealHours = task.idealHours;
 	}
@@ -171,6 +173,7 @@ export class Spike extends BacklogItem {
 	description: string
 
 	copy(spike: Spike): void {
+		super.copy(spike)
 		this.description = spike.description;
 	}
 }
@@ -183,6 +186,7 @@ export class Infrastructure extends BacklogItem {
 	description: string
 
 	copy(infrastructure: Infrastructure): void {
+		super.copy(infrastructure)
 		this.description = infrastructure.description;
 	}
 }
@@ -195,6 +199,7 @@ export class Bug extends BacklogItem {
 	description: string
 
 	copy(bug: Bug): void {
+		super.copy(bug)
 		this.description = bug.description;
 	}
 }
