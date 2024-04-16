@@ -11,7 +11,7 @@ export class SprintRepository extends ModelRepository {
 		newSprint.endDate = endDate ?? new Date()
 		newSprint.goal = goal ?? ""
 		newSprint.release = release
-		newSprint.itemCount = 0
+		newSprint.backlogItemCount = 0
 		await this.sprintSource.save(newSprint)
 		return newSprint
 	}

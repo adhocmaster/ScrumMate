@@ -15,9 +15,9 @@ export class BacklogItemRepository extends ModelRepository {
 		newStory.storyPoints = storyPoints
 		newStory.priority = priority
 		newStory.sprint = sprint
-		newStory.rank = sprint.itemCount
+		newStory.rank = sprint.backlogItemCount
 		await this.backlogSource.save(newStory)
-		sprint.itemCount += 1
+		sprint.backlogItemCount += 1
 		await this.sprintSource.save(sprint)
 		return newStory
 	}
@@ -83,13 +83,22 @@ export class BacklogItemRepository extends ModelRepository {
 		sourceList.sort((a: BacklogItem, b: BacklogItem) => a.rank - b.rank)
 		const [item] = sourceList.splice(sourceIndex, 1)
 		for (const { backlogItem, index } of sourceList.map((backlogItem, index) => ({ backlogItem, index }))) {
-			backlogItem.rank = index + 1;
+			backlogItem.rank = index;
 			await this.backlogSource.save(backlogItem)
 		}
-		// sourceObj.
+		sourceObj.backlogItemCount -= 1;
+		await sourceSave(sourceObj)
 
+		destinationList.sort((a: BacklogItem, b: BacklogItem) => a.rank - b.rank)
+		destinationList.splice(destinationIndex, 0, item)
+		for (const { backlogItem, index } of destinationList.map((backlogItem, index) => ({ backlogItem, index }))) {
+			backlogItem.rank = index;
+			await this.backlogSource.save(backlogItem)
+		}
+		destinationObj.backlogItemCount += 1;
+		await sourceSave(destinationObj)
 
-		return [[], []]
+		return [sourceList, destinationList]
 	}
 
 	public async lookupBacklogById(id: number): Promise<BacklogItem> {
