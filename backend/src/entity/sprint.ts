@@ -14,6 +14,9 @@ export class Sprint {
 	@Column()
 	sprintNumber: number
 
+	@Column({ default: 0 })
+	backlogItemCount: number = 0
+
 	@Column()
 	startDate: Date
 
@@ -73,6 +76,7 @@ export class Sprint {
 		this.endDate = sprint.endDate;
 		this.createdDate = sprint.createdDate;
 		this.goal = sprint.goal;
+		this.backlogItemCount = sprint.backlogItemCount;
 	}
 
 }

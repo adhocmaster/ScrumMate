@@ -11,6 +11,7 @@ export class SprintRepository extends ModelRepository {
 		newSprint.endDate = endDate ?? new Date()
 		newSprint.goal = goal ?? ""
 		newSprint.release = release
+		newSprint.backlogItemCount = 0
 		await this.sprintSource.save(newSprint)
 		return newSprint
 	}
@@ -41,8 +42,8 @@ export class SprintRepository extends ModelRepository {
 		return await this.sprintSource.moveSprintTodosToBacklog(releaseId, sprintId);
 	}
 
-	public async getSprintWithBacklog(releaseId: number): Promise<Sprint[]> {
-		return await this.sprintSource.getSprintWithBacklog(releaseId);
+	public async getSprintsWithBacklog(releaseId: number): Promise<Sprint[]> {
+		return await this.sprintSource.getSprintsWithBacklog(releaseId);
 	}
 
 	public async deleteSprint(id: number): Promise<void> {

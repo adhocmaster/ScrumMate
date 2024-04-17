@@ -130,6 +130,7 @@ describe("Release API tests", () => {
 			});
 	});
 
+	let backlogIdOriginal: Number;
 	let backlogId: Number;
 
 	test('New Backlog Item', async () => {
@@ -150,6 +151,8 @@ describe("Release API tests", () => {
 				expect(res.body).toBeDefined();
 				expect(res.body.id).toBeDefined();
 				backlogId = res.body.id;
+				backlogIdOriginal = backlogId;
+				expect(res.body.rank).toEqual(0);
 			});
 	});
 
@@ -167,6 +170,79 @@ describe("Release API tests", () => {
 				expect(res.body.id).toBeDefined();
 				backlogId = res.body.id;
 				expect(res.body.priority).toEqual(3);
+				expect(res.body.rank).toEqual(0);
+			});
+	});
+
+	test('Second Backlog Item in sprint', async () => {
+		const body = {
+			"userTypes": "plants",
+			"functionalityDescription": "allows plants to feel pain",
+			"reasoning": "why not",
+			"acceptanceCriteria": "be able to hear their cries of agony",
+			"storyPoints": 100,
+			"priority": 1
+		}
+		await request(app)
+			.post(`/api/sprint/${sprintId}`)
+			.set('Cookie', [`user-auth=${sessionToken}`])
+			.send(body)
+			.expect(200)
+			.then((res) => {
+				expect(res.body).toBeDefined();
+				expect(res.body.id).toBeDefined();
+				backlogId = res.body.id;
+				expect(res.body.rank).toEqual(1);
+			});
+	});
+
+	test('Second Backlog Item to release backlog', async () => {
+		const body = {
+			"sourceType": "sprint",
+			"sourceRank": 1,
+			"destinationType": "backlog",
+			"destinationRank": 0,
+		}
+		await request(app)
+			.post(`/api/backlogItem/${sprintId}/${releaseId}/reorder`)
+			.set('Cookie', [`user-auth=${sessionToken}`])
+			.send(body)
+			.expect(200)
+			.then((res) => {
+				expect(res.body).toBeDefined();
+				expect(res.body.length).toBe(2);
+				expect(res.body[0].length).toBe(1);
+				expect(res.body[0][0].rank).toBe(0);
+				expect(res.body[1].length).toBe(1);
+				expect(res.body[1][0].rank).toBe(0);
+			});
+	});
+
+	test("The story moved from the sprint is no longer in the sprint", async () => {
+		await request(app)
+			.get(`/api/release/${releaseId}/sprints`)
+			.set('Cookie', [`user-auth=${sessionToken}`])
+			.expect(200)
+			.then((res) => {
+				expect(res.body).toBeDefined();
+				expect(res.body.length).toBe(1)
+				expect(res.body[0].todos.length).toBe(1)
+				expect(res.body[0].todos[0].rank).toBe(0)
+				expect(res.body[0].todos[0].id).toBe(backlogIdOriginal)
+			});
+	});
+
+	test("The story moved from the sprint is in the backlog", async () => {
+		await request(app)
+			.get(`/api/release/${releaseId}/backlog`)
+			.set('Cookie', [`user-auth=${sessionToken}`])
+			.expect(200)
+			.then((res) => {
+				expect(res.body).toBeDefined();
+				expect(res.body.backlog.length).toBe(1)
+				expect(res.body.backlog[0].id).toBe(backlogId)
+				expect(res.body.backlog[0].rank).toBe(0)
+				expect(res.body.backlogItemCount).toBe(1)
 			});
 	});
 });
