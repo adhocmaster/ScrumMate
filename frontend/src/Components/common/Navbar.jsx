@@ -61,7 +61,7 @@ const Navbar = ({ isLoggedIn, onSignOut, projectId }) => {
 								marginLeft: 'auto'
 							}}
 							// TODO: Add click functionality
-							onClick={() => onSignOut}
+							onClick={onSignOut}
 						>
 							<AccountCircleIcon />
 						</IconButton>
