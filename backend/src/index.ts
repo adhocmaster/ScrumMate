@@ -88,6 +88,7 @@ AppDataSource.initialize().then(async () => {
 	backlog1.acceptanceCriteria = "There is no acceptance criteria"
 	backlog1.storyPoints = 8;
 	backlog1.functionalityDescription = "This is the first backlog item"
+	backlog1.rank = 0
 	await db.save(backlog1);
 
 	const backlog2 = new Story()
@@ -97,6 +98,7 @@ AppDataSource.initialize().then(async () => {
 	backlog2.acceptanceCriteria = "There is no acceptance criteria"
 	backlog2.storyPoints = 10;
 	backlog2.functionalityDescription = "This is the functionality."
+	backlog2.rank = 1
 	await db.save(backlog2);
 
 
@@ -107,6 +109,7 @@ AppDataSource.initialize().then(async () => {
 	backlog3.acceptanceCriteria = "There is no acceptance criteria"
 	backlog3.storyPoints = 12;
 	backlog3.functionalityDescription = "Backlog Item for sprint2."
+	backlog3.rank = 0
 	await db.save(backlog3);
 
 	const backlog4 = new Story()
@@ -116,6 +119,7 @@ AppDataSource.initialize().then(async () => {
 	backlog4.acceptanceCriteria = "There is no acceptance criteria"
 	backlog4.storyPoints = 12;
 	backlog4.functionalityDescription = "Second Backlog Item for sprint2."
+	backlog4.rank = 1
 	await db.save(backlog4);
 
 
