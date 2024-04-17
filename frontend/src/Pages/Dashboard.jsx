@@ -53,7 +53,6 @@ function Row(props) {
 				<TableCell align="right">{row.fat}</TableCell>
 				<TableCell align="right">{row.carbs}</TableCell>
 				<TableCell align="right">{row.protein}</TableCell>
-				<TableCell align="right">{row.protein}</TableCell>
 				<TableCell align="right">
 					<IconButton
 						aria-label="expand row"
@@ -172,11 +171,6 @@ export default function Dashboard() {
 							<TableCell align="right">
 								<Typography variant="h5">
 									Date Created
-								</Typography>
-							</TableCell>
-							<TableCell align="right">
-								<Typography variant="h5">
-									Date Modified
 								</Typography>
 							</TableCell>
 							<TableCell />
