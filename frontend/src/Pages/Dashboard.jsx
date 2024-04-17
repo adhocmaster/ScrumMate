@@ -44,6 +44,7 @@ function Row(props) {
 	const [open, setOpen] = React.useState(false);
 
 	return (
+		// using Row.Proptype fields here
 		<React.Fragment>
 			<TableRow sx={{ '& > *': { borderBottom: 'unset' } }}>
 				<TableCell component="th" scope="row">
@@ -120,29 +121,27 @@ const rows = [
 export default function Dashboard() {
 	return (
 		<>
-			<>
-				<Box sx={{
-					display: 'flex',
-					paddingLeft: '20px',
-					paddingBottom: '20px',
-					paddingTop: '55px'
-				}}>
-					<Typography
-						variant="h4"
-						align='left'
-						sx={{ flexGrow: 0 }}
-					>
-						My Projects
-					</Typography>
-					<IconButton
-						onClick={() => {
-							console.log("adding item");
-						}}
-					>
-						<AddCircleOutlineIcon fontSize="small" />
-					</IconButton>
-				</Box>
-			</>
+			<Box sx={{
+				display: 'flex',
+				paddingLeft: '20px',
+				paddingBottom: '20px',
+				paddingTop: '55px'
+			}}>
+				<Typography
+					variant="h4"
+					align='left'
+					sx={{ flexGrow: 0 }}
+				>
+					My Projects
+				</Typography>
+				<IconButton
+					onClick={() => {
+						console.log("adding item");
+					}}
+				>
+					<AddCircleOutlineIcon fontSize="small" />
+				</IconButton>
+			</Box>
 
 			<TableContainer component={Paper} sx={{ width: '90%', margin: 'auto' }}>
 				<Table aria-label="collapsible table">
