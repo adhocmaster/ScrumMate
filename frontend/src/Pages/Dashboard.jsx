@@ -14,6 +14,7 @@ import Paper from '@mui/material/Paper';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import ButtonBar from '../Components/ReleasePlan/ButtonBar';
+import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 
 function createData(name, calories, fat, carbs, protein, price) {
 	return {
@@ -81,7 +82,7 @@ function Row(props) {
 					</Collapse>
 				</TableCell>
 			</TableRow>
-		</React.Fragment>
+		</ React.Fragment>
 	);
 }
 
@@ -120,17 +121,29 @@ const rows = [
 export default function Dashboard() {
 	return (
 		<>
-			<Typography
-				align='left'
-				variant="h4"
-				sx={{
+			<>
+				<Box sx={{
+					display: 'flex',
 					paddingLeft: '20px',
 					paddingBottom: '20px',
-					paddingTop: '55px',
-				}}
-			>
-				My Projects
-			</Typography>
+					paddingTop: '55px'
+				}}>
+					<Typography
+						variant="h4"
+						align='left'
+						sx={{ flexGrow: 0 }}
+					>
+						My Projects
+					</Typography>
+					<IconButton
+						onClick={() => {
+							console.log("adding item");
+						}}
+					>
+						<AddCircleOutlineIcon fontSize="small" />
+					</IconButton>
+				</Box>
+			</>
 
 			<TableContainer component={Paper} sx={{ width: '90%', margin: 'auto' }}>
 				<Table aria-label="collapsible table">
