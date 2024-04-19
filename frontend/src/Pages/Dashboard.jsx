@@ -1,6 +1,8 @@
 import * as React from 'react';
 import PropTypes from 'prop-types';
 import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import { Link } from 'react-router-dom';
 import Collapse from '@mui/material/Collapse';
 import IconButton from '@mui/material/IconButton';
 import Table from '@mui/material/Table';
@@ -57,7 +59,14 @@ export default function Dashboard() {
 			<React.Fragment>
 				<TableRow sx={{ '& > *': { borderBottom: 'unset' } }}>
 					<TableCell component="th" scope="row">
-						{data.name}
+						<Button
+							component={Link}
+							to="/releases"
+							style={{ textTransform: 'none' }}
+							state={{ data }}
+						>
+							{data.name}
+						</Button>
 					</TableCell>
 					<TableCell align="right">{data.productOwner.username}</TableCell>
 					<TableCell align="right">{data.nextRevision}</TableCell>
