@@ -142,18 +142,22 @@ describe("Project API tests", () => {
 
 	test("Get Project Data", async () => {
 		await request(app)
-			.get(`/api/project/${projectId}/getRowData`)
+			.get(`/api/user/projectRowData`)
 			.set('Cookie', [`user-auth=${sessionToken}`])
 			.expect(200)
 			.then((res) => {
 				expect(res.body).toBeDefined();
-				expect(res.body.id).toBeDefined();
-				expect(res.body.productOwner).toBeDefined();
-				expect(res.body.productOwner.username).toBeDefined();
-				expect(res.body.productOwner.username).toBe("sallyg");
-				expect(res.body.nextRevision).toBeDefined();
-				expect(res.body.nextRevision).toBe(0);
-				expect(res.body.dateCreated).toBeDefined();
+				console.log(res.body)
+				expect(res.body.length).toBe(1);
+				expect(res.body[0]).toBeDefined();
+				expect(res.body[0].id).toBe(projectId);
+				expect(res.body[0].name).toBe("Updated Project");
+				expect(res.body[0].productOwner).toBeDefined();
+				expect(res.body[0].productOwner.username).toBeDefined();
+				expect(res.body[0].productOwner.username).toBe("sallyg");
+				expect(res.body[0].nextRevision).toBeDefined();
+				expect(res.body[0].nextRevision).toBe(0);
+				expect(res.body[0].dateCreated).toBeDefined();
 			})
 	});
 });

@@ -58,4 +58,24 @@ export class UserRepository extends ModelRepository {
 		return await this.userSource.fetchUserWithProjects(id);
 	}
 
+	public async fetchUserProjectsRowData(userId: number) {
+		const userWithProjects = await this.fetchUserWithProjects(userId);
+		const projectList = userWithProjects.ownedProjects.concat(userWithProjects.joinedProjects);
+		const projectDataList = [];
+
+		for (const project of projectList) {
+			const projectData = await this.projectSource.lookupProjectByIdWithOwnerAndRelease(project.id);
+			projectData.nextRevision = projectData.nextRevision - 1;
+			// TODO: if there is a release plan:
+			//		find the current sprint number of the most recent (signed) release plan's sprint
+			//		set projectWithOwnerAndRelease.currentSprint to it
+			// else: set projectWithOwnerAndRelease.nextRevision = "-" so that is displayed
+			// if (projectWithOwnerAndRelease.nextRevision > 0) {
+			// }
+			projectDataList.push(projectData);
+		}
+
+		return projectDataList;
+	}
+
 }

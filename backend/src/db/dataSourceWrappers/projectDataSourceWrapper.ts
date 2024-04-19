@@ -41,6 +41,7 @@ export class ProjectDataSourceWrapper extends ModelDataSourceWrapper {
 		}
 		return maybeProject[0]
 	}
+
 	public async fetchProjectWithReleases(id: number): Promise<Project> {
 		// Get the project with revisions' with only their numbers and dates
 		// avoids getting the problem/goal statements and saves on data
