@@ -1,6 +1,6 @@
 /* eslint-disable import/no-anonymous-default-export */
 import express from "express";
-import { newProject, joinProject, editProject, getReleases, getRecentRelease, getName } from "../controllers/project";
+import { newProject, joinProject, editProject, getReleases, getRecentRelease, getName, getRowData } from "../controllers/project";
 import { errorWrapper } from '../helpers/errors';
 import { isAuthenticated } from "../middleware/index";
 
@@ -11,4 +11,5 @@ export default (router: express.Router) => {
 	router.get('/project/:projectId/releases', isAuthenticated, errorWrapper(getReleases));
 	router.get('/project/:projectId/recentRelease', isAuthenticated, errorWrapper(getRecentRelease));
 	router.get('/project/:projectId/getName', errorWrapper(getName));
+	router.get('/project/:projectId/getRowData', errorWrapper(getRowData));
 };

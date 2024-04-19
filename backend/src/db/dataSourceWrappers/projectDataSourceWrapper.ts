@@ -28,6 +28,19 @@ export class ProjectDataSourceWrapper extends ModelDataSourceWrapper {
 		return maybeProject[0]
 	}
 
+	public async lookupProjectByIdWithOwnerAndRelease(id: number): Promise<Project> {
+		const maybeProject = await this.dataSource.getRepository(Project).find({
+			where: { id: id },
+			relations: {
+				productOwner: true,
+				releases: true,
+			}
+		})
+		if (!maybeProject || maybeProject.length === 0) {
+			throw new NotFoundError(`Project with id ${id} not found`)
+		}
+		return maybeProject[0]
+	}
 	public async fetchProjectWithReleases(id: number): Promise<Project> {
 		// Get the project with revisions' with only their numbers and dates
 		// avoids getting the problem/goal statements and saves on data

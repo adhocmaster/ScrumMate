@@ -37,13 +37,15 @@ export const getReleases = async (req: express.Request, res: express.Response) =
 	const db = Database.getInstance();
 	const { projectId } = req.params
 	verifyParameters(projectId);
-	return res.json(await db.getProjectRepository.fetchProjectWithReleases(parseInt(projectId)));
+	const project = await db.getProjectRepository.fetchProjectWithReleases(parseInt(projectId));
+	return res.json(project);
 };
 
 export const getRecentRelease = async (req: express.Request, res: express.Response) => {
 	const db = Database.getInstance();
 	const { projectId } = req.params;
-	return res.json(await db.getProjectRepository.fetchMostRecentRelease(parseInt(projectId)));
+	const release = await db.getProjectRepository.fetchMostRecentRelease(parseInt(projectId));
+	return res.json(release);
 };
 
 export const getName = async (req: express.Request, res: express.Response) => {
@@ -51,4 +53,11 @@ export const getName = async (req: express.Request, res: express.Response) => {
 	const { projectId } = req.params;
 	const project = await db.getProjectRepository.lookupProjectById(parseInt(projectId));
 	return res.json(project.name);
+};
+
+export const getRowData = async (req: express.Request, res: express.Response) => {
+	const db = Database.getInstance();
+	const { projectId } = req.params;
+	const projectData = await db.getProjectRepository.fetchProjectData(parseInt(projectId));
+	return res.json(projectData);
 };

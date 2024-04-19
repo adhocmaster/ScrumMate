@@ -30,6 +30,18 @@ export class ProjectRepository extends ModelRepository {
 		return await this.projectSource.lookupProjectByIdWithUsers(id);
 	}
 
+	public async fetchProjectData(id: number): Promise<Project> {
+		const projectWithOwnerAndRelease = await this.projectSource.lookupProjectByIdWithOwnerAndRelease(id);
+		projectWithOwnerAndRelease.nextRevision = projectWithOwnerAndRelease.nextRevision - 1;
+		// TODO: if there is a release plan:
+		//		find the current sprint number of the most recent (signed) release plan's sprint
+		//		set projectWithOwnerAndRelease.currentSprint to it
+		// else: set projectWithOwnerAndRelease.nextRevision = "-" so that is displayed
+		// if (projectWithOwnerAndRelease.nextRevision > 0) {
+		// }
+		return projectWithOwnerAndRelease;
+	}
+
 	public async fetchProjectWithReleases(id: number): Promise<Project> {
 		return await this.projectSource.fetchProjectWithReleases(id);
 	}
