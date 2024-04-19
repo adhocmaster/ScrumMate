@@ -19,7 +19,7 @@ import ButtonBar from '../Components/ReleasePlan/ButtonBar';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import { useState, useEffect } from 'react';
 
-export default function Dashboard() {
+export default function Dashboard({ setName }) {
 	const [rows, setRows] = useState([]);
 
 	function fetchProjectRowData() {
@@ -64,6 +64,7 @@ export default function Dashboard() {
 							to="/releases"
 							style={{ textTransform: 'none' }}
 							state={{ data }}
+							onClick={() => { setName(data.name) }}
 						>
 							{data.name}
 						</Button>
@@ -101,7 +102,7 @@ export default function Dashboard() {
 						</Collapse>
 					</TableCell>
 				</TableRow>
-			</ React.Fragment>
+			</ React.Fragment >
 		);
 	}
 

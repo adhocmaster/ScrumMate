@@ -1,31 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { AppBar, Toolbar, Typography } from '@mui/material';
 import { Link } from 'react-router-dom';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import { IconButton } from '@mui/material';
 
-const Navbar = ({ isLoggedIn, onSignOut, projectId }) => {
-	console.log("getting name")
-
-	const [name, setName] = useState('');
-
-	useEffect(() => {
-
-		var options = {
-			method: 'get',
-			credentials: 'include'
-		}
-		fetch(`https://localhost:8080/project/${projectId}/getName`)
-			.then(response => response.json())
-			.then(data => {
-				console.log(data)
-				setName(data);
-			})
-			.catch(error => {
-				console.error('Error', error);
-			});
-	}, []);
-
+const Navbar = ({ isLoggedIn, onSignOut, projectName, setName }) => {
 	return (
 		<div>
 			<AppBar position="fixed" sx={{
@@ -44,13 +23,14 @@ const Navbar = ({ isLoggedIn, onSignOut, projectId }) => {
 							fontSize: '24px',
 							marginRight: '30px',
 						}}
+						onClick={() => setName('')}
 					>
 						{/* ScrumMate Text when clicked, links to dashboard */}
 						<Link exact to="/" style={{ textDecoration: 'none', color: 'white' }}>ScrumMate</Link>
 					</Typography>
 
 					<Typography>
-						{name}
+						{projectName}
 					</Typography>
 
 					{/* Avatar Button */}

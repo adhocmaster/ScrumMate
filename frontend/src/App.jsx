@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import SignInBox from './Components/SignIn/SignInBox';
 import Dashboard from './Pages/Dashboard';
@@ -9,14 +9,16 @@ import Register from './Pages/Register';
 function App() {
 	const [isLoggedIn, setIsLoggedIn] = useState(false);
 	const [color, setColor] = useState('#E6EEFF')
+	const [name, setName] = useState('');
 
 	const handleSignOut = () => {
+		setName('')
 		setIsLoggedIn(false);
 	};
 
 	return (
 		<div className="App" style={{ backgroundColor: color }}>
-			<Navbar isLoggedIn={isLoggedIn} onSignOut={handleSignOut} />
+			<Navbar isLoggedIn={isLoggedIn} onSignOut={handleSignOut} projectName={name} setName={setName} />
 			<Routes>
 				<Route
 					path="/"
@@ -31,7 +33,7 @@ function App() {
 				<Route
 					path="/dashboard"
 					element={
-						isLoggedIn ? <Dashboard /> : <Navigate replace to="/" />
+						isLoggedIn ? <Dashboard setName={setName} /> : <Navigate replace to="/" />
 					}
 				/>
 				<Route
