@@ -10,5 +10,5 @@ export default (router: express.Router) => {
 	router.patch('/project/:projectId', isAuthenticated, errorWrapper(editProject))
 	router.get('/project/:projectId/releases', isAuthenticated, errorWrapper(getReleases));
 	router.get('/project/:projectId/recentRelease', isAuthenticated, errorWrapper(getRecentRelease));
-	router.get('/project/:projectId/getName', errorWrapper(getName));
+	router.get('/project/:projectId/getName', isAuthenticated, errorWrapper(getName));
 };

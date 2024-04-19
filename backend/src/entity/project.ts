@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany, ManyToMany } from "typeorm"
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany, ManyToMany, CreateDateColumn } from "typeorm"
 import { User } from "./User"
 import { addMaybeUndefined, getMaybeUndefined, removeMaybeUndefined } from "./utils/addGetList"
 import { Release } from "./release"
@@ -15,6 +15,9 @@ export class Project {
 
 	@Column()
 	nextRevision: number
+
+	@CreateDateColumn()
+	dateCreated: Date
 
 	///// Relational /////
 
