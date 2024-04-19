@@ -15,134 +15,110 @@ import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import ButtonBar from '../Components/ReleasePlan/ButtonBar';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
-
-function createData(name, calories, fat, carbs, protein, price) {
-	return {
-		name,
-		calories,
-		fat,
-		carbs,
-		protein,
-		price,
-		history: [
-			{
-				date: '2020-01-05',
-				customerId: '11091700',
-				amount: 3,
-			},
-			{
-				date: '2020-01-02',
-				customerId: 'Anonymous',
-				amount: 1,
-			},
-		],
-	};
-}
-
-function Row(props) {
-	const { row } = props;
-	const [open, setOpen] = React.useState(false);
-
-	return (
-		<React.Fragment>
-			<TableRow sx={{ '& > *': { borderBottom: 'unset' } }}>
-				<TableCell component="th" scope="row">
-					{row.name}
-				</TableCell>
-				<TableCell align="right">{row.calories}</TableCell>
-				<TableCell align="right">{row.fat}</TableCell>
-				<TableCell align="right">{row.carbs}</TableCell>
-				<TableCell align="right">{row.protein}</TableCell>
-				<TableCell align="right">
-					<IconButton
-						aria-label="expand row"
-						size="small"
-						onClick={() => setOpen(!open)}
-					>
-						{open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
-					</IconButton>
-				</TableCell>
-			</TableRow>
-			<TableRow>
-				<TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
-					<Collapse in={open} timeout="auto" unmountOnExit>
-						<Box sx={{ margin: 1 }}>
-							<Typography variant="h6" gutterBottom component="div">
-								Shortcuts
-							</Typography>
-							<Box
-								display="flex"
-								justifyContent={'flex-start'}
-							>
-								{/* TODO: Handle Button Clicks */}
-								<ButtonBar />
-							</Box>
-						</Box>
-					</Collapse>
-				</TableCell>
-			</TableRow>
-		</ React.Fragment>
-	);
-}
-
-Row.propTypes = {
-	row: PropTypes.shape({
-		calories: PropTypes.number.isRequired,
-		carbs: PropTypes.number.isRequired,
-		fat: PropTypes.number.isRequired,
-		history: PropTypes.arrayOf(
-			PropTypes.shape({
-				amount: PropTypes.number.isRequired,
-				customerId: PropTypes.string.isRequired,
-				date: PropTypes.string.isRequired,
-			}),
-		).isRequired,
-		name: PropTypes.string.isRequired,
-		price: PropTypes.number.isRequired,
-		protein: PropTypes.number.isRequired,
-	}).isRequired,
-};
-
-const rows = [
-	createData('Frozen yoghurt', 159, 6.0, 24, 4.0, 3.99,),
-	createData('Ice cream sandwich', 237, 9.0, 37, 4.3, 4.99,),
-	createData('Eclair', 262, 16.0, 24, 6.0, 3.79,),
-	createData('Cupcake', 305, 3.7, 67, 4.3, 2.5,),
-	createData('Gingerbread', 356, 16.0, 49, 3.9, 1.5,),
-	createData('Gingerbread', 356, 16.0, 49, 3.9, 1.5,),
-	createData('Gingerbread', 356, 16.0, 49, 3.9, 1.5,),
-	createData('Gingerbread', 356, 16.0, 49, 3.9, 1.5,),
-	createData('Gingerbread', 356, 16.0, 49, 3.9, 1.5,),
-	createData('Gingerbread', 356, 16.0, 49, 3.9, 1.5,),
-	createData('Gingerbread', 356, 16.0, 49, 3.9, 1.5,),
-];
+import { useState, useEffect } from 'react';
 
 export default function Dashboard() {
+	const [rows, setRows] = useState([]);
+
+	function fetchProjectRowData() {
+		var options = {
+			method: 'get',
+			credentials: 'include'
+		}
+		try {
+			fetch(`http://localhost:8080/api/user/projectRowData`, options).then((result) => {
+				if (result.status === 200) {
+					console.log(result)
+				}
+				console.log('waiting for .then')
+				result.json().then((response) => {
+					setRows(response)
+					// setRevisions(response.releases.map((release) => convertRevisionAndDate(release)))
+				})
+			})
+		} catch {
+			return null;
+		}
+	}
+
+	useEffect(() => {
+		fetchProjectRowData();
+	}, []);
+
+	function Row(projectData) {
+		const [open, setOpen] = useState(false);
+		const data = projectData.row
+		// https://forum.freecodecamp.org/t/how-to-convert-date-to-dd-mm-yyyy-in-react/431093
+		const options = { year: 'numeric', month: 'long', day: 'numeric' };
+		const formattedDate = new Date(data.dateCreated).toLocaleDateString('en-US', options);
+
+
+		return (
+			<React.Fragment>
+				<TableRow sx={{ '& > *': { borderBottom: 'unset' } }}>
+					<TableCell component="th" scope="row">
+						{data.name}
+					</TableCell>
+					<TableCell align="right">{data.productOwner.username}</TableCell>
+					<TableCell align="right">{data.nextRevision}</TableCell>
+					{/* <TableCell align="right">{data.currentSprint}</TableCell> */}
+					<TableCell align="right">{'-'}</TableCell>
+					<TableCell align="right">{formattedDate}</TableCell>
+					<TableCell align="right">
+						<IconButton
+							aria-label="expand row"
+							size="small"
+							onClick={() => setOpen(!open)}
+						>
+							{open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
+						</IconButton>
+					</TableCell>
+				</TableRow>
+				<TableRow>
+					<TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
+						<Collapse in={open} timeout="auto" unmountOnExit>
+							<Box sx={{ margin: 1 }}>
+								<Typography variant="h6" gutterBottom component="div">
+									Shortcuts
+								</Typography>
+								<Box
+									display="flex"
+									justifyContent={'flex-start'}
+								>
+									{/* TODO: Handle Button Clicks */}
+									<ButtonBar />
+								</Box>
+							</Box>
+						</Collapse>
+					</TableCell>
+				</TableRow>
+			</ React.Fragment>
+		);
+	}
+
 	return (
 		<>
-			<>
-				<Box sx={{
-					display: 'flex',
-					paddingLeft: '20px',
-					paddingBottom: '20px',
-					paddingTop: '55px'
-				}}>
-					<Typography
-						variant="h4"
-						align='left'
-						sx={{ flexGrow: 0 }}
-					>
-						My Projects
-					</Typography>
-					<IconButton
-						onClick={() => {
-							console.log("adding item");
-						}}
-					>
-						<AddCircleOutlineIcon fontSize="small" />
-					</IconButton>
-				</Box>
-			</>
+			<Box sx={{
+				display: 'flex',
+				paddingLeft: '20px',
+				paddingBottom: '20px',
+				paddingTop: '55px'
+			}}>
+				<Typography
+					variant="h4"
+					align='left'
+					sx={{ flexGrow: 0 }}
+				>
+					My Projects
+				</Typography>
+				<IconButton
+					onClick={() => {
+						console.log("adding item");
+					}}
+				>
+					<AddCircleOutlineIcon fontSize="small" />
+				</IconButton>
+			</Box>
 
 			<TableContainer component={Paper} sx={{ width: '90%', margin: 'auto' }}>
 				<Table aria-label="collapsible table">
@@ -178,7 +154,7 @@ export default function Dashboard() {
 					</TableHead>
 					<TableBody>
 						{rows.map((row) => (
-							<Row key={row.name} row={row} />
+							<Row key={row.id} row={row} />
 						))}
 					</TableBody>
 				</Table>
