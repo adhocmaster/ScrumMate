@@ -33,6 +33,7 @@ export class ProjectRepository extends ModelRepository {
 	public async fetchProjectData(id: number): Promise<Project> {
 		const projectWithOwnerAndRelease = await this.projectSource.lookupProjectByIdWithOwnerAndRelease(id);
 		projectWithOwnerAndRelease.nextRevision = projectWithOwnerAndRelease.nextRevision - 1;
+		projectWithOwnerAndRelease.productOwner = projectWithOwnerAndRelease.productOwner;
 		// TODO: if there is a release plan:
 		//		find the current sprint number of the most recent (signed) release plan's sprint
 		//		set projectWithOwnerAndRelease.currentSprint to it
