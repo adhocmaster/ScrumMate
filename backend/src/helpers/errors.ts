@@ -2,7 +2,7 @@ import express from "express";
 
 export const Codes = {
 	ParameterError: 400,
-	NotFoundError: 404,
+	NotFoundError: 400,
 	NotSavedError: 500,
 	ExistingUserError: 400,
 	DeletionError: 500,
@@ -42,7 +42,7 @@ export class NotSavedError extends Error {
 export class ExistingUserError extends Error {
 	constructor(msg: string) {
 		super(msg);
-		this.name = "NotExistingError"
+		this.name = "ExistingUserError"
 	}
 	public code() {
 		return Codes.ExistingUserError;
@@ -65,7 +65,8 @@ export function errorWrapper(func: { (req: express.Request, res: express.Respons
 			// console.log(`running function ${func.name}`)
 			return await func(req, res)
 		} catch (err) {
-			// console.log("caught error", err) // Maybe include it in the body instead?
+
+			console.log("caught error", err.name)
 			try {
 				return res.sendStatus(err.code());
 			} catch {

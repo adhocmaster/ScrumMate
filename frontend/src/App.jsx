@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import SignInBox from './Components/SignIn/SignInBox';
 import Dashboard from './Pages/Dashboard';
@@ -8,44 +8,18 @@ import Register from './Pages/Register';
 
 function App() {
 	const [isLoggedIn, setIsLoggedIn] = useState(false);
-	const handleSignIn = (email, password) => {
-		try {
-			var options = {
-				url: "https://localhost:8080/api/user/login/",
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json'
-				},
-				body: JSON.stringify({ email, password }),
-				credentials: 'include'
-			}
-			fetch('http://localhost:8080/api/user/login/', options).then((result) => {
-				console.log(result)
-				if (result.status === 200) {
-
-				}
-				return result.json()
-
-			}).then((response) => {
-				console.log(response)
-				setIsLoggedIn(true);
-
-			})
-
-		} catch (error) {
-			console.log(error)
-		}
-
-	};
-
+	const [color, setColor] = useState('#E6EEFF')
+	const [name, setName] = useState('');
 
 	const handleSignOut = () => {
+		setName('')
+		setColor('#E6EEFF')
 		setIsLoggedIn(false);
 	};
 
 	return (
-		<div className="App">
-			<Navbar isLoggedIn={isLoggedIn} onSignOut={handleSignOut} />
+		<div className="App" style={{ backgroundColor: color }}>
+			<Navbar isLoggedIn={isLoggedIn} onSignOut={handleSignOut} projectName={name} setName={setName} />
 			<Routes>
 				<Route
 					path="/"
@@ -53,14 +27,14 @@ function App() {
 						isLoggedIn ? (
 							<Navigate replace to="/dashboard" />
 						) : (
-							<SignInBox onLogin={handleSignIn} />
+							<SignInBox setIsLoggedIn={setIsLoggedIn} setColor={setColor} />
 						)
 					}
 				/>
 				<Route
 					path="/dashboard"
 					element={
-						isLoggedIn ? <Dashboard /> : <Navigate replace to="/" />
+						isLoggedIn ? <Dashboard setName={setName} /> : <Navigate replace to="/" />
 					}
 				/>
 				<Route

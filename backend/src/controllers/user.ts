@@ -56,3 +56,10 @@ export const getProjects = async (req: express.Request, res: express.Response) =
 	const userWithProjects = await db.getUserRepository.fetchUserWithProjects(req.userId);
 	return res.json([...userWithProjects.getOwnedProjects(), ...userWithProjects.getJoinedProjects()]);
 };
+
+export const getProjectRowData = async (req: express.Request, res: express.Response) => {
+	const db = Database.getInstance();
+	verifyParameters(req.userId);
+	const projectData = await db.getUserRepository.fetchUserProjectsRowData(req.userId);
+	return res.json(projectData);
+};

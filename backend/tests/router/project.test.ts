@@ -139,4 +139,25 @@ describe("Project API tests", () => {
 				expect(res.body.releases).toEqual([]);
 			})
 	});
+
+	test("Get Project Data", async () => {
+		await request(app)
+			.get(`/api/user/projectRowData`)
+			.set('Cookie', [`user-auth=${sessionToken}`])
+			.expect(200)
+			.then((res) => {
+				expect(res.body).toBeDefined();
+				console.log(res.body)
+				expect(res.body.length).toBe(1);
+				expect(res.body[0]).toBeDefined();
+				expect(res.body[0].id).toBe(projectId);
+				expect(res.body[0].name).toBe("Updated Project");
+				expect(res.body[0].productOwner).toBeDefined();
+				expect(res.body[0].productOwner.username).toBeDefined();
+				expect(res.body[0].productOwner.username).toBe("sallyg");
+				expect(res.body[0].nextRevision).toBeDefined();
+				expect(res.body[0].nextRevision).toBe(0);
+				expect(res.body[0].dateCreated).toBeDefined();
+			})
+	});
 });
