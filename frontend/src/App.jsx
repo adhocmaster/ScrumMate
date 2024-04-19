@@ -13,6 +13,7 @@ function App() {
 
 	const handleSignOut = () => {
 		setName('')
+		setColor('#E6EEFF')
 		setIsLoggedIn(false);
 	};
 
