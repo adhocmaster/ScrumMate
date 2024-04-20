@@ -105,13 +105,13 @@ export class ReleaseRepository extends ModelRepository {
 
 	/// return list sorted by ascending sprint number
 	public async getReleaseSprints(releaseId: number): Promise<Sprint[]> {
-		const sprints = await this.sprintSource.getSprintWithBacklog(releaseId);
+		const sprints = await this.sprintSource.getSprintsWithBacklog(releaseId);
 		return sprints.sort((a: Sprint, b: Sprint) => a.sprintNumber - b.sprintNumber)
 	}
 
 	/// return new order sorted by ascending sprint number
 	public async reorderSprints(releaseId: number, startIndex: number, destinationIndex: number): Promise<Sprint[]> {
-		const sprints = await this.sprintSource.getSprintWithBacklog(releaseId)
+		const sprints = await this.sprintSource.getSprintsWithBacklog(releaseId)
 		// unfortunately cant call getReleaseSprints() because we need the release too
 		// otherwise we need to take a performance hit looking up the release again
 		sprints.sort((a: Sprint, b: Sprint) => a.sprintNumber - b.sprintNumber)
@@ -131,7 +131,8 @@ export class ReleaseRepository extends ModelRepository {
 		await this.sprintSource.moveSprintTodosToBacklog(sprintWithRelease.release.id, sprintId)
 		await this.sprintSource.deleteSprint(sprintId)
 		const releaseWithSprints = await this.releaseSource.fetchReleaseWithSprints(sprintWithRelease.release.id)
-		for (const { sprint, index } of releaseWithSprints.sprints.map((sprint, index) => ({ sprint, index }))) {
+		const sprintIndexPairs = releaseWithSprints.sprints.map((sprint, index) => ({ sprint, index }))
+		for (const { sprint, index } of sprintIndexPairs) {
 			sprint.sprintNumber = index + 1;
 			await this.sprintSource.save(sprint)
 		}

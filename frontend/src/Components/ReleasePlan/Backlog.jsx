@@ -21,6 +21,7 @@ import {
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 
 const Backlog = () => {
+
   const [backlogItems, setBacklogItems] = useState([
     { id: 'placeholder-1', type: 'story', description: 'Placeholder Item 1', isPlaceholder: true },
     { id: 'placeholder-2', type: 'spike', description: 'Placeholder Item 2', isPlaceholder: true }
@@ -40,7 +41,6 @@ const Backlog = () => {
   const addBacklogItem = () => {
     setDialogOpen(true); // This triggers the dialog to open
   };
-
   const onDragEnd = (result) => {
     const { source, destination } = result;
     if (!destination) {
@@ -130,7 +130,6 @@ const Backlog = () => {
       >
         Add Backlog Item +
       </Button>
-
       <Dialog open={dialogOpen} onClose={() => setDialogOpen(false)}>
         <DialogTitle>Add New</DialogTitle>
         <DialogContent>

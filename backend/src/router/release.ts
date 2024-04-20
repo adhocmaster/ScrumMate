@@ -1,3 +1,4 @@
+/* eslint-disable import/no-anonymous-default-export */
 import express from "express";
 import { newRelease, editRelease, copyRelease, getRelease, getReleaseAndBacklog } from "../controllers/release";
 import { errorWrapper } from '../helpers/errors';

@@ -156,16 +156,25 @@ describe('testing that everything can be saved and loaded from database', () => 
 	release1.project = project1; project1.addRelease(release1)
 	release2.project = project1; project1.addRelease(release2)
 	sprint1.release = release2; release2.addSprint(sprint1);
+	sprint1.backlogItemCount = 0
 	sprint2.release = release2; release2.addSprint(sprint2);
+	sprint2.backlogItemCount = 0
 	role.sprint = sprint1; sprint2.addRole(role) // assume adding to release meanse it is backlogged
 	role.user = teammember1;
 	spike.sprint = sprint2; sprint2.addTODO(spike)
+	spike.rank = 1;
 	story1.sprint = sprint2; sprint2.addTODO(story1)
+	story1.rank = 1;
 	task1.story = story1; story1.addTask(task1); task1.sprint = sprint1; sprint1.addTODO(task1)
+	task1.rank = 1;
 	task2.story = story1; story1.addTask(task2); task2.sprint = sprint1; sprint1.addTODO(task2)
+	task2.rank = 1;
 	story2.sprint = sprint2; sprint2.addTODO(story2)
+	story2.rank = 2;
 	task3.story = story2; story2.addTask(task3); task3.sprint = sprint1; sprint1.addTODO(task3)
+	task3.rank = 1;
 	task4.story = story2; story2.addTask(task4); task4.sprint = sprint1; sprint1.addTODO(task4)
+	task4.rank = 1;
 	productOwner1.addOwnedProject(project2); project2.productOwner = productOwner1
 
 	productOwner2.addOwnedProject(project3); project3.productOwner = productOwner2

@@ -22,6 +22,9 @@ export class Release {
 	@Column()
 	goalStatement: string
 
+	@Column({ default: 0 })
+	backlogItemCount: number = 0
+
 	///// Relational /////
 
 	@ManyToOne(() => Project, (project) => project.releases, { nullable: false })
@@ -60,6 +63,7 @@ export class Release {
 		this.goalStatement = release.goalStatement;
 		this.revisionDate = release.revisionDate;
 		this.project = release.project;
+		this.backlogItemCount = release.backlogItemCount
 	}
 
 }
