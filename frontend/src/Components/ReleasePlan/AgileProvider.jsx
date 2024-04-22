@@ -15,43 +15,46 @@ export const AgileProvider = ({ children }) => {
 
   const [sprints, setSprints] = useState([]);
 
-  const onDragEnd = (result) => {
+  const reorderBacklogItems = (result) => {
     const { source, destination } = result;
     if (!destination) return;
 
-    // Determine if the operation is within the backlog or sprints
-    const isSourceBacklog = source.droppableId === 'backlog';
-    const isDestinationBacklog = destination.droppableId === 'backlog';
+    const startIndex = source.index;
+    const endIndex = destination.index;
 
-    let sourceItems = isSourceBacklog ? [...backlogItems] : [...sprints[parseInt(source.droppableId.replace('sprint-', ''), 10)].items];
-    let destinationItems = isDestinationBacklog ? [...backlogItems] : [...sprints[parseInt(destination.droppableId.replace('sprint-', ''), 10)].items];
+    setBacklogItems((items) => {
+        const newItems = [...items];
+        const [movedItem] = newItems.splice(startIndex, 1);
+        newItems.splice(endIndex, 0, movedItem);
+        return newItems;
+    });
+  };
 
-    // Remove the item from the source
-    const [movedItem] = sourceItems.splice(source.index, 1);
+  function reorderStories(result) {
+		const startIndex = result.source.index;
+		const endIndex = result.destination.index;
 
-    // If the destination is the same, use modified sourceItems
-    if (source.droppableId === destination.droppableId) {
-        sourceItems.splice(destination.index, 0, movedItem);
-    } else {
-        // Otherwise, add to the destinationItems
-        destinationItems.splice(destination.index, 0, movedItem);
-    }
+		setStories((stories) => {
+			const nums = [...stories];
+			const [removed] = nums.splice(startIndex, 1);
+			nums.splice(endIndex, 0, removed);
+			return nums;
+		})
+	}
 
-    // Update states accordingly
-    if (isSourceBacklog) {
-        setBacklogItems(sourceItems);
-    } else {
-        const updatedSprints = [...sprints];
-        updatedSprints[parseInt(source.droppableId.replace('sprint-', ''), 10)].items = sourceItems;
-        setSprints(updatedSprints);
-    }
 
-    if (!isDestinationBacklog && source.droppableId !== destination.droppableId) {
-        const updatedSprints = [...sprints];
-        updatedSprints[parseInt(destination.droppableId.replace('sprint-', ''), 10)].items = destinationItems;
-        setSprints(updatedSprints);
-    } else if (isDestinationBacklog && source.droppableId !== destination.droppableId) {
-        setBacklogItems(destinationItems);
+  const onDragEnd = (result) => {
+    const { source, destination } = result;
+    console.log(result);
+
+    if (!destination) return;
+    if (source.droppableId === "backlogDroppable" && destination.droppableId === "backlogDroppable") {
+        reorderBacklogItems(result);
+        return;
+    } 
+    if (source.droppableId === "userstoryDroppable" && destination.droppableId === "userstoryDroppable") {
+        reorderStories(result);
+        return;
     }
   };
 

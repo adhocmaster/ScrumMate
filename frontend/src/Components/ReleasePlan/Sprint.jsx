@@ -6,19 +6,7 @@ import DeleteConfirmation from './DeleteConfirmation';
 import { useAgile } from './AgileProvider';
 
 const Sprint = ({ index, items, setItems, userStories }) => {
-	const { stories, setStories, onDragEnd } = useAgile();
-
-	function reorderStories(result) {
-		const startIndex = result.source.index;
-		const endIndex = result.destination.index;
-
-		setStories((stories) => {
-			const nums = [...stories];
-			const [removed] = nums.splice(startIndex, 1);
-			nums.splice(endIndex, 0, removed);
-			return nums;
-		})
-	}
+	const { stories = [], setStories, onDragEnd } = useAgile();
 
 	const deleteSprint = (sprintId, index) => {
 		fetch(`http://localhost:8080/api/sprint/${sprintId}`, {
@@ -32,7 +20,7 @@ const Sprint = ({ index, items, setItems, userStories }) => {
 	};
 
 	return (
-		<DragDropContext onDragEnd={reorderStories}>
+		<DragDropContext onDragEnd={onDragEnd}>
 			<Box sx={{ display: 'flex', marginLeft: 2, marginBottom: 2, backgroundColor: 'lightgray' }}>
 				<Box sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
 					<Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between', alignItems: 'center', height: '100%', marginLeft: 2 }}>
@@ -44,7 +32,7 @@ const Sprint = ({ index, items, setItems, userStories }) => {
 						<Divider orientation='vertical' sx={{ marginTop: '10px', marginLeft: '12px', backgroundColor: 'rgba(0, 0, 0, 0.5)', width: '1.5px', height: '88%' }} />
 					</Box>
 				</Box>
-				<Droppable droppableId={`droppable-${index}`} direction="horizontal">
+				<Droppable droppableId={`userstoryDroppable-${index}`} direction="horizontal">
 					{(provided) => (
 						<Paper sx={{ backgroundColor: 'lightgray', overflowX: 'auto' }}>
 							<List ref={provided.innerRef} {...provided.droppableProps} sx={{ display: 'flex', flexDirection: 'row' }}>
@@ -53,8 +41,11 @@ const Sprint = ({ index, items, setItems, userStories }) => {
 										{(provided) => (
 											<div
 												ref={provided.innerRef} {...provided.draggableProps} {...provided.dragHandleProps}
-												onClick={(event) => event.stopPropagation()} sx={{ minWidth: 200, display: 'inline-block', padding: '8px 0px 8px 12px' }}>
-												<UserStory key={story.id} userStoryText={story.description} storyPoints={story.storyPoints} onClick={(event) => event.stopPropagation()} />
+												onClick={(event) => event.stopPropagation()}
+												sx={{ minWidth: 200, display: 'inline-block', padding: '8px 0px 8px 12px' }}>
+												<UserStory key={story.id} userStoryText={story.description} storyPoints={story.storyPoints} 
+												onClick={(event) => event.stopPropagation()} 
+												/>
 											</div>
 										)}
 									</Draggable>
