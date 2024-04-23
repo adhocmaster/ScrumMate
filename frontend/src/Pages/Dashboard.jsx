@@ -23,6 +23,8 @@ import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import InboxIcon from '@mui/icons-material/Inbox';
 import SendIcon from '@mui/icons-material/Send';
+import CheckIcon from '@mui/icons-material/Check';
+import CloseIcon from '@mui/icons-material/Close';
 import { Dialog, DialogTitle, DialogContent, DialogActions, TextField } from '@mui/material'
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
@@ -35,6 +37,9 @@ export default function Dashboard({ setName }) {
 
 	const [createDialogOpen, setCreateDialogOpen] = useState(false);
 	const [newProjectName, setNewProjectName] = useState('');
+
+	const [invitesDialogOpen, setInvitesDialogOpen] = useState(false);
+	const [inviteList, setInviteList] = useState([]);
 
 	const [shareDialogOpen, setShareDialogOpen] = useState(false);
 	const [userList, setUserList] = useState([]);
@@ -60,6 +65,14 @@ export default function Dashboard({ setName }) {
 		setNewProjectName('');
 	};
 
+	const handleInvitesDialogOpen = () => {
+		setInvitesDialogOpen(true);
+	};
+
+	const handleInvitesDialogClose = () => {
+		setInvitesDialogOpen(false);
+	};
+
 	const handleShareDialogOpen = (id) => {
 		setShareDialogOpen(true);
 	};
@@ -72,8 +85,7 @@ export default function Dashboard({ setName }) {
 	};
 
 	const handleShare = () => {
-		setShareDialogOpen(false);
-		// TODO: do something with renameProjectTextfield
+		// TODO: do something with recipient
 		setRecipient('');
 	};
 
@@ -242,7 +254,7 @@ export default function Dashboard({ setName }) {
 					<AddCircleOutlineIcon fontSize="small" />
 				</IconButton>
 				<IconButton
-					onClick={handleCreateDialogOpen}
+					onClick={handleInvitesDialogOpen}
 				>
 					<InboxIcon fontSize="small" />
 				</IconButton>
@@ -305,6 +317,50 @@ export default function Dashboard({ setName }) {
 				<DialogActions>
 					<Button onClick={handleCreateDialogClose}>Cancel</Button>
 					<Button onClick={handleCreate} color="primary">Create</Button>
+				</DialogActions>
+			</Dialog>
+
+			<Dialog open={invitesDialogOpen} onClose={handleInvitesDialogClose} maxWidth="sm" fullWidth>
+				<DialogTitle>Project invitations</DialogTitle>
+				<DialogContent>
+					<Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'column' }}>
+						<List sx={{ width: '90%', bgcolor: 'background.paper' }}>
+							<Divider />
+							<ListItem>
+								<ListItemText primary="Project1" />
+								<IconButton edge="end" aria-label="delete" onClick={() => { console.log('hi') }} sx={{ marginRight: 1 }}>
+									<CheckIcon />
+								</IconButton>
+								<IconButton edge="end" aria-label="delete" onClick={() => { console.log('hi') }}>
+									<CloseIcon />
+								</IconButton>
+							</ListItem>
+							<Divider />
+							<ListItem>
+								<ListItemText primary="Project2" />
+								<IconButton edge="end" aria-label="delete" onClick={() => { console.log('hi') }} sx={{ marginRight: 1 }}>
+									<CheckIcon />
+								</IconButton>
+								<IconButton edge="end" aria-label="delete" onClick={() => { console.log('hi') }}>
+									<CloseIcon />
+								</IconButton>
+							</ListItem>
+							<Divider />
+							<ListItem>
+								<ListItemText primary="Project3" />
+								<IconButton edge="end" aria-label="delete" onClick={() => { console.log('hi') }} sx={{ marginRight: 1 }}>
+									<CheckIcon />
+								</IconButton>
+								<IconButton edge="end" aria-label="delete" onClick={() => { console.log('hi') }}>
+									<CloseIcon />
+								</IconButton>
+							</ListItem>
+							<Divider />
+						</List>
+					</Box>
+				</DialogContent>
+				<DialogActions>
+					<Button onClick={handleInvitesDialogClose}>Done</Button>
 				</DialogActions>
 			</Dialog>
 
