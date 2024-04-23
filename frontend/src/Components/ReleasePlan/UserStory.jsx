@@ -68,15 +68,15 @@ const UserStory = ({ userStoryText, storyPoints, ...props }) => {
 
     return (
         <>
-            <Card sx={{ marginBottom: 1, marginRight: 2, position: 'relative' }}>
-                <CardContent sx={{ minHeight: 128,maxWidth:150, maxHeight:200,overflow:'auto'}}>
+            <Card sx={{ marginBottom: 1, marginRight: 2, position: 'relative', width: 150, height: 200, display:'flex',flexDirection: 'column', justifyContent: 'space-between' }}>
+                <CardContent sx={{ minHeight: 128,maxWidth:150, maxHeight:200,overflowY:'auto'}}>
                     <IconButton
                         aria-label="settings"
                         aria-controls="menu-userstory"
                         aria-haspopup="true"
                         onClick={handleMenuClick}
                         size="large"
-                        sx={{ position: 'absolute', bottom: 8, left: 0 }}
+                        sx={{ position: 'absolute', bottom: -1, left: 0 }}
                     >
                         <MoreVertIcon />
                     </IconButton>
@@ -93,6 +93,8 @@ const UserStory = ({ userStoryText, storyPoints, ...props }) => {
 						<Typography variant="body1" textAlign={'left'} fontSize={14} sx={{
 							wordWrap: 'break-word',
 							overflowWrap: 'break-word',
+							maxHeight: 120, 
+							marginBottom:1,
 							hyphens: 'auto' 
 						}} >
 							{fullStory}
@@ -161,7 +163,7 @@ const UserStory = ({ userStoryText, storyPoints, ...props }) => {
 					sx={{ marginBottom: 2 }}
 					/>
 
-					{/* <TextField
+					<TextField
 					margin="dense"
 					id="acceptance-criteria"
 					label="Acceptance Criteria"
@@ -173,7 +175,7 @@ const UserStory = ({ userStoryText, storyPoints, ...props }) => {
 					value={acceptanceCriteria}
 					onChange={(e) => setAcceptanceCriteria(e.target.value)}
 					sx={{ marginBottom: 2 }}
-					/> */}
+					/>
 
 					<TextField
 					margin="dense"
