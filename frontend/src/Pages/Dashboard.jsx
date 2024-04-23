@@ -22,7 +22,13 @@ import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import InboxIcon from '@mui/icons-material/Inbox';
+import SendIcon from '@mui/icons-material/Send';
 import { Dialog, DialogTitle, DialogContent, DialogActions, TextField } from '@mui/material'
+import List from '@mui/material/List';
+import ListItem from '@mui/material/ListItem';
+import ListItemText from '@mui/material/ListItemText';
+import Avatar from '@mui/material/Avatar';
+import Divider from '@mui/material/Divider';
 
 export default function Dashboard({ setName }) {
 	const [rows, setRows] = useState([]);
@@ -31,7 +37,8 @@ export default function Dashboard({ setName }) {
 	const [newProjectName, setNewProjectName] = useState('');
 
 	const [shareDialogOpen, setShareDialogOpen] = useState(false);
-
+	const [userList, setUserList] = useState([]);
+	const [recipient, setRecipient] = useState('');
 
 	const [renameDialogOpen, setRenameDialogOpen] = useState(false);
 	const [renameProjectTextfield, setRenameProjectTextfield] = useState('');
@@ -51,6 +58,28 @@ export default function Dashboard({ setName }) {
 		handleCreateDialogClose();
 		// TODO: do something with newProjectName
 		setNewProjectName('');
+	};
+
+	const handleShareDialogOpen = (id) => {
+		setShareDialogOpen(true);
+	};
+
+	const handleShareDialogClose = (event, reason) => {
+		if (reason !== 'backdropClick') {
+			setRecipient('');
+			setShareDialogOpen(false);
+		}
+	};
+
+	const handleShare = () => {
+		setShareDialogOpen(false);
+		// TODO: do something with renameProjectTextfield
+		setRecipient('');
+	};
+
+	const confirmShare = () => {
+		setShareDialogOpen(false);
+		setRecipient('');
 	};
 
 	const handleRenameDialogOpen = (projectName) => {
@@ -156,7 +185,7 @@ export default function Dashboard({ setName }) {
 									<ListItemIcon>
 										<IconButton
 											onClick={() => {
-												console.log("adding person");
+												handleShareDialogOpen(data.id)
 											}}
 										>
 											<PersonAddIcon fontSize="small" />
@@ -277,6 +306,73 @@ export default function Dashboard({ setName }) {
 					<Button onClick={handleCreateDialogClose}>Cancel</Button>
 					<Button onClick={handleCreate} color="primary">Create</Button>
 				</DialogActions>
+			</Dialog>
+
+			<Dialog
+				open={shareDialogOpen}
+				onClose={handleShareDialogClose}
+				maxWidth="sm"
+				fullWidth
+				slotProps={{
+					backdrop: undefined
+				}}
+			>
+				<DialogTitle>Manage access to your project</DialogTitle>
+
+				<Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'column' }}>
+					<List sx={{ width: '90%', bgcolor: 'background.paper' }}>
+						<Divider />
+						<ListItem>
+							<ListItemIcon>
+								<Avatar>U</Avatar>
+							</ListItemIcon>
+							<ListItemText primary="User1" />
+							<IconButton edge="end" aria-label="delete" onClick={() => { console.log('hi') }}>
+								<DeleteIcon />
+							</IconButton>
+						</ListItem>
+						<Divider />
+						<ListItem>
+							<ListItemIcon>
+								<Avatar>U</Avatar>
+							</ListItemIcon>
+							<ListItemText primary="User2" />
+							<IconButton edge="end" aria-label="delete" onClick={() => { console.log('hi') }}>
+								<DeleteIcon />
+							</IconButton>
+						</ListItem>
+						<Divider />
+						<ListItem>
+							<ListItemIcon>
+								<Avatar>Y</Avatar>
+							</ListItemIcon>
+							<ListItemText primary="You" />
+						</ListItem>
+						<Divider />
+					</List>
+				</Box>
+
+				<DialogContent>
+					<Box sx={{ display: 'flex', alignItems: 'center' }}>
+						<TextField
+							autoFocus
+							margin="dense"
+							label="Recipient email"
+							type="text"
+							variant="outlined"
+							sx={{ width: '90%', mr: 1 }} // <-- Adjust the width here
+							onChange={(e) => setRecipient(e.target.value)}
+						/>
+						<IconButton edge="end" aria-label="send" onClick={() => { console.log('hi') }}>
+							<SendIcon fontSize="large" />
+						</IconButton>
+					</Box>
+				</DialogContent>
+				<Box sx={{ padding: '16px 10px' }}>
+					<Button variant="outlined" onClick={confirmShare} color="primary" fullWidth>
+						Confirm List
+					</Button>
+				</Box>
 			</Dialog>
 
 			<Dialog open={renameDialogOpen} onClose={handleRenameDialogClose} maxWidth="sm" fullWidth>
