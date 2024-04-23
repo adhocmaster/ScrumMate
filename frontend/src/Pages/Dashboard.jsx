@@ -21,25 +21,53 @@ import ListItemIcon from '@mui/material/ListItemIcon';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
+import InboxIcon from '@mui/icons-material/Inbox';
 import { Dialog, DialogTitle, DialogContent, DialogActions, TextField } from '@mui/material'
 
 export default function Dashboard({ setName }) {
 	const [rows, setRows] = useState([]);
-	const [dialogOpen, setDialogOpen] = useState(false);
+
+	const [createDialogOpen, setCreateDialogOpen] = useState(false);
 	const [newProjectName, setNewProjectName] = useState('');
 
-	const handleDialogOpen = () => {
-		setDialogOpen(true);
+	const [shareDialogOpen, setShareDialogOpen] = useState(false);
+
+
+	const [renameDialogOpen, setRenameDialogOpen] = useState(false);
+	const [renameProjectTextfield, setRenameProjectTextfield] = useState('');
+
+	const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+
+
+
+	const handleCreateDialogOpen = () => {
+		setCreateDialogOpen(true);
 	};
 
-	const handleDialogClose = () => {
-		setDialogOpen(false);
+	const handleCreateDialogClose = () => {
+		setCreateDialogOpen(false);
 	};
 
 	const handleCreate = () => {
-		handleDialogClose();
+		handleCreateDialogClose();
 		// TODO: do something with newProjectName
 		setNewProjectName('')
+	};
+
+	const handleRenameDialogOpen = (projectName) => {
+		setRenameProjectTextfield(projectName)
+		setRenameDialogOpen(true);
+	};
+
+	const handleRenameDialogClose = () => {
+		setRenameProjectTextfield('')
+		setRenameDialogOpen(false);
+	};
+
+	const handleRename = () => {
+		setRenameDialogOpen(false);
+		// TODO: do something with renameProjectTextfield
+		setRenameProjectTextfield('')
 	};
 
 	function fetchProjectRowData() {
@@ -106,7 +134,7 @@ export default function Dashboard({ setName }) {
 				</TableRow>
 				<TableRow>
 					<TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
-						<Collapse in={open} timeout="auto" unmountOnExit>
+						<Collapse in={open || renameProjectTextfield} timeout="auto" unmountOnExit>
 							<Box sx={{ margin: 1 }}>
 								<Box display="flex" justifyContent="space-between" alignItems="center">
 									<Typography variant="h6" gutterBottom component="div">
@@ -115,21 +143,21 @@ export default function Dashboard({ setName }) {
 									<ListItemIcon>
 										<IconButton
 											onClick={() => {
-												console.log("adding item");
+												console.log("adding person");
 											}}
 										>
 											<PersonAddIcon fontSize="small" />
 										</IconButton>
 										<IconButton
 											onClick={() => {
-												console.log("adding item");
+												handleRenameDialogOpen(data.name)
 											}}
 										>
 											<EditIcon fontSize="small" />
 										</IconButton>
 										<IconButton
 											onClick={() => {
-												console.log("adding item");
+												console.log("leaving");
 											}}
 										>
 											<DeleteIcon fontSize="small" />
@@ -167,9 +195,14 @@ export default function Dashboard({ setName }) {
 					My Projects
 				</Typography>
 				<IconButton
-					onClick={handleDialogOpen}
+					onClick={handleCreateDialogOpen}
 				>
 					<AddCircleOutlineIcon fontSize="small" />
+				</IconButton>
+				<IconButton
+					onClick={handleCreateDialogOpen}
+				>
+					<InboxIcon fontSize="small" />
 				</IconButton>
 			</Box>
 
@@ -213,7 +246,7 @@ export default function Dashboard({ setName }) {
 				</Table>
 			</TableContainer>
 
-			<Dialog open={dialogOpen} onClose={handleDialogClose} maxWidth="sm" fullWidth>
+			<Dialog open={createDialogOpen} onClose={handleCreateDialogClose} maxWidth="sm" fullWidth>
 				<DialogTitle>Create a new project</DialogTitle>
 				<DialogContent>
 					<TextField
@@ -228,8 +261,28 @@ export default function Dashboard({ setName }) {
 					/>
 				</DialogContent>
 				<DialogActions>
-					<Button onClick={handleDialogClose}>Cancel</Button>
+					<Button onClick={handleCreateDialogClose}>Cancel</Button>
 					<Button onClick={handleCreate} color="primary">Create</Button>
+				</DialogActions>
+			</Dialog>
+
+			<Dialog open={renameDialogOpen} onClose={handleRenameDialogClose} maxWidth="sm" fullWidth>
+				<DialogTitle>Rename your project</DialogTitle>
+				<DialogContent>
+					<TextField
+						autoFocus
+						margin="dense"
+						label="Name"
+						type="text"
+						fullWidth
+						variant="outlined"
+						value={renameProjectTextfield}
+						onChange={(e) => setRenameProjectTextfield(e.target.value)}
+					/>
+				</DialogContent>
+				<DialogActions>
+					<Button onClick={handleRenameDialogClose}>Cancel</Button>
+					<Button onClick={handleRename} color="primary">Create</Button>
 				</DialogActions>
 			</Dialog>
 		</>
