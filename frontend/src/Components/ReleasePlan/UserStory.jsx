@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import {
   Card,
   CardContent,
+  Box,
   Typography,
   IconButton,
   Menu,
@@ -44,6 +45,7 @@ const UserStory = ({ userStoryText, storyPoints, ...props }) => {
 		setTempEditedText(editedText);
         setTempEditedPoints(editedPoints);
         setDialogOpen(true);
+		handleMenuClose();
     };
 
     const handleDialogClose = () => {
@@ -53,9 +55,11 @@ const UserStory = ({ userStoryText, storyPoints, ...props }) => {
     const handleSave = () => {
         setEditedText(tempEditedText);
         setEditedPoints(tempEditedPoints);
-		const newFullStory = `As a(n) ${role} I want to be able to ${functionalityDescription} so that I ${acceptanceCriteria}`;
+		const newFullStory = `As a(n) ${role} I want to be able to ${functionalityDescription}`;
+		// so that I ${acceptanceCriteria}`;
 		setFullStory(newFullStory);
         handleDialogClose();
+		handleMenuClose();
     };
 
     const handleDelete = () => {
@@ -65,7 +69,7 @@ const UserStory = ({ userStoryText, storyPoints, ...props }) => {
     return (
         <>
             <Card sx={{ marginBottom: 1, marginRight: 2, position: 'relative' }}>
-                <CardContent sx={{ minHeight: 128 }}>
+                <CardContent sx={{ minHeight: 128,maxWidth:150, maxHeight:200,overflow:'auto'}}>
                     <IconButton
                         aria-label="settings"
                         aria-controls="menu-userstory"
@@ -84,9 +88,13 @@ const UserStory = ({ userStoryText, storyPoints, ...props }) => {
                         onClose={handleMenuClose}
                     >
                         <MenuItem onClick={handleDialogOpen}>Edit</MenuItem>
-                        <MenuItem onClick={handleDelete}>Delete</MenuItem>
+                        <MenuItem onClick={handleDelete} style={{ color: 'red' }} >Delete</MenuItem>
                     </Menu>
-						<Typography variant="body1" textAlign={'left'} fontSize={14}>
+						<Typography variant="body1" textAlign={'left'} fontSize={14} sx={{
+							wordWrap: 'break-word',
+							overflowWrap: 'break-word',
+							hyphens: 'auto' 
+						}} >
 							{fullStory}
 						</Typography>
 
@@ -113,9 +121,30 @@ const UserStory = ({ userStoryText, storyPoints, ...props }) => {
 					<ToggleButton value="infrastructure">Infrastructure</ToggleButton>
 					</ToggleButtonGroup>
 					
-					<Typography variant="body2" gutterBottom>
-					 As a(n) <TextField size="small" label="role" value={role} onChange={(e) => setRole(e.target.value)} /> I want to be able to
-					</Typography>
+					<Box display="flex" alignItems="center" gap={1} mb={2}>
+						<Typography variant="body2" component="span">
+							As a(n)
+						</Typography>
+						<TextField
+							size="small"
+							label="Role"
+							value={role}
+							onChange={(e) => setRole(e.target.value)}
+							sx={{
+							'.MuiInputBase-input': {
+								fontSize: '0.875rem', 
+								height: 'auto',
+								padding: '5px 9px',
+							},
+							'.MuiInputLabel-root': {
+								fontSize: '0.875rem',
+							}
+							}}
+						/>
+						<Typography variant="body2" component="span">
+							I want to be able to
+						</Typography>
+					</Box>
 
 					<TextField
 					autoFocus
@@ -132,7 +161,7 @@ const UserStory = ({ userStoryText, storyPoints, ...props }) => {
 					sx={{ marginBottom: 2 }}
 					/>
 
-					<TextField
+					{/* <TextField
 					margin="dense"
 					id="acceptance-criteria"
 					label="Acceptance Criteria"
@@ -144,7 +173,7 @@ const UserStory = ({ userStoryText, storyPoints, ...props }) => {
 					value={acceptanceCriteria}
 					onChange={(e) => setAcceptanceCriteria(e.target.value)}
 					sx={{ marginBottom: 2 }}
-					/>
+					/> */}
 
 					<TextField
 					margin="dense"
