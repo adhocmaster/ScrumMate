@@ -1,49 +1,172 @@
-import { Card, CardContent, Typography } from '@mui/material';
+import React, { useState } from 'react';
+import {
+  Card,
+  CardContent,
+  Typography,
+  IconButton,
+  Menu,
+  MenuItem,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Button,
+  TextField,
+  ToggleButtonGroup,
+  ToggleButton,
+} from '@mui/material';
+import MoreVertIcon from '@mui/icons-material/MoreVert';
 
-const UserStory = ({ userStoryText, storyPoints }) => {
-	const truncateText = (text, maxLength) => {
-		if (text.length <= maxLength) {
-			return text;
-		}
+const UserStory = ({ userStoryText, storyPoints, ...props }) => {
+    const [anchorEl, setAnchorEl] = useState(null);
+    const [dialogOpen, setDialogOpen] = useState(false);
+    const [editedText, setEditedText] = useState(userStoryText);
+    const [editedPoints, setEditedPoints] = useState(storyPoints);
+    const [userStoryType, setUserStoryType] = useState('story');
 
-		const truncatedText = text.slice(0, maxLength);
-		const lastSpaceIndex = truncatedText.lastIndexOf(' ');
-		const truncatedWithEllipsis = lastSpaceIndex !== -1 ? `${truncatedText.slice(0, lastSpaceIndex)} ...` : `${truncatedText} ...`;
+	const [role, setRole] = useState('');
+    const [functionalityDescription, setFunctionalityDescription] = useState('');
+    const [acceptanceCriteria, setAcceptanceCriteria] = useState('');
+    const [fullStory, setFullStory] = useState(userStoryText);
 
-		return truncatedWithEllipsis;
-	};
-	return (
-		<Card
-			sx={{
-				marginBottom: 1,
-				marginRight: 2,
-				position: 'relative',
-			}}
-		>
-			<CardContent sx={{ minHeight: 128 }}>
-				<Typography
-					variant="body1"
-					textAlign={'left'}
-					fontSize={14}
-				>
-					{userStoryText ? truncateText(userStoryText, 120) : ''}
-				</Typography>
+	const [tempEditedText, setTempEditedText] = useState(userStoryText);
+    const [tempEditedPoints, setTempEditedPoints] = useState(storyPoints);
 
-				<Typography
-					variant="body1"
-					textAlign={'right'}
-					fontSize={14}
-					sx={{
-						position: 'absolute',
-						bottom: 10,
-						right: 12,
-					}}
-				>
-					{storyPoints}
-				</Typography>
-			</CardContent>
-		</Card>
-	)
+    const handleMenuClick = (event) => {
+        setAnchorEl(event.currentTarget);
+    };
+
+    const handleMenuClose = () => {
+        setAnchorEl(null);
+    };
+
+    const handleDialogOpen = () => {
+		setTempEditedText(editedText);
+        setTempEditedPoints(editedPoints);
+        setDialogOpen(true);
+    };
+
+    const handleDialogClose = () => {
+        setDialogOpen(false);
+    };
+
+    const handleSave = () => {
+        setEditedText(tempEditedText);
+        setEditedPoints(tempEditedPoints);
+		const newFullStory = `As a(n) ${role} I want to be able to ${functionalityDescription} so that I ${acceptanceCriteria}`;
+		setFullStory(newFullStory);
+        handleDialogClose();
+    };
+
+    const handleDelete = () => {
+        handleDialogClose();
+    };
+
+    return (
+        <>
+            <Card sx={{ marginBottom: 1, marginRight: 2, position: 'relative' }}>
+                <CardContent sx={{ minHeight: 128 }}>
+                    <IconButton
+                        aria-label="settings"
+                        aria-controls="menu-userstory"
+                        aria-haspopup="true"
+                        onClick={handleMenuClick}
+                        size="large"
+                        sx={{ position: 'absolute', bottom: 8, left: 0 }}
+                    >
+                        <MoreVertIcon />
+                    </IconButton>
+                    <Menu
+                        id="menu-userstory"
+                        anchorEl={anchorEl}
+                        keepMounted
+                        open={Boolean(anchorEl)}
+                        onClose={handleMenuClose}
+                    >
+                        <MenuItem onClick={handleDialogOpen}>Edit</MenuItem>
+                        <MenuItem onClick={handleDelete}>Delete</MenuItem>
+                    </Menu>
+						<Typography variant="body1" textAlign={'left'} fontSize={14}>
+							{fullStory}
+						</Typography>
+
+						<Typography variant="body1" textAlign={'right'} fontSize={14} sx={{ position: 'absolute', bottom: 10, right: 12 }}>
+							{editedPoints} SP
+						</Typography>
+                </CardContent>
+            </Card>
+
+			<Dialog open={dialogOpen} onClose={handleDialogClose} maxWidth="sm" fullWidth>
+				<DialogTitle>Edit:</DialogTitle>
+				<DialogContent>
+					<ToggleButtonGroup
+					color="primary"
+					value={userStoryType}
+					exclusive
+					onChange={(e, newType) => setUserStoryType(newType)}
+					aria-label="User story type"
+					fullWidth
+					sx={{ marginBottom: 2 }}
+					>
+					<ToggleButton value="story">Story</ToggleButton>
+					<ToggleButton value="spike">Spike</ToggleButton>
+					<ToggleButton value="infrastructure">Infrastructure</ToggleButton>
+					</ToggleButtonGroup>
+					
+					<Typography variant="body2" gutterBottom>
+					 As a(n) <TextField size="small" label="role" value={role} onChange={(e) => setRole(e.target.value)} /> I want to be able to
+					</Typography>
+
+					<TextField
+					autoFocus
+					margin="dense"
+					id="functionality-description"
+					label="Functionality Description"
+					type="text"
+					fullWidth
+					variant="outlined"
+					multiline
+					rows={4}
+					value={functionalityDescription}
+					onChange={(e) => setFunctionalityDescription(e.target.value)}
+					sx={{ marginBottom: 2 }}
+					/>
+
+					<TextField
+					margin="dense"
+					id="acceptance-criteria"
+					label="Acceptance Criteria"
+					type="text"
+					fullWidth
+					variant="outlined"
+					multiline
+					rows={4}
+					value={acceptanceCriteria}
+					onChange={(e) => setAcceptanceCriteria(e.target.value)}
+					sx={{ marginBottom: 2 }}
+					/>
+
+					<TextField
+					margin="dense"
+					id="story-points"
+					label="Story Points"
+					type="number"
+					fullWidth
+					variant="outlined"
+					value={storyPoints}
+					onChange={(e) => setEditedPoints(e.target.value)}
+					InputProps={{ inputProps: { min: 0 } }}
+					/>
+				</DialogContent>
+				<DialogActions>
+					<Button onClick={handleDialogClose}>Cancel</Button>
+					<Button onClick={handleDelete} color="error">Delete</Button>
+					<Button onClick={handleSave} color="primary">Save</Button>
+				</DialogActions>
+				</Dialog>
+
+        </>
+    );
 };
 
 export default UserStory;
