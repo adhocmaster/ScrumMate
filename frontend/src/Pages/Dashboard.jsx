@@ -21,9 +21,26 @@ import ListItemIcon from '@mui/material/ListItemIcon';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
+import { Dialog, DialogTitle, DialogContent, DialogActions, TextField } from '@mui/material'
 
 export default function Dashboard({ setName }) {
 	const [rows, setRows] = useState([]);
+	const [dialogOpen, setDialogOpen] = useState(false);
+	const [newProjectName, setNewProjectName] = useState('');
+
+	const handleDialogOpen = () => {
+		setDialogOpen(true);
+	};
+
+	const handleDialogClose = () => {
+		setDialogOpen(false);
+	};
+
+	const handleCreate = () => {
+		handleDialogClose();
+		// TODO: do something with newProjectName
+		setNewProjectName('')
+	};
 
 	function fetchProjectRowData() {
 		var options = {
@@ -150,9 +167,7 @@ export default function Dashboard({ setName }) {
 					My Projects
 				</Typography>
 				<IconButton
-					onClick={() => {
-						console.log("adding item");
-					}}
+					onClick={handleDialogOpen}
 				>
 					<AddCircleOutlineIcon fontSize="small" />
 				</IconButton>
@@ -197,6 +212,26 @@ export default function Dashboard({ setName }) {
 					</TableBody>
 				</Table>
 			</TableContainer>
+
+			<Dialog open={dialogOpen} onClose={handleDialogClose} maxWidth="sm" fullWidth>
+				<DialogTitle>Create a new project</DialogTitle>
+				<DialogContent>
+					<TextField
+						autoFocus
+						margin="dense"
+						label="Name"
+						type="text"
+						fullWidth
+						variant="outlined"
+						value={newProjectName}
+						onChange={(e) => setNewProjectName(e.target.value)}
+					/>
+				</DialogContent>
+				<DialogActions>
+					<Button onClick={handleDialogClose}>Cancel</Button>
+					<Button onClick={handleCreate} color="primary">Create</Button>
+				</DialogActions>
+			</Dialog>
 		</>
 	);
 }
