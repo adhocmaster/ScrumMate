@@ -37,8 +37,7 @@ export default function Dashboard({ setName }) {
 	const [renameProjectTextfield, setRenameProjectTextfield] = useState('');
 
 	const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-
-
+	const [deletedProjectName, setDeletedProjectName] = useState('');
 
 	const handleCreateDialogOpen = () => {
 		setCreateDialogOpen(true);
@@ -51,23 +50,37 @@ export default function Dashboard({ setName }) {
 	const handleCreate = () => {
 		handleCreateDialogClose();
 		// TODO: do something with newProjectName
-		setNewProjectName('')
+		setNewProjectName('');
 	};
 
 	const handleRenameDialogOpen = (projectName) => {
-		setRenameProjectTextfield(projectName)
+		setRenameProjectTextfield(projectName);
 		setRenameDialogOpen(true);
 	};
 
 	const handleRenameDialogClose = () => {
-		setRenameProjectTextfield('')
+		setRenameProjectTextfield('');
 		setRenameDialogOpen(false);
 	};
 
 	const handleRename = () => {
 		setRenameDialogOpen(false);
 		// TODO: do something with renameProjectTextfield
-		setRenameProjectTextfield('')
+		setRenameProjectTextfield('');
+	};
+
+	const handleDeleteDialogOpen = (id, name) => {
+		setDeletedProjectName(name);
+		setDeleteDialogOpen(true);
+	};
+
+	const handleDeleteDialogClose = () => {
+		setDeleteDialogOpen(false);
+	};
+
+	const handleDelete = () => {
+		setRenameDialogOpen(false);
+		// TODO: do deleting/leaving
 	};
 
 	function fetchProjectRowData() {
@@ -134,7 +147,7 @@ export default function Dashboard({ setName }) {
 				</TableRow>
 				<TableRow>
 					<TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
-						<Collapse in={open || renameProjectTextfield} timeout="auto" unmountOnExit>
+						<Collapse in={open} timeout="auto" unmountOnExit>
 							<Box sx={{ margin: 1 }}>
 								<Box display="flex" justifyContent="space-between" alignItems="center">
 									<Typography variant="h6" gutterBottom component="div">
@@ -157,7 +170,7 @@ export default function Dashboard({ setName }) {
 										</IconButton>
 										<IconButton
 											onClick={() => {
-												console.log("leaving");
+												handleDeleteDialogOpen(data.id, data.name)
 											}}
 										>
 											<DeleteIcon fontSize="small" />
@@ -282,7 +295,15 @@ export default function Dashboard({ setName }) {
 				</DialogContent>
 				<DialogActions>
 					<Button onClick={handleRenameDialogClose}>Cancel</Button>
-					<Button onClick={handleRename} color="primary">Create</Button>
+					<Button onClick={handleRename} color="primary">Rename</Button>
+				</DialogActions>
+			</Dialog>
+
+			<Dialog open={deleteDialogOpen} onClose={handleDeleteDialogClose} maxWidth="sm" fullWidth>
+				<DialogTitle>Are you sure you want to leave "{deletedProjectName}"?</DialogTitle>
+				<DialogActions>
+					<Button onClick={handleDeleteDialogClose}>Cancel</Button>
+					<Button onClick={handleDelete} color="error">Leave</Button>
 				</DialogActions>
 			</Dialog>
 		</>
