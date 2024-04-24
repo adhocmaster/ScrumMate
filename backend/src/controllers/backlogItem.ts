@@ -66,3 +66,10 @@ export const moveBacklog = async (req: express.Request, res: express.Response) =
 	}
 	return res.json(await db.getBacklogItemRepository.reorderBacklog(parseInt(sourceId), sourceType, parseInt(sourceRank), parseInt(destinationId), destinationType, parseInt(destinationRank)));
 }
+
+export const deleteBacklogItem = async (req: express.Request, res: express.Response) => {
+	const db = Database.getInstance();
+	const { backlogItemId } = req.params;
+	verifyParameters(backlogItemId);
+	return res.json(await db.getBacklogItemRepository.deleteBacklogItem(parseInt(backlogItemId)));
+}
