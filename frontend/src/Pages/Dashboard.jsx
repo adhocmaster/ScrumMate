@@ -1,5 +1,4 @@
 import * as React from 'react';
-import PropTypes from 'prop-types';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import { Link } from 'react-router-dom';
@@ -18,9 +17,112 @@ import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import ButtonBar from '../Components/ReleasePlan/ButtonBar';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import { useState, useEffect } from 'react';
+import ListItemIcon from '@mui/material/ListItemIcon';
+import PersonAddIcon from '@mui/icons-material/PersonAdd';
+import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
+import InboxIcon from '@mui/icons-material/Inbox';
+import SendIcon from '@mui/icons-material/Send';
+import CheckIcon from '@mui/icons-material/Check';
+import CloseIcon from '@mui/icons-material/Close';
+import { Dialog, DialogTitle, DialogContent, DialogActions, TextField } from '@mui/material'
+import List from '@mui/material/List';
+import ListItem from '@mui/material/ListItem';
+import ListItemText from '@mui/material/ListItemText';
+import Avatar from '@mui/material/Avatar';
+import Divider from '@mui/material/Divider';
 
 export default function Dashboard({ setName }) {
 	const [rows, setRows] = useState([]);
+
+	const [createDialogOpen, setCreateDialogOpen] = useState(false);
+	const [newProjectName, setNewProjectName] = useState('');
+
+	const [invitesDialogOpen, setInvitesDialogOpen] = useState(false);
+	const [inviteList, setInviteList] = useState([]);
+
+	const [shareDialogOpen, setShareDialogOpen] = useState(false);
+	const [userList, setUserList] = useState([]);
+	const [recipient, setRecipient] = useState('');
+
+	const [renameDialogOpen, setRenameDialogOpen] = useState(false);
+	const [renameProjectTextfield, setRenameProjectTextfield] = useState('');
+
+	const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+	const [deletedProjectName, setDeletedProjectName] = useState('');
+
+	const handleCreateDialogOpen = () => {
+		setCreateDialogOpen(true);
+	};
+
+	const handleCreateDialogClose = () => {
+		setCreateDialogOpen(false);
+	};
+
+	const handleCreate = () => {
+		handleCreateDialogClose();
+		// TODO: do something with newProjectName
+		setNewProjectName('');
+	};
+
+	const handleInvitesDialogOpen = () => {
+		setInvitesDialogOpen(true);
+	};
+
+	const handleInvitesDialogClose = () => {
+		setInvitesDialogOpen(false);
+	};
+
+	const handleShareDialogOpen = (id) => {
+		setShareDialogOpen(true);
+	};
+
+	const handleShareDialogClose = (event, reason) => {
+		if (reason !== 'backdropClick') {
+			setRecipient('');
+			setShareDialogOpen(false);
+		}
+	};
+
+	const handleShare = () => {
+		// TODO: do something with recipient
+		setRecipient('');
+	};
+
+	const confirmShare = () => {
+		setShareDialogOpen(false);
+		setRecipient('');
+	};
+
+	const handleRenameDialogOpen = (projectName) => {
+		setRenameProjectTextfield(projectName);
+		setRenameDialogOpen(true);
+	};
+
+	const handleRenameDialogClose = () => {
+		setRenameProjectTextfield('');
+		setRenameDialogOpen(false);
+	};
+
+	const handleRename = () => {
+		setRenameDialogOpen(false);
+		// TODO: do something with renameProjectTextfield
+		setRenameProjectTextfield('');
+	};
+
+	const handleDeleteDialogOpen = (id, name) => {
+		setDeletedProjectName(name);
+		setDeleteDialogOpen(true);
+	};
+
+	const handleDeleteDialogClose = () => {
+		setDeleteDialogOpen(false);
+	};
+
+	const handleDelete = () => {
+		setRenameDialogOpen(false);
+		// TODO: do deleting/leaving
+	};
 
 	function fetchProjectRowData() {
 		var options = {
@@ -88,9 +190,34 @@ export default function Dashboard({ setName }) {
 					<TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
 						<Collapse in={open} timeout="auto" unmountOnExit>
 							<Box sx={{ margin: 1 }}>
-								<Typography variant="h6" gutterBottom component="div">
-									Shortcuts
-								</Typography>
+								<Box display="flex" justifyContent="space-between" alignItems="center">
+									<Typography variant="h6" gutterBottom component="div">
+										Shortcuts
+									</Typography>
+									<ListItemIcon>
+										<IconButton
+											onClick={() => {
+												handleShareDialogOpen(data.id)
+											}}
+										>
+											<PersonAddIcon fontSize="small" />
+										</IconButton>
+										<IconButton
+											onClick={() => {
+												handleRenameDialogOpen(data.name)
+											}}
+										>
+											<EditIcon fontSize="small" />
+										</IconButton>
+										<IconButton
+											onClick={() => {
+												handleDeleteDialogOpen(data.id, data.name)
+											}}
+										>
+											<DeleteIcon fontSize="small" />
+										</IconButton>
+									</ListItemIcon>
+								</Box>
 								<Box
 									display="flex"
 									justifyContent={'flex-start'}
@@ -122,11 +249,14 @@ export default function Dashboard({ setName }) {
 					My Projects
 				</Typography>
 				<IconButton
-					onClick={() => {
-						console.log("adding item");
-					}}
+					onClick={handleCreateDialogOpen}
 				>
 					<AddCircleOutlineIcon fontSize="small" />
+				</IconButton>
+				<IconButton
+					onClick={handleInvitesDialogOpen}
+				>
+					<InboxIcon fontSize="small" />
 				</IconButton>
 			</Box>
 
@@ -169,217 +299,165 @@ export default function Dashboard({ setName }) {
 					</TableBody>
 				</Table>
 			</TableContainer>
+
+			<Dialog open={createDialogOpen} onClose={handleCreateDialogClose} maxWidth="sm" fullWidth>
+				<DialogTitle>Create a new project</DialogTitle>
+				<DialogContent>
+					<TextField
+						autoFocus
+						margin="dense"
+						label="Name"
+						type="text"
+						fullWidth
+						variant="outlined"
+						value={newProjectName}
+						onChange={(e) => setNewProjectName(e.target.value)}
+					/>
+				</DialogContent>
+				<DialogActions>
+					<Button onClick={handleCreateDialogClose}>Cancel</Button>
+					<Button onClick={handleCreate} color="primary">Create</Button>
+				</DialogActions>
+			</Dialog>
+
+			<Dialog open={invitesDialogOpen} onClose={handleInvitesDialogClose} maxWidth="sm" fullWidth>
+				<DialogTitle>Project invitations</DialogTitle>
+				<DialogContent>
+					<Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'column' }}>
+						<List sx={{ width: '90%', bgcolor: 'background.paper' }}>
+							<Divider />
+							<ListItem>
+								<ListItemText primary="Project1" />
+								<IconButton edge="end" aria-label="delete" onClick={() => { console.log('hi') }} sx={{ marginRight: 1 }}>
+									<CheckIcon />
+								</IconButton>
+								<IconButton edge="end" aria-label="delete" onClick={() => { console.log('hi') }}>
+									<CloseIcon />
+								</IconButton>
+							</ListItem>
+							<Divider />
+							<ListItem>
+								<ListItemText primary="Project2" />
+								<IconButton edge="end" aria-label="delete" onClick={() => { console.log('hi') }} sx={{ marginRight: 1 }}>
+									<CheckIcon />
+								</IconButton>
+								<IconButton edge="end" aria-label="delete" onClick={() => { console.log('hi') }}>
+									<CloseIcon />
+								</IconButton>
+							</ListItem>
+							<Divider />
+							<ListItem>
+								<ListItemText primary="Project3" />
+								<IconButton edge="end" aria-label="delete" onClick={() => { console.log('hi') }} sx={{ marginRight: 1 }}>
+									<CheckIcon />
+								</IconButton>
+								<IconButton edge="end" aria-label="delete" onClick={() => { console.log('hi') }}>
+									<CloseIcon />
+								</IconButton>
+							</ListItem>
+							<Divider />
+						</List>
+					</Box>
+				</DialogContent>
+				<DialogActions>
+					<Button onClick={handleInvitesDialogClose}>Done</Button>
+				</DialogActions>
+			</Dialog>
+
+			<Dialog
+				open={shareDialogOpen}
+				onClose={handleShareDialogClose}
+				maxWidth="sm"
+				fullWidth
+				slotProps={{
+					backdrop: undefined
+				}}
+			>
+				<DialogTitle>Manage access to your project</DialogTitle>
+
+				<Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'column' }}>
+					<List sx={{ width: '90%', bgcolor: 'background.paper' }}>
+						<Divider />
+						<ListItem>
+							<ListItemIcon>
+								<Avatar>U</Avatar>
+							</ListItemIcon>
+							<ListItemText primary="User1" />
+							<IconButton edge="end" aria-label="delete" onClick={() => { console.log('hi') }}>
+								<DeleteIcon />
+							</IconButton>
+						</ListItem>
+						<Divider />
+						<ListItem>
+							<ListItemIcon>
+								<Avatar>U</Avatar>
+							</ListItemIcon>
+							<ListItemText primary="User2" />
+							<IconButton edge="end" aria-label="delete" onClick={() => { console.log('hi') }}>
+								<DeleteIcon />
+							</IconButton>
+						</ListItem>
+						<Divider />
+						<ListItem>
+							<ListItemIcon>
+								<Avatar>Y</Avatar>
+							</ListItemIcon>
+							<ListItemText primary="You" />
+						</ListItem>
+						<Divider />
+					</List>
+				</Box>
+
+				<DialogContent>
+					<Box sx={{ display: 'flex', alignItems: 'center' }}>
+						<TextField
+							autoFocus
+							margin="dense"
+							label="Recipient email"
+							type="text"
+							variant="outlined"
+							sx={{ width: '90%', mr: 1 }} // <-- Adjust the width here
+							onChange={(e) => setRecipient(e.target.value)}
+						/>
+						<IconButton edge="end" aria-label="send" onClick={() => { console.log('hi') }}>
+							<SendIcon fontSize="large" />
+						</IconButton>
+					</Box>
+				</DialogContent>
+				<Box sx={{ padding: '16px 10px' }}>
+					<Button variant="outlined" onClick={confirmShare} color="primary" fullWidth>
+						Confirm List
+					</Button>
+				</Box>
+			</Dialog>
+
+			<Dialog open={renameDialogOpen} onClose={handleRenameDialogClose} maxWidth="sm" fullWidth>
+				<DialogTitle>Rename your project</DialogTitle>
+				<DialogContent>
+					<TextField
+						autoFocus
+						margin="dense"
+						label="Name"
+						type="text"
+						fullWidth
+						variant="outlined"
+						value={renameProjectTextfield}
+						onChange={(e) => setRenameProjectTextfield(e.target.value)}
+					/>
+				</DialogContent>
+				<DialogActions>
+					<Button onClick={handleRenameDialogClose}>Cancel</Button>
+					<Button onClick={handleRename} color="primary">Rename</Button>
+				</DialogActions>
+			</Dialog>
+
+			<Dialog open={deleteDialogOpen} onClose={handleDeleteDialogClose} maxWidth="sm" fullWidth>
+				<DialogTitle>Are you sure you want to leave "{deletedProjectName}"?</DialogTitle>
+				<DialogActions>
+					<Button onClick={handleDeleteDialogClose}>Cancel</Button>
+					<Button onClick={handleDelete} color="error">Leave</Button>
+				</DialogActions>
+			</Dialog>
 		</>
 	);
 }
-
-// import React, { useState, useEffect } from 'react';
-// import { Typography, Button, Box, Drawer, List, ListItem, ListItemText, Paper } from '@mui/material';
-// import { Dialog, DialogTitle, DialogContent, TextField, DialogActions } from '@mui/material';
-// import { PieChart } from '@mui/icons-material';
-// import { Link } from 'react-router-dom';
-
-// const drawerWidth = 240;
-
-// const Dashboard = ({ isLoggedIn }) => {
-
-// 	//State hooks for create project
-// 	const [openDialog, setOpenDialog] = useState(false);
-// 	const [newProjectName, setNewProjectName] = useState('');
-// 	const [newProjectMembers, setNewProjectMembers] = useState('');
-// 	const [flag, setFlag] = useState(true)
-
-// 	const handleDialogOpen = () => {
-// 		setOpenDialog(true);
-// 	};
-
-// 	const handleDialogClose = () => {
-// 		setOpenDialog(false);
-// 	};
-
-// 	const handleSubmit = async () => {
-
-// 		try {
-// 			var memberEmails = newProjectMembers.split(/[, ]+/);
-// 			console.log(memberEmails)
-// 			const options = {
-// 				method: 'POST',
-// 				headers: {
-// 					'Content-Type': 'application/json',
-// 				},
-// 				body: JSON.stringify({
-// 					name: newProjectName,
-// 				}),
-// 				credentials: 'include',
-// 			};
-
-// 			const response = await fetch('http://localhost:3000/project', options);
-// 			console.log(response)
-// 			if (response.status === 200) {
-// 				console.log('New project created successfully!');
-// 				// Optionally, you can fetch the updated list of projects after creating a new one.
-// 				// Update the projectNames state or perform any other necessary actions.
-// 			} else {
-// 				console.error('Failed to create a new project');
-// 			}
-// 			handleDialogClose();
-// 			setNewProjectName('');
-// 			setFlag(false)
-
-// 		} catch (error) {
-// 			console.error('Error creating a new project:', error);
-// 		}
-// 	};
-
-
-// 	// Functionality for navigation clicks will need to be implemented
-// 	const [projectNames, setProjectNames] = useState([]);
-// 	const [currentProject, setCurrentProject] = useState({ name: "loading" })
-// 	const handleNavClick = (page) => {
-// 		// Logic to handle navigation
-// 		console.log(`Navigate to ${page}`);
-// 	};
-// 	const handleButtonClick = (project) => {
-// 		setCurrentProject(project)
-// 	}
-// 	useEffect(() => {
-// 		try {
-// 			var options = {
-// 				method: 'get',
-// 				credentials: 'include'
-// 			}
-// 			fetch(`http://localhost:8080/api/user/projects`, options).then((result) => {
-// 				console.log(result)
-// 				if (result.status == 200) {
-// 					console.log(result)
-// 				}
-// 				result.json().then((response) => {
-// 					console.log(response)
-// 					setProjectNames(response)
-// 					if (response.length > 0) {
-// 						setCurrentProject(response[0])
-// 					} else {
-// 						setCurrentProject({ name: "You have no projects yet, click Create New Project to make one. " })
-// 					}
-// 				})
-// 			})
-
-// 		} catch (error) {
-// 			console.log(error)
-// 		}
-
-// 	}, [flag])
-// 	return (
-// 		<>
-// 			<Box display="flex">
-// 				<Drawer
-// 					sx={{
-// 						width: drawerWidth,
-// 						flexShrink: 0,
-// 						'& .MuiDrawer-paper': {
-// 							width: drawerWidth,
-// 							boxSizing: 'border-box',
-// 							marginTop: '150px',
-// 						},
-// 					}}
-// 					variant="permanent"
-// 					anchor="left"
-// 				>
-// 					<Typography variant="h6" sx={{ padding: 2 }}>
-// 						Dashboard
-// 					</Typography>
-
-// 					{/* Project list */}
-// 					<List>
-// 						{projectNames.map((text, index) => (
-// 							<ListItem button key={text.name} onClick={() => handleButtonClick(text)} >
-// 								<ListItemText primary={text.name} />
-// 							</ListItem>
-// 						))}
-// 					</List>
-
-// 					{/* Create new project button */}
-// 					<Button sx={{ margin: 2 }} variant="contained" color="primary" onClick={handleDialogOpen}>
-// 						Create New Project
-// 					</Button>
-// 				</Drawer>
-// 				{/* Project data display box */}
-// 				<Box
-// 					component="main"
-// 					sx={{ flexGrow: 1, bgcolor: 'background.default', padding: 3, marginTop: '50px' }}
-// 				>
-// 					<Typography variant="h5" gutterBottom>
-// 						{currentProject.name}
-// 					</Typography>
-
-// 					<Paper sx={{ padding: 2, margin: '10px 0' }}>
-// 						{/* Pie chart to be implemented */}
-// 						<PieChart />
-// 						<Typography variant="body1">
-// 							Pie Graph of Completed Tasks vs Incomplete
-// 						</Typography>
-// 					</Paper>
-
-// 					{/* Buttons to view release plan and sprint pages */}
-// 					<Button
-// 						variant="contained"
-// 						color="secondary"
-// 						component={Link}
-// 						to="/releases"
-// 						state={{ currentProject }}
-// 					>
-// 						View Release Plan
-// 					</Button>
-
-// 					<Button
-// 						sx={{ marginLeft: 2 }}
-// 						variant="contained"
-// 						color="secondary"
-// 						component={Link}
-// 						to="/sprints"
-// 						state={{ currentProject }}
-// 					>
-// 						View Sprints
-// 					</Button>
-// 				</Box>
-// 			</Box>
-
-// 			{/* Create a new project dialog */}
-// 			<Dialog open={openDialog} onClose={handleDialogClose}>
-// 				<DialogTitle>Create New Project</DialogTitle>
-
-// 				<DialogContent>
-// 					<TextField
-// 						autoFocus
-// 						margin="dense"
-// 						id="project-name"
-// 						label="Project Name"
-// 						type="text"
-// 						fullWidth
-// 						variant="standard"
-// 						value={newProjectName}
-// 						onChange={(e) => setNewProjectName(e.target.value)}
-// 					/>
-
-// 					<TextField
-// 						margin="dense"
-// 						id="project-members"
-// 						label="Add Members By Email, Separate Each One By a Coma"
-// 						type="text"
-// 						fullWidth
-// 						variant="standard"
-// 						value={newProjectMembers}
-// 						onChange={(e) => setNewProjectMembers(e.target.value)}
-// 					/>
-// 				</DialogContent>
-
-// 				<DialogActions>
-// 					<Button onClick={handleDialogClose}>Cancel</Button>
-// 					<Button onClick={handleSubmit}>Create</Button>
-// 				</DialogActions>
-// 			</Dialog>
-// 		</>
-// 	);
-// };
-
-// export default Dashboard;
