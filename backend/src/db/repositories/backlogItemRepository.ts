@@ -132,6 +132,31 @@ export class BacklogItemRepository extends ModelRepository {
 		return [sourceList, destinationList]
 	}
 
+	public async deleteBacklogItem(backlogItemId: number): Promise<BacklogItem[]> {
+		const backlogItem = await this.backlogSource.fetchBacklogWithParent(backlogItemId);
+		await this.backlogSource.deleteBacklogItem(backlogItemId)
+
+		if (backlogItem.sprint) {
+			// sprint is parent
+			const sprint = await this.sprintSource.lookupSprintByIdWithTodos(backlogItem.sprint.id);
+			sprint.todos.sort((a: BacklogItem, b: BacklogItem) => a.rank - b.rank)
+			for (const { backlogItem, index } of sprint.todos.map((backlogItem, index) => ({ backlogItem, index }))) {
+				backlogItem.rank = index;
+				await this.backlogSource.save(backlogItem)
+			}
+			return sprint.todos;
+		} else {
+			// backlog is parent
+			const release = await this.releaseSource.fetchReleaseWithBacklog(backlogItem.release.id);
+			release.backlog.sort((a: BacklogItem, b: BacklogItem) => a.rank - b.rank)
+			for (const { backlogItem, index } of release.backlog.map((backlogItem, index) => ({ backlogItem, index }))) {
+				backlogItem.rank = index;
+				await this.backlogSource.save(backlogItem)
+			}
+			return release.backlog
+		}
+	}
+
 	public async lookupBacklogById(id: number): Promise<BacklogItem> {
 		return await this.backlogSource.lookupBacklogById(id);
 	}

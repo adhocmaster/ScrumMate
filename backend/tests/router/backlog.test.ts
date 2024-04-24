@@ -4,8 +4,6 @@ import { Database } from '../../src/db/database';
 import { Release } from "../../src/entity/release"
 import request from 'supertest'
 import router from '../../src/router/index';
-// import { newReleaseRouter } from '../src/router/release';
-
 import { User } from '../../src/entity/User';
 import { Project } from '../../src/entity/project';
 import { UserRole } from '../../src/entity/roles';
@@ -23,7 +21,6 @@ beforeAll(async () => {
 		Database.setAndGetInstance(AppDataSource);
 		app.use(express.json())
 		app.use(cookieParser());
-
 		app.use('/api', router());
 		// app.use(newReleaseRouter);
 		const server = app.listen(8080)
@@ -243,6 +240,55 @@ describe("Release API tests", () => {
 				expect(res.body.backlog[0].id).toBe(backlogId)
 				expect(res.body.backlog[0].rank).toBe(0)
 				expect(res.body.backlogItemCount).toBe(1)
+			});
+	});
+
+	test('new Backlog Item in sprint', async () => {
+		const body = {
+			"userTypes": "plants",
+			"functionalityDescription": "make plants shoot at zombies",
+			"reasoning": "defend house",
+			"acceptanceCriteria": "plant shoots zombie",
+			"storyPoints": 21,
+			"priority": 1
+		}
+		await request(app)
+			.post(`/api/sprint/${sprintId}`)
+			.set('Cookie', [`user-auth=${sessionToken}`])
+			.send(body)
+			.expect(200)
+			.then((res) => {
+				expect(res.body).toBeDefined();
+				expect(res.body.id).toBeDefined();
+				backlogId = res.body.id;
+				expect(res.body.rank).toEqual(1);
+			});
+	});
+
+	test("Original story in the sprint was deleted", async () => {
+		await request(app)
+			.post(`/api/backlogItem/${backlogIdOriginal}/delete`)
+			.set('Cookie', [`user-auth=${sessionToken}`])
+			.expect(200)
+			.then((res) => {
+				expect(res.body).toBeDefined();
+				expect(res.body.length).toBe(1)
+				expect(res.body[0].id).toBe(backlogId)
+				expect(res.body[0].rank).toBe(0)
+			});
+	});
+
+	test("Original story removed is no longer in the sprint", async () => {
+		await request(app)
+			.get(`/api/release/${releaseId}/sprints`)
+			.set('Cookie', [`user-auth=${sessionToken}`])
+			.expect(200)
+			.then((res) => {
+				expect(res.body).toBeDefined();
+				expect(res.body.length).toBe(1)
+				expect(res.body[0].todos.length).toBe(1)
+				expect(res.body[0].todos[0].id).toBe(backlogId)
+				expect(res.body[0].todos[0].rank).toBe(0)
 			});
 	});
 });
