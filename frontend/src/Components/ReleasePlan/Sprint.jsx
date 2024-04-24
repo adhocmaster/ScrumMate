@@ -120,6 +120,7 @@ import DeleteConfirmation from './DeleteConfirmation';
 
 
 const Sprint = ({ index, items, setItems, userStories }) => {
+	console.log(items)
 
 	//Dummy Data
 	const [stories, setStories] = useState(["backlog item 1", " backlog item 2", "backlog item 3"]);

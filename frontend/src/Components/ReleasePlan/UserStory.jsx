@@ -18,7 +18,7 @@ import {
 } from '@mui/material';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 
-const UserStory = ({ userStoryText, storyPoints, ...props }) => {
+const UserStory = ({ userStoryRoles, userStoryText, userStoryAcceptance, storyPoints, ...props }) => {
 	const [anchorEl, setAnchorEl] = useState(null);
 	const [dialogOpen, setDialogOpen] = useState(false);
 	const [editedText, setEditedText] = useState(userStoryText);
