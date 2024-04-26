@@ -49,15 +49,21 @@ const UserStory = ({ storyObject, sprintId }) => {
     var options = {
       method: "post",
       credentials: "include",
-      userTypes: role,
-      functionalityDescription: functionalityDescription,
-      reasoning: reasoning,
-      acceptanceCriteria: acceptanceCriteria,
-      storyPoints: editedPoints,
-      // priority
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        userTypes: role,
+        functionalityDescription: functionalityDescription,
+        reasoning: reasoning,
+        acceptanceCriteria: acceptanceCriteria,
+        storyPoints: editedPoints,
+        // priority
+      }),
     };
     try {
       console.log(options);
+      console.log(sprintId, storyId);
       fetch(
         `http://localhost:8080/api/sprint/${sprintId}/story/${storyId}/edit`,
         options
