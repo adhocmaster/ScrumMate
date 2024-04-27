@@ -111,22 +111,20 @@ const Sprint = ({ index, items, setItems, userStories }) => {
 										index={storyObj.rank}
 									>
 										{(provided) =>
-											console.log(storyObj) || (
-												<div
-													ref={provided.innerRef}
-													{...provided.draggableProps}
-													{...provided.dragHandleProps}
-													sx={{
-														minWidth: 200,
-														display: "inline-block",
-														padding: "8px 0px 8px 12px",
-													}}
-												>
-													<UserStory
-														storyObject={storyObj}
-													/>
-												</div>
-											)
+											<div
+												ref={provided.innerRef}
+												{...provided.draggableProps}
+												{...provided.dragHandleProps}
+												sx={{
+													minWidth: 200,
+													display: "inline-block",
+													padding: "8px 0px 8px 12px",
+												}}
+											>
+												<UserStory
+													storyObject={storyObj}
+												/>
+											</div>
 										}
 									</Draggable>
 								))}
