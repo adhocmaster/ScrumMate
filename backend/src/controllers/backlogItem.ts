@@ -37,7 +37,7 @@ export const createNewBacklogStory = async (req: express.Request, res: express.R
 
 export const editStory = async (req: express.Request, res: express.Response) => {
 	const db = Database.getInstance()
-	const { sprintId, storyId } = req.params
+	const { storyId } = req.params
 	const {
 		userTypes,
 		functionalityDescription,
@@ -47,7 +47,7 @@ export const editStory = async (req: express.Request, res: express.Response) => 
 		priority,
 		rank,
 	} = req.body
-	const story = await db.getBacklogItemRepository.updateStory(parseInt(storyId), parseInt(sprintId), userTypes, functionalityDescription, reasoning, acceptanceCriteria, storyPoints, priority, parseInt(rank))
+	const story = await db.getBacklogItemRepository.updateStory(parseInt(storyId), userTypes, functionalityDescription, reasoning, acceptanceCriteria, storyPoints, priority, parseInt(rank))
 	return res.json(story)
 };
 

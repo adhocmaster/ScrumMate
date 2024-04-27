@@ -158,7 +158,7 @@ describe("Release API tests", () => {
 			"priority": 3
 		}
 		await request(app)
-			.post(`/api/sprint/${sprintId}/story/${backlogId}/edit`)
+			.post(`/api/story/${backlogId}/edit`)
 			.set('Cookie', [`user-auth=${sessionToken}`])
 			.send(body)
 			.expect(200)

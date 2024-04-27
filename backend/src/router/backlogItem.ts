@@ -7,7 +7,7 @@ import { isAuthenticated } from "../middleware/index";
 export default (router: express.Router) => {
 	router.post('/sprint/:sprintId/', isAuthenticated, errorWrapper(createStory));
 	router.post('/release/:releaseId/', isAuthenticated, errorWrapper(createNewBacklogStory));
-	router.post('/sprint/:sprintId/story/:storyId/edit', isAuthenticated, errorWrapper(editStory));
+	router.post('/story/:storyId/edit', isAuthenticated, errorWrapper(editStory));
 	router.post('/backlogItem/:sourceId/:destinationId/reorder', isAuthenticated, errorWrapper(moveBacklog));
 	router.post('/backlogItem/:backlogItemId/delete', isAuthenticated, errorWrapper(deleteBacklogItem));
 }

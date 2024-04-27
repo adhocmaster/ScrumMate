@@ -19,7 +19,7 @@ import {
 } from "@mui/material";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 
-const UserStory = ({ storyObject, sprintId }) => {
+const UserStory = ({ storyObject }) => {
 	const [anchorOpen, setAnchorOpen] = useState(false);
 	const [editDialogOpen, setEditDialogOpen] = useState(false);
 	const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
@@ -69,7 +69,7 @@ const UserStory = ({ storyObject, sprintId }) => {
 		setAcceptanceCriteria(tempAcceptanceCriteria);
 		setStoryPoints(tempStoryPoints);
 
-		saveEditedStory(sprintId, storyObject.id);
+		saveEditedStory(storyObject.id);
 		handleDialogClose();
 		handleMenuClose();
 	};
@@ -88,8 +88,7 @@ const UserStory = ({ storyObject, sprintId }) => {
 		handleDeleteDialogOpen();
 	};
 
-
-	function saveEditedStory(sprintId, storyId) {
+	function saveEditedStory(storyId) {
 		var options = {
 			method: "post",
 			credentials: "include",
@@ -109,7 +108,7 @@ const UserStory = ({ storyObject, sprintId }) => {
 
 		try {
 			fetch(
-				`http://localhost:8080/api/sprint/${sprintId}/story/${storyId}/edit`,
+				`http://localhost:8080/api/story/${storyId}/edit`,
 				options
 			).then((result) => {
 				if (result.status !== 200) {
