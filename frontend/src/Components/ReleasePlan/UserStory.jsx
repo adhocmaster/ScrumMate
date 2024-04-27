@@ -97,11 +97,11 @@ const UserStory = ({ storyObject, sprintId }) => {
 				"Content-Type": "application/json",
 			},
 			body: JSON.stringify({
-				userTypes: role,
-				functionalityDescription: functionality,
-				reasoning: reasoning,
-				acceptanceCriteria: acceptanceCriteria,
-				storyPoints: storyPoints,
+				userTypes: tempRole,
+				functionalityDescription: tempFunctionality,
+				reasoning: tempReasoning,
+				acceptanceCriteria: tempAcceptanceCriteria,
+				storyPoints: tempStoryPoints,
 				// priority
 			}),
 		};
@@ -114,6 +114,7 @@ const UserStory = ({ storyObject, sprintId }) => {
 				if (result.status !== 200) {
 					console.log("error", result);
 				}
+				console.log(result)
 			});
 		} catch {
 			return null;
