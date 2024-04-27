@@ -80,6 +80,38 @@ const UserStory = ({ storyObject, sprintId }) => {
 		}
 	}
 
+	function saveEditedStory(sprintId, storyId) {
+		var options = {
+			method: "post",
+			credentials: "include",
+			headers: {
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify({
+				userTypes: role,
+				functionalityDescription: functionalityDescription,
+				reasoning: reasoning,
+				acceptanceCriteria: acceptanceCriteria,
+				storyPoints: editedPoints,
+				// priority
+			}),
+		};
+		try {
+			console.log(options);
+			console.log(sprintId, storyId);
+			fetch(
+				`http://localhost:8080/api/sprint/${sprintId}/story/${storyId}/edit`,
+				options
+			).then((result) => {
+				if (result.status !== 200) {
+					console.log("error", result);
+				}
+			});
+		} catch {
+			return null;
+		}
+	}
+
 	const handleMenuClick = (event) => {
 		setAnchorEl(event.currentTarget);
 	};
@@ -103,7 +135,7 @@ const UserStory = ({ storyObject, sprintId }) => {
 		setEditedText(tempEditedText);
 		setEditedPoints(tempEditedPoints);
 		const newFullStory = `As a(n) ${role} I want to be able to ${functionalityDescription} so that ${reasoning}.`;
-		// so that I ${acceptanceCriteria}`;
+		// ${acceptanceCriteria}`;
 		setFullStory(newFullStory);
 		saveEditedStory(sprintId, storyObject.id);
 		handleDialogClose();
@@ -111,6 +143,7 @@ const UserStory = ({ storyObject, sprintId }) => {
 	};
 
 	const handleDeleteDialogOpen = () => {
+		handleMenuClose();
 		setDeleteDialogOpen(true)
 	}
 
@@ -120,7 +153,6 @@ const UserStory = ({ storyObject, sprintId }) => {
 
 	const handleDelete = () => {
 		handleDialogClose();
-		handleMenuClose();
 		handleDeleteDialogOpen();
 	};
 
@@ -164,7 +196,7 @@ const UserStory = ({ storyObject, sprintId }) => {
 						onClose={handleMenuClose}
 					>
 						<MenuItem onClick={handleDialogOpen}>Edit</MenuItem>
-						<MenuItem onClick={handleDelete} style={{ color: "red" }}>
+						<MenuItem onClick={handleDeleteDialogOpen} style={{ color: "red" }}>
 							Delete
 						</MenuItem>
 					</Menu>
@@ -256,6 +288,24 @@ const UserStory = ({ storyObject, sprintId }) => {
 						sx={{ marginBottom: 2 }}
 					/>
 
+					<Typography variant="body2" component="span" >
+						so that
+					</Typography>
+
+					<TextField
+						margin="dense"
+						id="reasoning"
+						label="Reasoning"
+						type="text"
+						fullWidth
+						variant="outlined"
+						multiline
+						rows={4}
+						value={reasoning}
+						onChange={(e) => console.log("setting reasoning", e.target.value) || setReasoning(e.target.value)}
+						sx={{ marginBottom: 2, marginTop: 2 }}
+					/>
+
 					<TextField
 						margin="dense"
 						id="acceptance-criteria"
@@ -284,7 +334,7 @@ const UserStory = ({ storyObject, sprintId }) => {
 				</DialogContent>
 				<DialogActions>
 					<Button onClick={handleDialogClose}>Cancel</Button>
-					<Button onClick={handleDelete} color="error">
+					<Button onClick={handleDeleteDialogOpen} color="error">
 						Delete
 					</Button>
 					<Button onClick={handleSave} color="primary">
