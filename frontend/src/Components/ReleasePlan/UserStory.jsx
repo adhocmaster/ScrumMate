@@ -10,6 +10,7 @@ import {
 	Dialog,
 	DialogTitle,
 	DialogContent,
+	DialogContentText,
 	DialogActions,
 	Button,
 	TextField,
@@ -32,6 +33,8 @@ const UserStory = ({ userStoryText, storyPoints, ...props }) => {
 
 	const [tempEditedText, setTempEditedText] = useState(userStoryText);
 	const [tempEditedPoints, setTempEditedPoints] = useState(storyPoints);
+
+	const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
 
 	const handleMenuClick = (event) => {
 		setAnchorEl(event.currentTarget);
@@ -62,8 +65,18 @@ const UserStory = ({ userStoryText, storyPoints, ...props }) => {
 		handleMenuClose();
 	};
 
+	const handleDeleteDialogOpen = () => {
+		setDeleteDialogOpen(true)
+	}
+
+	const handleDeleteDialogClose = () => {
+		setDeleteDialogOpen(false)
+	}
+
 	const handleDelete = () => {
 		handleDialogClose();
+		handleMenuClose();
+		handleDeleteDialogOpen();
 	};
 
 	return (
@@ -196,6 +209,27 @@ const UserStory = ({ userStoryText, storyPoints, ...props }) => {
 				</DialogActions>
 			</Dialog>
 
+			<Dialog open={deleteDialogOpen} onClose={handleDeleteDialogClose}>
+				<DialogTitle>
+					Delete backlog item?
+				</DialogTitle>
+
+				<DialogContent>
+					<DialogContentText>
+						Are you sure you want to delete this backlog item?
+					</DialogContentText>
+				</DialogContent>
+
+				<DialogActions>
+					<Button onClick={handleDeleteDialogClose} color="primary">
+						Cancel
+					</Button>
+
+					<Button variant="contained" color="error" onClick={handleDelete} >
+						Delete
+					</Button>
+				</DialogActions>
+			</Dialog>
 		</>
 	);
 };
