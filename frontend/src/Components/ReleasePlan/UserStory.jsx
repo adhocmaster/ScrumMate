@@ -20,123 +20,55 @@ import {
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 
 const UserStory = ({ storyObject, sprintId }) => {
-	console.log(sprintId);
-	const [anchorEl, setAnchorEl] = useState(null);
-	const [dialogOpen, setDialogOpen] = useState(false);
-	const [editedText, setEditedText] = useState(
-		storyObject.functionalityDescription
-	);
-	const [editedPoints, setEditedPoints] = useState(storyObject.storyPoints);
-	const [userStoryType, setUserStoryType] = useState("story");
-
-	const [role, setRole] = useState(storyObject.userTypes);
-	const [functionalityDescription, setFunctionalityDescription] = useState(
-		storyObject.functionalityDescription
-	);
-	const [reasoning, setReasoning] = useState(storyObject.reasoning);
-	const [acceptanceCriteria, setAcceptanceCriteria] = useState("");
-	const [fullStory, setFullStory] = useState(
-		`As a(n) ${role} I want to be able to ${functionalityDescription} so that ${reasoning}.`
-	);
-
-	const [tempEditedText, setTempEditedText] = useState(
-		storyObject.functionalityDescription
-	);
-	const [tempEditedPoints, setTempEditedPoints] = useState(
-		storyObject.storyPoints
-	);
-
+	const [anchorOpen, setAnchorOpen] = useState(false);
+	const [editDialogOpen, setEditDialogOpen] = useState(false);
 	const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
 
-	function saveEditedStory(sprintId, storyId) {
-		var options = {
-			method: "post",
-			credentials: "include",
-			headers: {
-				"Content-Type": "application/json",
-			},
-			body: JSON.stringify({
-				userTypes: role,
-				functionalityDescription: functionalityDescription,
-				reasoning: reasoning,
-				acceptanceCriteria: acceptanceCriteria,
-				storyPoints: editedPoints,
-				// priority
-			}),
-		};
-		try {
-			console.log(options);
-			console.log(sprintId, storyId);
-			fetch(
-				`http://localhost:8080/api/sprint/${sprintId}/story/${storyId}/edit`,
-				options
-			).then((result) => {
-				if (result.status !== 200) {
-					console.log("error", result);
-				}
-			});
-		} catch {
-			return null;
-		}
-	}
+	const [backlogItemType, setBacklogItemType] = useState("story");
+	const [role, setRole] = useState(storyObject.userTypes);
+	const [functionality, setFunctionality] = useState(storyObject.functionalityDescription);
+	const [reasoning, setReasoning] = useState(storyObject.reasoning);
+	const [acceptanceCriteria, setAcceptanceCriteria] = useState(storyObject.acceptanceCriteria);
+	const [storyPoints, setStoryPoints] = useState(storyObject.storyPoints);
 
-	function saveEditedStory(sprintId, storyId) {
-		var options = {
-			method: "post",
-			credentials: "include",
-			headers: {
-				"Content-Type": "application/json",
-			},
-			body: JSON.stringify({
-				userTypes: role,
-				functionalityDescription: functionalityDescription,
-				reasoning: reasoning,
-				acceptanceCriteria: acceptanceCriteria,
-				storyPoints: editedPoints,
-				// priority
-			}),
-		};
-		try {
-			console.log(options);
-			console.log(sprintId, storyId);
-			fetch(
-				`http://localhost:8080/api/sprint/${sprintId}/story/${storyId}/edit`,
-				options
-			).then((result) => {
-				if (result.status !== 200) {
-					console.log("error", result);
-				}
-			});
-		} catch {
-			return null;
-		}
-	}
+	const [tempBacklogItemType, setTempBacklogItemType] = useState(backlogItemType);
+	const [tempRole, setTempRole] = useState(role);
+	const [tempFunctionality, setTempFunctionality] = useState(functionality);
+	const [tempReasoning, setTempReasoning] = useState(reasoning);
+	const [tempAcceptanceCriteria, setTempAcceptanceCriteria] = useState(acceptanceCriteria);
+	const [tempStoryPoints, setTempStoryPoints] = useState(storyPoints);
 
 	const handleMenuClick = (event) => {
-		setAnchorEl(event.currentTarget);
+		setAnchorOpen(event.currentTarget);
 	};
 
 	const handleMenuClose = () => {
-		setAnchorEl(null);
+		setAnchorOpen(false);
 	};
 
 	const handleDialogOpen = () => {
-		setTempEditedText(editedText);
-		setTempEditedPoints(editedPoints);
-		setDialogOpen(true);
+		setTempBacklogItemType(backlogItemType)
+		setTempRole(role)
+		setTempFunctionality(functionality)
+		setTempReasoning(reasoning)
+		setTempAcceptanceCriteria(acceptanceCriteria)
+		setTempStoryPoints(storyPoints)
+		setEditDialogOpen(true);
 		handleMenuClose();
 	};
 
 	const handleDialogClose = () => {
-		setDialogOpen(false);
+		setEditDialogOpen(false);
 	};
 
 	const handleSave = () => {
-		setEditedText(tempEditedText);
-		setEditedPoints(tempEditedPoints);
-		const newFullStory = `As a(n) ${role} I want to be able to ${functionalityDescription} so that ${reasoning}.`;
-		// ${acceptanceCriteria}`;
-		setFullStory(newFullStory);
+		setBacklogItemType(tempBacklogItemType);
+		setRole(tempRole);
+		setFunctionality(tempFunctionality);
+		setReasoning(tempReasoning);
+		setAcceptanceCriteria(tempAcceptanceCriteria);
+		setStoryPoints(tempStoryPoints);
+
 		saveEditedStory(sprintId, storyObject.id);
 		handleDialogClose();
 		handleMenuClose();
@@ -155,6 +87,38 @@ const UserStory = ({ storyObject, sprintId }) => {
 		handleDialogClose();
 		handleDeleteDialogOpen();
 	};
+
+
+	function saveEditedStory(sprintId, storyId) {
+		var options = {
+			method: "post",
+			credentials: "include",
+			headers: {
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify({
+				userTypes: role,
+				functionalityDescription: functionality,
+				reasoning: reasoning,
+				acceptanceCriteria: acceptanceCriteria,
+				storyPoints: storyPoints,
+				// priority
+			}),
+		};
+
+		try {
+			fetch(
+				`http://localhost:8080/api/sprint/${sprintId}/story/${storyId}/edit`,
+				options
+			).then((result) => {
+				if (result.status !== 200) {
+					console.log("error", result);
+				}
+			});
+		} catch {
+			return null;
+		}
+	}
 
 	return (
 		<>
@@ -190,9 +154,9 @@ const UserStory = ({ storyObject, sprintId }) => {
 					</IconButton>
 					<Menu
 						id="menu-userstory"
-						anchorEl={anchorEl}
+						anchorEl={anchorOpen}
 						keepMounted
-						open={Boolean(anchorEl)}
+						open={anchorOpen}
 						onClose={handleMenuClose}
 					>
 						<MenuItem onClick={handleDialogOpen}>Edit</MenuItem>
@@ -212,7 +176,7 @@ const UserStory = ({ storyObject, sprintId }) => {
 							hyphens: "auto",
 						}}
 					>
-						{fullStory}
+						{`As a(n) ${role} I want to be able to ${functionality} so that ${reasoning}.`}
 					</Typography>
 
 					<Typography
@@ -221,13 +185,13 @@ const UserStory = ({ storyObject, sprintId }) => {
 						fontSize={14}
 						sx={{ position: "absolute", bottom: 10, right: 12 }}
 					>
-						{editedPoints} SP
+						{storyPoints} SP
 					</Typography>
 				</CardContent>
 			</Card>
 
 			<Dialog
-				open={dialogOpen}
+				open={editDialogOpen}
 				onClose={handleDialogClose}
 				maxWidth="sm"
 				fullWidth
@@ -236,9 +200,9 @@ const UserStory = ({ storyObject, sprintId }) => {
 				<DialogContent>
 					<ToggleButtonGroup
 						color="primary"
-						value={userStoryType}
+						value={tempBacklogItemType}
 						exclusive
-						onChange={(e, newType) => setUserStoryType(newType)}
+						onChange={(e, newType) => setTempBacklogItemType(newType)}
 						aria-label="User story type"
 						fullWidth
 						sx={{ marginBottom: 2 }}
@@ -255,8 +219,8 @@ const UserStory = ({ storyObject, sprintId }) => {
 						<TextField
 							size="small"
 							label="Role"
-							value={role}
-							onChange={(e) => setRole(e.target.value)}
+							value={tempRole}
+							onChange={(e) => setTempRole(e.target.value)}
 							sx={{
 								".MuiInputBase-input": {
 									fontSize: "0.875rem",
@@ -283,8 +247,8 @@ const UserStory = ({ storyObject, sprintId }) => {
 						variant="outlined"
 						multiline
 						rows={4}
-						value={functionalityDescription}
-						onChange={(e) => setFunctionalityDescription(e.target.value)}
+						value={tempFunctionality}
+						onChange={(e) => setTempFunctionality(e.target.value)}
 						sx={{ marginBottom: 2 }}
 					/>
 
@@ -301,8 +265,8 @@ const UserStory = ({ storyObject, sprintId }) => {
 						variant="outlined"
 						multiline
 						rows={4}
-						value={reasoning}
-						onChange={(e) => console.log("setting reasoning", e.target.value) || setReasoning(e.target.value)}
+						value={tempReasoning}
+						onChange={(e) => setTempReasoning(e.target.value)}
 						sx={{ marginBottom: 2, marginTop: 2 }}
 					/>
 
@@ -315,8 +279,8 @@ const UserStory = ({ storyObject, sprintId }) => {
 						variant="outlined"
 						multiline
 						rows={4}
-						value={acceptanceCriteria}
-						onChange={(e) => setAcceptanceCriteria(e.target.value)}
+						value={tempAcceptanceCriteria}
+						onChange={(e) => setTempAcceptanceCriteria(e.target.value)}
 						sx={{ marginBottom: 2 }}
 					/>
 
@@ -327,8 +291,8 @@ const UserStory = ({ storyObject, sprintId }) => {
 						type="number"
 						fullWidth
 						variant="outlined"
-						value={editedPoints}
-						onChange={(e) => setEditedPoints(e.target.value)}
+						value={tempStoryPoints}
+						onChange={(e) => setTempStoryPoints(e.target.value)}
 						InputProps={{ inputProps: { min: 0 } }}
 					/>
 				</DialogContent>
