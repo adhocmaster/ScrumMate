@@ -10,6 +10,7 @@ import {
   Dialog,
   DialogTitle,
   DialogContent,
+  DialogContentText,
   DialogActions,
   Button,
   TextField,
@@ -44,6 +45,8 @@ const UserStory = ({ storyObject, sprintId }) => {
   const [tempEditedPoints, setTempEditedPoints] = useState(
     storyObject.storyPoints
   );
+  
+	const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
 
   function saveEditedStory(sprintId, storyId) {
     var options = {
@@ -110,6 +113,20 @@ const UserStory = ({ storyObject, sprintId }) => {
   const handleDelete = () => {
     handleDialogClose();
   };
+  
+  const handleDeleteDialogOpen = () => {
+		setDeleteDialogOpen(true)
+	}
+
+	const handleDeleteDialogClose = () => {
+		setDeleteDialogOpen(false)
+	}
+
+	const handleDelete = () => {
+		handleDialogClose();
+		handleMenuClose();
+		handleDeleteDialogOpen();
+	};
 
   return (
     <>
@@ -279,6 +296,28 @@ const UserStory = ({ storyObject, sprintId }) => {
           </Button>
         </DialogActions>
       </Dialog>
+
+			<Dialog open={deleteDialogOpen} onClose={handleDeleteDialogClose}>
+				<DialogTitle>
+					Delete backlog item?
+				</DialogTitle>
+
+				<DialogContent>
+					<DialogContentText>
+						Are you sure you want to delete this backlog item?
+					</DialogContentText>
+				</DialogContent>
+
+				<DialogActions>
+					<Button onClick={handleDeleteDialogClose} color="primary">
+						Cancel
+					</Button>
+
+					<Button variant="contained" color="error" onClick={handleDelete} >
+						Delete
+					</Button>
+				</DialogActions>
+			</Dialog>
     </>
   );
 };
