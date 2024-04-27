@@ -110,11 +110,7 @@ const UserStory = ({ storyObject, sprintId }) => {
     handleMenuClose();
   };
 
-  const handleDelete = () => {
-    handleDialogClose();
-  };
-  
-  const handleDeleteDialogOpen = () => {
+  	const handleDeleteDialogOpen = () => {
 		setDeleteDialogOpen(true)
 	}
 
