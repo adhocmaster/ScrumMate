@@ -7,7 +7,7 @@ import DeleteConfirmation from "./DeleteConfirmation";
 const Sprint = ({ index, items, setItems, userStories }) => {
 	const [stories, setStories] = useState(userStories);
 
-	//Function to handle the reordering of stories (content within the cards).
+	// Function to handle the reordering of stories (content within the cards).
 	function reorderStories(result) {
 		const startIndex = result.source.index;
 		const endIndex = result.destination.index;
@@ -28,6 +28,18 @@ const Sprint = ({ index, items, setItems, userStories }) => {
 		}).catch((error) => console.log("error deleting sprint:"));
 		const updatedSprints = items.filter((_, i) => index !== i);
 		setItems(updatedSprints);
+	};
+
+	const deleteStory = (storyId) => {
+		// TODO: find index and remove it and do setstate again
+		fetch(`http://localhost:8080/api/backlogItem/${storyId}/delete`, {
+			method: "DELETE",
+			credentials: "include",
+			headers: { "Content-Type": "application/json" },
+		}).catch((error) => console.log("error deleting story"));
+		// will this cause issues with rank later?
+		const updatedStories = userStories.filter((story) => story.id !== storyId);
+		setStories(updatedStories);
 	};
 
 	const onDragEnd = (result) => {
@@ -123,6 +135,7 @@ const Sprint = ({ index, items, setItems, userStories }) => {
 											>
 												<UserStory
 													storyObject={storyObj}
+													deleteFunction={deleteStory}
 												/>
 											</div>
 										}

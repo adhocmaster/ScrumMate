@@ -9,5 +9,5 @@ export default (router: express.Router) => {
 	router.post('/release/:releaseId/', isAuthenticated, errorWrapper(createNewBacklogStory));
 	router.post('/story/:storyId/edit', isAuthenticated, errorWrapper(editStory));
 	router.post('/backlogItem/:sourceId/:destinationId/reorder', isAuthenticated, errorWrapper(moveBacklog));
-	router.post('/backlogItem/:backlogItemId/delete', isAuthenticated, errorWrapper(deleteBacklogItem));
+	router.delete('/backlogItem/:backlogItemId/delete', isAuthenticated, errorWrapper(deleteBacklogItem));
 }
