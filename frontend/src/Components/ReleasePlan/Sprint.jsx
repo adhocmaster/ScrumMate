@@ -33,13 +33,14 @@ const Sprint = ({ index, items, setItems, userStories }) => {
 	const deleteStory = (storyId) => {
 		// TODO: find index and remove it and do setstate again
 		fetch(`http://localhost:8080/api/backlogItem/${storyId}/delete`, {
-			method: "DELETE",
+			method: "POST",
 			credentials: "include",
 			headers: { "Content-Type": "application/json" },
-		}).catch((error) => console.log("error deleting story"));
-		// will this cause issues with rank later?
-		const updatedStories = userStories.filter((story) => story.id !== storyId);
-		setStories(updatedStories);
+		})
+			.then((response) => response.json())
+			.then((result) => {
+				setStories(result)
+			}).catch((error) => console.log("error deleting story"));
 	};
 
 	const onDragEnd = (result) => {

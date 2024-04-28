@@ -267,7 +267,7 @@ describe("Release API tests", () => {
 
 	test("Original story in the sprint was deleted", async () => {
 		await request(app)
-			.delete(`/api/backlogItem/${backlogIdOriginal}/delete`)
+			.post(`/api/backlogItem/${backlogIdOriginal}/delete`)
 			.set('Cookie', [`user-auth=${sessionToken}`])
 			.expect(200)
 			.then((res) => {

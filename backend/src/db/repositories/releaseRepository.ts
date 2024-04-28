@@ -106,7 +106,11 @@ export class ReleaseRepository extends ModelRepository {
 	/// return list sorted by ascending sprint number
 	public async getReleaseSprints(releaseId: number): Promise<Sprint[]> {
 		const sprints = await this.sprintSource.getSprintsWithBacklog(releaseId);
-		return sprints.sort((a: Sprint, b: Sprint) => a.sprintNumber - b.sprintNumber)
+		sprints.sort((a: Sprint, b: Sprint) => a.sprintNumber - b.sprintNumber)
+		for (const sprint of sprints) {
+			sprint.todos.sort((a: BacklogItem, b: BacklogItem) => a.rank - b.rank);
+		}
+		return sprints
 	}
 
 	/// return new order sorted by ascending sprint number
