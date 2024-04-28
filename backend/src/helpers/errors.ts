@@ -66,7 +66,7 @@ export function errorWrapper(func: { (req: express.Request, res: express.Respons
 			return await func(req, res)
 		} catch (err) {
 
-			console.log("caught error", err.name)
+			console.log("caught error", err.name, err.message)
 			try {
 				return res.sendStatus(err.code());
 			} catch {

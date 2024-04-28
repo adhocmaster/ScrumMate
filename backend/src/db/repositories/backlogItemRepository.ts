@@ -40,8 +40,7 @@ export class BacklogItemRepository extends ModelRepository {
 		return newStory
 	}
 
-	public async updateStory(storyId: number, sprintId?: number, userTypes?: string, functionalityDescription?: string, reasoning?: string, acceptanceCriteria?: string, storyPoints?: number, priority?: Priority, rank?: number): Promise<Story> {
-		// const sprint = await this.sprintSource.lookupSprintById(sprintId)
+	public async updateStory(storyId: number, userTypes?: string, functionalityDescription?: string, reasoning?: string, acceptanceCriteria?: string, storyPoints?: number, priority?: Priority, rank?: number): Promise<Story> {
 		const story = await this.backlogSource.lookupStoryById(storyId)
 		story.userTypes = userTypes ?? story.userTypes
 		story.functionalityDescription = functionalityDescription ?? story.functionalityDescription
@@ -49,11 +48,6 @@ export class BacklogItemRepository extends ModelRepository {
 		story.acceptanceCriteria = acceptanceCriteria ?? story.acceptanceCriteria
 		story.storyPoints = storyPoints ?? story.storyPoints
 		story.priority = priority ?? story.priority
-		// if (sprint) {
-		//   story.sprint.removeTODO(story) // may need to fix the remove method, match on id
-		//   story.sprint = sprint
-		//   sprint.addTODO(story) // again, might break
-		// }
 		await this.backlogSource.save(story)
 		return story;
 	}
