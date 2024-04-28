@@ -126,9 +126,26 @@ export class BacklogItemRepository extends ModelRepository {
 		return [sourceList, destinationList]
 	}
 
+	private async moveBacklogItemToDeletedList(backlogItemWithParent: BacklogItem) {
+		const parentSprint = backlogItemWithParent.sprint;
+		const parentRelease = backlogItemWithParent.release;
+		if (backlogItemWithParent.sprint) {
+			const sprintWithRelease = await this.sprintSource.lookupSprintByIdWithRelease(backlogItemWithParent.sprint.id);
+			backlogItemWithParent.deletedFrom = sprintWithRelease.release;
+			backlogItemWithParent.sprint = null;
+		} else {
+			backlogItemWithParent.deletedFrom = backlogItemWithParent.release;
+		}
+		backlogItemWithParent.release = null;
+		await this.backlogSource.save(backlogItemWithParent);
+		backlogItemWithParent.sprint = parentSprint;
+		backlogItemWithParent.release = parentRelease;
+	}
+
 	public async deleteBacklogItem(backlogItemId: number): Promise<BacklogItem[]> {
 		const backlogItem = await this.backlogSource.fetchBacklogWithParent(backlogItemId);
-		await this.backlogSource.deleteBacklogItem(backlogItemId)
+		await this.moveBacklogItemToDeletedList(backlogItem);
+		// await this.backlogSource.deleteBacklogItem(backlogItemId);
 
 		if (backlogItem.sprint) {
 			// sprint is parent

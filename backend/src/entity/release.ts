@@ -36,6 +36,9 @@ export class Release {
 	@OneToMany(() => BacklogItem, (backlog) => backlog.release)
 	backlog: BacklogItem[]
 
+	@OneToMany(() => BacklogItem, (backlog) => backlog.deletedFrom)
+	deletedBacklog: BacklogItem[]
+
 	///// Methods /////
 
 	getSprints(): Sprint[] {
@@ -57,13 +60,24 @@ export class Release {
 	removeFromBacklog(backlogItem: BacklogItem): void {
 		this.backlog = removeMaybeUndefined(backlogItem, this.backlog)
 	}
+
+	getDeletedBacklogItems(): BacklogItem[] {
+		return getMaybeUndefined(this.backlog)
+	}
+	addToDeletedBacklogItems(backlogItem: BacklogItem): void {
+		this.deletedBacklog = addMaybeUndefined(backlogItem, this.deletedBacklog)
+	}
+	removeFromDeletedBacklogItems(backlogItem: BacklogItem): void {
+		this.deletedBacklog = removeMaybeUndefined(backlogItem, this.deletedBacklog)
+	}
+
 	copy(release: Release): void {
 		this.revision = release.revision;
 		this.problemStatement = release.problemStatement;
 		this.goalStatement = release.goalStatement;
 		this.revisionDate = release.revisionDate;
 		this.project = release.project;
-		this.backlogItemCount = release.backlogItemCount
+		this.backlogItemCount = release.backlogItemCount;
 	}
 
 }
