@@ -147,7 +147,6 @@ describe("Project API tests", () => {
 			.expect(200)
 			.then((res) => {
 				expect(res.body).toBeDefined();
-				console.log(res.body)
 				expect(res.body.length).toBe(1);
 				expect(res.body[0]).toBeDefined();
 				expect(res.body[0].id).toBe(projectId);

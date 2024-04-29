@@ -19,7 +19,7 @@ import {
 } from "@mui/material";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 
-const UserStory = ({ storyObject }) => {
+const UserStory = ({ storyObject, deleteFunction }) => {
 	const [anchorOpen, setAnchorOpen] = useState(false);
 	const [editDialogOpen, setEditDialogOpen] = useState(false);
 	const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
@@ -85,7 +85,7 @@ const UserStory = ({ storyObject }) => {
 
 	const handleDelete = () => {
 		handleDialogClose();
-		handleDeleteDialogOpen();
+		deleteFunction(storyObject.id)
 	};
 
 	function saveEditedStory(storyId) {

@@ -61,6 +61,15 @@ export class ReleaseRepository extends ModelRepository {
 		});
 	}
 
+	private async copyReleaseDeletedStories(releaseCopy: Release, sourceList: BacklogItem[]) {
+		await this.copyBacklogItems(sourceList, async (backlogItemCopy) => {
+			backlogItemCopy.deletedFrom = releaseCopy;
+			await this.backlogSource.save(backlogItemCopy);
+			backlogItemCopy.deletedFrom = undefined;
+			releaseCopy.addToDeletedBacklogItems(backlogItemCopy);
+		});
+	}
+
 	private async copySprintTodos(sprintCopy: Sprint, sourceList: BacklogItem[]) {
 		await this.copyBacklogItems(sourceList, async (backlogItemCopy) => {
 			backlogItemCopy.sprint = sprintCopy;
@@ -99,6 +108,7 @@ export class ReleaseRepository extends ModelRepository {
 
 		await this.copySprints(releaseCopy, releaseWithEverything.getSprints());
 		await this.copyReleaseBacklog(releaseCopy, releaseWithEverything.getBacklog());
+		await this.copyReleaseDeletedStories(releaseCopy, releaseWithEverything.getDeletedBacklogItems());
 
 		return releaseCopy
 	}
@@ -106,7 +116,11 @@ export class ReleaseRepository extends ModelRepository {
 	/// return list sorted by ascending sprint number
 	public async getReleaseSprints(releaseId: number): Promise<Sprint[]> {
 		const sprints = await this.sprintSource.getSprintsWithBacklog(releaseId);
-		return sprints.sort((a: Sprint, b: Sprint) => a.sprintNumber - b.sprintNumber)
+		sprints.sort((a: Sprint, b: Sprint) => a.sprintNumber - b.sprintNumber)
+		for (const sprint of sprints) {
+			sprint.todos.sort((a: BacklogItem, b: BacklogItem) => a.rank - b.rank);
+		}
+		return sprints
 	}
 
 	/// return new order sorted by ascending sprint number

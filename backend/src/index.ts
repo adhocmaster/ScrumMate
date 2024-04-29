@@ -17,10 +17,14 @@ AppDataSource.initialize().then(async () => {
 	/// Initializing som basic information for the frontend
 	/// TEMPORARY CODE UNTIL THE SIGNIN AND PROJECT SELECTION PAGES ARE DONE
 	console.log('initializing system')
+	const CREATEDATA = true;
 
 	const db = Database.setAndGetInstance(AppDataSource)
 	try {
 		await db.getUserRepository.lookupUserByEmail("bob@gmail.com")
+		if (CREATEDATA) {
+			throw new Error("going to catch condition")
+		}
 	} catch {
 		const productOwner1 = new User()
 		productOwner1.username = "bob"

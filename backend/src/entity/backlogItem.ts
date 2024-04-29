@@ -30,15 +30,14 @@ export class BacklogItem {
 
 	///// Relational /////
 
-	@ManyToOne(() => Release, (release) => release.backlog) // have this whether it is in a backlog or not?
+	@ManyToOne(() => Release, (release) => release.backlog)
 	release: Release
 
-	// deviating from diagram: each backlog item should only be in one backlog.
-	// if you need it in another sprint (eg. did not finish it this sprint and want to move it to next), copy it
-	// this way if you edit it in the new one, we don't change it in the previous sprints
-	// also, work in a sprint should be completed within that sprint.
-	@ManyToOne(() => Sprint, (sprint) => sprint.todos)
-	sprint: Sprint // nullable in case it is just in the backlog?
+	@ManyToOne(() => Sprint, (sprint) => sprint.todos, { nullable: true })
+	sprint: Sprint
+
+	@ManyToOne(() => Release, (release) => release.deletedBacklog)
+	deletedFrom: Release
 
 	@ManyToMany(() => User, (user) => user.assignments)
 	@JoinTable()
