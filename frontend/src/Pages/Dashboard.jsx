@@ -32,7 +32,7 @@ import ListItemText from '@mui/material/ListItemText';
 import Avatar from '@mui/material/Avatar';
 import Divider from '@mui/material/Divider';
 
-export default function Dashboard({ setName }) {
+export default function Dashboard({ setName, setSelectedProjectId }) {
 	const [rows, setRows] = useState([]);
 
 	const [createDialogOpen, setCreateDialogOpen] = useState(false);
@@ -189,7 +189,11 @@ export default function Dashboard({ setName }) {
 							to="/releases"
 							style={{ textTransform: 'none' }}
 							state={{ data }}
-							onClick={() => { setName(data.name) }}
+							onClick={() => {
+								setName(data.name);
+								console.log(data.id)
+								setSelectedProjectId(data.id);
+							}}
 						>
 							{data.name}
 						</Button>

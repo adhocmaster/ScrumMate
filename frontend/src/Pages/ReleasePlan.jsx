@@ -12,35 +12,38 @@ import Backlog from "../Components/ReleasePlan/Backlog";
 import SanityCheckGraph from "../Components/ReleasePlan/SanityCheckGraph";
 import SanityCheckText from "../Components/ReleasePlan/SanityCheckText";
 
-const ReleasePlan = () => {
+const ReleasePlan = ({ projectId }) => {
   const [sprints, setSprints] = useState([]);
   const [open, setOpen] = useState(true);
   const [problemStatement, setProblem] = useState("");
   const [highLevelGoals, setGoals] = useState("");
-  const [releaseId, setId] = useState(1);
+  const [releaseId, setId] = useState(null);
 
-  const projectId = 1;
-
-  function fetchMostRecentRelease(projectId, setProblem, setGoals, setId) {
+  function fetchMostRecentRelease() {
     console.log("about to most recent release");
     var options = {
       method: "get",
       credentials: "include",
     };
-    fetch(
-      `http://localhost:8080/api/project/${projectId}/recentRelease`,
-      options
-    ).then((result) => {
-      if (result.status === 200) {
-        console.log(result);
-      }
-      result.json().then((response) => {
-        console.log(response);
-        setProblem(response.problemStatement);
-        setGoals(response.goalStatement);
-        setId(response.id);
+    try {
+      fetch(
+        `http://localhost:8080/api/project/${projectId}/recentRelease`,
+        options
+      ).then((result) => {
+        if (result.status === 200) {
+          console.log(result);
+          result.json().then((response) => {
+            console.log(response);
+            setProblem(response.problemStatement);
+            setGoals(response.goalStatement);
+            setId(response.id);
+          });
+        }
       });
-    });
+    } catch {
+
+    }
+
   }
 
   function fetchRelease(releaseId, setProblem, setGoals) {
@@ -49,18 +52,23 @@ const ReleasePlan = () => {
       method: "get",
       credentials: "include",
     };
-    fetch(`http://localhost:8080/api/release/${releaseId}`, options).then(
-      (result) => {
-        if (result.status === 200) {
-          console.log(result);
+    try {
+      fetch(`http://localhost:8080/api/release/${releaseId}`, options).then(
+        (result) => {
+          if (result.status === 200) {
+            console.log(result);
+            result.json().then((response) => {
+              console.log(response);
+              setProblem(response.problemStatement);
+              setGoals(response.goalStatement);
+            });
+          }
         }
-        result.json().then((response) => {
-          console.log(response);
-          setProblem(response.problemStatement);
-          setGoals(response.goalStatement);
-        });
-      }
-    );
+      );
+    } catch {
+
+    }
+
   }
 
   function fetchSprints(releaseId) {
@@ -68,18 +76,22 @@ const ReleasePlan = () => {
       method: "get",
       credentials: "include",
     };
-    fetch(
-      `http://localhost:8080/api/release/${releaseId}/sprints`,
-      options
-    ).then((result) => {
-      if (result.status === 200) {
-        result.json().then((response) => {
-          setSprints(response);
-        });
-      } else {
-        setSprints([]);
-      }
-    });
+    try {
+      fetch(
+        `http://localhost:8080/api/release/${releaseId}/sprints`,
+        options
+      ).then((result) => {
+        if (result.status === 200) {
+          result.json().then((response) => {
+            setSprints(response);
+          });
+        } else {
+          setSprints([]);
+        }
+      });
+    } catch {
+
+    }
   }
 
   function createNewSprints() {
@@ -111,7 +123,7 @@ const ReleasePlan = () => {
   }
 
   useEffect(() => {
-    fetchMostRecentRelease(1, setProblem, setGoals, setId);
+    fetchMostRecentRelease();
   }, []);
 
   useEffect(() => {
@@ -135,6 +147,7 @@ const ReleasePlan = () => {
           open={open}
           toggleDrawer={toggleDrawer}
           title={"Revisions"}
+          projectId={projectId}
           items={[]}
           itemClick={revisionsClick}
         />

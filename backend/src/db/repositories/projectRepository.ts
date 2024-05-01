@@ -8,10 +8,19 @@ export class ProjectRepository extends ModelRepository {
 		const user = await this.userSource.lookupUserById(userId)
 		const newProject = new Project()
 		newProject.name = projectName
-		newProject.nextRevision = 1
+		newProject.nextRevision = 2
 		newProject.productOwner = user
-		newProject.releases = [];
+		const defaultRelease = new Release()
+		defaultRelease.revision = 1
+		defaultRelease.revisionDate = new Date()
+		defaultRelease.problemStatement = ""
+		defaultRelease.goalStatement = ""
+		defaultRelease.backlogItemCount = 0
+		defaultRelease.project = newProject
+		newProject.releases = [defaultRelease];
 		await this.projectSource.save(newProject)
+		await this.releaseSource.save(defaultRelease)
+		newProject.releases[0].project = undefined;
 		return newProject
 	}
 

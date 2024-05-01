@@ -8,8 +8,9 @@ import LockIcon from '@mui/icons-material/Lock';
 import LockOpenIcon from '@mui/icons-material/LockOpen';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 
-const Sidebar = ({ open, toggleDrawer, title, items, itemClick }) => {
+const Sidebar = ({ open, toggleDrawer, title, projectId, items, itemClick }) => {
 	const [selected, setSelected] = useState(0);
+	const [revisions, setRevisions] = useState(items || []);
 
 	function convertRevisionAndDate(release) {
 		release.revision = `Revision ${release.revision}`
@@ -17,7 +18,7 @@ const Sidebar = ({ open, toggleDrawer, title, items, itemClick }) => {
 		return release
 	}
 
-	function fetchReleases(projectId, setRevisions) {
+	function fetchReleases() {
 		console.log("about to fetch")
 		var options = {
 			method: 'get',
@@ -26,15 +27,16 @@ const Sidebar = ({ open, toggleDrawer, title, items, itemClick }) => {
 		fetch(`http://localhost:8080/api/project/${projectId}/releases`, options).then((result) => {
 			if (result.status === 200) {
 				console.log(result)
+				result.json().then((response) => {
+					console.log(response)
+					console.log(projectId)
+					setRevisions(response.releases.map((release) => convertRevisionAndDate(release)))
+				})
 			}
-			result.json().then((response) => {
-				console.log(response)
-				setRevisions(response.releases.map((release) => convertRevisionAndDate(release)))
-			})
 		})
 	}
 
-	function createNewRelease(projectId, addRevisions) {
+	function createNewRelease() {
 		try {
 			const options = {
 				method: 'POST',
@@ -78,10 +80,9 @@ const Sidebar = ({ open, toggleDrawer, title, items, itemClick }) => {
 		}
 	}
 
-	const [revisions, setRevisions] = useState(items || []);
 
 	useEffect(() => {
-		fetchReleases(1, setRevisions);
+		fetchReleases();
 	}, []);
 
 	const toggleLock = (index) => {
