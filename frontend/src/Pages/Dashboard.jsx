@@ -199,7 +199,7 @@ export default function Dashboard({ setName, setSelectedProjectId }) {
 						</Button>
 					</TableCell>
 					<TableCell align="right">{data.productOwner.username}</TableCell>
-					<TableCell align="right">{data.nextRevision}</TableCell>
+					<TableCell align="right">{data.numRevisions}</TableCell>
 					{/* <TableCell align="right">{data.currentSprint}</TableCell> */}
 					<TableCell align="right">{'-'}</TableCell>
 					<TableCell align="right">{formattedDate}</TableCell>

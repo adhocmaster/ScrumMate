@@ -14,7 +14,7 @@ export class Project {
 	name: string
 
 	@Column()
-	nextRevision: number
+	numRevisions: number
 
 	@CreateDateColumn()
 	dateCreated: Date

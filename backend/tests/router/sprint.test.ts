@@ -325,7 +325,7 @@ describe("Sprint API tests", () => {
 			.then((res) => {
 				expect(res.body).toBeDefined();
 				expect(res.body.revision).toBeDefined();
-				expect(res.body.revision).toBe(1);
+				expect(res.body.revision).toBe(2);
 				expect(res.body.goalStatement).toBeDefined();
 				expect(res.body.sprints).toBeDefined();
 				expect(res.body.sprints.length).toBe(2);
@@ -366,7 +366,7 @@ describe("Sprint API tests", () => {
 			.then((res) => {
 				expect(res.body).toBeDefined();
 				expect(res.body.revision).toBeDefined();
-				expect(res.body.revision).toBe(2);
+				expect(res.body.revision).toBe(3);
 				expect(res.body.goalStatement).toBeDefined();
 				expect(res.body.sprints).toBeDefined();
 				expect(res.body.sprints.length).toBe(1);

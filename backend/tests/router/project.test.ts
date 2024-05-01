@@ -136,7 +136,9 @@ describe("Project API tests", () => {
 			.then((res) => {
 				expect(res.body).toBeDefined();
 				expect(res.body.id).toBeDefined();
-				expect(res.body.releases).toEqual([]);
+				expect(res.body.releases.length).toBe(1);
+				expect(res.body.releases[0].revision).toBe(1);
+				expect(res.body.releases[0].backlogItemCount).toBe(0);
 			})
 	});
 
@@ -154,8 +156,8 @@ describe("Project API tests", () => {
 				expect(res.body[0].productOwner).toBeDefined();
 				expect(res.body[0].productOwner.username).toBeDefined();
 				expect(res.body[0].productOwner.username).toBe("sallyg");
-				expect(res.body[0].nextRevision).toBeDefined();
-				expect(res.body[0].nextRevision).toBe(0);
+				expect(res.body[0].numRevisions).toBeDefined();
+				expect(res.body[0].numRevisions).toBe(1);
 				expect(res.body[0].dateCreated).toBeDefined();
 			})
 	});

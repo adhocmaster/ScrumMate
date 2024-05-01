@@ -8,7 +8,7 @@ export class ProjectRepository extends ModelRepository {
 		const user = await this.userSource.lookupUserById(userId)
 		const newProject = new Project()
 		newProject.name = projectName
-		newProject.nextRevision = 2
+		newProject.numRevisions = 1
 		newProject.productOwner = user
 		const defaultRelease = new Release()
 		defaultRelease.revision = 1

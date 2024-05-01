@@ -11,8 +11,8 @@ export class ReleaseRepository extends ModelRepository {
 		const release = new Release()
 		release.project = project
 		if (!revision) {
-			revision = project.nextRevision
-			project.nextRevision = project.nextRevision + 1
+			revision = project.numRevisions + 1
+			project.numRevisions = project.numRevisions + 1
 			await this.projectSource.save(project)
 		}
 		release.revision = revision
@@ -101,8 +101,8 @@ export class ReleaseRepository extends ModelRepository {
 		releaseCopy.copy(releaseWithEverything);
 
 		// set the new revision number
-		releaseCopy.revision = releaseWithEverything.project.nextRevision;
-		releaseWithEverything.project.nextRevision += 1;
+		releaseCopy.revision = releaseWithEverything.project.numRevisions + 1;
+		releaseWithEverything.project.numRevisions += 1;
 		await this.projectSource.save(releaseWithEverything.project);
 		await this.releaseSource.save(releaseCopy)
 

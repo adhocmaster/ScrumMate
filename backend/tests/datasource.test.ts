@@ -124,30 +124,30 @@ describe("release plans", () => {
 	test("making a new release plan for plannertarium", async () => {
 		const db = Database.getInstance()
 		release = await db.getReleaseRepository.createNewRelease(plannertarium.id)
-		expect(release.revision).toBe(1)
+		expect(release.revision).toBe(2)
 		expect(release.problemStatement).toBe("")
 		expect(release.goalStatement).toBe("")
 		plannertarium = await db.getProjectRepository.lookupProjectById(plannertarium.id)
-		expect(plannertarium.nextRevision).toBe(2)
+		expect(plannertarium.numRevisions).toBe(2)
 	});
 
 	test("updating release plan", async () => {
 		const db = Database.getInstance()
 		release = await db.getReleaseRepository.updateRelease(release.id, null, "app is too good", null)
-		expect(release.revision).toBe(1)
+		expect(release.revision).toBe(2)
 		expect(release.problemStatement).toBe("app is too good")
 		expect(release.goalStatement).toBe("")
 		plannertarium = await db.getProjectRepository.lookupProjectById(plannertarium.id)
-		expect(plannertarium.nextRevision).toBe(2)
+		expect(plannertarium.numRevisions).toBe(2)
 	});
 
 	test("copying release plan", async () => {
 		const db = Database.getInstance()
 		release = await db.getReleaseRepository.copyRelease(release.id)
 		expect(release.problemStatement).toBe("app is too good")
-		expect(release.revision).toBe(2)
+		expect(release.revision).toBe(3)
 		plannertarium = await db.getProjectRepository.lookupProjectById(plannertarium.id)
-		expect(plannertarium.nextRevision).toBe(3)
+		expect(plannertarium.numRevisions).toBe(3)
 	});
 
 });
