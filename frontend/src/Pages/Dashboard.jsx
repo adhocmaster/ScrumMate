@@ -61,7 +61,7 @@ export default function Dashboard({ setName }) {
 
 	const handleCreate = () => {
 		handleCreateDialogClose();
-		// TODO: do something with newProjectName
+		fetchCreateNewProject()
 		setNewProjectName('');
 	};
 
@@ -131,13 +131,11 @@ export default function Dashboard({ setName }) {
 		}
 		try {
 			fetch(`http://localhost:8080/api/user/projectRowData`, options).then((result) => {
-				if (result.status === 200) {
-					console.log(result)
+				if (result.status !== 200) {
+					console.log("error", result)
 				}
-				console.log('waiting for .then')
 				result.json().then((response) => {
 					setRows(response)
-					// setRevisions(response.releases.map((release) => convertRevisionAndDate(release)))
 				})
 			})
 		} catch {
@@ -148,6 +146,31 @@ export default function Dashboard({ setName }) {
 	useEffect(() => {
 		fetchProjectRowData();
 	}, []);
+
+	function fetchCreateNewProject() {
+		var options = {
+			method: 'post',
+			credentials: 'include',
+			headers: {
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify({
+				name: newProjectName
+			}),
+		}
+		try {
+			fetch(`http://localhost:8080/api/project`, options).then((result) => {
+				if (result.status !== 200) {
+					console.log("error", result)
+				}
+				result.json().then((response) => {
+					setRows(rows.concat(response))
+				})
+			})
+		} catch {
+			return null;
+		}
+	}
 
 	function Row(projectData) {
 		const [open, setOpen] = useState(false);
