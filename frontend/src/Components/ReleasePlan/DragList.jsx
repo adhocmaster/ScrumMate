@@ -1,6 +1,21 @@
 import React from "react";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import Sprint from "./Sprint";
+import {
+	DndContext,
+	closestCenter,
+	KeyboardSensor,
+	PointerSensor,
+	useSensor,
+	useSensors,
+} from "@dnd-kit/core";
+import {
+	arrayMove,
+	SortableContext,
+	sortableKeyboardCoordinates,
+	verticalListSortingStrategy,
+} from "@dnd-kit/sortable";
+
 
 async function reorderFetch(releaseId, sprintStartIndex, sprintEndIndex, setItems) {
 	fetch(`http://localhost:8080/api/release/${releaseId}/reorder`, {
@@ -66,41 +81,49 @@ export default function DragList({ items, setItems, releaseId }) {
 			result.destination.index, setItems);
 	}
 
+	const sensors = useSensors(
+		useSensor(PointerSensor),
+		useSensor(KeyboardSensor, {
+			coordinateGetter: sortableKeyboardCoordinates,
+		})
+	);
+
+	function handleDragEnd(event) {
+		const { active, over } = event;
+
+		if (active.id !== over.id) {
+			setItems((items) => {
+				const oldIndex = items.indexOf(active.id);
+				const newIndex = items.indexOf(over.id);
+
+				return arrayMove(items, oldIndex, newIndex);
+			});
+		}
+	}
+
 	return (
-		<DragDropContext onDragEnd={onDragEnd}>
-			<Droppable droppableId="droppable">
-				{(provided, snapshot) => (
-					<div
-						{...provided.droppableProps}
-						ref={provided.innerRef}
-					// style={getListStyle(snapshot.isDraggingOver)}
-					>
-						{items.map((item, index) => (
-							<Draggable key={index} draggableId={`here: ${index}`} index={index}>
-								{(provided, snapshot) => (
-									<div
-										ref={provided.innerRef}
-										{...provided.draggableProps}
-										{...provided.dragHandleProps}
-										style={getItemStyle(
-											snapshot.isDragging,
-											provided.draggableProps.style
-										)}
-									>
-										<Sprint
-											index={index}
-											items={items}
-											setItems={setItems}
-											userStories={item.todos}
-										/>
-									</div>
-								)}
-							</Draggable>
-						))}
-						{provided.placeholder}
-					</div>
-				)}
-			</Droppable>
-		</DragDropContext>
+		<DndContext
+			sensors={sensors}
+			collisionDetection={closestCenter}
+			onDragEnd={handleDragEnd}
+		>
+			<div>
+				<SortableContext
+					items={items}
+					strategy={verticalListSortingStrategy}
+				>
+					{items.map((item, index) =>
+						<div>
+							<Sprint
+								index={index}
+								items={items}
+								setItems={setItems}
+								userStories={item.todos}
+							/>
+						</div>
+					)}
+				</SortableContext>
+			</div>
+		</DndContext >
 	);
 }
