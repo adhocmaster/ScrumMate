@@ -47,6 +47,7 @@ export default function Dashboard({ setName, setSelectedProjectId }) {
 
 	const [renameDialogOpen, setRenameDialogOpen] = useState(false);
 	const [renameProjectTextfield, setRenameProjectTextfield] = useState('');
+	const [renameProjectId, setRenameProjectId] = useState(null);
 
 	const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
 	const [deletedProjectName, setDeletedProjectName] = useState('');
@@ -61,10 +62,10 @@ export default function Dashboard({ setName, setSelectedProjectId }) {
 
 	const handleCreate = () => {
 		if (!isValidProjectName(newProjectName)) {
-			return
+			return;
 		}
 		handleCreateDialogClose();
-		fetchCreateNewProject()
+		fetchCreateNewProject();
 		setNewProjectName('');
 	};
 
@@ -97,20 +98,24 @@ export default function Dashboard({ setName, setSelectedProjectId }) {
 		setRecipient('');
 	};
 
-	const handleRenameDialogOpen = (projectName) => {
+	const handleRenameDialogOpen = (projectName, projectId) => {
 		setRenameProjectTextfield(projectName);
+		setRenameProjectId(projectId);
 		setRenameDialogOpen(true);
 	};
 
 	const handleRenameDialogClose = () => {
 		setRenameProjectTextfield('');
+		setRenameProjectId(null);
 		setRenameDialogOpen(false);
 	};
 
 	const handleRename = () => {
-		setRenameDialogOpen(false);
-		// TODO: do something with renameProjectTextfield
-		setRenameProjectTextfield('');
+		if (!isValidProjectName(renameProjectTextfield)) {
+			return;
+		}
+		fetchRenameProject();
+		handleRenameDialogClose();
 	};
 
 	const handleDeleteDialogOpen = (id, name) => {
@@ -179,9 +184,37 @@ export default function Dashboard({ setName, setSelectedProjectId }) {
 		return str !== "";
 	}
 
+	function fetchRenameProject() {
+		var options = {
+			method: 'PATCH',
+			credentials: 'include',
+			headers: {
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify({
+				name: renameProjectTextfield
+			}),
+		}
+		try {
+			fetch(`http://localhost:8080/api/project/${renameProjectId}`, options).then((result) => {
+				if (result.status === 200) {
+					result.json().then((response) => {
+						const index = rows.findIndex(obj => obj.id === renameProjectId);
+						const rowsCopy = [...rows]
+						rowsCopy[index] = response;
+						setRows(rowsCopy)
+					})
+				}
+			})
+		} catch {
+			console.log("failed to rename project")
+			return null;
+		}
+	}
+
 	function Row(projectData) {
 		const [open, setOpen] = useState(false);
-		const data = projectData.row
+		const data = projectData.row // may need to remove to update
 		// https://forum.freecodecamp.org/t/how-to-convert-date-to-dd-mm-yyyy-in-react/431093
 		const options = { year: 'numeric', month: 'long', day: 'numeric' };
 		const formattedDate = new Date(data.dateCreated).toLocaleDateString('en-US', options);
@@ -238,7 +271,7 @@ export default function Dashboard({ setName, setSelectedProjectId }) {
 										</IconButton>
 										<IconButton
 											onClick={() => {
-												handleRenameDialogOpen(data.name)
+												handleRenameDialogOpen(data.name, data.id)
 											}}
 										>
 											<EditIcon fontSize="small" />

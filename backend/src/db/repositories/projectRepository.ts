@@ -25,7 +25,7 @@ export class ProjectRepository extends ModelRepository {
 	}
 
 	public async updateProject(id: number, name?: string,): Promise<Project> {
-		const project = await this.projectSource.lookupProjectById(id)
+		const project = await this.projectSource.lookupProjectByIdWithOwnerAndRelease(id)
 		project.name = name ?? project.name
 		await this.projectSource.save(project)
 		return project
