@@ -19,7 +19,7 @@ AppDataSource.initialize().then(async () => {
 	console.log('initializing system')
 	const CREATEDATA = true;
 
-	const db = Database.setAndGetInstance(AppDataSource)
+	const db = Database.setAndGetInstance(AppDataSource);
 	try {
 		await db.getUserRepository.lookupUserByEmail("bob@gmail.com")
 		if (CREATEDATA) {

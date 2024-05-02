@@ -3,6 +3,7 @@ import { ModelDataSourceWrapper } from "./modelDataSourceWrapper";
 import { Release } from "../../entity/release";
 import { Sprint } from "../../entity/sprint";
 import { BacklogItem } from "entity/backlogItem";
+import { DeleteResult } from "typeorm";
 
 export class SprintDataSourceWrapper extends ModelDataSourceWrapper {
 
@@ -96,7 +97,7 @@ export class SprintDataSourceWrapper extends ModelDataSourceWrapper {
 	// 	}
 	// }
 
-	public async deleteSprint(sprintId: number) {
-		await super.delete(Sprint, sprintId);
+	public async deleteSprint(sprintId: number): Promise<DeleteResult> {
+		return await super.delete(Sprint, sprintId);
 	}
 }

@@ -39,6 +39,7 @@ export class UserDataSourceWrapper extends ModelDataSourceWrapper {
 		if (!maybeUserList || maybeUserList.length === 0) {
 			throw new NotFoundError(`User with id ${id} not found`)
 		}
+		// Sometimes its not included ???
 		return maybeUserList[0]
 	}
 

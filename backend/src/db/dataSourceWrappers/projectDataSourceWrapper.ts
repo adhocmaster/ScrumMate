@@ -62,6 +62,6 @@ export class ProjectDataSourceWrapper extends ModelDataSourceWrapper {
 	}
 
 	public async deleteProject(projectId: number) {
-		await super.delete(Project, projectId);
+		return await super.delete(Project, projectId);
 	}
 }
