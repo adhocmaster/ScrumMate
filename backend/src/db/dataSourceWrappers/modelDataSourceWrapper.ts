@@ -44,6 +44,15 @@ export class ModelDataSourceWrapper {
 		return maybeItem
 	}
 
+	public async delete(type: EntityTarget<ObjectLiteral>, id: number) {
+		return await this.dataSource
+			.createQueryBuilder()
+			.delete()
+			.from(type)
+			.where("id = :id", { id: id })
+			.execute();
+	}
+
 	public async nuke(): Promise<void> {
 		const loadedReleases = await this.dataSource.getRepository(Release).find({
 			relations: ['project', 'sprints', 'backlog'],

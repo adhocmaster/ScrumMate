@@ -45,12 +45,7 @@ export class BacklogItemDataSourceWrapper extends ModelDataSourceWrapper {
 	}
 
 	public async deleteBacklogItem(backlogId: number): Promise<DeleteResult> {
-		return await this.dataSource
-			.createQueryBuilder()
-			.delete()
-			.from(BacklogItem)
-			.where("id = :id", { id: backlogId })
-			.execute()
+		return await super.delete(BacklogItem, backlogId);
 	}
 
 }

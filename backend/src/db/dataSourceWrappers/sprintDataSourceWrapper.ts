@@ -87,14 +87,16 @@ export class SprintDataSourceWrapper extends ModelDataSourceWrapper {
 		return maybeSprint[0].todos
 	}
 
-	// TODO: handle stories in the sprint
-	// Maybe we can make it soft-delete if we ever implement undo feature
-	public async deleteSprint(id: number): Promise<void> {
-		try {
-			await this.dataSource.getRepository(Sprint).delete(id)
-		} catch (e) {
-			console.log(e)
-			throw new DeletionError(`Sprint with id ${id} failed to delete`)
-		}
+	// public async deleteSprint(id: number): Promise<void> {
+	// 	try {
+	// 		await this.dataSource.getRepository(Sprint).delete(id)
+	// 	} catch (e) {
+	// 		console.log(e)
+	// 		throw new DeletionError(`Sprint with id ${id} failed to delete`)
+	// 	}
+	// }
+
+	public async deleteSprint(sprintId: number) {
+		await super.delete(Sprint, sprintId);
 	}
 }

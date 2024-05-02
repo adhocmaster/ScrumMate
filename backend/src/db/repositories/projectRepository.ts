@@ -32,7 +32,7 @@ export class ProjectRepository extends ModelRepository {
 		return project
 	}
 
-	public async leaveProject(userId: number, projectId: number): Promise<Project> {
+	public async leaveProject(userId: number, projectId: number): Promise<void> {
 		function getNewProductOwner(userList: User[]) {
 			return userList[userList.length * Math.random() | 0];
 		}
@@ -46,14 +46,9 @@ export class ProjectRepository extends ModelRepository {
 				project.teamMembers.filter((user) => { return user.id !== newProductOwner.id });
 				project.productOwner = newProductOwner;
 			} else {
-				await this.projectSource.dataSource
-					.createQueryBuilder()
-					.delete()
-					.from(Project)
-					.where("id = :id", { id: projectId })
-					.execute();
+				await this.deleteProject(projectId);
 				await this.userSource.save(user);
-				return
+				return;
 			}
 		} else {
 			project.teamMembers = project.teamMembers.filter((user) => { return user.id !== userId });
@@ -61,7 +56,44 @@ export class ProjectRepository extends ModelRepository {
 		}
 		await this.userSource.save(user);
 		await this.projectSource.save(project);
-		return project;
+	}
+
+	public async deleteBacklogItem(backlogItemId: number) {
+		// const backlogItem = this.backlogSource.lookupBacklogById(backlogItemId);
+		// TODO: delete assignees
+		await this.backlogSource.deleteBacklogItem(backlogItemId);
+	}
+
+	public async deleteSprint(sprintId: number) {
+		const sprintToDelete = await this.sprintSource.lookupSprintByIdWithTodos(sprintId);
+		for (const backlogItem of sprintToDelete.todos) {
+			await this.deleteBacklogItem(backlogItem.id)
+		}
+		// TODO: delete sprint roles
+		await this.sprintSource.deleteSprint(sprintId);
+	}
+
+	public async deleteReleases(releaseId: number) {
+		const releaseToDelete = await this.releaseSource.fetchReleaseWithEverything(releaseId);
+		for (const sprint of releaseToDelete.sprints) {
+			await this.deleteSprint(sprint.id);
+		}
+		for (const backlogItem of releaseToDelete.backlog) {
+			await this.deleteBacklogItem(backlogItem.id);
+		}
+		for (const backlogItem of releaseToDelete.deletedBacklog) {
+			await this.deleteBacklogItem(backlogItem.id);
+		}
+		await this.releaseSource.deleteRelease(releaseId);
+	}
+
+	public async deleteProject(projectId: number) {
+		const projectToDelete = await this.projectSource.fetchProjectWithReleases(projectId);
+		for (const release of projectToDelete.releases) {
+			await this.deleteReleases(release.id)
+		}
+		// TODO: delete userroles as well
+		await this.projectSource.deleteProject(projectId)
 	}
 
 	public async lookupProjectById(id: number): Promise<Project> {

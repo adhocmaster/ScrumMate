@@ -60,4 +60,8 @@ export class ProjectDataSourceWrapper extends ModelDataSourceWrapper {
 	public async fetchMostRecentRelease(id: number): Promise<Release> {
 		return (await this.fetchProjectWithReleases(id)).releases[0]
 	}
+
+	public async deleteProject(projectId: number) {
+		await super.delete(Project, projectId);
+	}
 }
