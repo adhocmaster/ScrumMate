@@ -60,6 +60,9 @@ export default function Dashboard({ setName, setSelectedProjectId }) {
 	};
 
 	const handleCreate = () => {
+		if (!isValidProjectName(newProjectName)) {
+			return
+		}
 		handleCreateDialogClose();
 		fetchCreateNewProject()
 		setNewProjectName('');
@@ -170,6 +173,10 @@ export default function Dashboard({ setName, setSelectedProjectId }) {
 		} catch {
 			return null;
 		}
+	}
+
+	function isValidProjectName(str) {
+		return str !== "";
 	}
 
 	function Row(projectData) {
