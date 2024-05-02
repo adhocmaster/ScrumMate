@@ -31,6 +31,8 @@ import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
 import Avatar from '@mui/material/Avatar';
 import Divider from '@mui/material/Divider';
+import NotificationsNoneIcon from '@mui/icons-material/NotificationsNone';
+import NotificationsActiveIcon from '@mui/icons-material/NotificationsActive';
 
 export default function Dashboard({ setName, setSelectedProjectId }) {
 	const [rows, setRows] = useState([]);
@@ -38,6 +40,7 @@ export default function Dashboard({ setName, setSelectedProjectId }) {
 	const [createDialogOpen, setCreateDialogOpen] = useState(false);
 	const [newProjectName, setNewProjectName] = useState('');
 
+	const [inviteNotificationsIcon, setInviteNotificationsIcon] = useState(NotificationsNoneIcon);
 	const [invitesDialogOpen, setInvitesDialogOpen] = useState(false);
 	const [inviteList, setInviteList] = useState([]);
 
@@ -51,6 +54,7 @@ export default function Dashboard({ setName, setSelectedProjectId }) {
 
 	const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
 	const [deletedProjectName, setDeletedProjectName] = useState('');
+	const [deleteProjectId, setDeleteProjectId] = useState(null);
 
 	const handleCreateDialogOpen = () => {
 		setCreateDialogOpen(true);
@@ -118,8 +122,9 @@ export default function Dashboard({ setName, setSelectedProjectId }) {
 		handleRenameDialogClose();
 	};
 
-	const handleDeleteDialogOpen = (id, name) => {
+	const handleDeleteDialogOpen = (name, id) => {
 		setDeletedProjectName(name);
+		setDeleteProjectId(id)
 		setDeleteDialogOpen(true);
 	};
 
@@ -128,8 +133,9 @@ export default function Dashboard({ setName, setSelectedProjectId }) {
 	};
 
 	const handleDelete = () => {
-		setRenameDialogOpen(false);
-		// TODO: do deleting/leaving
+		fetchDeleteProject();
+		setDeleteProjectId(null);
+		handleDeleteDialogClose();
 	};
 
 	function fetchProjectRowData() {
@@ -184,6 +190,32 @@ export default function Dashboard({ setName, setSelectedProjectId }) {
 		return str !== "";
 	}
 
+	// function fetchNotifications() {
+	// 	var options = {
+	// 		method: 'post',
+	// 		credentials: 'include',
+	// 		headers: {
+	// 			"Content-Type": "application/json",
+	// 		},
+	// 	}
+	// 	try {
+	// 		fetch(`http://localhost:8080/api/project`, options).then((result) => {
+	// 			if (result.status !== 200) {
+	// 				console.log("error", result)
+	// 			}
+	// 			result.json().then((response) => {
+	// 				setRows(rows.concat(response))
+	// 			})
+	// 		})
+	// 	} catch {
+	// 		return null;
+	// 	}
+	// }
+
+	// useEffect(() => {
+	// 	fetchNotifications();
+	// }, []);
+
 	function fetchRenameProject() {
 		var options = {
 			method: 'PATCH',
@@ -212,6 +244,24 @@ export default function Dashboard({ setName, setSelectedProjectId }) {
 		}
 	}
 
+	function fetchDeleteProject() {
+		var options = {
+			method: 'DELETE',
+			credentials: 'include',
+		}
+		try {
+			fetch(`http://localhost:8080/api/project/${deleteProjectId}`, options).then((result) => {
+				if (result.status === 200) {
+					const filtered = rows.filter((projRowData) => { return projRowData.id !== deleteProjectId });
+					setRows(filtered)
+				}
+			})
+		} catch {
+			console.log("failed to delete project")
+			return null;
+		}
+	}
+
 	function Row(projectData) {
 		const [open, setOpen] = useState(false);
 		const data = projectData.row // may need to remove to update
@@ -231,7 +281,6 @@ export default function Dashboard({ setName, setSelectedProjectId }) {
 							state={{ data }}
 							onClick={() => {
 								setName(data.name);
-								console.log(data.id)
 								setSelectedProjectId(data.id);
 							}}
 						>
@@ -278,7 +327,7 @@ export default function Dashboard({ setName, setSelectedProjectId }) {
 										</IconButton>
 										<IconButton
 											onClick={() => {
-												handleDeleteDialogOpen(data.id, data.name)
+												handleDeleteDialogOpen(data.name, data.id)
 											}}
 										>
 											<DeleteIcon fontSize="small" />
