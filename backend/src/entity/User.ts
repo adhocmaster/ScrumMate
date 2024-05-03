@@ -32,6 +32,10 @@ export class User {
 	@JoinTable()
 	joinedProjects: Project[]
 
+	@ManyToMany(() => Project, (project) => project.invitedUsers)
+	@JoinTable()
+	projectInvites: Project[]
+
 	@ManyToMany(() => BacklogItem, (todo) => todo.assignees)
 	assignments: BacklogItem[]
 

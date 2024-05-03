@@ -55,6 +55,13 @@ export const getName = async (req: express.Request, res: express.Response) => {
 	return res.json(project.name);
 };
 
+export const getMembers = async (req: express.Request, res: express.Response) => {
+	const db = Database.getInstance();
+	const { projectId } = req.params;
+	const project = await db.getProjectRepository.lookupProjectById(parseInt(projectId));
+	return res.json(project.name);
+};
+
 export const leaveProject = async (req: express.Request, res: express.Response) => {
 	const db = Database.getInstance();
 	const { projectId } = req.params;

@@ -27,6 +27,9 @@ export class Project {
 	@ManyToMany(() => User, (user) => user.joinedProjects)
 	teamMembers: User[]
 
+	@ManyToMany(() => User, (user) => user.projectInvites)
+	invitedUsers: User[]
+
 	@OneToMany(() => Release, (release) => release.project)
 	releases: Release[]
 

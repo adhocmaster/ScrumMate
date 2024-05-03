@@ -104,6 +104,11 @@ export class ProjectRepository extends ModelRepository {
 		return await this.projectSource.lookupProjectByIdWithUsers(id);
 	}
 
+	public async lookupProjectMembers(id: number): Promise<(User | User[])[]> {
+		const project = await this.projectSource.lookupProjectByIdWithUsers(id);
+		return [project.invitedUsers, project.productOwner, project.teamMembers]
+	}
+
 	public async fetchProjectWithReleases(id: number): Promise<Project> {
 		return await this.projectSource.fetchProjectWithReleases(id);
 	}

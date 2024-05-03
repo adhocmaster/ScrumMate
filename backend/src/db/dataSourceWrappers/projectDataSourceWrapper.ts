@@ -19,7 +19,8 @@ export class ProjectDataSourceWrapper extends ModelDataSourceWrapper {
 			where: { id: id },
 			relations: {
 				productOwner: true,
-				teamMembers: true
+				teamMembers: true,
+				invitedUsers: true,
 			}
 		})
 		if (!maybeProject || maybeProject.length === 0) {
