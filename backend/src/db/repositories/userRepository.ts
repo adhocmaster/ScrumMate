@@ -58,6 +58,10 @@ export class UserRepository extends ModelRepository {
 		return await this.userSource.fetchUserWithProjects(id);
 	}
 
+	public async fetchUserWithProjectInvites(id: number) {
+		return await this.userSource.fetchUserWithProjectInvites(id);
+	}
+
 	public async fetchUserProjectsRowData(userId: number) {
 		const userWithProjects = await this.fetchUserWithProjects(userId);
 		const projectList = userWithProjects.ownedProjects.concat(userWithProjects.joinedProjects);

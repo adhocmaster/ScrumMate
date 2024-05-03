@@ -63,3 +63,10 @@ export const getProjectRowData = async (req: express.Request, res: express.Respo
 	const projectData = await db.getUserRepository.fetchUserProjectsRowData(req.userId);
 	return res.json(projectData);
 };
+
+export const getInvites = async (req: express.Request, res: express.Response) => {
+	const db = Database.getInstance();
+	verifyParameters(req.userId);
+	const user = await db.getUserRepository.fetchUserWithProjectInvites(req.userId);
+	return res.json(user.projectInvites);
+};
