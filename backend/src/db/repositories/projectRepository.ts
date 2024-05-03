@@ -122,6 +122,19 @@ export class ProjectRepository extends ModelRepository {
 		return [project.invitedUsers, project.productOwner, project.teamMembers]
 	}
 
+	public async cancelInvite(projectId: number, userId: number): Promise<(User | User[])[]> {
+		const project = await this.projectSource.lookupProjectByIdWithUsers(projectId);
+		const userToInvite = await this.userSource.fetchUserWithProjectInvites(userId);
+
+		userToInvite.projectInvites = userToInvite.projectInvites.filter(project => project.id !== projectId);
+		project.invitedUsers = project.invitedUsers.filter(user => user.id !== userId);
+
+		await this.projectSource.save(project);
+		await this.userSource.save(userToInvite);
+
+		return [project.invitedUsers, project.productOwner, project.teamMembers]
+	}
+
 	public async fetchProjectWithReleases(id: number): Promise<Project> {
 		return await this.projectSource.fetchProjectWithReleases(id);
 	}
