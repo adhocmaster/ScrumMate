@@ -1,7 +1,7 @@
 import { User } from "../../entity/User";
 import { Project } from "../../entity/project";
 import { authentication, random } from "../../helpers";
-import { ExistingUserError } from "../../helpers/errors";
+import { ExistingUserError, NotFoundError } from "../../helpers/errors";
 import { ModelRepository } from "./modelRepository";
 
 export class UserRepository extends ModelRepository {
@@ -60,6 +60,25 @@ export class UserRepository extends ModelRepository {
 
 	public async fetchUserWithProjectInvites(id: number) {
 		return await this.userSource.fetchUserWithProjectInvites(id);
+	}
+
+	public async acceptInvite(userId: number, projectId: number) {
+		const userWithInvites = await this.fetchUserWithProjectInvites(userId);
+		const userWithProjects = await this.fetchUserWithProjects(userId);
+		const project = await this.projectSource.lookupProjectByIdWithUsers(projectId);
+
+		if (!userWithInvites.projectInvites.some(project => project.id === projectId)) {
+			throw new NotFoundError(`Invite to project with id ${projectId} not found`)
+		}
+
+		userWithProjects.projectInvites = userWithInvites.projectInvites.filter(projectInvite => projectInvite.id !== projectId)
+		project.invitedUsers = project.invitedUsers.filter(invitedUser => invitedUser.id !== userId);
+		project.teamMembers.push(userWithProjects);
+
+		await this.projectSource.save(project);
+		await this.userSource.save(userWithProjects);
+
+		return userWithProjects;
 	}
 
 	public async fetchUserProjectsRowData(userId: number) {
