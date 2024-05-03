@@ -40,7 +40,6 @@ const Backlog = () => {
         setDialogOpen(true);  // This triggers the dialog to open
     };
 
-
     return (
         <DragDropContext onDragEnd={onDragEnd}>
             <Typography
