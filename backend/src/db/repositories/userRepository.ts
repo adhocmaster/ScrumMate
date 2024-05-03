@@ -81,6 +81,23 @@ export class UserRepository extends ModelRepository {
 		return userWithProjects;
 	}
 
+	public async rejectInvite(userId: number, projectId: number) {
+		const userWithInvites = await this.fetchUserWithProjectInvites(userId);
+		const project = await this.projectSource.lookupProjectByIdWithUsers(projectId);
+
+		if (!userWithInvites.projectInvites.some(project => project.id === projectId)) {
+			throw new NotFoundError(`Invite to project with id ${projectId} not found`)
+		}
+
+		userWithInvites.projectInvites = userWithInvites.projectInvites.filter(projectInvite => projectInvite.id !== projectId)
+		project.invitedUsers = project.invitedUsers.filter(invitedUser => invitedUser.id !== userId);
+
+		await this.projectSource.save(project);
+		await this.userSource.save(userWithInvites);
+
+		return userWithInvites;
+	}
+
 	public async fetchUserProjectsRowData(userId: number) {
 		const userWithProjects = await this.fetchUserWithProjects(userId);
 		const projectList = userWithProjects.ownedProjects.concat(userWithProjects.joinedProjects);

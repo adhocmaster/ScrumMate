@@ -78,3 +78,11 @@ export const acceptInvite = async (req: express.Request, res: express.Response) 
 	const user = await db.getUserRepository.acceptInvite(req.userId, parseInt(projectId));
 	return res.json(user.projectInvites);
 };
+
+export const rejectInvite = async (req: express.Request, res: express.Response) => {
+	const db = Database.getInstance();
+	const { projectId } = req.body;
+	verifyParameters(req.userId, projectId);
+	const user = await db.getUserRepository.rejectInvite(req.userId, parseInt(projectId));
+	return res.json(user.projectInvites);
+};
