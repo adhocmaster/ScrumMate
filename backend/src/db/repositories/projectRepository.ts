@@ -109,6 +109,19 @@ export class ProjectRepository extends ModelRepository {
 		return [project.invitedUsers, project.productOwner, project.teamMembers]
 	}
 
+	public async inviteUser(projectId: number, userEmail: string): Promise<(User | User[])[]> {
+		const project = await this.projectSource.lookupProjectByIdWithUsers(projectId);
+		const userToInvite = await this.userSource.fetchUserByEmailWithProjectInvites(userEmail);
+
+		project.invitedUsers.push(userToInvite);
+		userToInvite.projectInvites.push(project);
+
+		await this.projectSource.save(project);
+		await this.userSource.save(userToInvite);
+
+		return [project.invitedUsers, project.productOwner, project.teamMembers]
+	}
+
 	public async fetchProjectWithReleases(id: number): Promise<Project> {
 		return await this.projectSource.fetchProjectWithReleases(id);
 	}

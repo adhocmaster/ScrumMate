@@ -62,6 +62,13 @@ export const getMembers = async (req: express.Request, res: express.Response) =>
 	return res.json(project.name);
 };
 
+export const sendInvite = async (req: express.Request, res: express.Response) => {
+	const db = Database.getInstance();
+	const { projectId, userEmail } = req.params;
+	const newMemberList = await db.getProjectRepository.inviteUser(parseInt(projectId), userEmail);
+	return res.json(newMemberList);
+};
+
 export const leaveProject = async (req: express.Request, res: express.Response) => {
 	const db = Database.getInstance();
 	const { projectId } = req.params;
