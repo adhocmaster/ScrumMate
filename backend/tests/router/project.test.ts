@@ -55,18 +55,6 @@ afterAll(async () => {
 });
 
 describe("Project API tests", () => {
-	test("Another user", async () => {
-		const body = { username: "bobby", email: "bobby@gmail.com", password: "password123" }
-		await request(app)
-			.post("/api/user/create")
-			.send(body)
-			.expect(200)
-			.then((res) => {
-				expect(res.body.email).toEqual(body.email);
-				expect(res.body.id).toBeDefined();
-			});
-	});
-
 	let sessionToken: string;
 	test("CREATE USER", async () => {
 		const body = { username: "sallyg", email: "sallys@gmail.com", password: "password123" }
@@ -91,6 +79,18 @@ describe("Project API tests", () => {
 				sessionToken = res.body.sessionToken;
 			});
 	});
+
+	// test("Another user", async () => {
+	// 	const body = { username: "bobby", email: "bobby@gmail.com", password: "password123" }
+	// 	await request(app)
+	// 		.post("/api/user/create")
+	// 		.send(body)
+	// 		.expect(200)
+	// 		.then((res) => {
+	// 			expect(res.body.email).toEqual(body.email);
+	// 			expect(res.body.id).toBeDefined();
+	// 		});
+	// });
 
 	let projectId: Number;
 
