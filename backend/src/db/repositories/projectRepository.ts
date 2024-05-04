@@ -44,7 +44,7 @@ export class ProjectRepository extends ModelRepository {
 			user.ownedProjects = user.ownedProjects.filter((proj) => { return proj.id !== projectId })
 			if (project.teamMembers.length > 0) {
 				const newProductOwner = getNewProductOwner(project.teamMembers);
-				project.teamMembers.filter((user) => { return user.id !== newProductOwner.id });
+				project.teamMembers = project.teamMembers.filter((user) => { return user.id !== newProductOwner.id });
 				project.productOwner = newProductOwner;
 			} else {
 				await this.deleteProject(projectId);
@@ -107,6 +107,13 @@ export class ProjectRepository extends ModelRepository {
 
 	public async lookupProjectMembers(id: number): Promise<(User | User[])[]> {
 		const project = await this.projectSource.lookupProjectByIdWithUsers(id);
+		return [project.invitedUsers, project.productOwner, project.teamMembers]
+	}
+
+	public async removeProjectMember(projectId: number, memberId: number): Promise<(User | User[])[]> {
+		const project = await this.projectSource.lookupProjectByIdWithUsers(projectId);
+		project.teamMembers = project.teamMembers.filter(member => member.id !== memberId);
+		await this.projectSource.save(project);
 		return [project.invitedUsers, project.productOwner, project.teamMembers]
 	}
 

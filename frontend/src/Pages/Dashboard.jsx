@@ -283,6 +283,26 @@ export default function Dashboard({ setName, setSelectedProjectId }) {
 		}
 	}
 
+	function fetchKickTeamMember(userId) {
+		var options = {
+			method: 'post',
+			credentials: 'include',
+		}
+		try {
+			fetch(`http://localhost:8080/api/project/${sharingProjectId}/removeMember/${userId}`, options).then((result) => {
+				if (result.status !== 200) {
+					console.log("error", result)
+					return
+				}
+				result.json().then((response) => {
+					setUserList(response);
+				})
+			})
+		} catch {
+			return;
+		}
+	}
+
 	function fetchNotifications() {
 		var options = {
 			method: 'get',
@@ -636,7 +656,7 @@ export default function Dashboard({ setName, setSelectedProjectId }) {
 									</ListItemIcon>
 									<ListItemText primary={user.username} />
 									{ownUserId === userList[1].id &&
-										<IconButton edge="end" aria-label="delete" onClick={() => { console.log('hi') }}>
+										<IconButton edge="end" aria-label="delete" onClick={() => { fetchKickTeamMember(user.id) }}>
 											<DeleteIcon />
 										</IconButton>}
 								</ListItem>
@@ -665,7 +685,7 @@ export default function Dashboard({ setName, setSelectedProjectId }) {
 							aria-label="send"
 							onClick={() => { handleShare() }}
 						>
-							<SendIcon fontSize="large" />
+							<SendIcon fontSize="large" style={{ color: '#3477eb' }} />
 						</IconButton>
 					</Box>
 				</DialogContent>
