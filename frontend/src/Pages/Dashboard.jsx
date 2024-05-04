@@ -21,7 +21,6 @@ import ListItemIcon from '@mui/material/ListItemIcon';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
-import InboxIcon from '@mui/icons-material/Inbox';
 import SendIcon from '@mui/icons-material/Send';
 import CheckIcon from '@mui/icons-material/Check';
 import CloseIcon from '@mui/icons-material/Close';
@@ -40,13 +39,15 @@ export default function Dashboard({ setName, setSelectedProjectId }) {
 	const [createDialogOpen, setCreateDialogOpen] = useState(false);
 	const [newProjectName, setNewProjectName] = useState('');
 
-	const [inviteNotificationsIcon, setInviteNotificationsIcon] = useState(NotificationsNoneIcon);
+	const [isNotifications, setIsNotifications] = useState(false);
 	const [invitesDialogOpen, setInvitesDialogOpen] = useState(false);
 	const [inviteList, setInviteList] = useState([]);
 
 	const [shareDialogOpen, setShareDialogOpen] = useState(false);
-	const [userList, setUserList] = useState([]);
+	const [userList, setUserList] = useState([[], { username: "loading..." }, []]);
 	const [recipient, setRecipient] = useState('');
+	const [recipientError, setRecipientError] = useState(false);
+	const [sharingProjectId, setSharingProjectId] = useState(null);
 
 	const [renameDialogOpen, setRenameDialogOpen] = useState(false);
 	const [renameProjectTextfield, setRenameProjectTextfield] = useState('');
@@ -81,11 +82,14 @@ export default function Dashboard({ setName, setSelectedProjectId }) {
 		setInvitesDialogOpen(false);
 	};
 
-	const handleShareDialogOpen = (id) => {
+	const handleShareDialogOpen = (projectId) => {
+		setSharingProjectId(projectId);
+		fetchUserList(projectId);
 		setShareDialogOpen(true);
 	};
 
 	const handleShareDialogClose = (event, reason) => {
+		setRecipientError(false)
 		if (reason !== 'backdropClick') {
 			setRecipient('');
 			setShareDialogOpen(false);
@@ -93,12 +97,12 @@ export default function Dashboard({ setName, setSelectedProjectId }) {
 	};
 
 	const handleShare = () => {
-		// TODO: do something with recipient
-		setRecipient('');
+		fetchSendInvite();
 	};
 
 	const confirmShare = () => {
-		setShareDialogOpen(false);
+		handleShareDialogClose();
+		setSharingProjectId(null);
 		setRecipient('');
 	};
 
@@ -188,6 +192,68 @@ export default function Dashboard({ setName, setSelectedProjectId }) {
 
 	function isValidProjectName(str) {
 		return str !== "";
+	}
+
+	function fetchUserList(projectId) {
+		var options = {
+			method: 'get',
+			credentials: 'include',
+		}
+		try {
+			fetch(`http://localhost:8080/api/project/${projectId}/getMembers`, options).then((result) => {
+				if (result.status !== 200) {
+					console.log("error", result)
+					return
+				}
+				result.json().then((response) => {
+					setUserList(response)
+				})
+			})
+		} catch {
+			return;
+		}
+	}
+
+	function fetchSendInvite() {
+		var options = {
+			method: 'post',
+			credentials: 'include',
+		}
+		try {
+			fetch(`http://localhost:8080/api/project/${sharingProjectId}/invite/${recipient}`, options).then((result) => {
+				if (result.status !== 200) {
+					console.log("error", result)
+					setRecipientError(true)
+					return
+				}
+				result.json().then((response) => {
+					setUserList(response);
+					setRecipientError(false);
+				})
+			})
+		} catch {
+			return;
+		}
+	}
+
+	function fetchCancelInvite(userId) {
+		var options = {
+			method: 'post',
+			credentials: 'include',
+		}
+		try {
+			fetch(`http://localhost:8080/api/project/${sharingProjectId}/cancelInvite/${userId}`, options).then((result) => {
+				if (result.status !== 200) {
+					console.log("error", result)
+					return
+				}
+				result.json().then((response) => {
+					setUserList(response);
+				})
+			})
+		} catch {
+			return;
+		}
 	}
 
 	// function fetchNotifications() {
@@ -372,7 +438,7 @@ export default function Dashboard({ setName, setSelectedProjectId }) {
 				<IconButton
 					onClick={handleInvitesDialogOpen}
 				>
-					<InboxIcon fontSize="small" />
+					{isNotifications ? <NotificationsActiveIcon fontSize="small" style={{ color: 'red' }} /> : <NotificationsNoneIcon fontSize="small" />}
 				</IconButton>
 			</Box>
 
@@ -483,6 +549,7 @@ export default function Dashboard({ setName, setSelectedProjectId }) {
 			<Dialog
 				open={shareDialogOpen}
 				onClose={handleShareDialogClose}
+				disableEscapeKeyDown={true}
 				maxWidth="sm"
 				fullWidth
 				slotProps={{
@@ -494,48 +561,63 @@ export default function Dashboard({ setName, setSelectedProjectId }) {
 				<Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'column' }}>
 					<List sx={{ width: '90%', bgcolor: 'background.paper' }}>
 						<Divider />
+						{userList[0].map((user) => (
+							<>
+								<ListItem>
+									<ListItemIcon>
+										<Avatar>Inv</Avatar>
+									</ListItemIcon>
+									<ListItemText primary={user.username} />
+									<IconButton edge="end" aria-label="delete" onClick={() => { fetchCancelInvite(user.id) }}>
+										<CloseIcon />
+									</IconButton>
+								</ListItem>
+								<Divider />
+							</>
+						))}
 						<ListItem>
 							<ListItemIcon>
-								<Avatar>U</Avatar>
+								<Avatar>PO</Avatar>
 							</ListItemIcon>
-							<ListItemText primary="User1" />
-							<IconButton edge="end" aria-label="delete" onClick={() => { console.log('hi') }}>
-								<DeleteIcon />
-							</IconButton>
+							<ListItemText primary={userList[1].username} />
 						</ListItem>
 						<Divider />
-						<ListItem>
-							<ListItemIcon>
-								<Avatar>U</Avatar>
-							</ListItemIcon>
-							<ListItemText primary="User2" />
-							<IconButton edge="end" aria-label="delete" onClick={() => { console.log('hi') }}>
-								<DeleteIcon />
-							</IconButton>
-						</ListItem>
-						<Divider />
-						<ListItem>
-							<ListItemIcon>
-								<Avatar>Y</Avatar>
-							</ListItemIcon>
-							<ListItemText primary="You" />
-						</ListItem>
-						<Divider />
+						{userList[2].map((user) => (
+							<>
+								<ListItem>
+									<ListItemIcon>
+										<Avatar>TM</Avatar>
+									</ListItemIcon>
+									<ListItemText primary={user.username} />
+									<IconButton edge="end" aria-label="delete" onClick={() => { console.log('hi') }}>
+										<DeleteIcon />
+									</IconButton>
+								</ListItem>
+								<Divider />
+							</>
+						))}
 					</List>
 				</Box>
 
 				<DialogContent>
 					<Box sx={{ display: 'flex', alignItems: 'center' }}>
 						<TextField
+							error={recipientError}
+							helperText={recipientError ? "User not found" : ""}
 							autoFocus
 							margin="dense"
 							label="Recipient email"
 							type="text"
 							variant="outlined"
-							sx={{ width: '90%', mr: 1 }} // <-- Adjust the width here
+							sx={{ width: '90%', mr: 1 }}
+							value={recipient}
 							onChange={(e) => setRecipient(e.target.value)}
 						/>
-						<IconButton edge="end" aria-label="send" onClick={() => { console.log('hi') }}>
+						<IconButton
+							edge="end"
+							aria-label="send"
+							onClick={() => { handleShare() }}
+						>
 							<SendIcon fontSize="large" />
 						</IconButton>
 					</Box>
