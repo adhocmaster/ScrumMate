@@ -79,7 +79,9 @@ export class UserRepository extends ModelRepository {
 		await this.projectSource.save(project);
 		await this.userSource.save(userWithProjects);
 
-		return userWithProjects;
+		project.teamMembers = undefined
+
+		return [userWithProjects, project];
 	}
 
 	public async rejectInvite(userId: number, projectId: number) {

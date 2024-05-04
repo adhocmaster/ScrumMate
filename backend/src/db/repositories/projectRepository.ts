@@ -114,7 +114,7 @@ export class ProjectRepository extends ModelRepository {
 		const project = await this.projectSource.lookupProjectByIdWithUsers(projectId);
 		const userToInvite = await this.userSource.fetchUserByEmailWithProjectInvites(userEmail);
 
-		if (project.productOwner.email === userEmail || project.teamMembers.some(member => member.email === userEmail)) {
+		if (project.productOwner.email === userEmail || project.teamMembers.some(member => member.email === userEmail) || project.invitedUsers.some(member => member.email === userEmail)) {
 			throw new ExistingUserError(`User with email ${userEmail} is already on the tean`);
 		}
 

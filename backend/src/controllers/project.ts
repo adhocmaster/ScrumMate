@@ -5,29 +5,24 @@ import { verifyParameters } from './utils/verifyParams';
 //User id param
 export const newProject = async (req: express.Request, res: express.Response) => {
 	const db = Database.getInstance();
-	const {
-		name,
-		userId
-	} = req.body;
+	const { name } = req.body;
 	verifyParameters(name);
-	const newProject = await db.getProjectRepository.createNewProject(userId, name);
+	const newProject = await db.getProjectRepository.createNewProject(req.userId, name);
 	return res.json(newProject);
 };
 
 export const joinProject = async (req: express.Request, res: express.Response) => {
 	const db = Database.getInstance();
-	const { userId, projectId } = req.params;
+	const { projectId } = req.params;
 	verifyParameters(projectId);
-	const project = await db.getUserRepository.joinProject(parseInt(userId), parseInt(projectId));
+	const project = await db.getUserRepository.joinProject(req.userId, parseInt(projectId));
 	return res.json(project);
 };
 
 export const editProject = async (req: express.Request, res: express.Response) => {
 	const db = Database.getInstance();
 	const { projectId } = req.params;
-	const {
-		name,
-	} = req.body;
+	const { name } = req.body;
 	verifyParameters(projectId, name);
 	const project = await db.getProjectRepository.updateProject(parseInt(projectId), name);
 	return res.json(project);

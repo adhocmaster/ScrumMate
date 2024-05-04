@@ -39,7 +39,6 @@ export default function Dashboard({ setName, setSelectedProjectId }) {
 	const [createDialogOpen, setCreateDialogOpen] = useState(false);
 	const [newProjectName, setNewProjectName] = useState('');
 
-	const [isNotifications, setIsNotifications] = useState(false);
 	const [invitesDialogOpen, setInvitesDialogOpen] = useState(false);
 	const [inviteList, setInviteList] = useState([]);
 
@@ -228,6 +227,7 @@ export default function Dashboard({ setName, setSelectedProjectId }) {
 				}
 				result.json().then((response) => {
 					setUserList(response);
+					setRecipient('')
 					setRecipientError(false);
 				})
 			})
@@ -256,31 +256,67 @@ export default function Dashboard({ setName, setSelectedProjectId }) {
 		}
 	}
 
-	// function fetchNotifications() {
-	// 	var options = {
-	// 		method: 'post',
-	// 		credentials: 'include',
-	// 		headers: {
-	// 			"Content-Type": "application/json",
-	// 		},
-	// 	}
-	// 	try {
-	// 		fetch(`http://localhost:8080/api/project`, options).then((result) => {
-	// 			if (result.status !== 200) {
-	// 				console.log("error", result)
-	// 			}
-	// 			result.json().then((response) => {
-	// 				setRows(rows.concat(response))
-	// 			})
-	// 		})
-	// 	} catch {
-	// 		return null;
-	// 	}
-	// }
+	function fetchNotifications() {
+		var options = {
+			method: 'get',
+			credentials: 'include',
+		}
+		try {
+			fetch(`http://localhost:8080/api/user/getInvites`, options).then((result) => {
+				if (result.status !== 200) {
+					console.log("error", result)
+				}
+				result.json().then((response) => {
+					setInviteList(response)
+				})
+			})
+		} catch {
+			return null;
+		}
+	}
 
-	// useEffect(() => {
-	// 	fetchNotifications();
-	// }, []);
+	useEffect(() => {
+		fetchNotifications();
+	}, []);
+
+	function fetchAcceptInvite(projectId) {
+		var options = {
+			method: 'post',
+			credentials: 'include',
+		}
+		try {
+			fetch(`http://localhost:8080/api/user/acceptInvite/${projectId}`, options).then((result) => {
+				if (result.status !== 200) {
+					console.log("error", result)
+				}
+				result.json().then((response) => {
+					setInviteList(response[0])
+					setRows(rows.concat(response[1]))
+				})
+			})
+		} catch {
+			return null;
+		}
+	}
+
+	function fetchRejectInvite(projectId) {
+		var options = {
+			method: 'post',
+			credentials: 'include',
+		}
+		try {
+			fetch(`http://localhost:8080/api/user/rejectInvite/${projectId}`, options).then((result) => {
+				if (result.status !== 200) {
+					console.log("error", result)
+				}
+				result.json().then((response) => {
+					setInviteList(response)
+				})
+			})
+		} catch {
+			return null;
+		}
+	}
 
 	function fetchRenameProject() {
 		var options = {
@@ -438,7 +474,7 @@ export default function Dashboard({ setName, setSelectedProjectId }) {
 				<IconButton
 					onClick={handleInvitesDialogOpen}
 				>
-					{isNotifications ? <NotificationsActiveIcon fontSize="small" style={{ color: 'red' }} /> : <NotificationsNoneIcon fontSize="small" />}
+					{inviteList.length > 0 ? <NotificationsActiveIcon fontSize="small" style={{ color: 'red' }} /> : <NotificationsNoneIcon fontSize="small" />}
 				</IconButton>
 			</Box>
 
@@ -507,37 +543,20 @@ export default function Dashboard({ setName, setSelectedProjectId }) {
 				<DialogContent>
 					<Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'column' }}>
 						<List sx={{ width: '90%', bgcolor: 'background.paper' }}>
-							<Divider />
-							<ListItem>
-								<ListItemText primary="Project1" />
-								<IconButton edge="end" aria-label="delete" onClick={() => { console.log('hi') }} sx={{ marginRight: 1 }}>
-									<CheckIcon />
-								</IconButton>
-								<IconButton edge="end" aria-label="delete" onClick={() => { console.log('hi') }}>
-									<CloseIcon />
-								</IconButton>
-							</ListItem>
-							<Divider />
-							<ListItem>
-								<ListItemText primary="Project2" />
-								<IconButton edge="end" aria-label="delete" onClick={() => { console.log('hi') }} sx={{ marginRight: 1 }}>
-									<CheckIcon />
-								</IconButton>
-								<IconButton edge="end" aria-label="delete" onClick={() => { console.log('hi') }}>
-									<CloseIcon />
-								</IconButton>
-							</ListItem>
-							<Divider />
-							<ListItem>
-								<ListItemText primary="Project3" />
-								<IconButton edge="end" aria-label="delete" onClick={() => { console.log('hi') }} sx={{ marginRight: 1 }}>
-									<CheckIcon />
-								</IconButton>
-								<IconButton edge="end" aria-label="delete" onClick={() => { console.log('hi') }}>
-									<CloseIcon />
-								</IconButton>
-							</ListItem>
-							<Divider />
+							{inviteList.length > 0 && <Divider />}
+							{inviteList.map(invitedProject =>
+								<>
+									<ListItem>
+										<ListItemText primary={invitedProject.name} />
+										<IconButton edge="end" aria-label="delete" onClick={() => { fetchAcceptInvite(invitedProject.id) }} sx={{ marginRight: 1 }}>
+											<CheckIcon />
+										</IconButton>
+										<IconButton edge="end" aria-label="delete" onClick={() => { fetchRejectInvite(invitedProject.id) }}>
+											<CloseIcon />
+										</IconButton>
+									</ListItem>
+									<Divider />
+								</>)}
 						</List>
 					</Box>
 				</DialogContent>
@@ -603,7 +622,7 @@ export default function Dashboard({ setName, setSelectedProjectId }) {
 					<Box sx={{ display: 'flex', alignItems: 'center' }}>
 						<TextField
 							error={recipientError}
-							helperText={recipientError ? "User not found" : ""}
+							helperText={recipientError ? "User not found or is already on the list" : ""}
 							autoFocus
 							margin="dense"
 							label="Recipient email"
