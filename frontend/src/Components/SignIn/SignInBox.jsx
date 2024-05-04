@@ -42,8 +42,10 @@ function SignInBox({ setIsLoggedIn, setColor }) {
 
 			if (response.status === 200) {
 				setIsLoggedIn(true);
-				setColor('#ffffff')
-				setPassword('')
+				setColor('#ffffff');
+				setPassword('');
+			} else {
+				setErrorAlert(true);
 			}
 		} catch (error) {
 			setErrorAlert(true)

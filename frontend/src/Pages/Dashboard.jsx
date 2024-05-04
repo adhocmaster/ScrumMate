@@ -101,6 +101,11 @@ export default function Dashboard({ setName, setSelectedProjectId }) {
 		fetchSendInvite();
 	};
 
+	const handleShareEnterPress = (event) => {
+		event.preventDefault();
+		handleShare();
+	};
+
 	const confirmShare = () => {
 		handleShareDialogClose();
 		setSharingProjectId(null);
@@ -125,6 +130,11 @@ export default function Dashboard({ setName, setSelectedProjectId }) {
 		}
 		fetchRenameProject();
 		handleRenameDialogClose();
+	};
+
+	const handleRenameEnterPress = (event) => {
+		event.preventDefault();
+		handleRename();
 	};
 
 	const handleDeleteDialogOpen = (name, id) => {
@@ -207,7 +217,6 @@ export default function Dashboard({ setName, setSelectedProjectId }) {
 					return
 				}
 				result.json().then((response) => {
-					console.log(response)
 					setOwnUserId(response);
 				})
 			})
@@ -667,7 +676,11 @@ export default function Dashboard({ setName, setSelectedProjectId }) {
 				</Box>
 
 				<DialogContent>
-					<Box sx={{ display: 'flex', alignItems: 'center' }}>
+					<Box
+						component="form"
+						onSubmit={handleShareEnterPress}
+						sx={{ display: 'flex', alignItems: 'center' }}
+					>
 						<TextField
 							error={recipientError}
 							helperText={recipientError ? "User not found or is already on the list" : ""}
@@ -683,7 +696,7 @@ export default function Dashboard({ setName, setSelectedProjectId }) {
 						<IconButton
 							edge="end"
 							aria-label="send"
-							onClick={() => { handleShare() }}
+							onClick={handleShare}
 						>
 							<SendIcon fontSize="large" style={{ color: '#3477eb' }} />
 						</IconButton>
@@ -697,23 +710,28 @@ export default function Dashboard({ setName, setSelectedProjectId }) {
 			</Dialog>
 
 			<Dialog open={renameDialogOpen} onClose={handleRenameDialogClose} maxWidth="sm" fullWidth>
-				<DialogTitle>Rename your project</DialogTitle>
-				<DialogContent>
-					<TextField
-						autoFocus
-						margin="dense"
-						label="Name"
-						type="text"
-						fullWidth
-						variant="outlined"
-						value={renameProjectTextfield}
-						onChange={(e) => setRenameProjectTextfield(e.target.value)}
-					/>
-				</DialogContent>
-				<DialogActions>
-					<Button onClick={handleRenameDialogClose}>Cancel</Button>
-					<Button onClick={handleRename} color="primary">Rename</Button>
-				</DialogActions>
+				<Box
+					component="form"
+					onSubmit={handleRenameEnterPress}
+				>
+					<DialogTitle>Rename your project</DialogTitle>
+					<DialogContent>
+						<TextField
+							autoFocus
+							margin="dense"
+							label="Name"
+							type="text"
+							fullWidth
+							variant="outlined"
+							value={renameProjectTextfield}
+							onChange={(e) => setRenameProjectTextfield(e.target.value)}
+						/>
+					</DialogContent>
+					<DialogActions>
+						<Button onClick={handleRenameDialogClose}>Cancel</Button>
+						<Button onClick={handleRename} color="primary">Rename</Button>
+					</DialogActions>
+				</Box>
 			</Dialog>
 
 			<Dialog open={deleteDialogOpen} onClose={handleDeleteDialogClose} maxWidth="sm" fullWidth>
