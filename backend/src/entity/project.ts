@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany, ManyToMany, CreateDateColumn } from "typeorm"
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany, ManyToMany, CreateDateColumn, JoinTable } from "typeorm"
 import { User } from "./User"
 import { addMaybeUndefined, getMaybeUndefined, removeMaybeUndefined } from "./utils/addGetList"
 import { Release } from "./release"
@@ -25,9 +25,11 @@ export class Project {
 	productOwner: User
 
 	@ManyToMany(() => User, (user) => user.joinedProjects)
+	@JoinTable()
 	teamMembers: User[]
 
 	@ManyToMany(() => User, (user) => user.projectInvites)
+	@JoinTable()
 	invitedUsers: User[]
 
 	@OneToMany(() => Release, (release) => release.project)

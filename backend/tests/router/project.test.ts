@@ -80,17 +80,17 @@ describe("Project API tests", () => {
 			});
 	});
 
-	// test("Another user", async () => {
-	// 	const body = { username: "bobby", email: "bobby@gmail.com", password: "password123" }
-	// 	await request(app)
-	// 		.post("/api/user/create")
-	// 		.send(body)
-	// 		.expect(200)
-	// 		.then((res) => {
-	// 			expect(res.body.email).toEqual(body.email);
-	// 			expect(res.body.id).toBeDefined();
-	// 		});
-	// });
+	test("Another user", async () => {
+		const body = { username: "bobby", email: "bobby@gmail.com", password: "password123" }
+		await request(app)
+			.post("/api/user/create")
+			.send(body)
+			.expect(200)
+			.then((res) => {
+				expect(res.body.email).toEqual(body.email);
+				expect(res.body.id).toBeDefined();
+			});
+	});
 
 	let projectId: Number;
 
@@ -240,12 +240,10 @@ describe("Project API tests", () => {
 			.expect(200);
 	});
 
-	// test('backlogItem was deleted', async () => {
-	// 	await request(app)
-	// 		.get(`/api/___/${___}`)
-	// 		.set('Cookie', [`user-auth=${sessionToken}`])
-	// 		.expect(404)
-	// })
+	test('backlogItem was deleted', async () => {
+		const db = Database.getInstance();
+		await expect(async () => await db.getBacklogItemRepository.lookupBacklogById(backlogItemId)).rejects.toThrow('not found');
+	})
 
 	test('sprint was deleted', async () => {
 		await request(app)

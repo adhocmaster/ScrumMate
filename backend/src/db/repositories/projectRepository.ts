@@ -2,6 +2,7 @@ import { User } from "../../entity/User";
 import { Release } from "../../entity/release";
 import { Project } from "../../entity/project";
 import { ModelRepository } from "./modelRepository";
+import { ExistingUserError } from "../../helpers/errors";
 
 export class ProjectRepository extends ModelRepository {
 
@@ -113,11 +114,17 @@ export class ProjectRepository extends ModelRepository {
 		const project = await this.projectSource.lookupProjectByIdWithUsers(projectId);
 		const userToInvite = await this.userSource.fetchUserByEmailWithProjectInvites(userEmail);
 
+		if (project.productOwner.email === userEmail || project.teamMembers.some(member => member.email === userEmail)) {
+			throw new ExistingUserError(`User with email ${userEmail} is already on the tean`);
+		}
+
 		project.invitedUsers.push(userToInvite);
 		userToInvite.projectInvites.push(project);
 
 		await this.projectSource.save(project);
 		await this.userSource.save(userToInvite);
+
+		userToInvite.projectInvites = undefined;
 
 		return [project.invitedUsers, project.productOwner, project.teamMembers]
 	}

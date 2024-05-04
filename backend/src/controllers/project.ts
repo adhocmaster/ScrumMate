@@ -58,8 +58,8 @@ export const getName = async (req: express.Request, res: express.Response) => {
 export const getMembers = async (req: express.Request, res: express.Response) => {
 	const db = Database.getInstance();
 	const { projectId } = req.params;
-	const project = await db.getProjectRepository.lookupProjectByIdWithUsers(parseInt(projectId));
-	return res.json(project.name);
+	const memberList = await db.getProjectRepository.lookupProjectMembers(parseInt(projectId));
+	return res.json(memberList);
 };
 
 export const sendInvite = async (req: express.Request, res: express.Response) => {

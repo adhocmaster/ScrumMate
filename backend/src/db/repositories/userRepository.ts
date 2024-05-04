@@ -74,6 +74,7 @@ export class UserRepository extends ModelRepository {
 		userWithProjects.projectInvites = userWithInvites.projectInvites.filter(projectInvite => projectInvite.id !== projectId)
 		project.invitedUsers = project.invitedUsers.filter(invitedUser => invitedUser.id !== userId);
 		project.teamMembers.push(userWithProjects);
+		userWithProjects.joinedProjects.push(project)
 
 		await this.projectSource.save(project);
 		await this.userSource.save(userWithProjects);
