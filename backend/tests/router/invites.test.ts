@@ -199,7 +199,9 @@ describe("Invite API tests", () => {
 			.expect(200)
 			.then((res) => {
 				expect(res.body).toBeDefined();
-				expect(res.body.length).toBe(0);
+				expect(res.body.length).toBe(2);
+				expect(res.body[0].length).toBe(0);
+				expect(res.body[1].id).toBe(projectId);
 			});
 	});
 

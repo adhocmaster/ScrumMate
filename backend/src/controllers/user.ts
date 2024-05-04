@@ -51,6 +51,10 @@ export const edit = async (req: express.Request, res: express.Response) => {
 // 	return res.json(user)
 // };
 
+export const getUserId = async (req: express.Request, res: express.Response) => {
+	return res.json(req.userId);
+};
+
 export const getProjects = async (req: express.Request, res: express.Response) => {
 	const db = Database.getInstance();
 	verifyParameters(req.userId);

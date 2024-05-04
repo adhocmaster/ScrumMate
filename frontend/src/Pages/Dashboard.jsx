@@ -56,6 +56,8 @@ export default function Dashboard({ setName, setSelectedProjectId }) {
 	const [deletedProjectName, setDeletedProjectName] = useState('');
 	const [deleteProjectId, setDeleteProjectId] = useState(null);
 
+	const [ownUserId, setOwnUserId] = useState(null);
+
 	const handleCreateDialogOpen = () => {
 		setCreateDialogOpen(true);
 	};
@@ -192,6 +194,31 @@ export default function Dashboard({ setName, setSelectedProjectId }) {
 	function isValidProjectName(str) {
 		return str !== "";
 	}
+
+	function fetchUserId() {
+		var options = {
+			method: 'get',
+			credentials: 'include',
+		}
+		try {
+			fetch(`http://localhost:8080/api/user`, options).then((result) => {
+				if (result.status !== 200) {
+					console.log("error", result)
+					return
+				}
+				result.json().then((response) => {
+					console.log(response)
+					setOwnUserId(response);
+				})
+			})
+		} catch {
+			return;
+		}
+	}
+
+	useEffect(() => {
+		fetchUserId();
+	}, []);
 
 	function fetchUserList(projectId) {
 		var options = {
@@ -608,9 +635,10 @@ export default function Dashboard({ setName, setSelectedProjectId }) {
 										<Avatar>TM</Avatar>
 									</ListItemIcon>
 									<ListItemText primary={user.username} />
-									<IconButton edge="end" aria-label="delete" onClick={() => { console.log('hi') }}>
-										<DeleteIcon />
-									</IconButton>
+									{ownUserId === userList[1].id &&
+										<IconButton edge="end" aria-label="delete" onClick={() => { console.log('hi') }}>
+											<DeleteIcon />
+										</IconButton>}
 								</ListItem>
 								<Divider />
 							</>
