@@ -7,15 +7,15 @@ import DeleteConfirmation from "./DeleteConfirmation";
 
 const Sprint = ({ index, items, setItems, userStories }) => {
 	const [stories, setStories] = useState(userStories);
-    const [dialogOpen, setDialogOpen] = useState(false);
+	const [dialogOpen, setDialogOpen] = useState(false);
 
-    const [backlogItemType, setBacklogItemType] = useState('story');
-    const [role, setRole] = useState('');
-    const [functionality, setFunctionality] = useState('');
-    const [reasoning, setReasoning] = useState('');
-    const [acceptanceCriteria, setAcceptanceCriteria] = useState('');
-    const [storyPoints, setStoryPoints] = useState(0);
-	
+	const [backlogItemType, setBacklogItemType] = useState('story');
+	const [role, setRole] = useState('');
+	const [functionality, setFunctionality] = useState('');
+	const [reasoning, setReasoning] = useState('');
+	const [acceptanceCriteria, setAcceptanceCriteria] = useState('');
+	const [storyPoints, setStoryPoints] = useState(0);
+
 
 	// Function to handle the reordering of stories (content within the cards).
 	function reorderStories(result) {
@@ -67,32 +67,32 @@ const Sprint = ({ index, items, setItems, userStories }) => {
 
 	//for + popup
 	const openDialogForNewStory = () => {
-        setBacklogItemType('story');
-        setRole('');
-        setFunctionality('');
-        setReasoning('');
-        setAcceptanceCriteria('');
-        setStoryPoints(0);
-        setDialogOpen(true);
-    };
+		setBacklogItemType('story');
+		setRole('');
+		setFunctionality('');
+		setReasoning('');
+		setAcceptanceCriteria('');
+		setStoryPoints(0);
+		setDialogOpen(true);
+	};
 
-    const handleDialogClose = () => {
-        setDialogOpen(false);
-    };
+	const handleDialogClose = () => {
+		setDialogOpen(false);
+	};
 
-    const handleCreate = (sprintId) => {
-        const newStory = {
-            backlogItemType,
-            role,
-            functionality,
-            reasoning,
-            acceptanceCriteria,
-            storyPoints,
-        };
-        console.log('Creating new story:', newStory);
-        saveNewStory(newStory, sprintId);
-        setDialogOpen(false);
-    };
+	const handleCreate = (sprintId) => {
+		const newStory = {
+			backlogItemType,
+			role,
+			functionality,
+			reasoning,
+			acceptanceCriteria,
+			storyPoints,
+		};
+		console.log('Creating new story:', newStory);
+		saveNewStory(newStory, sprintId);
+		setDialogOpen(false);
+	};
 
 	function saveNewStory(newStory, sprintId) {
 		var options = {
@@ -108,7 +108,7 @@ const Sprint = ({ index, items, setItems, userStories }) => {
 				reasoning: newStory.reasoning,
 				acceptanceCriteria: newStory.acceptanceCriteria,
 				storyPoints: newStory.storyPoints,
-				priority : 1
+				priority: 1
 				// priority?
 			}),
 		};
@@ -121,6 +121,16 @@ const Sprint = ({ index, items, setItems, userStories }) => {
 				if (result.status !== 200) {
 					console.log("error", result);
 				}
+				console.log(items)
+				result.json().then((jsonResult) => {
+					console.log(jsonResult)
+					const sprintsCopy = [...items];
+					const indexOfSprint = sprintsCopy.findIndex((sprint) => sprint.id === sprintId);
+					console.log(indexOfSprint)
+					console.log(sprintsCopy[indexOfSprint])
+					sprintsCopy[indexOfSprint].todos.push(jsonResult)
+					setItems(sprintsCopy);
+				})
 			});
 		} catch {
 			return null;
@@ -167,8 +177,8 @@ const Sprint = ({ index, items, setItems, userStories }) => {
 									}}
 								/>
 								<IconButton onClick={openDialogForNewStory} color="primary" aria-label="add new story">
-                                    <AddIcon />
-                                </IconButton>
+									<AddIcon />
+								</IconButton>
 								<Dialog open={dialogOpen} onClose={handleDialogClose} maxWidth="sm" fullWidth>
 									<DialogTitle>Add New Story</DialogTitle>
 									<DialogContent>
@@ -266,10 +276,10 @@ const Sprint = ({ index, items, setItems, userStories }) => {
 										<Button onClick={() => {
 											const sprintId = items[index].id;
 											handleCreate(sprintId);
-										}} 
-										color="primary"
+										}}
+											color="primary"
 										>
-										Create Story
+											Create Story
 										</Button>
 									</DialogActions>
 								</Dialog>
