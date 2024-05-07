@@ -26,8 +26,7 @@ function SignInBox({ setIsLoggedIn, setColor }) {
 		setRememberMe(event.target.checked);
 	};
 
-	const handleSignIn = (email, password) => {
-		console.log(email, password)
+	const handleSignIn = async (email, password) => {
 		try {
 			var options = {
 				url: "https://localhost:8080/api/user/login/",
@@ -38,22 +37,18 @@ function SignInBox({ setIsLoggedIn, setColor }) {
 				body: JSON.stringify({ email, password }),
 				credentials: 'include'
 			}
-			var successfulLogin = false;
-			fetch('http://localhost:8080/api/user/login/', options).then((result) => {
-				console.log(result)
-				successfulLogin = result.status === 200
-				if (successfulLogin) {
-					console.log('setting logged in true')
-					setIsLoggedIn(true);
-					setColor('#ffffff')
-				} else {
-					setErrorAlert(true)
-				}
-			}).then((response) => {
-				console.log(response)
-			})
+
+			const response = await fetch('http://localhost:8080/api/user/login/', options);
+
+			if (response.status === 200) {
+				setIsLoggedIn(true);
+				setColor('#ffffff');
+				setPassword('');
+			} else {
+				setErrorAlert(true);
+			}
 		} catch (error) {
-			console.log(error)
+			setErrorAlert(true)
 		}
 	};
 

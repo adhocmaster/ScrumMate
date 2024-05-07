@@ -19,7 +19,8 @@ export class ProjectDataSourceWrapper extends ModelDataSourceWrapper {
 			where: { id: id },
 			relations: {
 				productOwner: true,
-				teamMembers: true
+				teamMembers: true,
+				invitedUsers: true,
 			}
 		})
 		if (!maybeProject || maybeProject.length === 0) {
@@ -59,5 +60,9 @@ export class ProjectDataSourceWrapper extends ModelDataSourceWrapper {
 
 	public async fetchMostRecentRelease(id: number): Promise<Release> {
 		return (await this.fetchProjectWithReleases(id)).releases[0]
+	}
+
+	public async deleteProject(projectId: number) {
+		return await super.delete(Project, projectId);
 	}
 }

@@ -21,7 +21,6 @@ import ListItemIcon from '@mui/material/ListItemIcon';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
-import InboxIcon from '@mui/icons-material/Inbox';
 import SendIcon from '@mui/icons-material/Send';
 import CheckIcon from '@mui/icons-material/Check';
 import CloseIcon from '@mui/icons-material/Close';
@@ -31,8 +30,10 @@ import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
 import Avatar from '@mui/material/Avatar';
 import Divider from '@mui/material/Divider';
+import NotificationsNoneIcon from '@mui/icons-material/NotificationsNone';
+import NotificationsActiveIcon from '@mui/icons-material/NotificationsActive';
 
-export default function Dashboard({ setName }) {
+export default function Dashboard({ setName, setSelectedProjectId }) {
 	const [rows, setRows] = useState([]);
 
 	const [createDialogOpen, setCreateDialogOpen] = useState(false);
@@ -42,14 +43,20 @@ export default function Dashboard({ setName }) {
 	const [inviteList, setInviteList] = useState([]);
 
 	const [shareDialogOpen, setShareDialogOpen] = useState(false);
-	const [userList, setUserList] = useState([]);
+	const [userList, setUserList] = useState([[], { username: "loading..." }, []]);
 	const [recipient, setRecipient] = useState('');
+	const [recipientError, setRecipientError] = useState(false);
+	const [sharingProjectId, setSharingProjectId] = useState(null);
 
 	const [renameDialogOpen, setRenameDialogOpen] = useState(false);
 	const [renameProjectTextfield, setRenameProjectTextfield] = useState('');
+	const [renameProjectId, setRenameProjectId] = useState(null);
 
 	const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
 	const [deletedProjectName, setDeletedProjectName] = useState('');
+	const [deleteProjectId, setDeleteProjectId] = useState(null);
+
+	const [ownUserId, setOwnUserId] = useState(null);
 
 	const handleCreateDialogOpen = () => {
 		setCreateDialogOpen(true);
@@ -60,8 +67,11 @@ export default function Dashboard({ setName }) {
 	};
 
 	const handleCreate = () => {
+		if (!isValidProjectName(newProjectName)) {
+			return;
+		}
 		handleCreateDialogClose();
-		// TODO: do something with newProjectName
+		fetchCreateNewProject();
 		setNewProjectName('');
 	};
 
@@ -73,11 +83,14 @@ export default function Dashboard({ setName }) {
 		setInvitesDialogOpen(false);
 	};
 
-	const handleShareDialogOpen = (id) => {
+	const handleShareDialogOpen = (projectId) => {
+		setSharingProjectId(projectId);
+		fetchUserList(projectId);
 		setShareDialogOpen(true);
 	};
 
 	const handleShareDialogClose = (event, reason) => {
+		setRecipientError(false)
 		if (reason !== 'backdropClick') {
 			setRecipient('');
 			setShareDialogOpen(false);
@@ -85,33 +98,48 @@ export default function Dashboard({ setName }) {
 	};
 
 	const handleShare = () => {
-		// TODO: do something with recipient
-		setRecipient('');
+		fetchSendInvite();
+	};
+
+	const handleShareEnterPress = (event) => {
+		event.preventDefault();
+		handleShare();
 	};
 
 	const confirmShare = () => {
-		setShareDialogOpen(false);
+		handleShareDialogClose();
+		setSharingProjectId(null);
 		setRecipient('');
 	};
 
-	const handleRenameDialogOpen = (projectName) => {
+	const handleRenameDialogOpen = (projectName, projectId) => {
 		setRenameProjectTextfield(projectName);
+		setRenameProjectId(projectId);
 		setRenameDialogOpen(true);
 	};
 
 	const handleRenameDialogClose = () => {
 		setRenameProjectTextfield('');
+		setRenameProjectId(null);
 		setRenameDialogOpen(false);
 	};
 
 	const handleRename = () => {
-		setRenameDialogOpen(false);
-		// TODO: do something with renameProjectTextfield
-		setRenameProjectTextfield('');
+		if (!isValidProjectName(renameProjectTextfield)) {
+			return;
+		}
+		fetchRenameProject();
+		handleRenameDialogClose();
 	};
 
-	const handleDeleteDialogOpen = (id, name) => {
+	const handleRenameEnterPress = (event) => {
+		event.preventDefault();
+		handleRename();
+	};
+
+	const handleDeleteDialogOpen = (name, id) => {
 		setDeletedProjectName(name);
+		setDeleteProjectId(id)
 		setDeleteDialogOpen(true);
 	};
 
@@ -120,8 +148,9 @@ export default function Dashboard({ setName }) {
 	};
 
 	const handleDelete = () => {
-		setRenameDialogOpen(false);
-		// TODO: do deleting/leaving
+		fetchDeleteProject();
+		setDeleteProjectId(null);
+		handleDeleteDialogClose();
 	};
 
 	function fetchProjectRowData() {
@@ -131,13 +160,11 @@ export default function Dashboard({ setName }) {
 		}
 		try {
 			fetch(`http://localhost:8080/api/user/projectRowData`, options).then((result) => {
-				if (result.status === 200) {
-					console.log(result)
+				if (result.status !== 200) {
+					console.log("error", result)
 				}
-				console.log('waiting for .then')
 				result.json().then((response) => {
 					setRows(response)
-					// setRevisions(response.releases.map((release) => convertRevisionAndDate(release)))
 				})
 			})
 		} catch {
@@ -149,9 +176,253 @@ export default function Dashboard({ setName }) {
 		fetchProjectRowData();
 	}, []);
 
+	function fetchCreateNewProject() {
+		var options = {
+			method: 'post',
+			credentials: 'include',
+			headers: {
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify({
+				name: newProjectName
+			}),
+		}
+		try {
+			fetch(`http://localhost:8080/api/project`, options).then((result) => {
+				if (result.status !== 200) {
+					console.log("error", result)
+				}
+				result.json().then((response) => {
+					setRows(rows.concat(response))
+				})
+			})
+		} catch {
+			return null;
+		}
+	}
+
+	function isValidProjectName(str) {
+		return str !== "";
+	}
+
+	function fetchUserId() {
+		var options = {
+			method: 'get',
+			credentials: 'include',
+		}
+		try {
+			fetch(`http://localhost:8080/api/user`, options).then((result) => {
+				if (result.status !== 200) {
+					console.log("error", result)
+					return
+				}
+				result.json().then((response) => {
+					setOwnUserId(response);
+				})
+			})
+		} catch {
+			return;
+		}
+	}
+
+	useEffect(() => {
+		fetchUserId();
+	}, []);
+
+	function fetchUserList(projectId) {
+		var options = {
+			method: 'get',
+			credentials: 'include',
+		}
+		try {
+			fetch(`http://localhost:8080/api/project/${projectId}/getMembers`, options).then((result) => {
+				if (result.status !== 200) {
+					console.log("error", result)
+					return
+				}
+				result.json().then((response) => {
+					setUserList(response)
+				})
+			})
+		} catch {
+			return;
+		}
+	}
+
+	function fetchSendInvite() {
+		var options = {
+			method: 'post',
+			credentials: 'include',
+		}
+		try {
+			fetch(`http://localhost:8080/api/project/${sharingProjectId}/invite/${recipient}`, options).then((result) => {
+				if (result.status !== 200) {
+					console.log("error", result)
+					setRecipientError(true)
+					return
+				}
+				result.json().then((response) => {
+					setUserList(response);
+					setRecipient('')
+					setRecipientError(false);
+				})
+			})
+		} catch {
+			return;
+		}
+	}
+
+	function fetchCancelInvite(userId) {
+		var options = {
+			method: 'post',
+			credentials: 'include',
+		}
+		try {
+			fetch(`http://localhost:8080/api/project/${sharingProjectId}/cancelInvite/${userId}`, options).then((result) => {
+				if (result.status !== 200) {
+					console.log("error", result)
+					return
+				}
+				result.json().then((response) => {
+					setUserList(response);
+				})
+			})
+		} catch {
+			return;
+		}
+	}
+
+	function fetchKickTeamMember(userId) {
+		var options = {
+			method: 'post',
+			credentials: 'include',
+		}
+		try {
+			fetch(`http://localhost:8080/api/project/${sharingProjectId}/removeMember/${userId}`, options).then((result) => {
+				if (result.status !== 200) {
+					console.log("error", result)
+					return
+				}
+				result.json().then((response) => {
+					setUserList(response);
+				})
+			})
+		} catch {
+			return;
+		}
+	}
+
+	function fetchNotifications() {
+		var options = {
+			method: 'get',
+			credentials: 'include',
+		}
+		try {
+			fetch(`http://localhost:8080/api/user/getInvites`, options).then((result) => {
+				if (result.status !== 200) {
+					console.log("error", result)
+				}
+				result.json().then((response) => {
+					setInviteList(response)
+				})
+			})
+		} catch {
+			return null;
+		}
+	}
+
+	useEffect(() => {
+		fetchNotifications();
+	}, []);
+
+	function fetchAcceptInvite(projectId) {
+		var options = {
+			method: 'post',
+			credentials: 'include',
+		}
+		try {
+			fetch(`http://localhost:8080/api/user/acceptInvite/${projectId}`, options).then((result) => {
+				if (result.status !== 200) {
+					console.log("error", result)
+				}
+				result.json().then((response) => {
+					setInviteList(response[0])
+					setRows(rows.concat(response[1]))
+				})
+			})
+		} catch {
+			return null;
+		}
+	}
+
+	function fetchRejectInvite(projectId) {
+		var options = {
+			method: 'post',
+			credentials: 'include',
+		}
+		try {
+			fetch(`http://localhost:8080/api/user/rejectInvite/${projectId}`, options).then((result) => {
+				if (result.status !== 200) {
+					console.log("error", result)
+				}
+				result.json().then((response) => {
+					setInviteList(response)
+				})
+			})
+		} catch {
+			return null;
+		}
+	}
+
+	function fetchRenameProject() {
+		var options = {
+			method: 'PATCH',
+			credentials: 'include',
+			headers: {
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify({
+				name: renameProjectTextfield
+			}),
+		}
+		try {
+			fetch(`http://localhost:8080/api/project/${renameProjectId}`, options).then((result) => {
+				if (result.status === 200) {
+					result.json().then((response) => {
+						const index = rows.findIndex(obj => obj.id === renameProjectId);
+						const rowsCopy = [...rows]
+						rowsCopy[index] = response;
+						setRows(rowsCopy)
+					})
+				}
+			})
+		} catch {
+			console.log("failed to rename project")
+			return null;
+		}
+	}
+
+	function fetchDeleteProject() {
+		var options = {
+			method: 'DELETE',
+			credentials: 'include',
+		}
+		try {
+			fetch(`http://localhost:8080/api/project/${deleteProjectId}`, options).then((result) => {
+				if (result.status === 200) {
+					const filtered = rows.filter((projRowData) => { return projRowData.id !== deleteProjectId });
+					setRows(filtered)
+				}
+			})
+		} catch {
+			console.log("failed to delete project")
+			return null;
+		}
+	}
+
 	function Row(projectData) {
 		const [open, setOpen] = useState(false);
-		const data = projectData.row
+		const data = projectData.row // may need to remove to update
 		// https://forum.freecodecamp.org/t/how-to-convert-date-to-dd-mm-yyyy-in-react/431093
 		const options = { year: 'numeric', month: 'long', day: 'numeric' };
 		const formattedDate = new Date(data.dateCreated).toLocaleDateString('en-US', options);
@@ -166,13 +437,16 @@ export default function Dashboard({ setName }) {
 							to="/releases"
 							style={{ textTransform: 'none' }}
 							state={{ data }}
-							onClick={() => { setName(data.name) }}
+							onClick={() => {
+								setName(data.name);
+								setSelectedProjectId(data.id);
+							}}
 						>
 							{data.name}
 						</Button>
 					</TableCell>
 					<TableCell align="right">{data.productOwner.username}</TableCell>
-					<TableCell align="right">{data.nextRevision}</TableCell>
+					<TableCell align="right">{data.numRevisions}</TableCell>
 					{/* <TableCell align="right">{data.currentSprint}</TableCell> */}
 					<TableCell align="right">{'-'}</TableCell>
 					<TableCell align="right">{formattedDate}</TableCell>
@@ -204,14 +478,14 @@ export default function Dashboard({ setName }) {
 										</IconButton>
 										<IconButton
 											onClick={() => {
-												handleRenameDialogOpen(data.name)
+												handleRenameDialogOpen(data.name, data.id)
 											}}
 										>
 											<EditIcon fontSize="small" />
 										</IconButton>
 										<IconButton
 											onClick={() => {
-												handleDeleteDialogOpen(data.id, data.name)
+												handleDeleteDialogOpen(data.name, data.id)
 											}}
 										>
 											<DeleteIcon fontSize="small" />
@@ -256,7 +530,7 @@ export default function Dashboard({ setName }) {
 				<IconButton
 					onClick={handleInvitesDialogOpen}
 				>
-					<InboxIcon fontSize="small" />
+					{inviteList.length > 0 ? <NotificationsActiveIcon fontSize="small" style={{ color: 'red' }} /> : <NotificationsNoneIcon fontSize="small" />}
 				</IconButton>
 			</Box>
 
@@ -325,37 +599,20 @@ export default function Dashboard({ setName }) {
 				<DialogContent>
 					<Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'column' }}>
 						<List sx={{ width: '90%', bgcolor: 'background.paper' }}>
-							<Divider />
-							<ListItem>
-								<ListItemText primary="Project1" />
-								<IconButton edge="end" aria-label="delete" onClick={() => { console.log('hi') }} sx={{ marginRight: 1 }}>
-									<CheckIcon />
-								</IconButton>
-								<IconButton edge="end" aria-label="delete" onClick={() => { console.log('hi') }}>
-									<CloseIcon />
-								</IconButton>
-							</ListItem>
-							<Divider />
-							<ListItem>
-								<ListItemText primary="Project2" />
-								<IconButton edge="end" aria-label="delete" onClick={() => { console.log('hi') }} sx={{ marginRight: 1 }}>
-									<CheckIcon />
-								</IconButton>
-								<IconButton edge="end" aria-label="delete" onClick={() => { console.log('hi') }}>
-									<CloseIcon />
-								</IconButton>
-							</ListItem>
-							<Divider />
-							<ListItem>
-								<ListItemText primary="Project3" />
-								<IconButton edge="end" aria-label="delete" onClick={() => { console.log('hi') }} sx={{ marginRight: 1 }}>
-									<CheckIcon />
-								</IconButton>
-								<IconButton edge="end" aria-label="delete" onClick={() => { console.log('hi') }}>
-									<CloseIcon />
-								</IconButton>
-							</ListItem>
-							<Divider />
+							{inviteList.length > 0 && <Divider />}
+							{inviteList.map(invitedProject =>
+								<>
+									<ListItem>
+										<ListItemText primary={invitedProject.name} />
+										<IconButton edge="end" aria-label="delete" onClick={() => { fetchAcceptInvite(invitedProject.id) }} sx={{ marginRight: 1 }}>
+											<CheckIcon />
+										</IconButton>
+										<IconButton edge="end" aria-label="delete" onClick={() => { fetchRejectInvite(invitedProject.id) }}>
+											<CloseIcon />
+										</IconButton>
+									</ListItem>
+									<Divider />
+								</>)}
 						</List>
 					</Box>
 				</DialogContent>
@@ -367,6 +624,7 @@ export default function Dashboard({ setName }) {
 			<Dialog
 				open={shareDialogOpen}
 				onClose={handleShareDialogClose}
+				disableEscapeKeyDown={true}
 				maxWidth="sm"
 				fullWidth
 				slotProps={{
@@ -378,49 +636,69 @@ export default function Dashboard({ setName }) {
 				<Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'column' }}>
 					<List sx={{ width: '90%', bgcolor: 'background.paper' }}>
 						<Divider />
+						{userList[0].map((user) => (
+							<>
+								<ListItem>
+									<ListItemIcon>
+										<Avatar>Inv</Avatar>
+									</ListItemIcon>
+									<ListItemText primary={user.username} />
+									<IconButton edge="end" aria-label="delete" onClick={() => { fetchCancelInvite(user.id) }}>
+										<CloseIcon />
+									</IconButton>
+								</ListItem>
+								<Divider />
+							</>
+						))}
 						<ListItem>
 							<ListItemIcon>
-								<Avatar>U</Avatar>
+								<Avatar>PO</Avatar>
 							</ListItemIcon>
-							<ListItemText primary="User1" />
-							<IconButton edge="end" aria-label="delete" onClick={() => { console.log('hi') }}>
-								<DeleteIcon />
-							</IconButton>
+							<ListItemText primary={userList[1].username} />
 						</ListItem>
 						<Divider />
-						<ListItem>
-							<ListItemIcon>
-								<Avatar>U</Avatar>
-							</ListItemIcon>
-							<ListItemText primary="User2" />
-							<IconButton edge="end" aria-label="delete" onClick={() => { console.log('hi') }}>
-								<DeleteIcon />
-							</IconButton>
-						</ListItem>
-						<Divider />
-						<ListItem>
-							<ListItemIcon>
-								<Avatar>Y</Avatar>
-							</ListItemIcon>
-							<ListItemText primary="You" />
-						</ListItem>
-						<Divider />
+						{userList[2].map((user) => (
+							<>
+								<ListItem>
+									<ListItemIcon>
+										<Avatar>TM</Avatar>
+									</ListItemIcon>
+									<ListItemText primary={user.username} />
+									{ownUserId === userList[1].id &&
+										<IconButton edge="end" aria-label="delete" onClick={() => { fetchKickTeamMember(user.id) }}>
+											<DeleteIcon />
+										</IconButton>}
+								</ListItem>
+								<Divider />
+							</>
+						))}
 					</List>
 				</Box>
 
 				<DialogContent>
-					<Box sx={{ display: 'flex', alignItems: 'center' }}>
+					<Box
+						component="form"
+						onSubmit={handleShareEnterPress}
+						sx={{ display: 'flex', alignItems: 'center' }}
+					>
 						<TextField
+							error={recipientError}
+							helperText={recipientError ? "User not found or is already on the list" : ""}
 							autoFocus
 							margin="dense"
 							label="Recipient email"
 							type="text"
 							variant="outlined"
-							sx={{ width: '90%', mr: 1 }} // <-- Adjust the width here
+							sx={{ width: '90%', mr: 1 }}
+							value={recipient}
 							onChange={(e) => setRecipient(e.target.value)}
 						/>
-						<IconButton edge="end" aria-label="send" onClick={() => { console.log('hi') }}>
-							<SendIcon fontSize="large" />
+						<IconButton
+							edge="end"
+							aria-label="send"
+							onClick={handleShare}
+						>
+							<SendIcon fontSize="large" style={{ color: '#3477eb' }} />
 						</IconButton>
 					</Box>
 				</DialogContent>
@@ -432,23 +710,28 @@ export default function Dashboard({ setName }) {
 			</Dialog>
 
 			<Dialog open={renameDialogOpen} onClose={handleRenameDialogClose} maxWidth="sm" fullWidth>
-				<DialogTitle>Rename your project</DialogTitle>
-				<DialogContent>
-					<TextField
-						autoFocus
-						margin="dense"
-						label="Name"
-						type="text"
-						fullWidth
-						variant="outlined"
-						value={renameProjectTextfield}
-						onChange={(e) => setRenameProjectTextfield(e.target.value)}
-					/>
-				</DialogContent>
-				<DialogActions>
-					<Button onClick={handleRenameDialogClose}>Cancel</Button>
-					<Button onClick={handleRename} color="primary">Rename</Button>
-				</DialogActions>
+				<Box
+					component="form"
+					onSubmit={handleRenameEnterPress}
+				>
+					<DialogTitle>Rename your project</DialogTitle>
+					<DialogContent>
+						<TextField
+							autoFocus
+							margin="dense"
+							label="Name"
+							type="text"
+							fullWidth
+							variant="outlined"
+							value={renameProjectTextfield}
+							onChange={(e) => setRenameProjectTextfield(e.target.value)}
+						/>
+					</DialogContent>
+					<DialogActions>
+						<Button onClick={handleRenameDialogClose}>Cancel</Button>
+						<Button onClick={handleRename} color="primary">Rename</Button>
+					</DialogActions>
+				</Box>
 			</Dialog>
 
 			<Dialog open={deleteDialogOpen} onClose={handleDeleteDialogClose} maxWidth="sm" fullWidth>

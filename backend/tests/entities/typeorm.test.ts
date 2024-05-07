@@ -36,7 +36,7 @@ function populateUser(user: User, length = 10) {
 
 function populateProject(project: Project, length = 10) {
 	project.name = makeRandomId(length)
-	project.nextRevision = 1
+	project.numRevisions = 1
 }
 
 function populateRelease(release: Release, length = 10) {

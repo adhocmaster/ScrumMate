@@ -60,12 +60,17 @@ export class ReleaseDataSourceWrapper extends ModelDataSourceWrapper {
 					todos: true,
 				},
 				backlog: true,
+				deletedBacklog: true,
 			},
 		})
 		if (!releaseWithSprints) {
 			throw new NotFoundError(`Release with releaseId ${releaseId} not found`)
 		}
 		return releaseWithSprints
+	}
+
+	public async deleteRelease(releaseId: number) {
+		await super.delete(Release, releaseId);
 	}
 
 }

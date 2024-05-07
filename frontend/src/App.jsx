@@ -10,6 +10,7 @@ function App() {
 	const [isLoggedIn, setIsLoggedIn] = useState(false);
 	const [color, setColor] = useState('#E6EEFF')
 	const [name, setName] = useState('');
+	const [selectedProjectId, setSelectedProjectId] = useState(24)
 
 	const handleSignOut = () => {
 		setName('')
@@ -34,13 +35,13 @@ function App() {
 				<Route
 					path="/dashboard"
 					element={
-						isLoggedIn ? <Dashboard setName={setName} /> : <Navigate replace to="/" />
+						isLoggedIn ? <Dashboard setName={setName} setSelectedProjectId={setSelectedProjectId} /> : <Navigate replace to="/" />
 					}
 				/>
 				<Route
 					path="/releases"
 					element={
-						isLoggedIn ? <ReleasePlan /> : <Navigate replace to="/" />
+						isLoggedIn ? <ReleasePlan projectId={selectedProjectId} /> : <Navigate replace to="/" />
 					}
 				/>
 

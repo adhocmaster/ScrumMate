@@ -39,6 +39,35 @@ export class UserDataSourceWrapper extends ModelDataSourceWrapper {
 		if (!maybeUserList || maybeUserList.length === 0) {
 			throw new NotFoundError(`User with id ${id} not found`)
 		}
+		// Sometimes its not included ???
+		return maybeUserList[0]
+	}
+
+	public async fetchUserWithProjectInvites(id: number): Promise<User> {
+		const maybeUserList = await this.dataSource.getRepository(User).find({
+			where: { id: id },
+			relations: {
+				projectInvites: true
+			}
+		})
+		if (!maybeUserList || maybeUserList.length === 0) {
+			throw new NotFoundError(`User with id ${id} not found`)
+		}
+		// Sometimes its not included ???
+		return maybeUserList[0]
+	}
+
+	public async fetchUserByEmailWithProjectInvites(email: string): Promise<User> {
+		const maybeUserList = await this.dataSource.getRepository(User).find({
+			where: { email: email },
+			relations: {
+				projectInvites: true
+			}
+		})
+		if (!maybeUserList || maybeUserList.length === 0) {
+			throw new NotFoundError(`User with email ${email} not found`)
+		}
+		// Sometimes its not included ???
 		return maybeUserList[0]
 	}
 

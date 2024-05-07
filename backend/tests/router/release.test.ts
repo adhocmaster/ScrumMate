@@ -105,7 +105,9 @@ describe("Release API tests", () => {
 			.then((res) => {
 				expect(res.body).toBeDefined();
 				expect(res.body.id).toBeDefined();
-				expect(res.body.releases).toEqual([]);
+				expect(res.body.releases.length).toBe(1);
+				expect(res.body.releases[0].revision).toBe(1);
+				expect(res.body.releases[0].backlogItemCount).toBe(0);
 			})
 	});
 
@@ -138,7 +140,7 @@ describe("Release API tests", () => {
 	});
 
 	let releaseId: Number;
-	test("Get Releases of project with 2 releases", async () => {
+	test("Get Releases of project with 3 releases", async () => {
 		await request(app)
 			.get(`/api/project/${projectId}/releases`)
 			.set('Cookie', [`user-auth=${sessionToken}`])
@@ -147,7 +149,7 @@ describe("Release API tests", () => {
 				expect(res.body).toBeDefined();
 				expect(res.body.id).toBeDefined();
 				releaseId = res.body.id;
-				expect(res.body.releases.length).toEqual(2);
+				expect(res.body.releases.length).toEqual(3);
 			})
 	});
 

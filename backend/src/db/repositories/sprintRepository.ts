@@ -1,3 +1,4 @@
+import { DeleteResult } from "typeorm";
 import { Sprint } from "../../entity/sprint";
 import { ModelRepository } from "./modelRepository";
 
@@ -46,7 +47,7 @@ export class SprintRepository extends ModelRepository {
 		return await this.sprintSource.getSprintsWithBacklog(releaseId);
 	}
 
-	public async deleteSprint(id: number): Promise<void> {
+	public async deleteSprint(id: number): Promise<DeleteResult> {
 		return await this.sprintSource.deleteSprint(id);
 	}
 

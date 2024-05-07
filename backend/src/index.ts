@@ -19,7 +19,7 @@ AppDataSource.initialize().then(async () => {
 	console.log('initializing system')
 	const CREATEDATA = true;
 
-	const db = Database.setAndGetInstance(AppDataSource)
+	const db = Database.setAndGetInstance(AppDataSource);
 	try {
 		await db.getUserRepository.lookupUserByEmail("bob@gmail.com")
 		if (CREATEDATA) {
@@ -36,7 +36,7 @@ AppDataSource.initialize().then(async () => {
 
 		var project1 = new Project()
 		project1.name = "scrum tools"
-		project1.nextRevision = 3
+		project1.numRevisions = 2
 		project1.productOwner = productOwner1
 		project1.id = 1
 		await db.save(project1)

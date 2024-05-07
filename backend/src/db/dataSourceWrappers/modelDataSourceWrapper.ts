@@ -5,7 +5,7 @@ import { Release } from "../../entity/release";
 import { UserRole } from "../../entity/roles";
 import { Sprint } from "../../entity/sprint";
 import { NotSavedError, NotFoundError } from "../../helpers/errors";
-import { DataSource, EntityTarget, FindManyOptions, ObjectLiteral } from "typeorm";
+import { DataSource, DeleteResult, EntityTarget, FindManyOptions, ObjectLiteral } from "typeorm";
 
 export class ModelDataSourceWrapper {
 	public dataSource: DataSource;
@@ -42,6 +42,15 @@ export class ModelDataSourceWrapper {
 			throw new NotFoundError(`${type} with id ${id} not found`)
 		}
 		return maybeItem
+	}
+
+	public async delete(type: EntityTarget<ObjectLiteral>, id: number): Promise<DeleteResult> {
+		return await this.dataSource
+			.createQueryBuilder()
+			.delete()
+			.from(type)
+			.where("id = :id", { id: id })
+			.execute();
 	}
 
 	public async nuke(): Promise<void> {

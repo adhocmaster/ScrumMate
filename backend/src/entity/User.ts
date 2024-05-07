@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany, ManyToMany, JoinTable } from "typeorm"
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany, ManyToMany } from "typeorm"
 import { Project } from "./project"
 import { getMaybeUndefined, addMaybeUndefined, removeMaybeUndefined } from "./utils/addGetList"
 import { BacklogItem } from "./backlogItem"
@@ -29,8 +29,10 @@ export class User {
 	ownedProjects: Project[]
 
 	@ManyToMany(() => Project, (project) => project.teamMembers)
-	@JoinTable()
 	joinedProjects: Project[]
+
+	@ManyToMany(() => Project, (project) => project.invitedUsers)
+	projectInvites: Project[]
 
 	@ManyToMany(() => BacklogItem, (todo) => todo.assignees)
 	assignments: BacklogItem[]

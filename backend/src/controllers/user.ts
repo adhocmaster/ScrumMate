@@ -2,6 +2,7 @@ import express from "express";
 import { authentication, random } from "../helpers/index";
 import { Database } from "../db/database";
 import { verifyParameters } from './utils/verifyParams';
+import { User } from "../entity/User";
 
 export const createUser = async (req: express.Request, res: express.Response) => {
 	const db = Database.getInstance();
@@ -50,6 +51,10 @@ export const edit = async (req: express.Request, res: express.Response) => {
 // 	return res.json(user)
 // };
 
+export const getUserId = async (req: express.Request, res: express.Response) => {
+	return res.json(req.userId);
+};
+
 export const getProjects = async (req: express.Request, res: express.Response) => {
 	const db = Database.getInstance();
 	verifyParameters(req.userId);
@@ -62,4 +67,30 @@ export const getProjectRowData = async (req: express.Request, res: express.Respo
 	verifyParameters(req.userId);
 	const projectData = await db.getUserRepository.fetchUserProjectsRowData(req.userId);
 	return res.json(projectData);
+};
+
+export const getInvites = async (req: express.Request, res: express.Response) => {
+	const db = Database.getInstance();
+	verifyParameters(req.userId);
+	const user = await db.getUserRepository.fetchUserWithProjectInvites(req.userId);
+	return res.json(user.projectInvites);
+};
+
+export const acceptInvite = async (req: express.Request, res: express.Response) => {
+	const db = Database.getInstance();
+	const { projectId } = req.params;
+	verifyParameters(req.userId, projectId);
+	const [user, project] = await db.getUserRepository.acceptInvite(req.userId, parseInt(projectId));
+	if (!(user instanceof User)) {
+		return res.sendStatus(500);
+	}
+	return res.json([user.projectInvites, project]);
+};
+
+export const rejectInvite = async (req: express.Request, res: express.Response) => {
+	const db = Database.getInstance();
+	const { projectId } = req.params;
+	verifyParameters(req.userId, projectId);
+	const user = await db.getUserRepository.rejectInvite(req.userId, parseInt(projectId));
+	return res.json(user.projectInvites);
 };
