@@ -267,8 +267,17 @@ const Sprint = ({ index, items, setItems, userStories }) => {
 											fullWidth
 											variant="outlined"
 											value={storyPoints}
-											onChange={(e) => setStoryPoints(e.target.value)}
-											InputProps={{ inputProps: { min: 0 } }}
+											onChange={(e) => {
+											  // Check if the entered value is a number and is not empty
+											  if (!isNaN(e.target.value) && e.target.value.trim() !== '') {
+												setStoryPoints(e.target.value);
+											  }
+											}}
+											InputProps={{
+											  inputProps: {
+												min: 0 // Minimum value
+											  }
+											}}
 										/>
 									</DialogContent>
 									<DialogActions>
@@ -283,7 +292,6 @@ const Sprint = ({ index, items, setItems, userStories }) => {
 										</Button>
 									</DialogActions>
 								</Dialog>
-
 
 								<Typography sx={{ marginBottom: 2 }} fontSize={14}>
 									8
