@@ -17,7 +17,7 @@ AppDataSource.initialize().then(async () => {
 	/// Initializing som basic information for the frontend
 	/// TEMPORARY CODE UNTIL THE SIGNIN AND PROJECT SELECTION PAGES ARE DONE
 	console.log('initializing system')
-	const CREATEDATA = true;
+	const CREATEDATA = false;
 
 	const db = Database.setAndGetInstance(AppDataSource);
 	try {

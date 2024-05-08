@@ -1,11 +1,21 @@
 import { useState } from "react";
-import { Box, Divider, Typography, Paper, List } from "@mui/material";
+import { Box, Divider, Typography, Paper, List, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, TextField, ToggleButtonGroup, ToggleButton, IconButton } from '@mui/material';
+import AddIcon from '@mui/icons-material/Add';
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import UserStory from "./UserStory";
 import DeleteConfirmation from "./DeleteConfirmation";
 
 const Sprint = ({ index, items, setItems, userStories }) => {
 	const [stories, setStories] = useState(userStories);
+	const [dialogOpen, setDialogOpen] = useState(false);
+
+	const [backlogItemType, setBacklogItemType] = useState('story');
+	const [role, setRole] = useState('');
+	const [functionality, setFunctionality] = useState('');
+	const [reasoning, setReasoning] = useState('');
+	const [acceptanceCriteria, setAcceptanceCriteria] = useState('');
+	const [storyPoints, setStoryPoints] = useState(0);
+
 
 	// Function to handle the reordering of stories (content within the cards).
 	function reorderStories(result) {
@@ -55,6 +65,79 @@ const Sprint = ({ index, items, setItems, userStories }) => {
 		);
 	};
 
+	//for + popup
+	const openDialogForNewStory = () => {
+		setBacklogItemType('story');
+		setRole('');
+		setFunctionality('');
+		setReasoning('');
+		setAcceptanceCriteria('');
+		setStoryPoints(0);
+		setDialogOpen(true);
+	};
+
+	const handleDialogClose = () => {
+		setDialogOpen(false);
+	};
+
+	const handleCreate = (sprintId) => {
+		const newStory = {
+			backlogItemType,
+			role,
+			functionality,
+			reasoning,
+			acceptanceCriteria,
+			storyPoints,
+		};
+		console.log('Creating new story:', newStory);
+		saveNewStory(newStory, sprintId);
+		setDialogOpen(false);
+	};
+
+	function saveNewStory(newStory, sprintId) {
+		var options = {
+			method: "post",
+			credentials: "include",
+			headers: {
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify({
+				// change type?
+				userTypes: newStory.role,
+				functionalityDescription: newStory.functionality,
+				reasoning: newStory.reasoning,
+				acceptanceCriteria: newStory.acceptanceCriteria,
+				storyPoints: newStory.storyPoints,
+				priority: 1
+				// priority?
+			}),
+		};
+
+		try {
+			fetch(
+				`http://localhost:8080/api/sprint/${sprintId}`,
+				options
+			).then((result) => {
+				if (result.status !== 200) {
+					console.log("error", result);
+				}
+				console.log(items)
+				result.json().then((jsonResult) => {
+					console.log(jsonResult)
+					const sprintsCopy = [...items];
+					const indexOfSprint = sprintsCopy.findIndex((sprint) => sprint.id === sprintId);
+					console.log(indexOfSprint)
+					console.log(sprintsCopy[indexOfSprint])
+					sprintsCopy[indexOfSprint].todos.push(jsonResult)
+					setItems(sprintsCopy);
+				})
+			});
+		} catch {
+			return null;
+		}
+	}
+
+
 	return (
 		<DragDropContext onDragEnd={reorderStories}>
 			<Droppable droppableId={`droppable-${index}`} direction="horizontal">
@@ -93,6 +176,123 @@ const Sprint = ({ index, items, setItems, userStories }) => {
 										deleteSprint(sprintId, index);
 									}}
 								/>
+								<IconButton onClick={openDialogForNewStory} color="primary" aria-label="add new story">
+									<AddIcon />
+								</IconButton>
+								<Dialog open={dialogOpen} onClose={handleDialogClose} maxWidth="sm" fullWidth>
+									<DialogTitle>Add New Story</DialogTitle>
+									<DialogContent>
+										<ToggleButtonGroup
+											color="primary"
+											value={backlogItemType}
+											exclusive
+											onChange={(e, newType) => setBacklogItemType(newType)}
+											aria-label="User story type"
+											fullWidth
+											sx={{ marginBottom: 2 }}
+										>
+											<ToggleButton value="story">Story</ToggleButton>
+											<ToggleButton value="spike">Spike</ToggleButton>
+											<ToggleButton value="infrastructure">Infrastructure</ToggleButton>
+										</ToggleButtonGroup>
+
+										<Box display="flex" alignItems="center" gap={1} mb={2}>
+											<Typography variant="body2" component="span">
+												As a(n)
+											</Typography>
+											<TextField
+												size="small"
+												label="Role"
+												value={role}
+												onChange={(e) => setRole(e.target.value)}
+												fullWidth
+											/>
+											<Typography variant="body2" component="span">
+												I want to be able to
+											</Typography>
+										</Box>
+
+										<TextField
+											autoFocus
+											margin="dense"
+											id="functionality-description"
+											label="Functionality Description"
+											type="text"
+											fullWidth
+											variant="outlined"
+											multiline
+											rows={4}
+											value={functionality}
+											onChange={(e) => setFunctionality(e.target.value)}
+											sx={{ marginBottom: 2 }}
+										/>
+
+										<Typography variant="body2" component="span">
+											so that
+										</Typography>
+
+										<TextField
+											margin="dense"
+											id="reasoning"
+											label="Reasoning"
+											type="text"
+											fullWidth
+											variant="outlined"
+											multiline
+											rows={4}
+											value={reasoning}
+											onChange={(e) => setReasoning(e.target.value)}
+											sx={{ marginBottom: 2, marginTop: 2 }}
+										/>
+
+										<TextField
+											margin="dense"
+											id="acceptance-criteria"
+											label="Acceptance Criteria"
+											type="text"
+											fullWidth
+											variant="outlined"
+											multiline
+											rows={4}
+											value={acceptanceCriteria}
+											onChange={(e) => setAcceptanceCriteria(e.target.value)}
+											sx={{ marginBottom: 2 }}
+										/>
+
+										<TextField
+											margin="dense"
+											id="story-points"
+											label="Story Points"
+											type="number"
+											fullWidth
+											variant="outlined"
+											value={storyPoints}
+											onChange={(e) => {
+											  // Check if the entered value is a number and is not empty
+											  if (!isNaN(e.target.value) && e.target.value.trim() !== '') {
+												setStoryPoints(e.target.value);
+											  }
+											}}
+											InputProps={{
+											  inputProps: {
+												min: 0 // Minimum value
+											  }
+											}}
+										/>
+									</DialogContent>
+									<DialogActions>
+										<Button onClick={handleDialogClose}>Cancel</Button>
+										<Button onClick={() => {
+											const sprintId = items[index].id;
+											handleCreate(sprintId);
+										}}
+											color="primary"
+										>
+											Create Story
+										</Button>
+									</DialogActions>
+								</Dialog>
+
 								<Typography sx={{ marginBottom: 2 }} fontSize={14}>
 									8
 								</Typography>
