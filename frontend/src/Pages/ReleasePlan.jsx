@@ -40,10 +40,7 @@ const ReleasePlan = ({ projectId }) => {
           });
         }
       });
-    } catch {
-
-    }
-
+    } catch {}
   }
 
   function fetchRelease(releaseId, setProblem, setGoals) {
@@ -65,10 +62,7 @@ const ReleasePlan = ({ projectId }) => {
           }
         }
       );
-    } catch {
-
-    }
-
+    } catch {}
   }
 
   function fetchSprints(releaseId) {
@@ -89,9 +83,7 @@ const ReleasePlan = ({ projectId }) => {
           setSprints([]);
         }
       });
-    } catch {
-
-    }
+    } catch {}
   }
 
   function createNewSprints() {
@@ -237,7 +229,7 @@ const ReleasePlan = ({ projectId }) => {
           </Grid>
           {/* Backlog */}
           <Grid item xs={3}>
-            <Backlog />
+            <Backlog releaseId={releaseId} />
           </Grid>
         </Grid>
         {/* Sanity Check */}
