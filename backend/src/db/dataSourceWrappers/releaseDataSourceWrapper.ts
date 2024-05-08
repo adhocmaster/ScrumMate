@@ -48,6 +48,7 @@ export class ReleaseDataSourceWrapper extends ModelDataSourceWrapper {
 		if (!releaseWithBacklog || releaseWithBacklog.length === 0) {
 			throw new NotFoundError(`Release with releaseId ${releaseId} not found`)
 		}
+		releaseWithBacklog[0].backlog.sort((a, b) => a.rank - b.rank)
 		return releaseWithBacklog[0]
 	}
 

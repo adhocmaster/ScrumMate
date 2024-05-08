@@ -17,7 +17,7 @@ AppDataSource.initialize().then(async () => {
 	/// Initializing som basic information for the frontend
 	/// TEMPORARY CODE UNTIL THE SIGNIN AND PROJECT SELECTION PAGES ARE DONE
 	console.log('initializing system')
-	const CREATEDATA = false;
+	const CREATEDATA = true;
 
 	const db = Database.setAndGetInstance(AppDataSource);
 	try {
@@ -48,6 +48,7 @@ AppDataSource.initialize().then(async () => {
 		release1.goalStatement = "Keep everything fine"
 		release1.project = project1
 		release1.id = 1
+		release1.backlogItemCount = 0
 		await db.save(release1)
 
 		const release2 = new Release()
@@ -57,6 +58,7 @@ AppDataSource.initialize().then(async () => {
 		release2.goalStatement = "Must fix all the problems"
 		release2.project = project1
 		release2.id = 2
+		release2.backlogItemCount = 2
 		await db.save(release2)
 
 		const sprint1 = new Sprint()
@@ -90,6 +92,7 @@ AppDataSource.initialize().then(async () => {
 		await db.save(sprint3);
 
 		const backlog1 = new Story()
+		backlog1.id = 1;
 		backlog1.sprint = sprint1;
 		backlog1.userTypes = "none";
 		backlog1.reasoning = "there is no reasoning at all"
@@ -100,6 +103,7 @@ AppDataSource.initialize().then(async () => {
 		await db.save(backlog1);
 
 		const backlog2 = new Story()
+		backlog2.id = 2;
 		backlog2.sprint = sprint1;
 		backlog2.userTypes = "none";
 		backlog2.reasoning = "there is no reasoning at all"
@@ -111,6 +115,7 @@ AppDataSource.initialize().then(async () => {
 
 
 		const backlog3 = new Story()
+		backlog3.id = 3;
 		backlog3.sprint = sprint2;
 		backlog3.userTypes = "none";
 		backlog3.reasoning = "there is no reasoning at all"
@@ -121,6 +126,7 @@ AppDataSource.initialize().then(async () => {
 		await db.save(backlog3);
 
 		const backlog4 = new Story()
+		backlog4.id = 4;
 		backlog4.sprint = sprint2;
 		backlog4.userTypes = "none";
 		backlog4.reasoning = "there is no reasoning at all"
@@ -129,6 +135,28 @@ AppDataSource.initialize().then(async () => {
 		backlog4.functionalityDescription = "Second Backlog Item for sprint2."
 		backlog4.rank = 1
 		await db.save(backlog4);
+
+		const backlog5 = new Story()
+		backlog5.id = 5;
+		backlog5.release = release2;
+		backlog5.userTypes = "octopus";
+		backlog5.functionalityDescription = "eat fish"
+		backlog5.reasoning = "survive"
+		backlog5.acceptanceCriteria = "can eat fish and survive"
+		backlog5.storyPoints = 1000000;
+		backlog5.rank = 0
+		await db.save(backlog5);
+
+		const backlog6 = new Story()
+		backlog6.id = 6;
+		backlog6.release = release2;
+		backlog6.userTypes = "fish";
+		backlog6.functionalityDescription = "eat octopus"
+		backlog6.reasoning = "survive"
+		backlog6.acceptanceCriteria = "can eat octopus and survive"
+		backlog6.storyPoints = 1;
+		backlog6.rank = 1
+		await db.save(backlog6);
 	}
 
 	/// Start express
