@@ -1,8 +1,13 @@
 import React, { useEffect, useState } from 'react'
 import HistoryEduIcon from '@mui/icons-material/HistoryEdu'
-import { Drawer, IconButton, Typography, Grid, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, ListItemText } from "@mui/material";
+import {
+    Drawer, IconButton, Typography, Grid, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, ListItemText,
+    ListItem, ListItemIcon, Avatar, Box, List, Button
+} from "@mui/material";
 
-export const Signing = (projectId) => {
+import RestoreIcon from '@mui/icons-material/Restore';
+
+export const Signing = ({ projectId }) => {
 
     const [open, setOpen] = useState(false);
     const [users, setUserList] = useState([[], { username: "loading..." }, []]);
@@ -26,12 +31,8 @@ export const Signing = (projectId) => {
         }
     };
 
-    useEffect(() => {
-
-        fetchUserList(projectId);
-    });
-
     const handleClickOpen = () => {
+        fetchUserList(projectId)
         setOpen(true);
     };
 
@@ -45,18 +46,31 @@ export const Signing = (projectId) => {
             <IconButton onClick={() => handleClickOpen()}>
                 <HistoryEduIcon />
             </IconButton>
-            <Dialog open={open} onClose={handleClickClose}>
-                <DialogTitle>
-                    Signatures
-                </DialogTitle>
+            <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'column' }}>
 
-                <>
-                    <DialogContentText>
-                    </DialogContentText>
-                </>
+                <Dialog open={open} onClose={handleClickClose}>
+                    <DialogTitle>
+                        Signatures
+                    </DialogTitle>
+                    <List sx={{ width: '600px', bgcolor: 'background.paper' }}>
 
-
-            </Dialog>
+                        <ListItem>
+                            <ListItemIcon>
+                                <Avatar>PO</Avatar>
+                            </ListItemIcon>
+                            <ListItemText primary={users[1].username} />
+                            <ListItemIcon>
+                                <RestoreIcon fontSize="large" />
+                            </ListItemIcon>
+                        </ListItem>
+                    </List>
+                    <Box sx={{ padding: '16px 10px' }}>
+                        <Button variant="contained" color="primary" fullWidth>
+                            Sign Release Plan
+                        </Button>
+                    </Box>
+                </Dialog>
+            </Box >
         </>
 
     )
