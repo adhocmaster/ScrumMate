@@ -6,10 +6,12 @@ import {
 } from "@mui/material";
 
 import RestoreIcon from '@mui/icons-material/Restore';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 
 export const Signing = ({ projectId }) => {
 
     const [open, setOpen] = useState(false);
+    const [signed, isSigned] = useState(false);
     const [users, setUserList] = useState([[], { username: "loading..." }, []]);
 
     function fetchUserList() {
@@ -40,6 +42,10 @@ export const Signing = ({ projectId }) => {
         setOpen(false);
     }
 
+    const handleSignInClick = () => {
+        isSigned(true);
+    }
+
     return (
 
         <>
@@ -60,16 +66,16 @@ export const Signing = ({ projectId }) => {
                             </ListItemIcon>
                             <ListItemText primary={users[1].username} />
                             <ListItemIcon>
-                                <RestoreIcon fontSize="large" />
+                                {signed ? <CheckCircleIcon sx={{ color: 'green' }} fontSize='large' /> : <RestoreIcon fontSize="large" />}
                             </ListItemIcon>
                         </ListItem>
                     </List>
-                    <Box sx={{ padding: '16px 10px' }}>
+                    <Box sx={{ padding: '16px 10px' }} onClick={() => handleSignInClick()}>
                         <Button variant="contained" color="primary" fullWidth>
                             Sign Release Plan
                         </Button>
                     </Box>
-                </Dialog>
+                </Dialog >
             </Box >
         </>
 
