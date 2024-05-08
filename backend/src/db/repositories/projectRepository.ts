@@ -57,6 +57,15 @@ export class ProjectRepository extends ModelRepository {
 		}
 		await this.userSource.save(user);
 		await this.projectSource.save(project);
+
+		// check every revision that is not signed yet and make it fully signed if this was the missing signature
+		const projectWithReleases = await this.projectSource.fetchProjectWithReleases(projectId);
+		for (const release of projectWithReleases.releases) {
+			if (!release.fullySigned && release.signatures.length === project.teamMembers.length) {
+				release.fullySigned = true;
+				await this.releaseSource.save(release)
+			}
+		}
 	}
 
 	public async deleteBacklogItem(backlogItemId: number) {
