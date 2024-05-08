@@ -1,8 +1,9 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany, ManyToOne } from "typeorm"
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany, ManyToOne, ManyToMany, JoinTable } from "typeorm"
 import { Sprint } from "./sprint"
 import { Project } from "./project"
 import { BacklogItem } from "./backlogItem"
 import { addMaybeUndefined, getMaybeUndefined, removeMaybeUndefined } from "./utils/addGetList"
+import { User } from "./User"
 
 @Entity()
 export class Release {
@@ -25,6 +26,9 @@ export class Release {
 	@Column({ default: 0 })
 	backlogItemCount: number = 0
 
+	@Column()
+	fullySigned: boolean = false
+
 	///// Relational /////
 
 	@ManyToOne(() => Project, (project) => project.releases, { nullable: false })
@@ -32,6 +36,10 @@ export class Release {
 
 	@OneToMany(() => Sprint, (sprint) => sprint.release)
 	sprints: Sprint[]
+
+	@ManyToMany(() => User, (user) => user.signedReleases)
+	@JoinTable()
+	signatures: User[]
 
 	@OneToMany(() => BacklogItem, (backlog) => backlog.release)
 	backlog: BacklogItem[]

@@ -2,6 +2,7 @@ import { Entity, PrimaryGeneratedColumn, Column, OneToMany, ManyToMany } from "t
 import { Project } from "./project"
 import { getMaybeUndefined, addMaybeUndefined, removeMaybeUndefined } from "./utils/addGetList"
 import { BacklogItem } from "./backlogItem"
+import { Release } from "./release"
 
 @Entity()
 export class User {
@@ -33,6 +34,9 @@ export class User {
 
 	@ManyToMany(() => Project, (project) => project.invitedUsers)
 	projectInvites: Project[]
+
+	@ManyToMany(() => Release, (release) => release.signatures)
+	signedReleases: Release[]
 
 	@ManyToMany(() => BacklogItem, (todo) => todo.assignees)
 	assignments: BacklogItem[]
