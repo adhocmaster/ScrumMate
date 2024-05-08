@@ -44,17 +44,18 @@ export class ProjectDataSourceWrapper extends ModelDataSourceWrapper {
 	}
 
 	public async fetchProjectWithReleases(id: number): Promise<Project> {
-		// Get the project with revisions' with only their numbers and dates
-		// avoids getting the problem/goal statements and saves on data
-		const maybeProject = await this.dataSource.getRepository(Project).createQueryBuilder("project")
-			.where("project.id = :projectId", { projectId: id })
-			.select(['project.id', 'release.id', 'release.revision', "release.revisionDate"])
-			.leftJoin('project.releases', 'release')  // releases is the joined table
-			.getMany();
+		const maybeProject = await this.dataSource.getRepository(Project).find({
+			where: { id: id },
+			relations: {
+				releases: {
+					signatures: true
+				},
+			}
+		})
 		if (!maybeProject || maybeProject.length === 0) {
 			throw new NotFoundError(`Project with id ${id} not found`)
 		}
-		reverse(maybeProject[0].releases) // may need to get from db in desc order instead
+		maybeProject[0].releases.sort((a: Release, b: Release) => b.revision - a.revision)
 		return maybeProject[0]
 	}
 
