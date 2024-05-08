@@ -149,7 +149,7 @@ const Backlog = ({ releaseId }) => {
 		<DragDropContext onDragEnd={onDragEnd}>
 			<Typography
 				variant="h6"
-				marginLeft={2}
+				marginLeft={4}
 				textAlign={"left"}
 				fontWeight="bold"
 				fontSize={14}
@@ -276,8 +276,9 @@ const Backlog = ({ releaseId }) => {
 				{(provided) => (
 					<Paper
 						sx={{
-							marginLeft: 2,
+							marginLeft: 4,
 							backgroundColor: "lightgray",
+              width: { xs: '80%', sm: '60%', md: '80%', lg: '60%' } // Responsive width settings
 						}}
 						{...provided.droppableProps}
 						ref={provided.innerRef}
