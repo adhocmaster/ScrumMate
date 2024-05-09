@@ -156,29 +156,39 @@ export class ReleaseRepository extends ModelRepository {
 		return releaseWithSprints.sprints;
 	}
 
-	public async toggleSigning(userId: number, releaseId: number): Promise<User[]> {
+	public async toggleSigning(userId: number, releaseId: number): Promise<(User[] | boolean)[]> {
 		const releaseWithSignatures = await this.fetchReleaseWithSignatures(releaseId);
-		if (releaseWithSignatures.fullySigned) {
-			// throw new SigningError(`Release is fully signed`);
-			return releaseWithSignatures.signatures;
-		}
-
+		const releaseWithProject = await this.releaseSource.fetchReleaseWithProject(releaseId);
+		const projectWithMembers = await this.projectSource.lookupProjectByIdWithUsers(releaseWithProject.project.id);
+		const allMembers = [projectWithMembers.productOwner, ...projectWithMembers.teamMembers];
 		const userHasSigned = releaseWithSignatures.signatures.some((user) => user.id === userId);
-		if (userHasSigned) {
+
+		if (releaseWithSignatures.fullySigned) {
+			// throw new SigningError(`User ${userId} has already signed release ${releaseId}.`); 
+		} else if (userHasSigned) {
 			releaseWithSignatures.signatures = releaseWithSignatures.signatures.filter((user) => user.id !== userId);
 		} else {
 			const userToAdd = await this.userSource.lookupUserById(userId);
 			releaseWithSignatures.addSignature(userToAdd);
 
-			const releaseWithProject = await this.releaseSource.fetchReleaseWithProject(releaseId);
-			const projectWithMembers = await this.projectSource.lookupProjectByIdWithUsers(releaseWithProject.project.id);
-			if (releaseWithSignatures.signatures.length === projectWithMembers.teamMembers.length + 1) {
-				releaseWithSignatures.fullySigned = true;
-			}
+			releaseWithSignatures.fullySigned = releaseWithSignatures.signatures.length === projectWithMembers.teamMembers.length + 1;
 		}
 
 		await this.releaseSource.save(releaseWithSignatures);
-		return releaseWithSignatures.signatures;
+
+		// set difference
+		const unsignedMembers = allMembers.filter((member) => !releaseWithSignatures.signatures.some((signature) => signature.id === member.id));
+
+		return [unsignedMembers, releaseWithSignatures.signatures, releaseWithSignatures.fullySigned];
+	}
+
+	public async getSignatures(releaseId: number): Promise<(User[] | boolean)[]> {
+		const releaseWithSignatures = await this.fetchReleaseWithSignatures(releaseId);
+		const releaseWithProject = await this.releaseSource.fetchReleaseWithProject(releaseId);
+		const projectWithMembers = await this.projectSource.lookupProjectByIdWithUsers(releaseWithProject.project.id);
+		const allMembers = [projectWithMembers.productOwner, ...projectWithMembers.teamMembers];
+		const unsignedMembers = allMembers.filter((member) => !releaseWithSignatures.signatures.some((signature) => signature.id === member.id));
+		return [unsignedMembers, releaseWithSignatures.signatures, releaseWithSignatures.fullySigned];
 	}
 
 	public async lookupReleaseById(id: number): Promise<Release> {
