@@ -2,6 +2,8 @@ import { Sprint } from "../../entity/sprint";
 import { Release } from "../../entity/release";
 import { ModelRepository } from "./modelRepository";
 import { BacklogItem, Bug, Epic, Infrastructure, Spike, Story, Task } from "../../entity/backlogItem";
+import { User } from "../../entity/User";
+// import { SigningError } from "../../helpers/errors";
 
 export class ReleaseRepository extends ModelRepository {
 
@@ -154,6 +156,43 @@ export class ReleaseRepository extends ModelRepository {
 		return releaseWithSprints.sprints;
 	}
 
+	public async toggleSigning(userId: number, releaseId: number): Promise<(User[] | boolean)[]> {
+		const releaseWithSignatures = await this.fetchReleaseWithSignatures(releaseId);
+		const releaseWithProject = await this.releaseSource.fetchReleaseWithProject(releaseId);
+		const projectWithMembers = await this.projectSource.lookupProjectByIdWithUsers(releaseWithProject.project.id);
+		const allMembers = [projectWithMembers.productOwner, ...projectWithMembers.teamMembers];
+		const userHasSigned = releaseWithSignatures.signatures.some((user) => user.id === userId);
+		const isProductOwner = projectWithMembers.productOwner.id === userId;
+
+		if (releaseWithSignatures.fullySigned || (releaseWithSignatures.signatures.length === 0 && !isProductOwner)) {
+			// throw new SigningError(`User ${userId} has already signed release ${releaseId}.`);
+			// throw new SigningError(`User ${userId} is not Product Owner`);
+		} else if (userHasSigned) {
+			releaseWithSignatures.signatures = releaseWithSignatures.signatures.filter((user) => user.id !== userId);
+		} else {
+			const userToAdd = await this.userSource.lookupUserById(userId);
+			releaseWithSignatures.addSignature(userToAdd);
+
+			releaseWithSignatures.fullySigned = releaseWithSignatures.signatures.length === projectWithMembers.teamMembers.length + 1;
+		}
+
+		await this.releaseSource.save(releaseWithSignatures);
+
+		// set difference
+		const unsignedMembers = allMembers.filter((member) => !releaseWithSignatures.signatures.some((signature) => signature.id === member.id));
+
+		return [unsignedMembers, releaseWithSignatures.signatures, releaseWithSignatures.fullySigned];
+	}
+
+	public async getSignatures(releaseId: number): Promise<(User[] | boolean)[]> {
+		const releaseWithSignatures = await this.fetchReleaseWithSignatures(releaseId);
+		const releaseWithProject = await this.releaseSource.fetchReleaseWithProject(releaseId);
+		const projectWithMembers = await this.projectSource.lookupProjectByIdWithUsers(releaseWithProject.project.id);
+		const allMembers = [projectWithMembers.productOwner, ...projectWithMembers.teamMembers];
+		const unsignedMembers = allMembers.filter((member) => !releaseWithSignatures.signatures.some((signature) => signature.id === member.id));
+		return [unsignedMembers, releaseWithSignatures.signatures, releaseWithSignatures.fullySigned];
+	}
+
 	public async lookupReleaseById(id: number): Promise<Release> {
 		return await this.releaseSource.lookupReleaseById(id);
 	}
@@ -168,6 +207,10 @@ export class ReleaseRepository extends ModelRepository {
 
 	public async fetchReleaseWithBacklog(releaseId: number): Promise<Release> {
 		return await this.releaseSource.fetchReleaseWithBacklog(releaseId);
+	}
+
+	public async fetchReleaseWithSignatures(releaseId: number): Promise<Release> {
+		return await this.releaseSource.fetchReleaseWithSignatures(releaseId);
 	}
 
 	public async fetchReleaseWithEverything(releaseId: number): Promise<Release> {

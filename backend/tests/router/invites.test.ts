@@ -436,26 +436,91 @@ describe("Invite API tests", () => {
 
 	// now testing signing statuses with joins/leaves
 	let release1Id: number;
-	// temp until API is implemented
-	test("sally and bobby can fully sign revision 1", async () => {
+	test("getting signatures for unsigned release revision", async () => {
 		const db = Database.getInstance();
-		const projectWithUsers = await db.getProjectRepository.lookupProjectByIdWithUsers(projectId);
 		const projectWithReleases = await db.getProjectRepository.fetchProjectWithReleases(projectId);
-		expect(projectWithReleases.releases.length).toBe(1);
-		expect(projectWithReleases.releases[0].signatures.length).toBe(0);
-		expect(projectWithUsers.teamMembers.length).toBe(1);
-		projectWithReleases.releases[0].addSignature(projectWithUsers.productOwner);
-		projectWithReleases.releases[0].addSignature(projectWithUsers.teamMembers[0]);
-		projectWithReleases.releases[0].fullySigned = true;
 		release1Id = projectWithReleases.releases[0].id;
-		await db.getReleaseRepository.releaseSource.save(projectWithReleases.releases[0]);
-		const projectWithReleasesAfterSaving = await db.getProjectRepository.fetchProjectWithReleases(projectId);
-		expect(projectWithReleasesAfterSaving.releases.length).toBe(1);
-		expect(projectWithReleasesAfterSaving.releases[0].signatures.length).toBe(2);
-		expect(projectWithReleasesAfterSaving.releases[0].fullySigned).toBe(true);
+
+		await request(app)
+			.get(`/api/release/${release1Id}/signatures`)
+			.set('Cookie', [`user-auth=${sessionToken1}`])
+			.expect(200)
+			.then((res) => {
+				expect(res.body).toBeDefined();
+				expect(res.body.length).toBe(3);
+				expect(res.body[0].length).toBe(2);
+				expect(res.body[0].some((user: User) => user.id === sallyId)).toBe(true);
+				expect(res.body[0].some((user: User) => user.id === bobbyId)).toBe(true);
+				expect(res.body[1].length).toBe(0);
+				expect(res.body[2]).toBe(false);
+			});
 	});
 
-	// temp until API is implemented
+	test("sally can't fully sign revision 1", async () => {
+		await request(app)
+			.post(`/api/release/${release1Id}/toggleSign`)
+			.set('Cookie', [`user-auth=${sessionToken1}`])
+			.expect(200)
+			.then((res) => {
+				expect(res.body).toBeDefined();
+				expect(res.body.length).toBe(3);
+				expect(res.body[0].length).toBe(1);
+				expect(res.body[0][0].id).toBe(bobbyId);
+				expect(res.body[1].length).toBe(1);
+				expect(res.body[1][0].id).toBe(sallyId);
+				expect(res.body[2]).toBe(false);
+			});
+	});
+
+	test("getting signatures for release revision with 1 signature", async () => {
+		await request(app)
+			.get(`/api/release/${release1Id}/signatures`)
+			.set('Cookie', [`user-auth=${sessionToken1}`])
+			.expect(200)
+			.then((res) => {
+				expect(res.body).toBeDefined();
+				expect(res.body.length).toBe(3);
+				expect(res.body[0].length).toBe(1);
+				expect(res.body[0][0].id).toBe(bobbyId);
+				expect(res.body[1].length).toBe(1);
+				expect(res.body[1][0].id).toBe(sallyId);
+				expect(res.body[2]).toBe(false);
+			});
+	});
+
+
+	test("bobby can fully sign revision 1", async () => {
+		await request(app)
+			.post(`/api/release/${release1Id}/toggleSign`)
+			.set('Cookie', [`user-auth=${sessionToken2}`])
+			.expect(200)
+			.then((res) => {
+				expect(res.body).toBeDefined();
+				expect(res.body.length).toBe(3);
+				expect(res.body[0].length).toBe(0);
+				expect(res.body[1].length).toBe(2);
+				expect(res.body[1].some((user: User) => user.id === sallyId)).toBe(true);
+				expect(res.body[1].some((user: User) => user.id === bobbyId)).toBe(true);
+				expect(res.body[2]).toBe(true);
+			});
+	});
+
+	test("getting signatures for release revision with both signatures", async () => {
+		await request(app)
+			.get(`/api/release/${release1Id}/signatures`)
+			.set('Cookie', [`user-auth=${sessionToken1}`])
+			.expect(200)
+			.then((res) => {
+				expect(res.body).toBeDefined();
+				expect(res.body.length).toBe(3);
+				expect(res.body[0].length).toBe(0);
+				expect(res.body[1].length).toBe(2);
+				expect(res.body[1].some((user: User) => user.id === sallyId)).toBe(true);
+				expect(res.body[1].some((user: User) => user.id === bobbyId)).toBe(true);
+				expect(res.body[2]).toBe(true);
+			});
+	});
+
 	let release2Id: number;
 	test('Making a copy of revision 1 makes a revision 2 with no signatures', async () => {
 		await request(app)
@@ -473,28 +538,36 @@ describe("Invite API tests", () => {
 			});
 	});
 
-	// test("bobby can't sign revision 2", async () => {
-	// 	const db = Database.getInstance();
-	// 	const bobby = await db.getUserRepository.lookupUserById(bobbyId);
-	// 	const releaseWithEverything = await db.getReleaseRepository.fetchReleaseWithEverything(release2Id);
-	// 	releaseWithEverything.addSignature(bobby);
-	// 	await db.getReleaseRepository.releaseSource.save(releaseWithEverything)
-	// 	const releaseWithEverythingAfterSigning = await db.getReleaseRepository.fetchReleaseWithEverything(release2Id);
-	// 	expect(releaseWithEverythingAfterSigning.fullySigned).toBe(false);
-	// 	expect(releaseWithEverythingAfterSigning.signatures.length).toBe(1);
-	// 	expect(releaseWithEverythingAfterSigning.signatures[0].id).toBe(sallyId);
-	// });
+	test("bobby can't sign revision 2", async () => {
+		await request(app)
+			.post(`/api/release/${release2Id}/toggleSign`)
+			.set('Cookie', [`user-auth=${sessionToken2}`])
+			.expect(200)
+			.then((res) => {
+				expect(res.body).toBeDefined();
+				expect(res.body.length).toBe(3);
+				expect(res.body[0].length).toBe(2);
+				expect(res.body[0].some((user: User) => user.id === sallyId)).toBe(true);
+				expect(res.body[0].some((user: User) => user.id === bobbyId)).toBe(true);
+				expect(res.body[1].length).toBe(0);
+				expect(res.body[2]).toBe(false);
+			});
+	});
 
 	test("sally can sign revision 2 and it will not be fully signed", async () => {
-		const db = Database.getInstance();
-		const productOwner = await db.getUserRepository.lookupUserById(sallyId);
-		const releaseWithEverything = await db.getReleaseRepository.fetchReleaseWithEverything(release2Id);
-		releaseWithEverything.addSignature(productOwner);
-		await db.getReleaseRepository.releaseSource.save(releaseWithEverything)
-		const releaseWithEverythingAfterSigning = await db.getReleaseRepository.fetchReleaseWithEverything(release2Id);
-		expect(releaseWithEverythingAfterSigning.fullySigned).toBe(false);
-		expect(releaseWithEverythingAfterSigning.signatures.length).toBe(1);
-		expect(releaseWithEverythingAfterSigning.signatures[0].id).toBe(sallyId);
+		await request(app)
+			.post(`/api/release/${release2Id}/toggleSign`)
+			.set('Cookie', [`user-auth=${sessionToken1}`])
+			.expect(200)
+			.then((res) => {
+				expect(res.body).toBeDefined();
+				expect(res.body.length).toBe(3);
+				expect(res.body[0].length).toBe(1);
+				expect(res.body[0][0].id).toBe(bobbyId);
+				expect(res.body[1].length).toBe(1);
+				expect(res.body[1][0].id).toBe(sallyId);
+				expect(res.body[2]).toBe(false);
+			});
 	});
 
 	test("bobby leaving the project", async () => {
@@ -505,11 +578,18 @@ describe("Invite API tests", () => {
 	});
 
 	test("bobby leaving the project made revision 2 fully signed", async () => {
-		const db = Database.getInstance();
-		const releaseWithEverything = await db.getReleaseRepository.fetchReleaseWithEverything(release2Id);
-		expect(releaseWithEverything.fullySigned).toBe(true);
-		expect(releaseWithEverything.signatures.length).toBe(1);
-		expect(releaseWithEverything.signatures[0].id).toBe(sallyId);
+		await request(app)
+			.get(`/api/release/${release2Id}/signatures`)
+			.set('Cookie', [`user-auth=${sessionToken1}`])
+			.expect(200)
+			.then((res) => {
+				expect(res.body).toBeDefined();
+				expect(res.body.length).toBe(3);
+				expect(res.body[0].length).toBe(0);
+				expect(res.body[1].length).toBe(1);
+				expect(res.body[1][0].id).toBe(sallyId);
+				expect(res.body[2]).toBe(true);
+			});
 	});
 
 	test('reinviting bobby', async () => {
@@ -541,18 +621,35 @@ describe("Invite API tests", () => {
 	});
 
 	test("revision 2 is no longer fully signed", async () => {
-		const db = Database.getInstance();
-		const releaseWithEverything = await db.getReleaseRepository.fetchReleaseWithEverything(release2Id);
-		expect(releaseWithEverything.fullySigned).toBe(false);
-		expect(releaseWithEverything.signatures.length).toBe(1);
-		expect(releaseWithEverything.signatures[0].id).toBe(sallyId);
+		await request(app)
+			.get(`/api/release/${release2Id}/signatures`)
+			.set('Cookie', [`user-auth=${sessionToken1}`])
+			.expect(200)
+			.then((res) => {
+				expect(res.body).toBeDefined();
+				expect(res.body.length).toBe(3);
+				expect(res.body[0].length).toBe(1);
+				expect(res.body[0][0].id).toBe(bobbyId);
+				expect(res.body[1].length).toBe(1);
+				expect(res.body[1][0].id).toBe(sallyId);
+				expect(res.body[2]).toBe(false);
+			});
 	});
 
 	test("revision 1 is still fully signed", async () => {
-		const db = Database.getInstance();
-		const releaseWithEverything = await db.getReleaseRepository.fetchReleaseWithEverything(release1Id);
-		expect(releaseWithEverything.fullySigned).toBe(true);
-		expect(releaseWithEverything.signatures.length).toBe(2);
+		await request(app)
+			.get(`/api/release/${release1Id}/signatures`)
+			.set('Cookie', [`user-auth=${sessionToken1}`])
+			.expect(200)
+			.then((res) => {
+				expect(res.body).toBeDefined();
+				expect(res.body.length).toBe(3);
+				expect(res.body[0].length).toBe(0);
+				expect(res.body[1].length).toBe(2);
+				expect(res.body[1].some((user: User) => user.id === sallyId)).toBe(true);
+				expect(res.body[1].some((user: User) => user.id === bobbyId)).toBe(true);
+				expect(res.body[2]).toBe(true);
+			});
 	});
 
 });

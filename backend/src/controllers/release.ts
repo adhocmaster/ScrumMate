@@ -31,6 +31,7 @@ export const editRelease = async (req: express.Request, res: express.Response) =
 export const copyRelease = async (req: express.Request, res: express.Response) => {
 	const db = Database.getInstance();
 	const { releaseId } = req.params;
+	verifyParameters(releaseId);
 	const release = await db.getReleaseRepository.copyRelease(parseInt(releaseId));
 	return res.json(release);
 };
@@ -38,6 +39,7 @@ export const copyRelease = async (req: express.Request, res: express.Response) =
 export const getRelease = async (req: express.Request, res: express.Response) => {
 	const db = Database.getInstance();
 	const { releaseId } = req.params;
+	verifyParameters(releaseId);
 	const release = await db.getReleaseRepository.fetchReleaseWithProject(parseInt(releaseId));
 	return res.json(release);
 };
@@ -45,6 +47,23 @@ export const getRelease = async (req: express.Request, res: express.Response) =>
 export const getReleaseAndBacklog = async (req: express.Request, res: express.Response) => {
 	const db = Database.getInstance();
 	const { releaseId } = req.params;
+	verifyParameters(releaseId);
 	const release = await db.getReleaseRepository.fetchReleaseWithBacklog(parseInt(releaseId));
 	return res.json(release);
+};
+
+export const toggleSigning = async (req: express.Request, res: express.Response) => {
+	const db = Database.getInstance();
+	const { releaseId } = req.params;
+	verifyParameters(releaseId);
+	const signatureLists = await db.getReleaseRepository.toggleSigning(req.userId, parseInt(releaseId));
+	return res.json(signatureLists);
+};
+
+export const getSignatures = async (req: express.Request, res: express.Response) => {
+	const db = Database.getInstance();
+	const { releaseId } = req.params;
+	verifyParameters(releaseId);
+	const signatureLists = await db.getReleaseRepository.getSignatures(parseInt(releaseId));
+	return res.json(signatureLists);
 };
