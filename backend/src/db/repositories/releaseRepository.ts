@@ -2,6 +2,8 @@ import { Sprint } from "../../entity/sprint";
 import { Release } from "../../entity/release";
 import { ModelRepository } from "./modelRepository";
 import { BacklogItem, Bug, Epic, Infrastructure, Spike, Story, Task } from "../../entity/backlogItem";
+import { User } from "../../entity/User";
+import { SigningError } from "../../helpers/errors";
 
 export class ReleaseRepository extends ModelRepository {
 
@@ -154,6 +156,31 @@ export class ReleaseRepository extends ModelRepository {
 		return releaseWithSprints.sprints;
 	}
 
+	public async toggleSigning(userId: number, releaseId: number): Promise<User[]> {
+		const releaseWithSignatures = await this.fetchReleaseWithSignatures(releaseId);
+		if (releaseWithSignatures.fullySigned) {
+			// throw new SigningError(`Release is fully signed`);
+			return releaseWithSignatures.signatures;
+		}
+
+		const userHasSigned = releaseWithSignatures.signatures.some((user) => user.id === userId);
+		if (userHasSigned) {
+			releaseWithSignatures.signatures = releaseWithSignatures.signatures.filter((user) => user.id !== userId);
+		} else {
+			const userToAdd = await this.userSource.lookupUserById(userId);
+			releaseWithSignatures.addSignature(userToAdd);
+
+			const releaseWithProject = await this.releaseSource.fetchReleaseWithProject(releaseId);
+			const projectWithMembers = await this.projectSource.lookupProjectByIdWithUsers(releaseWithProject.project.id);
+			if (releaseWithSignatures.signatures.length === projectWithMembers.teamMembers.length + 1) {
+				releaseWithSignatures.fullySigned = true;
+			}
+		}
+
+		await this.releaseSource.save(releaseWithSignatures);
+		return releaseWithSignatures.signatures;
+	}
+
 	public async lookupReleaseById(id: number): Promise<Release> {
 		return await this.releaseSource.lookupReleaseById(id);
 	}
@@ -168,6 +195,10 @@ export class ReleaseRepository extends ModelRepository {
 
 	public async fetchReleaseWithBacklog(releaseId: number): Promise<Release> {
 		return await this.releaseSource.fetchReleaseWithBacklog(releaseId);
+	}
+
+	public async fetchReleaseWithSignatures(releaseId: number): Promise<Release> {
+		return await this.releaseSource.fetchReleaseWithSignatures(releaseId);
 	}
 
 	public async fetchReleaseWithEverything(releaseId: number): Promise<Release> {

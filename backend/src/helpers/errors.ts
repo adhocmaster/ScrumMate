@@ -6,6 +6,7 @@ export const Codes = {
 	NotSavedError: 500,
 	ExistingUserError: 400,
 	DeletionError: 500,
+	SigningError: 400,
 	Success: 200,
 };
 
@@ -56,6 +57,16 @@ export class DeletionError extends Error {
 	}
 	public code() {
 		return Codes.DeletionError;
+	}
+}
+
+export class SigningError extends Error {
+	constructor(msg: string) {
+		super(msg);
+		this.name = "SigningError"
+	}
+	public code() {
+		return Codes.SigningError;
 	}
 }
 

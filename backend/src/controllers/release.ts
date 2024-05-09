@@ -48,3 +48,10 @@ export const getReleaseAndBacklog = async (req: express.Request, res: express.Re
 	const release = await db.getReleaseRepository.fetchReleaseWithBacklog(parseInt(releaseId));
 	return res.json(release);
 };
+
+export const toggleSigning = async (req: express.Request, res: express.Response) => {
+	const db = Database.getInstance();
+	const { releaseId } = req.params;
+	const release = await db.getReleaseRepository.toggleSigning(req.userId, parseInt(releaseId));
+	return res.json(release);
+};
