@@ -43,7 +43,7 @@ export const Signing = ({ projectId }) => {
     }
 
     const handleSignInClick = () => {
-        isSigned(true);
+        isSigned(true)
     }
 
     return (
