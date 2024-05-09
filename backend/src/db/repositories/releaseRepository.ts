@@ -162,9 +162,11 @@ export class ReleaseRepository extends ModelRepository {
 		const projectWithMembers = await this.projectSource.lookupProjectByIdWithUsers(releaseWithProject.project.id);
 		const allMembers = [projectWithMembers.productOwner, ...projectWithMembers.teamMembers];
 		const userHasSigned = releaseWithSignatures.signatures.some((user) => user.id === userId);
+		const isProductOwner = projectWithMembers.productOwner.id === userId;
 
-		if (releaseWithSignatures.fullySigned) {
-			// throw new SigningError(`User ${userId} has already signed release ${releaseId}.`); 
+		if (releaseWithSignatures.fullySigned || (releaseWithSignatures.signatures.length === 0 && !isProductOwner)) {
+			// throw new SigningError(`User ${userId} has already signed release ${releaseId}.`);
+			// throw new SigningError(`User ${userId} is not Product Owner`);
 		} else if (userHasSigned) {
 			releaseWithSignatures.signatures = releaseWithSignatures.signatures.filter((user) => user.id !== userId);
 		} else {

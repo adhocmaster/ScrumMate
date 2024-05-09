@@ -10,6 +10,6 @@ export default (router: express.Router) => {
 	router.post('/release/:releaseId/copy', isAuthenticated, errorWrapper(copyRelease));
 	router.get('/release/:releaseId', errorWrapper(getRelease));
 	router.get('/release/:releaseId/backlog', errorWrapper(getReleaseAndBacklog));
-	router.post('/release/:releaseId/toggleSign', errorWrapper(toggleSigning));
-	router.get('/release/:releaseId/signatures', errorWrapper(getSignatures));
+	router.post('/release/:releaseId/toggleSign', isAuthenticated, errorWrapper(toggleSigning));
+	router.get('/release/:releaseId/signatures', isAuthenticated, errorWrapper(getSignatures));
 };
