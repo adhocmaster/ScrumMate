@@ -3,7 +3,7 @@ import { Release } from "../../entity/release";
 import { ModelRepository } from "./modelRepository";
 import { BacklogItem, Bug, Epic, Infrastructure, Spike, Story, Task } from "../../entity/backlogItem";
 import { User } from "../../entity/User";
-import { SigningError } from "../../helpers/errors";
+// import { SigningError } from "../../helpers/errors";
 
 export class ReleaseRepository extends ModelRepository {
 
