@@ -170,5 +170,9 @@ export class ReleaseRepository extends ModelRepository {
 		return await this.releaseSource.fetchReleaseWithBacklog(releaseId);
 	}
 
+	public async fetchReleaseWithEverything(releaseId: number): Promise<Release> {
+		return await this.releaseSource.fetchReleaseWithEverything(releaseId);
+	}
+
 
 }

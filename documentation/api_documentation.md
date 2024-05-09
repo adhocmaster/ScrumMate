@@ -16,8 +16,8 @@
     Body: { userId: number, name: string}
 
 
-  ### Join Project
-  POST: /project/:userId/joinProject/:projectId
+  ### Force a user to Join Project
+  POST: /project/:userId/forceJoinProject/:projectId
 
     Body: {}
 
