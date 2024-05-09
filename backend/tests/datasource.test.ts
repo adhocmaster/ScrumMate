@@ -96,7 +96,7 @@ describe("Project methods", () => {
 
 	test("joe joining plannertarium", async () => {
 		const db = Database.getInstance();
-		plannertarium = await db.getUserRepository.joinProject(joe.id, plannertarium.id)
+		plannertarium = await db.getUserRepository.forceJoinProject(joe.id, plannertarium.id)
 		expect(plannertarium.name).toBe("plannertarium")
 		expect((await db.getUserRepository.fetchUserWithProjects(joe.id)).getOwnedProjects()).toStrictEqual([])
 		expect((await db.getUserRepository.fetchUserWithProjects(joe.id)).getJoinedProjects().length).toBe(1)

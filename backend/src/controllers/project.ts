@@ -11,11 +11,11 @@ export const newProject = async (req: express.Request, res: express.Response) =>
 	return res.json(newProject);
 };
 
-export const joinProject = async (req: express.Request, res: express.Response) => {
+export const forceJoinProject = async (req: express.Request, res: express.Response) => {
 	const db = Database.getInstance();
 	const { projectId } = req.params;
 	verifyParameters(projectId);
-	const project = await db.getUserRepository.joinProject(req.userId, parseInt(projectId));
+	const project = await db.getUserRepository.forceJoinProject(req.userId, parseInt(projectId));
 	return res.json(project);
 };
 

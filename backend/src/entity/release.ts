@@ -59,6 +59,16 @@ export class Release {
 		this.sprints = removeMaybeUndefined(sprint, this.sprints)
 	}
 
+	getSignatures(): User[] {
+		return getMaybeUndefined(this.signatures)
+	}
+	addSignature(user: User): void {
+		this.signatures = addMaybeUndefined(user, this.signatures)
+	}
+	removeSignature(user: User): void {
+		this.signatures = removeMaybeUndefined(user, this.signatures)
+	}
+
 	getBacklog(): BacklogItem[] {
 		return getMaybeUndefined(this.backlog)
 	}
@@ -86,6 +96,8 @@ export class Release {
 		this.revisionDate = release.revisionDate;
 		this.project = release.project;
 		this.backlogItemCount = release.backlogItemCount;
+		this.fullySigned = false;
+		this.signatures = [];
 	}
 
 }

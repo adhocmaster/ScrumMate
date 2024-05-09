@@ -61,6 +61,7 @@ export class ReleaseDataSourceWrapper extends ModelDataSourceWrapper {
 				},
 				backlog: true,
 				deletedBacklog: true,
+				signatures: true,
 			},
 		})
 		if (!releaseWithSprints) {

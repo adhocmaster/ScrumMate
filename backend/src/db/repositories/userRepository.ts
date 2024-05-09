@@ -32,7 +32,7 @@ export class UserRepository extends ModelRepository {
 		return user
 	}
 
-	public async joinProject(userId: number, projectId: number): Promise<Project> {
+	public async forceJoinProject(userId: number, projectId: number): Promise<Project> {
 		const user = await this.userSource.lookupUserById(userId)
 		const project = await this.projectSource.lookupProjectById(projectId)
 		user.addJoinedProject(project)
@@ -91,6 +91,16 @@ export class UserRepository extends ModelRepository {
 		await this.userSource.save(userWithProjects);
 
 		project.teamMembers = undefined
+
+		// make the most recent fully signed revision (if there is one) no longer fully signed
+		const projectWithReleases = await this.projectSource.fetchProjectWithReleases(projectId);
+		for (const release of projectWithReleases.releases) {
+			if (release.fullySigned) {
+				release.fullySigned = false
+				await this.releaseSource.save(release)
+				break
+			}
+		}
 
 		return [userWithProjects, project];
 	}
