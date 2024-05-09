@@ -6,7 +6,7 @@ export const Codes = {
 	NotSavedError: 500,
 	ExistingUserError: 400,
 	DeletionError: 500,
-	SigningError: 400,
+	// SigningError: 400,
 	Success: 200,
 };
 
@@ -60,15 +60,15 @@ export class DeletionError extends Error {
 	}
 }
 
-export class SigningError extends Error {
-	constructor(msg: string) {
-		super(msg);
-		this.name = "SigningError"
-	}
-	public code() {
-		return Codes.SigningError;
-	}
-}
+// export class SigningError extends Error {
+// 	constructor(msg: string) {
+// 		super(msg);
+// 		this.name = "SigningError"
+// 	}
+// 	public code() {
+// 		return Codes.SigningError;
+// 	}
+// }
 
 export function errorWrapper(func: { (req: express.Request, res: express.Response): Promise<express.Response>; (arg0: express.Request, arg1: express.Response): any; }) {
 	return async function call(req: express.Request, res: express.Response) {
