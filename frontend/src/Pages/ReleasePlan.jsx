@@ -40,7 +40,7 @@ const ReleasePlan = ({ projectId }) => {
           });
         }
       });
-    } catch {}
+    } catch { }
   }
 
   function fetchRelease(releaseId, setProblem, setGoals) {
@@ -62,7 +62,7 @@ const ReleasePlan = ({ projectId }) => {
           }
         }
       );
-    } catch {}
+    } catch { }
   }
 
   function fetchSprints(releaseId) {
@@ -83,7 +83,7 @@ const ReleasePlan = ({ projectId }) => {
           setSprints([]);
         }
       });
-    } catch {}
+    } catch { }
   }
 
   function createNewSprints() {
@@ -248,7 +248,7 @@ const ReleasePlan = ({ projectId }) => {
         <Grid container spacing={2}>
           {/* Sanity Check Graph */}
           <Grid item xs={6}>
-            <SanityCheckGraph />
+            <SanityCheckGraph sprints={sprints} />
           </Grid>
           <Grid item xs={6}>
             <SanityCheckText
