@@ -44,8 +44,8 @@ AppDataSource.initialize().then(async () => {
 		const release1 = new Release()
 		release1.revision = 1
 		release1.revisionDate = new Date()
-		release1.problemStatement = "There are no problems"
-		release1.goalStatement = "Keep everything fine"
+		release1.problemStatement = "The problem we noticed was that many current planner applications are very general purpose and provide only the bare bones for managing tasks, and often lack event management in the same application. This leaves an opening for planners targeted for students who want additional task management features such as moving a homework assignment to the next day after partial completion, or being able to see deadlines on the planner. Our planner aims to implement many of these extra features in a task and event based planner application tailored for students."
+		release1.goalStatement = "The core of our app revolves around the idea of tasks and events. Tasks are things like assignments, reminders, and generally things that may go on a to-do list. Events are recurring things like classes or club meetings that happen at a certain time for certain durations. We plan to provide intuitive interfaces to create, edit, complete, view, and organize both tasks and events. A user’s intentions should be easily identified and addressed with gestures and actions. Users should also be able to view a near real time representation of their schedule on any device they are signed in on. Overall, users should enjoy using the app and not feel like their actions can’t keep up with their thoughts."
 		release1.project = project1
 		release1.id = 1
 		release1.backlogItemCount = 0
@@ -54,8 +54,8 @@ AppDataSource.initialize().then(async () => {
 		const release2 = new Release()
 		release2.revision = 2
 		release2.revisionDate = new Date()
-		release2.problemStatement = "There are many problems"
-		release2.goalStatement = "Must fix all the problems"
+		release2.problemStatement = "The problem we noticed was that many current planner applications are very general purpose and provide only the bare bones for managing tasks, and often lack event management in the same application. This leaves an opening for planners targeted for students who want additional task management features such as moving a homework assignment to the next day after partial completion."
+		release2.goalStatement = "The core of our app revolves around the idea of tasks and events. Tasks are things like assignments, reminders, and generally things that may go on a to-do list. Events are recurring things like classes or club meetings that happen at a certain time for certain durations."
 		release2.project = project1
 		release2.id = 2
 		release2.backlogItemCount = 2
@@ -66,9 +66,9 @@ AppDataSource.initialize().then(async () => {
 		sprint1.sprintNumber = 1;
 		sprint1.startDate = new Date();
 		sprint1.endDate = new Date();
-		sprint1.goal = "finsih sprint"
+		sprint1.goal = "Create the basic and foundational functionality and UI for the application. Establish infrastructure and get familiar with Flutter and Firebase."
 		sprint1.id = 1
-		sprint1.backlogItemCount = 2
+		sprint1.backlogItemCount = 3
 		await db.save(sprint1);
 
 		const sprint2 = new Sprint()
@@ -76,7 +76,7 @@ AppDataSource.initialize().then(async () => {
 		sprint2.sprintNumber = 2;
 		sprint2.startDate = new Date();
 		sprint2.endDate = new Date();
-		sprint2.goal = "finsih sprint"
+		sprint2.goal = "Create the basic and foundational functionality and UI for the application. Establish infrastructure and get familiar with Flutter and Firebase."
 		sprint2.id = 2
 		sprint2.backlogItemCount = 2
 		await db.save(sprint2);
@@ -86,77 +86,99 @@ AppDataSource.initialize().then(async () => {
 		sprint3.sprintNumber = 3;
 		sprint3.startDate = new Date();
 		sprint3.endDate = new Date();
-		sprint3.goal = "finsih sprint"
+		sprint3.goal = "Have complete user interfaces for essential parts of the application. Implement simple nonessential features into the task and event planner."
 		sprint3.id = 3
 		sprint3.backlogItemCount = 0
 		await db.save(sprint3);
 
-		const backlog1 = new Story()
-		backlog1.id = 1;
-		backlog1.sprint = sprint1;
-		backlog1.userTypes = "none";
-		backlog1.reasoning = "there is no reasoning at all"
-		backlog1.acceptanceCriteria = "There is no acceptance criteria"
-		backlog1.storyPoints = 8;
-		backlog1.functionalityDescription = "This is the first backlog item"
-		backlog1.rank = 0
-		await db.save(backlog1);
+		const backlog_s1_1 = new Story()
+		backlog_s1_1.id = 1;
+		backlog_s1_1.sprint = sprint1;
+		backlog_s1_1.userTypes = "student";
+		backlog_s1_1.functionalityDescription = "see my inputted information when I reopen the app"
+		backlog_s1_1.reasoning = "I do not need to keep it open"
+		backlog_s1_1.acceptanceCriteria = "Can log in and log out, and access user id within the app"
+		backlog_s1_1.storyPoints = 13;
+		backlog_s1_1.rank = 0
+		await db.save(backlog_s1_1);
 
-		const backlog2 = new Story()
-		backlog2.id = 2;
-		backlog2.sprint = sprint1;
-		backlog2.userTypes = "none";
-		backlog2.reasoning = "there is no reasoning at all"
-		backlog2.acceptanceCriteria = "There is no acceptance criteria"
-		backlog2.storyPoints = 10;
-		backlog2.functionalityDescription = "This is the functionality."
-		backlog2.rank = 1
-		await db.save(backlog2);
+		const backlog_s1_2 = new Story()
+		backlog_s1_2.id = 2;
+		backlog_s1_2.sprint = sprint1;
+		backlog_s1_2.userTypes = "student";
+		backlog_s1_2.functionalityDescription = "create tasks."
+		backlog_s1_2.reasoning = "I can see what my tasks are"
+		backlog_s1_2.acceptanceCriteria = "Can create tasks in an interface and see it on the list"
+		backlog_s1_2.storyPoints = 5;
+		backlog_s1_2.rank = 1
+		await db.save(backlog_s1_2);
+
+		const backlog_s1_3 = new Story()
+		backlog_s1_3.id = 3;
+		backlog_s1_3.sprint = sprint1;
+		backlog_s1_3.userTypes = "student";
+		backlog_s1_3.functionalityDescription = "change properties of a task."
+		backlog_s1_3.reasoning = "I can mark them as completed, move to another date, etc"
+		backlog_s1_3.acceptanceCriteria = "Can edit tasks in an interface and see it reflected in the list"
+		backlog_s1_3.storyPoints = 1;
+		backlog_s1_3.rank = 2
+		await db.save(backlog_s1_3);
 
 
-		const backlog3 = new Story()
-		backlog3.id = 3;
-		backlog3.sprint = sprint2;
-		backlog3.userTypes = "none";
-		backlog3.reasoning = "there is no reasoning at all"
-		backlog3.acceptanceCriteria = "There is no acceptance criteria"
-		backlog3.storyPoints = 12;
-		backlog3.functionalityDescription = "Backlog Item for sprint2."
-		backlog3.rank = 0
-		await db.save(backlog3);
+		const backlog_s2_1 = new Story()
+		backlog_s2_1.id = 4;
+		backlog_s2_1.sprint = sprint2;
+		backlog_s2_1.userTypes = "student";
+		backlog_s2_1.functionalityDescription = "manage my tasks in various time frames"
+		backlog_s2_1.reasoning = "I can get the amount of detail I need to plan my schedule"
+		backlog_s2_1.acceptanceCriteria = "Be able to see names of tasks in all views and be able to add tasks, be able to edit the information in this view"
+		backlog_s2_1.storyPoints = 8;
+		backlog_s2_1.rank = 0
+		await db.save(backlog_s2_1);
 
-		const backlog4 = new Story()
-		backlog4.id = 4;
-		backlog4.sprint = sprint2;
-		backlog4.userTypes = "none";
-		backlog4.reasoning = "there is no reasoning at all"
-		backlog4.acceptanceCriteria = "There is no acceptance criteria"
-		backlog4.storyPoints = 12;
-		backlog4.functionalityDescription = "Second Backlog Item for sprint2."
-		backlog4.rank = 1
-		await db.save(backlog4);
+		const backlog_s2_2 = new Story()
+		backlog_s2_2.id = 5;
+		backlog_s2_2.sprint = sprint2;
+		backlog_s2_2.userTypes = "student";
+		backlog_s2_2.functionalityDescription = "move my tasks around the timeline"
+		backlog_s2_2.reasoning = "I can assign them to other days"
+		backlog_s2_2.acceptanceCriteria = "Successfully use gestures to modify/move a task, be able to see it on the new date after the gesture is done"
+		backlog_s2_2.storyPoints = 12;
+		backlog_s2_2.rank = 1
+		await db.save(backlog_s2_2);
 
-		const backlog5 = new Story()
-		backlog5.id = 5;
-		backlog5.release = release2;
-		backlog5.userTypes = "octopus";
-		backlog5.functionalityDescription = "eat fish"
-		backlog5.reasoning = "survive"
-		backlog5.acceptanceCriteria = "can eat fish and survive"
-		backlog5.storyPoints = 1000000;
-		backlog5.rank = 0
-		await db.save(backlog5);
+		const backlog_r2_1 = new Story()
+		backlog_r2_1.id = 6;
+		backlog_r2_1.release = release2;
+		backlog_r2_1.userTypes = "student";
+		backlog_r2_1.functionalityDescription = "manage my events in various time frames"
+		backlog_r2_1.reasoning = " I can get the amount of detail I need to plan my schedule"
+		backlog_r2_1.acceptanceCriteria = "can eat fish and survive"
+		backlog_r2_1.storyPoints = 8;
+		backlog_r2_1.rank = 0
+		await db.save(backlog_r2_1);
 
-		const backlog6 = new Story()
-		backlog6.id = 6;
-		backlog6.release = release2;
-		backlog6.userTypes = "fish";
-		backlog6.functionalityDescription = "eat octopus"
-		backlog6.reasoning = "survive"
-		backlog6.acceptanceCriteria = "can eat octopus and survive"
-		backlog6.storyPoints = 1;
-		backlog6.rank = 1
-		await db.save(backlog6);
+		const backlog_r2_2 = new Story()
+		backlog_r2_2.id = 7;
+		backlog_r2_2.release = release2;
+		backlog_r2_2.userTypes = "student";
+		backlog_r2_2.functionalityDescription = "edit an event"
+		backlog_r2_2.reasoning = "I can keep the planner up to date with changes to my schedule"
+		backlog_r2_2.acceptanceCriteria = "In the larger view of an event, be able to see and edit all fields of the event"
+		backlog_r2_2.storyPoints = 1;
+		backlog_r2_2.rank = 1
+		await db.save(backlog_r2_2);
+
+		const backlog_r2_3 = new Story()
+		backlog_r2_3.id = 8;
+		backlog_r2_3.release = release2;
+		backlog_r2_3.userTypes = "student";
+		backlog_r2_3.functionalityDescription = "Look at different time windows"
+		backlog_r2_3.reasoning = "I can plan for the short, medium and long term as needed"
+		backlog_r2_3.acceptanceCriteria = "Able to move from daily view to monthly view with UI and gestures"
+		backlog_r2_3.storyPoints = 1;
+		backlog_r2_3.rank = 1
+		await db.save(backlog_r2_3);
 	}
 
 	/// Start express
