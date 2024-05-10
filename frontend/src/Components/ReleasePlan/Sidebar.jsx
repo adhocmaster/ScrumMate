@@ -7,6 +7,8 @@ import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import LockIcon from '@mui/icons-material/Lock';
 import LockOpenIcon from '@mui/icons-material/LockOpen';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
+import HistoryEduIcon from '@mui/icons-material/HistoryEdu'
+import { Signing } from './Signing';
 
 const Sidebar = ({ open, toggleDrawer, title, projectId, items, itemClick }) => {
 	const [selected, setSelected] = useState(0);
@@ -185,17 +187,9 @@ const Sidebar = ({ open, toggleDrawer, title, projectId, items, itemClick }) => 
 						key={index}
 						sx={{ backgroundColor: selected === index ? 'lightgray' : 'white', }}
 					>
-						<IconButton
-							onClick={(e) => {
-								e.stopPropagation();
-								toggleLock(index);
-							}}
-							sx={{
-								marginRight: 'auto',
-							}}
-						>
-							{locked ? <LockIcon fontSize="small" /> : <LockOpenIcon fontSize="small" />}
-						</IconButton>
+
+						{/* If it's 'locked' or signed then ... */}
+						<Signing projectId={projectId} />
 
 						<Typography fontSize={14}>
 							{`${revision} ${revisionDate}`}
