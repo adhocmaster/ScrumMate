@@ -50,17 +50,14 @@ const Sprint = ({ index, items, setItems, userStories }) => {
 			.then((response) => response.json())
 			.then((result) => {
 				setStories(result)
-				console.log(items)
-				// console.log(result)
 				setItems((currentItems) => {
 					const updatedItems = [...currentItems];
 					const sprintIndex = updatedItems.findIndex(s => s.todos.some(t => t.id === storyId));
 					if (sprintIndex !== -1) {
-					  updatedItems[sprintIndex].todos = updatedItems[sprintIndex].todos.filter(t => t.id !== storyId);
+					  updatedItems[sprintIndex].todos = result;
 					}
 					return updatedItems;
 				});
-				console.log(items)
 			}).catch((error) => console.log("error deleting story"));
 	};
 
