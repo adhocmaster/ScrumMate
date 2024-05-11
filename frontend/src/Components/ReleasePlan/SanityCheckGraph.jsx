@@ -1,8 +1,6 @@
 import { Box, Paper, Typography } from '@mui/material';
 
 const SanityCheckGraph = ({ sprints }) => {
-	console.log("sc", sprints)
-	console.log(sprints.map((sprint, index) => (sprint.todos.reduce((accumulator, backlogItem) => accumulator + Number(backlogItem.storyPoints), 0))))
 	const spTotals = sprints.map((sprint, index) => (sprint.todos.reduce((accumulator, backlogItem) => accumulator + Number(backlogItem.storyPoints), 0)))
 	return (
 		<Paper elevation={3} style={{ padding: '20px' }}>
