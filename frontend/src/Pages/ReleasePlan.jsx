@@ -6,7 +6,8 @@ import ButtonBar from "../Components/ReleasePlan/ButtonBar";
 import ContentBox from "../Components/common/ContentBox";
 import SanityCheckGraph from "../Components/ReleasePlan/SanityCheckGraph";
 import SanityCheckText from "../Components/ReleasePlan/SanityCheckText";
-import Board from "../Components/ReleasePlan/dragAndDrop/board"
+import Board from "../Components/ReleasePlan/dragAndDrop/SprintsAndBacklog"
+import { generateQuoteMap } from '../Components/ReleasePlan/mockData';
 
 const ReleasePlan = ({ projectId }) => {
 	const [sprints, setSprints] = useState([]);
@@ -99,6 +100,11 @@ const ReleasePlan = ({ projectId }) => {
 		setId(newReleaseId);
 	};
 
+	const data = {
+		medium: generateQuoteMap(100),
+		large: generateQuoteMap(500),
+	};
+
 	return (
 		<Grid container spacing={2}>
 			{/* Revision Sidebar */}
@@ -166,7 +172,8 @@ const ReleasePlan = ({ projectId }) => {
 				{/* High Level Goals */}
 				<ContentBox title={"High Level Goals"} content={highLevelGoals} />
 
-				<Board sprints={sprints} setSprints={setSprints} releaseId={releaseId} />
+				<Board initial={data.medium} withScrollableColumns />
+				{/* <Board sprints={sprints} setSprints={setSprints} releaseId={releaseId} /> */}
 
 				{/* Sanity Check */}
 				<Typography
