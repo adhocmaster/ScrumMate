@@ -1,9 +1,9 @@
-import React from "react";
-import styled from "@xstyled/styled-components";
-import { colors } from "@atlaskit/theme";
-import { Draggable } from "react-beautiful-dnd";
-import QuoteList from "../styles/verticalList";
-import Title from "../styles/title";
+import React from 'react';
+import styled from '@xstyled/styled-components';
+import { colors } from '@atlaskit/theme';
+import { Draggable } from 'react-beautiful-dnd';
+import QuoteList from '../styles/list';
+import Title from '../styles/title';
 
 const grid = 8;
 const borderRadius = 2;
@@ -11,7 +11,8 @@ const borderRadius = 2;
 const Container = styled.div`
   margin: ${grid}px;
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
+  min-wideth: 100px;
 `;
 
 const Header = styled.div`
@@ -26,14 +27,16 @@ const Header = styled.div`
   &:hover {
     background-color: ${colors.G50};
   }
+  width: 100;
 `;
 
-const Column = (props) => {
+const Row = (props) => {
 	const title = props.title;
 	const quotes = props.quotes;
 	const index = props.index;
+
 	return (
-		<Draggable draggableId={title} index={index} isDragDisabled={true}>
+		<Draggable draggableId={title} index={index} direction="horizontal">
 			{(provided, snapshot) => (
 				<Container ref={provided.innerRef} {...provided.draggableProps}>
 					<Header isDragging={snapshot.isDragging}>
@@ -49,7 +52,7 @@ const Column = (props) => {
 						listId={title}
 						listType="QUOTE"
 						style={{
-							backgroundColor: snapshot.isDragging ? colors.G50 : null
+							backgroundColor: snapshot.isDragging ? colors.G50 : null,
 						}}
 						quotes={quotes}
 						internalScroll={props.isScrollable}
@@ -62,4 +65,4 @@ const Column = (props) => {
 	);
 };
 
-export default Column;
+export default Row;

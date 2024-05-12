@@ -20,40 +20,34 @@ export const getBackgroundColor = (isDraggingOver, isDraggingFrom) => {
 };
 
 const Wrapper = styled.div`
-  background-color: ${(props) =>
-		getBackgroundColor(props.isDraggingOver, props.isDraggingFrom)};
+  background-color: ${(props) => getBackgroundColor(props.isDraggingOver, props.isDraggingFrom)};
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   opacity: ${({ isDropDisabled }) => (isDropDisabled ? 0.5 : 'inherit')};
   padding: ${grid}px;
   border: ${grid}px;
   padding-bottom: 0;
   transition: background-color 0.2s ease, opacity 0.1s ease;
   user-select: none;
+  width: 200px;
 `;
 
-const scrollContainerHeight = 250;
+const scrollContainerHeight = 500;
 
 const DropZone = styled.div`
   /* stop the list collapsing when empty */
-  min-width: 500px;
-  min-height: 150px;
+  min-height: ${scrollContainerHeight}px;
   /*
     not relying on the items for a margin-bottom
     as it will collapse when the list is empty
   */
   padding-bottom: ${grid}px;
-  display: flex;
-  flex-direction: row; /* Display children horizontally */
 `;
 
 const ScrollContainer = styled.div`
-  overflow-x: auto;
+  overflow-x: hidden;
   overflow-y: auto;
   max-height: ${scrollContainerHeight}px;
-  width: 1000px;
-  display: flex;
-  flex-direction: row; /* Display children horizontally */
 `;
 
 /* stylelint-disable block-no-empty */
@@ -70,7 +64,6 @@ const InnerQuoteList = React.memo(function InnerQuoteList(props) {
 					isDragging={dragSnapshot.isDragging}
 					isGroupedOver={Boolean(dragSnapshot.combineTargetFor)}
 					provided={dragProvided}
-					style={{ marginRight: grid }} // Add margin-right between items
 				/>
 			)}
 		</Draggable>
@@ -126,7 +119,6 @@ export default function QuoteList(props) {
 					)
 					: null
 			}
-			direction="horizontal"
 		>
 			{(dropProvided, dropSnapshot) => (
 				<Wrapper
@@ -138,18 +130,10 @@ export default function QuoteList(props) {
 				>
 					{internalScroll ? (
 						<ScrollContainer style={scrollContainerStyle}>
-							<InnerList
-								quotes={quotes}
-								title={title}
-								dropProvided={dropProvided}
-							/>
+							<InnerList quotes={quotes} title={title} dropProvided={dropProvided} />
 						</ScrollContainer>
 					) : (
-						<InnerList
-							quotes={quotes}
-							title={title}
-							dropProvided={dropProvided}
-						/>
+						<InnerList quotes={quotes} title={title} dropProvided={dropProvided} />
 					)}
 				</Wrapper>
 			)}
