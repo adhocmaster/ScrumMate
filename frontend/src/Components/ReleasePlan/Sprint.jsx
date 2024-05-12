@@ -54,7 +54,7 @@ const Sprint = ({ index, items, setItems, userStories }) => {
 					const updatedItems = [...currentItems];
 					const sprintIndex = updatedItems.findIndex(s => s.todos.some(t => t.id === storyId));
 					if (sprintIndex !== -1) {
-						updatedItems[sprintIndex].todos = result;
+					  updatedItems[sprintIndex].todos = result;
 					}
 					return updatedItems;
 				});
@@ -276,15 +276,15 @@ const Sprint = ({ index, items, setItems, userStories }) => {
 											variant="outlined"
 											value={storyPoints}
 											onChange={(e) => {
-												// Check if the entered value is a number and is not empty
-												if (!isNaN(e.target.value) && e.target.value.trim() !== '') {
-													setStoryPoints(e.target.value);
-												}
+											  // Check if the entered value is a number and is not empty
+											  if (!isNaN(e.target.value) && e.target.value.trim() !== '') {
+												setStoryPoints(e.target.value);
+											  }
 											}}
 											InputProps={{
-												inputProps: {
-													min: 0 // Minimum value
-												}
+											  inputProps: {
+												min: 0 // Minimum value
+											  }
 											}}
 										/>
 									</DialogContent>

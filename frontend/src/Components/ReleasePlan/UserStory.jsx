@@ -111,6 +111,7 @@ const UserStory = ({ storyObject, deleteFunction }) => {
 				`http://localhost:8080/api/story/${storyId}/edit`,
 				options
 			).then((result) => {
+				storyObject.storyPoints = tempStoryPoints
 				if (result.status !== 200) {
 					console.log("error", result);
 				}
