@@ -101,7 +101,7 @@ const Backlog = ({ releaseId }) => {
 					setStoryPoints(0);
 				}
 			);
-		} catch {}
+		} catch { }
 	}
 
 	function fetchDeleteStory(storyId) {
@@ -138,7 +138,7 @@ const Backlog = ({ releaseId }) => {
 					setBacklogItems([]);
 				}
 			});
-		} catch {}
+		} catch { }
 	}
 
 	useEffect(() => {

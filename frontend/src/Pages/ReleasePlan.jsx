@@ -1,15 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { Typography, Box } from "@mui/material";
 import { Grid, Divider } from "@mui/material";
-import { IconButton } from "@mui/material";
-import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import Sidebar from "../Components/ReleasePlan/Sidebar";
 import ButtonBar from "../Components/ReleasePlan/ButtonBar";
 import ContentBox from "../Components/common/ContentBox";
-import DragList from "../Components/ReleasePlan/DragList";
-import Backlog from "../Components/ReleasePlan/Backlog";
 import SanityCheckGraph from "../Components/ReleasePlan/SanityCheckGraph";
 import SanityCheckText from "../Components/ReleasePlan/SanityCheckText";
+import Board from "../Components/ReleasePlan/dragAndDrop/board"
 
 const ReleasePlan = ({ projectId }) => {
 	const [sprints, setSprints] = useState([]);
@@ -83,34 +80,6 @@ const ReleasePlan = ({ projectId }) => {
 				}
 			});
 		} catch { }
-	}
-
-	function createNewSprints() {
-		console.log("creating new");
-		var options = {
-			method: "POST",
-			credentials: "include",
-			headers: {
-				"Content-Type": "application/json",
-			},
-			body: JSON.stringify({ sprintNumber: sprints.length + 1 }),
-		};
-
-		fetch(`http://localhost:8080/api/release/${releaseId}/sprint`, options)
-			.then((result) => {
-				if (result.status === 200) {
-					console.log(result);
-				}
-				console.log(result);
-				return result.json();
-			})
-			.then((response) => {
-				console.log(response);
-				setSprints((prevSprints) => [...prevSprints, response]);
-			})
-			.catch((error) => {
-				console.error("Error:", error);
-			});
 	}
 
 	useEffect(() => {
@@ -197,38 +166,8 @@ const ReleasePlan = ({ projectId }) => {
 				{/* High Level Goals */}
 				<ContentBox title={"High Level Goals"} content={highLevelGoals} />
 
-				<Grid container spacing={2}>
-					{/* Sprints */}
-					<Grid item xs={9}>
-						<Typography
-							marginLeft={4}
-							textAlign="left"
-							fontWeight="bold"
-							fontSize={14}
-						>
-							Sprints
-							<IconButton
-								sx={{
-									marginBottom: "3px",
-								}}
-								onClick={createNewSprints}
-							>
-								<AddCircleOutlineIcon fontSize="small" />
-							</IconButton>
-						</Typography>
-						<DragList
-							marginLeft={2}
-							items={sprints}
-							setItems={setSprints}
-							releaseId={releaseId}
-						/>
-						{/* {sprints != [] ? <DragList items={sprints} setItems={setSprints}/>: ''} */}
-					</Grid>
-					{/* Backlog */}
-					<Grid item xs={3}>
-						<Backlog releaseId={releaseId} />
-					</Grid>
-				</Grid>
+				<Board sprints={sprints} setSprints={setSprints} releaseId={releaseId} />
+
 				{/* Sanity Check */}
 				<Typography
 					variant="h5"
