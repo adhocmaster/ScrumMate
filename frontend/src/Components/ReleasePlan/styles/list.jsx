@@ -36,7 +36,7 @@ const scrollContainerHeight = 250;
 
 const DropZone = styled.div`
   /* stop the list collapsing when empty */
-  min-height: ${scrollContainerHeight}px;
+  min-width: 500px;
   /*
     not relying on the items for a margin-bottom
     as it will collapse when the list is empty
@@ -50,7 +50,7 @@ const ScrollContainer = styled.div`
   overflow-x: auto;
   overflow-y: auto;
   max-height: ${scrollContainerHeight}px;
-  max-width: 1000px;
+  width: 1000px;
   display: flex;
   flex-direction: row; /* Display children horizontally */
 `;
