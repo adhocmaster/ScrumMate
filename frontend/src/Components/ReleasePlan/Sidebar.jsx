@@ -4,15 +4,12 @@ import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import { Drawer, IconButton, Typography, Grid } from "@mui/material";
 import { List, ListItem, ListItemButton } from "@mui/material";
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
-import LockIcon from '@mui/icons-material/Lock';
-import LockOpenIcon from '@mui/icons-material/LockOpen';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
-import HistoryEduIcon from '@mui/icons-material/HistoryEdu'
 import { Signing } from './Signing';
 
-const Sidebar = ({ open, toggleDrawer, title, projectId, items, itemClick }) => {
-	const [selected, setSelected] = useState(0);
-	const [revisions, setRevisions] = useState(items || []);
+const Sidebar = ({ open, toggleDrawer, projectId, itemClick }) => {
+	const [selected, setSelected] = useState(null);
+	const [revisions, setRevisions] = useState([]);
 
 	function convertRevisionAndDate(release) {
 		release.revision = `Revision ${release.revision}`
@@ -87,19 +84,6 @@ const Sidebar = ({ open, toggleDrawer, title, projectId, items, itemClick }) => 
 		fetchReleases();
 	}, []);
 
-	const toggleLock = (index) => {
-		setRevisions(prevRevisions => {
-			// Create a copy of the revisions array
-			const newRevisions = [...prevRevisions];
-			// Toggle the locked state of the specified revision
-			newRevisions[index] = {
-				...newRevisions[index], // Copy the existing properties
-				locked: !newRevisions[index].locked // Update the locked state
-			};
-			return newRevisions; // Return the updated array
-		});
-	}
-
 	const addRevisions = (item) => {
 		setRevisions([convertRevisionAndDate(item), ...revisions]);
 	};
@@ -138,7 +122,7 @@ const Sidebar = ({ open, toggleDrawer, title, projectId, items, itemClick }) => 
 									fontSize: 14,
 								}}
 							>
-								{title}
+								Revisions
 							</Typography>
 
 							<Grid container justifyContent="flex-end">
@@ -178,27 +162,26 @@ const Sidebar = ({ open, toggleDrawer, title, projectId, items, itemClick }) => 
 					}
 				</ListItem>
 
-				{open && revisions.map(({ id, revision, revisionDate, locked }, index) => (
+				{open && revisions.map((revision, index) => (
 					<ListItemButton
 						onClick={() => {
-							itemClick(id);
+							itemClick(revision.id);
 							setSelected(index);
 						}}
 						key={index}
 						sx={{ backgroundColor: selected === index ? 'lightgray' : 'white', }}
 					>
 
-						{/* If it's 'locked' or signed then ... */}
-						<Signing projectId={projectId} />
+						<Signing releaseId={revision.id} projectId={projectId} />
 
 						<Typography fontSize={14}>
-							{`${revision} ${revisionDate}`}
+							{`${revision.revision} ${revision.revisionDate}`}
 						</Typography>
 
 						<IconButton
 							onClick={(e) => {
 								e.stopPropagation();
-								copyRelease(id, addRevisions);
+								copyRelease(revision.id, addRevisions);
 								setSelected(0);
 							}}
 							sx={{
