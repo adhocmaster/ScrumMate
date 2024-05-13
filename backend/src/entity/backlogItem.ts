@@ -28,6 +28,12 @@ export class BacklogItem {
 	@Column()
 	rank: number // "index"
 
+	@Column({ default: false })
+	pokerCompleted: boolean
+
+	@Column({ type: 'json', default: {} })
+	estimates: Record<number, number>; // map userId to estimate
+
 	///// Relational /////
 
 	@ManyToOne(() => Release, (release) => release.backlog)
