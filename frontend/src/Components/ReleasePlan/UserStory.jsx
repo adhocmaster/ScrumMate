@@ -74,14 +74,14 @@ const UserStory = ({ storyObject, deleteFunction, sprints, setSprints }) => {
 	};
 
 	function saveEditedStory(storyId) {
-		var newStoryObj = {
+		const newStoryObj = {
 			userTypes: tempRole,
 			functionalityDescription: tempFunctionality,
 			reasoning: tempReasoning,
 			acceptanceCriteria: tempAcceptanceCriteria,
 			storyPoints: tempStoryPoints,
 		}
-		var sprintNumber = sprints.find(sprint => sprint.todos.some(todo => todo.id === storyId))?.sprintNumber;
+		const sprintNumber = sprints.find(sprint => sprint.todos.some(todo => todo.id === storyId))?.sprintNumber;
 
 		var options = {
 			method: "post",
