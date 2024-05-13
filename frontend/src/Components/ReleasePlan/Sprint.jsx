@@ -345,6 +345,8 @@ const Sprint = ({ index, items, setItems, userStories }) => {
 												<UserStory
 													storyObject={storyObj}
 													deleteFunction={deleteStory}
+													sprints = {items}
+													setSprints = {setItems}
 												/>
 											</div>
 										}

@@ -1,25 +1,10 @@
 import React, { useState } from "react";
 import {
-	Card,
-	CardContent,
-	Box,
-	Typography,
-	IconButton,
-	Menu,
-	MenuItem,
-	Dialog,
-	DialogTitle,
-	DialogContent,
-	DialogContentText,
-	DialogActions,
-	Button,
-	TextField,
-	ToggleButtonGroup,
-	ToggleButton,
+	Card, CardContent, Box, Typography, IconButton, Menu, MenuItem, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, Button, TextField, ToggleButtonGroup, ToggleButton,
 } from "@mui/material";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 
-const UserStory = ({ storyObject, deleteFunction }) => {
+const UserStory = ({ storyObject, deleteFunction, sprints, setSprints }) => {
 	const [anchorOpen, setAnchorOpen] = useState(false);
 	const [editDialogOpen, setEditDialogOpen] = useState(false);
 	const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
@@ -89,6 +74,15 @@ const UserStory = ({ storyObject, deleteFunction }) => {
 	};
 
 	function saveEditedStory(storyId) {
+		var newStoryObj = {
+			userTypes: tempRole,
+			functionalityDescription: tempFunctionality,
+			reasoning: tempReasoning,
+			acceptanceCriteria: tempAcceptanceCriteria,
+			storyPoints: tempStoryPoints,
+		}
+		var sprintNumber = sprints.find(sprint => sprint.todos.some(todo => todo.id === storyId))?.sprintNumber;
+
 		var options = {
 			method: "post",
 			credentials: "include",
@@ -111,7 +105,7 @@ const UserStory = ({ storyObject, deleteFunction }) => {
 				`http://localhost:8080/api/story/${storyId}/edit`,
 				options
 			).then((result) => {
-				storyObject.storyPoints = tempStoryPoints
+				setStoryWrapper(newStoryObj, sprintNumber, storyId)
 				if (result.status !== 200) {
 					console.log("error", result);
 				}
@@ -120,6 +114,17 @@ const UserStory = ({ storyObject, deleteFunction }) => {
 			return null;
 		}
 	}
+
+	function setStoryWrapper(newStoryObj, sprintNumber, storyId) {
+		const sprintsCopy = [...sprints];
+		const sprintIndex = sprintsCopy.findIndex(sprint => sprint.sprintNumber === sprintNumber);
+		const storyIndex = sprintsCopy[sprintIndex].todos.findIndex(story => story.id === storyId);
+		sprintsCopy[sprintIndex].todos[storyIndex] = { ...sprintsCopy[sprintIndex].todos[storyIndex], ...newStoryObj };
+		console.log(sprintsCopy)
+		setSprints(sprintsCopy);
+	}
+	
+	  	  
 
 	return (
 		<>
