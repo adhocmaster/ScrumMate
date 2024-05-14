@@ -1,6 +1,13 @@
-import { Card, CardContent, Typography } from '@mui/material';
+import { useState, useEffect } from 'react';
+import { Card, CardContent, Typography, } from '@mui/material';
+import { TextareaAutosize } from '@mui/base/TextareaAutosize';
 
-const ContentBox = ({ title, content }) => {
+const ContentBox = ({ title, isLocked }) => {
+
+	const [content, setContent] = useState("");
+
+	
+
 	return (
 		<>
 			<Typography
@@ -14,21 +21,31 @@ const ContentBox = ({ title, content }) => {
 				{title}
 			</Typography>
 
-			<Card
-				sx={{
-					minHeight: 100,
-					// maxWidth: '95%',
-					marginLeft: 2,
-					marginBottom: 2,
-					backgroundColor: 'lightgray',
-				}}
-			>
-				<CardContent>
-					<Typography variant='body1' textAlign='left' fontSize={14}>
-						{content}
-					</Typography>
-				</CardContent>
-			</Card>
+			{console.log("is it locked?: " + isLocked)}
+
+			{isLocked ?
+
+				<Card
+					sx={{
+						minHeight: 100,
+						// maxWidth: '95%',
+						marginLeft: 2,
+						marginBottom: 2,
+						backgroundColor: 'lightgray',
+					}}
+				>
+					<CardContent>
+						<Typography variant='body1' textAlign='left' fontSize={14}>
+							{content}
+						</Typography>
+					</CardContent>
+				</Card>
+				:
+				<TextareaAutosize minRows={3} style={{ width: "1160px" }} />
+
+
+
+			}
 		</>
 	);
 };
