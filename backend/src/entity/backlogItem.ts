@@ -28,6 +28,9 @@ export class BacklogItem {
 	@Column()
 	rank: number // "index"
 
+	@Column()
+	size: number // serves as SP, IH, etc...
+
 	@Column({ default: false })
 	pokerCompleted: boolean
 
@@ -64,6 +67,7 @@ export class BacklogItem {
 		this.createdDate = backlogItem.createdDate;
 		this.updatedDate = backlogItem.updatedDate;
 		this.rank = backlogItem.rank;
+		this.size = backlogItem.size;
 	}
 }
 
@@ -110,9 +114,6 @@ export class Story extends BacklogItem {
 	@Column()
 	acceptanceCriteria: string
 
-	@Column()
-	storyPoints: number
-
 	@Column({
 		type: "enum",
 		enum: Priority,
@@ -145,7 +146,6 @@ export class Story extends BacklogItem {
 		this.functionalityDescription = story.functionalityDescription;
 		this.reasoning = story.reasoning;
 		this.acceptanceCriteria = story.acceptanceCriteria;
-		this.storyPoints = story.storyPoints;
 		this.priority = story.priority;
 	}
 }
@@ -157,16 +157,12 @@ export class Task extends BacklogItem {
 	@Column()
 	description: string
 
-	@Column()
-	idealHours: number // may need to specify float?
-
-	@ManyToOne(() => Story, (story) => story.tasks) // for tasks only
+	@ManyToOne(() => Story, (story) => story.tasks)
 	story: Story
 
 	copy(task: Task): void {
 		super.copy(task)
 		this.description = task.description;
-		this.idealHours = task.idealHours;
 	}
 }
 

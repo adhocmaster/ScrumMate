@@ -24,10 +24,10 @@ export class Release {
 	goalStatement: string
 
 	@Column({ default: 0 })
-	backlogItemCount: number = 0
+	backlogItemCount: number
 
-	@Column()
-	fullySigned: boolean = false
+	@Column({ default: false })
+	fullySigned: boolean
 
 	///// Relational /////
 

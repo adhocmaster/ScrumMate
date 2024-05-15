@@ -29,7 +29,7 @@ const UserStory = ({ storyObject, deleteFunction }) => {
 	const [functionality, setFunctionality] = useState(storyObject.functionalityDescription);
 	const [reasoning, setReasoning] = useState(storyObject.reasoning);
 	const [acceptanceCriteria, setAcceptanceCriteria] = useState(storyObject.acceptanceCriteria);
-	const [storyPoints, setStoryPoints] = useState(storyObject.storyPoints);
+	const [storyPoints, setStoryPoints] = useState(storyObject.size);
 
 	const [tempBacklogItemType, setTempBacklogItemType] = useState(backlogItemType);
 	const [tempRole, setTempRole] = useState(role);
