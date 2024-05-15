@@ -9,7 +9,7 @@ import {
 import RestoreIcon from '@mui/icons-material/Restore';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 
-export const Signing = ({ releaseId, projectId }) => {
+export const Signing = ({ releaseId, projectId, setFullySigned }) => {
     const [open, setOpen] = useState(false);
     const [signatures, setSignatures] = useState([[], [], null]);
     const [ownUserId, setOwnUserId] = useState(null);
@@ -102,6 +102,7 @@ export const Signing = ({ releaseId, projectId }) => {
                 if (result.status === 200) {
                     result.json().then((response) => {
                         setSignatures(response);
+                        setFullySigned(response[2]);
                     })
                 }
             })

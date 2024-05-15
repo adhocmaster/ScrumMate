@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Typography, Box } from "@mui/material";
+import { Typography, Box, TextField } from "@mui/material";
 import { Grid, Divider } from "@mui/material";
 import { IconButton } from "@mui/material";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
@@ -10,6 +10,8 @@ import DragList from "../Components/ReleasePlan/DragList";
 import Backlog from "../Components/ReleasePlan/Backlog";
 import SanityCheckGraph from "../Components/ReleasePlan/SanityCheckGraph";
 import SanityCheckText from "../Components/ReleasePlan/SanityCheckText";
+import { TextareaAutosize } from '@mui/base/TextareaAutosize';
+
 
 const ReleasePlan = ({ projectId }) => {
   const [sprints, setSprints] = useState([]);
@@ -17,9 +19,11 @@ const ReleasePlan = ({ projectId }) => {
   const [problemStatement, setProblem] = useState("");
   const [highLevelGoals, setGoals] = useState("");
   const [releaseId, setId] = useState(null);
-  const [signatures, setSignatures] = useState(false);
+  const [fullySigned, setFullySigned] = useState(false);
 
-
+  const handleChangeHighLevelGoals = (event) => {
+    setGoals(event.target.value);
+  }
 
   function fetchMostRecentRelease() {
     console.log("about to most recent release");
@@ -37,9 +41,9 @@ const ReleasePlan = ({ projectId }) => {
           result.json().then((response) => {
             console.log(response);
             console.log(response.fullySigned)
-            setSignatures(response.fullySigned)
-            setProblem(response.problemStatement);
-            setGoals(response.goalStatement);
+            setFullySigned(response.fullySigned)
+            //setProblem(response.problemStatement);
+            //setGoals(response.goalStatement);
             setId(response.id);
           });
         }
@@ -60,6 +64,7 @@ const ReleasePlan = ({ projectId }) => {
             console.log(result);
             result.json().then((response) => {
               //console.log(response);
+              setFullySigned(response.fullySigned);
               setProblem(response.problemStatement);
               setGoals(response.goalStatement);
             });
@@ -89,6 +94,48 @@ const ReleasePlan = ({ projectId }) => {
       });
     } catch { }
   }
+
+  //updates the problem statement
+  function editProblem(e) {
+    var options = {
+      method: "POST",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ problemStatement: e.target.value },
+        { goalStatement: e.target.value }),
+    };
+    fetch(`http://localhost:8080/api/release/${releaseId}/edit`, options)
+      .then((result) => {
+        if (result.status === 200) {
+          result.json().then((response) => {
+            setProblem(response.problemStatement);
+          });
+        }
+      })
+  }
+
+  //updates the HighLevelGoals
+  function editGoals(e) {
+    var options = {
+      method: "POST",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ goalStatement: e.target.value }),
+    };
+    fetch(`http://localhost:8080/api/release/${releaseId}/edit`, options)
+      .then((result) => {
+        if (result.status === 200) {
+          result.json().then((response) => {
+            setGoals(response.goalStatement);
+          });
+        }
+      })
+  }
+
 
   function createNewSprints() {
     console.log("creating new");
@@ -144,6 +191,7 @@ const ReleasePlan = ({ projectId }) => {
           toggleDrawer={toggleDrawer}
           projectId={projectId}
           itemClick={revisionsClick}
+          setFullySigned={setFullySigned}
         />
       </Grid>
 
@@ -196,11 +244,58 @@ const ReleasePlan = ({ projectId }) => {
           v1.0.0
         </Typography>
 
+        {console.log("PS: " + problemStatement)}
         {/* Problem Statement */}
-        <ContentBox title={"Problem Statement"} isLocked={signatures} />
+        <Typography
+          variant='body1'
+          marginBottom={2}
+          marginLeft={2}
+          textAlign={'left'}
+          fontWeight="bold"
+          fontSize={14}
+        >
+          Problem Statement
+        </Typography>
+        {fullySigned ?
+          < ContentBox title={"Problem Statement"} content={problemStatement} />
+          :
+          <TextField
+            minRows={3}
+            style={{ width: "1160px" }}
+            value={problemStatement}
+            onChange={editProblem}
+            multiline
+            sx={{ height: "130px" }}
+          />}
 
         {/* High Level Goals */}
-        <ContentBox title={"High Level Goals"} isLocked={signatures} />
+
+        <br />
+        {console.log("HLG: " + highLevelGoals)}
+        {console.log("PS: " + problemStatement)}
+        {/* Problem Statement */}
+        <Typography
+          variant='body1'
+          marginBottom={2}
+          marginLeft={2}
+          textAlign={'left'}
+          fontWeight="bold"
+          fontSize={14}
+        >
+          High Level Goals
+        </Typography>
+        {fullySigned ?
+          <ContentBox content={highLevelGoals} />
+          :
+          <TextField
+            minRows={3}
+            style={{ width: "1160px" }}
+            value={highLevelGoals}
+            onChange={editGoals}
+            multiline
+          />}
+
+
 
         <Grid container spacing={2}>
           {/* Sprints */}
