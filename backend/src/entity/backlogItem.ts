@@ -34,7 +34,7 @@ export class BacklogItem {
 	@Column({ default: false })
 	pokerCompleted: boolean
 
-	@Column({ type: 'json', default: {} })
+	@Column({ type: 'simple-json', default: {} }) // may need to change type to other json type if switching db
 	estimates: Record<number, number>; // map userId to estimate
 
 	///// Relational /////
@@ -74,6 +74,7 @@ export class BacklogItem {
 // How to handle these? display them in anything?
 // What fields do they have?
 // Maybe just leave this alone for now... we will surely get a US for it soon
+// Sponsor said ignore Epics for now
 @ChildEntity()
 export class Epic extends BacklogItem {
 	public name = "Epic";
