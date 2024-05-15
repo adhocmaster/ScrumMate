@@ -18,72 +18,72 @@ const ReleasePlan = ({ projectId }) => {
 	const [highLevelGoals, setGoals] = useState("");
 	const [releaseId, setId] = useState(null);
 
-	function fetchMostRecentRelease() {
-		console.log("about to most recent release");
-		var options = {
-			method: "get",
-			credentials: "include",
-		};
-		try {
-			fetch(
-				`http://localhost:8080/api/project/${projectId}/recentRelease`,
-				options
-			).then((result) => {
-				if (result.status === 200) {
-					console.log(result);
-					result.json().then((response) => {
-						console.log(response);
-						setProblem(response.problemStatement);
-						setGoals(response.goalStatement);
-						setId(response.id);
-					});
-				}
-			});
-		} catch { }
-	}
+  function fetchMostRecentRelease() {
+    console.log("about to most recent release");
+    var options = {
+      method: "get",
+      credentials: "include",
+    };
+    try {
+      fetch(
+        `http://localhost:8080/api/project/${projectId}/recentRelease`,
+        options
+      ).then((result) => {
+        if (result.status === 200) {
+          console.log(result);
+          result.json().then((response) => {
+            console.log(response);
+            setProblem(response.problemStatement);
+            setGoals(response.goalStatement);
+            setId(response.id);
+          });
+        }
+      });
+    } catch { }
+  }
 
-	function fetchRelease(releaseId, setProblem, setGoals) {
-		console.log("about to fetch a release");
-		var options = {
-			method: "get",
-			credentials: "include",
-		};
-		try {
-			fetch(`http://localhost:8080/api/release/${releaseId}`, options).then(
-				(result) => {
-					if (result.status === 200) {
-						console.log(result);
-						result.json().then((response) => {
-							console.log(response);
-							setProblem(response.problemStatement);
-							setGoals(response.goalStatement);
-						});
-					}
-				}
-			);
-		} catch { }
-	}
+  function fetchRelease(releaseId, setProblem, setGoals) {
+    console.log("about to fetch a release");
+    var options = {
+      method: "get",
+      credentials: "include",
+    };
+    try {
+      fetch(`http://localhost:8080/api/release/${releaseId}`, options).then(
+        (result) => {
+          if (result.status === 200) {
+            console.log(result);
+            result.json().then((response) => {
+              console.log(response);
+              setProblem(response.problemStatement);
+              setGoals(response.goalStatement);
+            });
+          }
+        }
+      );
+    } catch { }
+  }
 
-	function fetchSprints(releaseId) {
-		var options = {
-			method: "get",
-			credentials: "include",
-		};
-		try {
-			fetch(
-				`http://localhost:8080/api/release/${releaseId}/sprints`,
-				options
-			).then((result) => {
-				if (result.status === 200) {
-					result.json().then((response) => {
-						setSprints(response);
-					});
-				} else {
-					setSprints([]);
-				}
-			});
-		} catch { }
-	}
+  function fetchSprints(releaseId) {
+    var options = {
+      method: "get",
+      credentials: "include",
+    };
+    try {
+      fetch(
+        `http://localhost:8080/api/release/${releaseId}/sprints`,
+        options
+      ).then((result) => {
+        if (result.status === 200) {
+          result.json().then((response) => {
+            setSprints(response);
+          });
+        } else {
+          setSprints([]);
+        }
+      });
+    } catch { }
+  }
 
 	function createNewSprints() {
 		console.log("creating new");
@@ -242,22 +242,22 @@ const ReleasePlan = ({ projectId }) => {
 					Sanity Check
 				</Typography>
 
-				<Grid container spacing={2}>
-					{/* Sanity Check Graph */}
-					<Grid item xs={6}>
-						<SanityCheckGraph />
-					</Grid>
-					<Grid item xs={6}>
-						<SanityCheckText
-							text={
-								"Yes we can do it because no sprint looks like too much work. Lorem ipsum dolor sit amet …"
-							}
-						/>
-					</Grid>
-				</Grid>
-			</Grid>
-		</Grid>
-	);
+        <Grid container spacing={2}>
+          {/* Sanity Check Graph */}
+          <Grid item xs={6}>
+            <SanityCheckGraph sprints={sprints} />
+          </Grid>
+          <Grid item xs={6}>
+            <SanityCheckText
+              text={
+                "Yes we can do it because no sprint looks like too much work. Lorem ipsum dolor sit amet …"
+              }
+            />
+          </Grid>
+        </Grid>
+      </Grid>
+    </Grid>
+  );
 };
 
 export default ReleasePlan;
