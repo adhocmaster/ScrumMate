@@ -3,7 +3,6 @@ import { BacklogItem, Priority, Story } from "../../entity/backlogItem";
 import { ModelRepository } from "./modelRepository";
 import { NotFoundError } from "../../helpers/errors";
 import { Sprint } from "../../entity/sprint";
-import { shuffle } from "lodash";
 
 export class BacklogItemRepository extends ModelRepository {
 
@@ -169,20 +168,17 @@ export class BacklogItemRepository extends ModelRepository {
 		}
 	}
 
-	// Returns a triple of [list of numbers (estimates) or booleans (estimate statuses), boolean for whether poker is done, story's SP]
-	public async getBacklogItemPoker(backlogItemId: number): Promise<[(number | boolean)[], boolean, number]> {
+	// Returns an object of [boolean for whether poker is done, user's  number of estimates, number of people not estimated, story's SP]
+	public async getBacklogItemPoker(backlogItemId: number): Promise<any> {
 		const backlogItemWithPoker = await this.backlogSource.fetchBacklogWithPoker(backlogItemId);
-		const teamIds = Object.keys(backlogItemWithPoker.estimates);
-		const shuffledTeamIds = shuffle(teamIds);
-		return [
-			shuffledTeamIds.map((id: string) =>
-				backlogItemWithPoker.pokerCompleted ?
-					backlogItemWithPoker.estimates.hasOwnProperty(parseInt(id)) :
-					backlogItemWithPoker.estimates[parseInt(id)]
-			),
-			backlogItemWithPoker.pokerCompleted,
-			backlogItemWithPoker.size,
-		]
+		return {
+			pokerDone: backlogItemWithPoker.pokerCompleted,
+			userEstimate: 1,
+			numberOfOtherEstimates: 2,
+			numberOfUnestimated: 2,
+			size: backlogItemWithPoker.size,
+			estimates: backlogItemWithPoker.pokerCompleted ? Object.values(backlogItemWithPoker.estimates) : []
+		}
 	}
 
 	public async lookupBacklogById(id: number): Promise<BacklogItem> {
