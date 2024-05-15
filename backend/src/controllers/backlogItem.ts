@@ -78,5 +78,5 @@ export const getBacklogItemPoker = async (req: express.Request, res: express.Res
 	const db = Database.getInstance();
 	const { backlogItemId } = req.params;
 	verifyParameters(backlogItemId);
-	return res.json(await db.getBacklogItemRepository.getBacklogItemPoker(parseInt(backlogItemId)));
+	return res.json(await db.getBacklogItemRepository.getBacklogItemPoker(parseInt(backlogItemId), req.userId));
 }

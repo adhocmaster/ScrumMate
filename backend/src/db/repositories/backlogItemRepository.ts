@@ -168,16 +168,30 @@ export class BacklogItemRepository extends ModelRepository {
 		}
 	}
 
-	// Returns an object of [boolean for whether poker is done, user's  number of estimates, number of people not estimated, story's SP]
-	public async getBacklogItemPoker(backlogItemId: number): Promise<any> {
+	public async getBacklogItemPoker(backlogItemId: number, userId: number): Promise<Object> {
 		const backlogItemWithPoker = await this.backlogSource.fetchBacklogWithPoker(backlogItemId);
+
+		const backlogItemWithParent = await this.backlogSource.fetchBacklogWithParent(backlogItemId);
+		var release = backlogItemWithParent.release;
+		if (backlogItemWithParent.sprint) {
+			release = (await this.sprintSource.lookupSprintByIdWithRelease(backlogItemWithParent.sprint.id)).release;
+		}
+		const project = (await this.releaseSource.fetchReleaseWithProject(release.id)).project;
+		const projectWithUsers = await this.projectSource.lookupProjectByIdWithUsers(project.id);
+
+		const pokerCompleted = backlogItemWithPoker.pokerCompleted;
+		const userHasEstimated = backlogItemWithPoker.estimates.hasOwnProperty(userId);
+		const pokerEstimates = Object.values(backlogItemWithPoker.estimates);
+		const numEstimates = pokerEstimates.length;
+		const numTeamMembers = projectWithUsers.teamMembers.length + 1;
+
 		return {
-			pokerDone: backlogItemWithPoker.pokerCompleted,
-			userEstimate: 1,
-			numberOfOtherEstimates: 2,
-			numberOfUnestimated: 2,
+			pokerDone: pokerCompleted,
+			userEstimate: userHasEstimated,
+			numberOfOtherEstimates: numEstimates - Number(userHasEstimated),
+			numberOfOtherUnestimated: numTeamMembers - numEstimates - Number(!userHasEstimated),
 			size: backlogItemWithPoker.size,
-			estimates: backlogItemWithPoker.pokerCompleted ? Object.values(backlogItemWithPoker.estimates) : []
+			estimates: pokerCompleted ? pokerEstimates : []
 		}
 	}
 
