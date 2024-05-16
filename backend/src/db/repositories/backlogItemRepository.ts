@@ -170,27 +170,27 @@ export class BacklogItemRepository extends ModelRepository {
 		}
 	}
 
-	public async getBacklogItemPoker(backlogItemId: number, userId: number): Promise<Object> {
-		async function getProjectWithUsersFromBacklog(backlogItemId: number, repository: BacklogItemRepository): Promise<Project> {
-			const backlogItemWithParent = await repository.backlogSource.fetchBacklogWithParent(backlogItemId);
-			var release = backlogItemWithParent.release;
-			if (backlogItemWithParent.sprint) {
-				release = (await repository.sprintSource.lookupSprintByIdWithRelease(backlogItemWithParent.sprint.id)).release;
-			}
-			const project = (await repository.releaseSource.fetchReleaseWithProject(release.id)).project;
-			const projectWithUsers = await repository.projectSource.lookupProjectByIdWithUsers(project.id);
-			return projectWithUsers;
+	private async getProjectWithUsersFromBacklog(backlogItemId: number): Promise<Project> {
+		const backlogItemWithParent = await this.backlogSource.fetchBacklogWithParent(backlogItemId);
+		var release = backlogItemWithParent.release;
+		if (backlogItemWithParent.sprint) {
+			release = (await this.sprintSource.lookupSprintByIdWithRelease(backlogItemWithParent.sprint.id)).release;
 		}
+		const project = (await this.releaseSource.fetchReleaseWithProject(release.id)).project;
+		const projectWithUsers = await this.projectSource.lookupProjectByIdWithUsers(project.id);
+		return projectWithUsers;
+	}
 
+	public async getBacklogItemPoker(backlogItemId: number, userId: number): Promise<Object> {
 		async function getTeamInfo(backlogItemWithPoker: BacklogItem, repository: BacklogItemRepository): Promise<(string | boolean)[][]> {
 			const pokerUserIdStrings = Object.keys(backlogItemWithPoker.estimates);
-			const projectWithUsers = await getProjectWithUsersFromBacklog(backlogItemWithPoker.id, repository);
+			const projectWithUsers = await repository.getProjectWithUsersFromBacklog(backlogItemWithPoker.id);
 
 			const shuffledPokerIdNumbers = shuffle(pokerUserIdStrings.map((idString) => parseInt(idString)))
 			const shuffledPokerIdsWithoutUser = shuffledPokerIdNumbers.filter((id) => id !== userId);
 			const pokerUsersWithoutUserWithPreviousEstimatesAndCurrentStatuses = shuffledPokerIdsWithoutUser.map((id: number) => {
 				const [currentEstimate, previousEstimate, submitted] = backlogItemWithPoker.estimates[id];
-				return [String(previousEstimate), submitted]
+				return [backlogItemWithPoker.pokerIsOver ? String(currentEstimate) : String(previousEstimate), submitted]
 			});
 
 			const pokerEstimates = Object.values(backlogItemWithPoker.estimates);
@@ -205,23 +205,38 @@ export class BacklogItemRepository extends ModelRepository {
 			return [...pokerUsersWithoutUserWithPreviousEstimatesAndCurrentStatuses, ...unestimatedTeamMembers];
 		}
 
-
 		const backlogItemWithPoker = await this.backlogSource.lookupBacklogById(backlogItemId);
-		const userHasEstimated = backlogItemWithPoker.estimates.hasOwnProperty(userId);
 		return {
 			pokerIsOver: backlogItemWithPoker.pokerIsOver,
-			userEstimate: userHasEstimated ? backlogItemWithPoker.estimates[userId] : ["", false],
+			userEstimate: backlogItemWithPoker.estimates[userId] ?? ["", false],
 			othersEstimates: await getTeamInfo(backlogItemWithPoker, this),
 			size: backlogItemWithPoker.size,
 			rank: backlogItemWithPoker.rank,
 		}
 	}
 
-	// public async placePokerEstimate(backlogItemId: number, estimate: number, userId: number) {
-	// 	const backlogItemWithPoker = await this.backlogSource.lookupBacklogById(backlogItemId);
-	// 	backlogItemWithPoker.estimates[userId] = estimate;
-	// 	await this.backlogSource.save(backlogItemWithPoker);
-	// }
+	public async placePokerEstimate(backlogItemId: number, estimate: number, userId: number): Promise<void> {
+		const backlogItemWithPoker = await this.backlogSource.lookupBacklogById(backlogItemId);
+
+		const estimatedUserIds = Object.keys(backlogItemWithPoker.estimates);
+		if (backlogItemWithPoker.pokerIsOver) {
+			for (const userId of estimatedUserIds) {
+				const [currentEstimate, previousEstimate, submitted] = backlogItemWithPoker.estimates[parseInt(userId)];
+				backlogItemWithPoker.estimates[parseInt(userId)] = [0, String(currentEstimate), false]
+			}
+			backlogItemWithPoker.pokerIsOver = false;
+		}
+
+		const oldEstimate = backlogItemWithPoker.estimates[userId][1] ?? "";
+		backlogItemWithPoker.estimates[userId] = [estimate, oldEstimate, true];
+
+		const projectWithUsers = await this.getProjectWithUsersFromBacklog(backlogItemId);
+		if (projectWithUsers.getTeamMembers().length + 1 === estimatedUserIds.length) {
+			backlogItemWithPoker.pokerIsOver = true;
+		}
+
+		await this.backlogSource.save(backlogItemWithPoker);
+	}
 
 	public async lookupBacklogById(id: number): Promise<BacklogItem> {
 		return await this.backlogSource.lookupBacklogById(id);

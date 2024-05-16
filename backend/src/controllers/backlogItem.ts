@@ -86,6 +86,6 @@ export const placePokerEstimate = async (req: express.Request, res: express.Resp
 	const { backlogItemId } = req.params;
 	const { estimate } = req.body;
 	verifyParameters(backlogItemId, estimate);
-	// await db.getBacklogItemRepository.
+	await db.getBacklogItemRepository.placePokerEstimate(parseInt(backlogItemId), parseInt(estimate), req.userId);
 	return res.sendStatus(200);
 }
