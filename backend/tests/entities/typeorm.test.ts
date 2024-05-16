@@ -163,18 +163,25 @@ describe('testing that everything can be saved and loaded from database', () => 
 	role.user = teammember1;
 	spike.sprint = sprint2; sprint2.addTODO(spike)
 	spike.rank = 1;
+	spike.size = 1;
 	story1.sprint = sprint2; sprint2.addTODO(story1)
 	story1.rank = 1;
+	story1.size = 1;
 	task1.story = story1; story1.addTask(task1); task1.sprint = sprint1; sprint1.addTODO(task1)
 	task1.rank = 1;
+	task1.size = 1;
 	task2.story = story1; story1.addTask(task2); task2.sprint = sprint1; sprint1.addTODO(task2)
 	task2.rank = 1;
+	task2.size = 1;
 	story2.sprint = sprint2; sprint2.addTODO(story2)
 	story2.rank = 2;
+	story2.size = 2;
 	task3.story = story2; story2.addTask(task3); task3.sprint = sprint1; sprint1.addTODO(task3)
 	task3.rank = 1;
+	task3.size = 1;
 	task4.story = story2; story2.addTask(task4); task4.sprint = sprint1; sprint1.addTODO(task4)
 	task4.rank = 1;
+	task4.size = 1;
 	productOwner1.addOwnedProject(project2); project2.productOwner = productOwner1
 
 	productOwner2.addOwnedProject(project3); project3.productOwner = productOwner2

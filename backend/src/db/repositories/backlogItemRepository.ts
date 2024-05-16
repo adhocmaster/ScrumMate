@@ -3,6 +3,9 @@ import { BacklogItem, Priority, Story } from "../../entity/backlogItem";
 import { ModelRepository } from "./modelRepository";
 import { NotFoundError } from "../../helpers/errors";
 import { Sprint } from "../../entity/sprint";
+import { shuffle } from "lodash";
+import { Project } from "../../entity/project";
+import user from "router/user";
 
 export class BacklogItemRepository extends ModelRepository {
 
@@ -13,7 +16,7 @@ export class BacklogItemRepository extends ModelRepository {
 		newStory.functionalityDescription = functionalityDescription
 		newStory.reasoning = reasoning
 		newStory.acceptanceCriteria = acceptanceCriteria
-		newStory.storyPoints = storyPoints
+		newStory.size = storyPoints
 		newStory.priority = priority
 		newStory.sprint = sprint
 		newStory.rank = sprint.backlogItemCount
@@ -30,7 +33,7 @@ export class BacklogItemRepository extends ModelRepository {
 		newStory.functionalityDescription = functionalityDescription
 		newStory.reasoning = reasoning
 		newStory.acceptanceCriteria = acceptanceCriteria
-		newStory.storyPoints = storyPoints
+		newStory.size = storyPoints
 		newStory.priority = priority
 		newStory.release = release
 		newStory.rank = release.backlogItemCount
@@ -46,7 +49,7 @@ export class BacklogItemRepository extends ModelRepository {
 		story.functionalityDescription = functionalityDescription ?? story.functionalityDescription
 		story.reasoning = reasoning ?? story.reasoning
 		story.acceptanceCriteria = acceptanceCriteria ?? story.acceptanceCriteria
-		story.storyPoints = storyPoints ?? story.storyPoints
+		story.size = storyPoints ?? story.size
 		story.priority = priority ?? story.priority
 		await this.backlogSource.save(story)
 		return story;
@@ -166,6 +169,115 @@ export class BacklogItemRepository extends ModelRepository {
 			}
 			return release.backlog
 		}
+	}
+
+	private async getProjectWithUsersFromBacklog(backlogItemId: number): Promise<Project> {
+		const backlogItemWithParent = await this.backlogSource.fetchBacklogWithParent(backlogItemId);
+		var release = backlogItemWithParent.release;
+		if (backlogItemWithParent.sprint) {
+			release = (await this.sprintSource.lookupSprintByIdWithRelease(backlogItemWithParent.sprint.id)).release;
+		}
+		const project = (await this.releaseSource.fetchReleaseWithProject(release.id)).project;
+		const projectWithUsers = await this.projectSource.lookupProjectByIdWithUsers(project.id);
+		return projectWithUsers;
+	}
+
+	public async getBacklogItemPoker(backlogItemId: number, userId: number): Promise<Object> {
+		function getTeamInfoFromBacklogItemEstimates(pokerUserIdStrings: string[]) {
+			const shuffledPokerIdNumbers = shuffle(pokerUserIdStrings.map((idString) => parseInt(idString)))
+			const shuffledPokerIdsWithoutUser = shuffledPokerIdNumbers.filter((id) => id !== userId);
+			const pokerUsersWithoutUserWithPreviousEstimatesAndCurrentStatuses = shuffledPokerIdsWithoutUser.map((id: number) => {
+				const [currentEstimate, previousEstimate, submitted] = backlogItemWithPoker.estimates[id];
+				return [backlogItemWithPoker.pokerIsOver ? currentEstimate : previousEstimate, submitted]
+			});
+			return pokerUsersWithoutUserWithPreviousEstimatesAndCurrentStatuses;
+		}
+
+		function getTeamInfoFromProject(backlogItemWithPoker: BacklogItem, projectWithUsers: Project) {
+			const pokerEstimates = Object.values(backlogItemWithPoker.estimates);
+			const numTeamMembers = projectWithUsers.teamMembers.length + 1;
+			const numEstimates = pokerEstimates.length;
+			const userHasEstimated = backlogItemWithPoker.estimates.hasOwnProperty(userId);
+			const numberOfUnestimatedTeamMembers = numTeamMembers - numEstimates;
+			const numberOfUnestimatedTeamMembersWithoutUser = numberOfUnestimatedTeamMembers - Number(!userHasEstimated);
+			const unestimatedTeamMembers = Array.from({ length: numberOfUnestimatedTeamMembersWithoutUser }, () => [...["", false]])
+			return unestimatedTeamMembers;
+		}
+
+		async function getTeamInfo(backlogItemWithPoker: BacklogItem, repository: BacklogItemRepository): Promise<(string | boolean)[][]> {
+			const pokerUserIdStrings = Object.keys(backlogItemWithPoker.estimates);
+			const projectWithUsers = await repository.getProjectWithUsersFromBacklog(backlogItemWithPoker.id);
+
+			const teamInfoFromPokerEstimates = getTeamInfoFromBacklogItemEstimates(pokerUserIdStrings);
+			const teamInfoFromProject = getTeamInfoFromProject(backlogItemWithPoker, projectWithUsers)
+
+			return [...teamInfoFromPokerEstimates, ...teamInfoFromProject];
+		}
+
+		const backlogItemWithPoker = await this.backlogSource.lookupBacklogById(backlogItemId);
+		const userHasEstimated = backlogItemWithPoker.estimates.hasOwnProperty(userId);
+
+		var userEstimate;
+		if (userHasEstimated) {
+			const [currentEstimate, previousEstimate, submitted] = backlogItemWithPoker.estimates[userId];
+			userEstimate = [currentEstimate, submitted];
+		} else {
+			userEstimate = ["", false];
+		}
+
+		return {
+			pokerIsOver: backlogItemWithPoker.pokerIsOver,
+			userEstimate: userEstimate,
+			othersEstimates: await getTeamInfo(backlogItemWithPoker, this),
+			size: backlogItemWithPoker.size,
+			rank: backlogItemWithPoker.rank,
+		}
+	}
+
+	public async placePokerEstimate(backlogItemId: number, estimate: number, userId: number): Promise<void> {
+		function nextRoundPoker(backlogItemWithPoker: BacklogItem): void {
+			const estimatedUserIds = Object.keys(backlogItemWithPoker.estimates);
+			for (const userIdWithEstimate of estimatedUserIds) {
+				const userIdWithEstimateNumber = parseInt(userIdWithEstimate)
+				const [currentEstimate, previousEstimate, submitted] = backlogItemWithPoker.estimates[userIdWithEstimateNumber];
+				backlogItemWithPoker.estimates[userIdWithEstimateNumber] = [currentEstimate, currentEstimate, false]
+			}
+			backlogItemWithPoker.pokerIsOver = false;
+		}
+
+		function getPreviousRoundEstimate(backlogItemWithPoker: BacklogItem, userId: number): string {
+			const userHasEstimated = backlogItemWithPoker.estimates.hasOwnProperty(userId);
+			const oldEstimate = userHasEstimated ? backlogItemWithPoker.estimates[userId][1] : "";
+			return oldEstimate;
+		}
+
+		function roundComplete(projectWithUsers: Project, backlogItemWithPoker: BacklogItem): boolean {
+			const estimatedUserIds = Object.keys(backlogItemWithPoker.estimates);
+			const wholeTeamCounted = projectWithUsers.getTeamMembers().length + 1 === estimatedUserIds.length;
+			const everyoneHasSubmitted = Object.values(backlogItemWithPoker.estimates).every((tuple) => tuple[2])
+			return wholeTeamCounted && everyoneHasSubmitted;
+		}
+
+		const backlogItemWithPoker = await this.backlogSource.lookupBacklogById(backlogItemId);
+
+		if (backlogItemWithPoker.pokerIsOver) {
+			nextRoundPoker(backlogItemWithPoker);
+		}
+
+		const oldEstimate = getPreviousRoundEstimate(backlogItemWithPoker, userId)
+		backlogItemWithPoker.estimates[userId] = [String(estimate), oldEstimate, true];
+
+		const projectWithUsers = await this.getProjectWithUsersFromBacklog(backlogItemId);
+		if (roundComplete(projectWithUsers, backlogItemWithPoker)) {
+			const everyEstimateEqual = Object.values(backlogItemWithPoker.estimates).every((tuple) => tuple[0] === backlogItemWithPoker.estimates[userId][0])
+			if (everyEstimateEqual) {
+				backlogItemWithPoker.pokerIsOver = true;
+			} else {
+				nextRoundPoker(backlogItemWithPoker);
+			}
+		}
+
+		await this.backlogSource.save(backlogItemWithPoker);
 	}
 
 	public async lookupBacklogById(id: number): Promise<BacklogItem> {

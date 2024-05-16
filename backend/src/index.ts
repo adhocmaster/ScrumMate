@@ -98,7 +98,7 @@ AppDataSource.initialize().then(async () => {
 		backlog_s1_1.functionalityDescription = "see my inputted information when I reopen the app"
 		backlog_s1_1.reasoning = "I do not need to keep it open"
 		backlog_s1_1.acceptanceCriteria = "Can log in and log out, and access user id within the app"
-		backlog_s1_1.storyPoints = 13;
+		backlog_s1_1.size = 13;
 		backlog_s1_1.rank = 0
 		await db.save(backlog_s1_1);
 
@@ -109,7 +109,7 @@ AppDataSource.initialize().then(async () => {
 		backlog_s1_2.functionalityDescription = "create tasks."
 		backlog_s1_2.reasoning = "I can see what my tasks are"
 		backlog_s1_2.acceptanceCriteria = "Can create tasks in an interface and see it on the list"
-		backlog_s1_2.storyPoints = 5;
+		backlog_s1_2.size = 5;
 		backlog_s1_2.rank = 1
 		await db.save(backlog_s1_2);
 
@@ -120,7 +120,7 @@ AppDataSource.initialize().then(async () => {
 		backlog_s1_3.functionalityDescription = "change properties of a task."
 		backlog_s1_3.reasoning = "I can mark them as completed, move to another date, etc"
 		backlog_s1_3.acceptanceCriteria = "Can edit tasks in an interface and see it reflected in the list"
-		backlog_s1_3.storyPoints = 1;
+		backlog_s1_3.size = 1;
 		backlog_s1_3.rank = 2
 		await db.save(backlog_s1_3);
 
@@ -132,7 +132,7 @@ AppDataSource.initialize().then(async () => {
 		backlog_s2_1.functionalityDescription = "manage my tasks in various time frames"
 		backlog_s2_1.reasoning = "I can get the amount of detail I need to plan my schedule"
 		backlog_s2_1.acceptanceCriteria = "Be able to see names of tasks in all views and be able to add tasks, be able to edit the information in this view"
-		backlog_s2_1.storyPoints = 8;
+		backlog_s2_1.size = 8;
 		backlog_s2_1.rank = 0
 		await db.save(backlog_s2_1);
 
@@ -143,7 +143,7 @@ AppDataSource.initialize().then(async () => {
 		backlog_s2_2.functionalityDescription = "move my tasks around the timeline"
 		backlog_s2_2.reasoning = "I can assign them to other days"
 		backlog_s2_2.acceptanceCriteria = "Successfully use gestures to modify/move a task, be able to see it on the new date after the gesture is done"
-		backlog_s2_2.storyPoints = 12;
+		backlog_s2_2.size = 12;
 		backlog_s2_2.rank = 1
 		await db.save(backlog_s2_2);
 
@@ -154,7 +154,7 @@ AppDataSource.initialize().then(async () => {
 		backlog_r2_1.functionalityDescription = "manage my events in various time frames"
 		backlog_r2_1.reasoning = " I can get the amount of detail I need to plan my schedule"
 		backlog_r2_1.acceptanceCriteria = "can eat fish and survive"
-		backlog_r2_1.storyPoints = 8;
+		backlog_r2_1.size = 8;
 		backlog_r2_1.rank = 0
 		await db.save(backlog_r2_1);
 
@@ -165,7 +165,7 @@ AppDataSource.initialize().then(async () => {
 		backlog_r2_2.functionalityDescription = "edit an event"
 		backlog_r2_2.reasoning = "I can keep the planner up to date with changes to my schedule"
 		backlog_r2_2.acceptanceCriteria = "In the larger view of an event, be able to see and edit all fields of the event"
-		backlog_r2_2.storyPoints = 1;
+		backlog_r2_2.size = 1;
 		backlog_r2_2.rank = 1
 		await db.save(backlog_r2_2);
 
@@ -176,7 +176,7 @@ AppDataSource.initialize().then(async () => {
 		backlog_r2_3.functionalityDescription = "Look at different time windows"
 		backlog_r2_3.reasoning = "I can plan for the short, medium and long term as needed"
 		backlog_r2_3.acceptanceCriteria = "Able to move from daily view to monthly view with UI and gestures"
-		backlog_r2_3.storyPoints = 1;
+		backlog_r2_3.size = 1;
 		backlog_r2_3.rank = 1
 		await db.save(backlog_r2_3);
 	}
