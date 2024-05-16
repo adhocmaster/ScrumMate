@@ -237,6 +237,109 @@ describe("Invite API tests", () => {
 			});
 	});
 
+	test('Sally estimates the first item', async () => {
+		const body = {
+			"estimate": "1",
+		}
+		await request(app)
+			.post(`/api/backlogItem/${backlogId1}/poker`)
+			.set('Cookie', [`user-auth=${sessionToken1}`])
+			.send(body)
+			.expect(200)
+	});
+
+	test('Sally estimates the second item', async () => {
+		const body = {
+			"estimate": "2",
+		}
+		await request(app)
+			.post(`/api/backlogItem/${backlogId2}/poker`)
+			.set('Cookie', [`user-auth=${sessionToken1}`])
+			.send(body)
+			.expect(200)
+	});
+
+	test('First backlogItem Poker is done and has estimate 1 from sally', async () => {
+		await request(app)
+			.get(`/api/backlogItem/${backlogId1}/poker`)
+			.set('Cookie', [`user-auth=${sessionToken1}`])
+			.expect(200)
+			.then((res) => {
+				expect(res.body).toBeDefined();
+				expect(res.body.pokerIsOver).toEqual(true);
+				expect(res.body.userEstimate).toEqual(["1", true]);
+				expect(res.body.othersEstimates).toEqual([]);
+				expect(res.body.size).toEqual(10);
+				expect(res.body.rank).toEqual(0);
+			});
+	});
+
+	test('Second backlogItem Poker is done and has estimate 2 from sally', async () => {
+		await request(app)
+			.get(`/api/backlogItem/${backlogId2}/poker`)
+			.set('Cookie', [`user-auth=${sessionToken1}`])
+			.expect(200)
+			.then((res) => {
+				expect(res.body).toBeDefined();
+				expect(res.body.pokerIsOver).toEqual(true);
+				expect(res.body.userEstimate).toEqual(["2", true]);
+				expect(res.body.othersEstimates).toEqual([]);
+				expect(res.body.size).toEqual(11);
+				expect(res.body.rank).toEqual(0);
+			});
+	});
+
+	test('Sally reestimates the first item to 2', async () => {
+		const body = {
+			"estimate": "2",
+		}
+		await request(app)
+			.post(`/api/backlogItem/${backlogId1}/poker`)
+			.set('Cookie', [`user-auth=${sessionToken1}`])
+			.send(body)
+			.expect(200)
+	});
+
+	test('Sally reestimates the second item to 3', async () => {
+		const body = {
+			"estimate": "3",
+		}
+		await request(app)
+			.post(`/api/backlogItem/${backlogId2}/poker`)
+			.set('Cookie', [`user-auth=${sessionToken1}`])
+			.send(body)
+			.expect(200)
+	});
+
+	test('First backlogItem Poker is now 2', async () => {
+		await request(app)
+			.get(`/api/backlogItem/${backlogId1}/poker`)
+			.set('Cookie', [`user-auth=${sessionToken1}`])
+			.expect(200)
+			.then((res) => {
+				expect(res.body).toBeDefined();
+				expect(res.body.pokerIsOver).toEqual(true);
+				expect(res.body.userEstimate).toEqual(["2", true]);
+				expect(res.body.othersEstimates).toEqual([]);
+				expect(res.body.size).toEqual(10);
+				expect(res.body.rank).toEqual(0);
+			});
+	});
+
+	test('Second backlogItem Poker is now 3', async () => {
+		await request(app)
+			.get(`/api/backlogItem/${backlogId2}/poker`)
+			.set('Cookie', [`user-auth=${sessionToken1}`])
+			.expect(200)
+			.then((res) => {
+				expect(res.body).toBeDefined();
+				expect(res.body.pokerIsOver).toEqual(true);
+				expect(res.body.userEstimate).toEqual(["3", true]);
+				expect(res.body.othersEstimates).toEqual([]);
+				expect(res.body.size).toEqual(11);
+				expect(res.body.rank).toEqual(0);
+			});
+	});
 
 	test('Get bobby initial invites', async () => {
 		await request(app)
@@ -330,7 +433,30 @@ describe("Invite API tests", () => {
 			});
 	});
 
-	test('First backlogItem Poker is no longer empty for sally', async () => {
+	// Poker again
+	test('Sally reestimates the first item to 3 after bobby joins', async () => {
+		const body = {
+			"estimate": "3",
+		}
+		await request(app)
+			.post(`/api/backlogItem/${backlogId1}/poker`)
+			.set('Cookie', [`user-auth=${sessionToken1}`])
+			.send(body)
+			.expect(200)
+	});
+
+	test('Sally reestimates the second item to 4 after bobby joins', async () => {
+		const body = {
+			"estimate": "4",
+		}
+		await request(app)
+			.post(`/api/backlogItem/${backlogId2}/poker`)
+			.set('Cookie', [`user-auth=${sessionToken1}`])
+			.send(body)
+			.expect(200)
+	});
+
+	test('First backlogItem Poker is updated for sally', async () => {
 		await request(app)
 			.get(`/api/backlogItem/${backlogId1}/poker`)
 			.set('Cookie', [`user-auth=${sessionToken1}`])
@@ -338,14 +464,14 @@ describe("Invite API tests", () => {
 			.then((res) => {
 				expect(res.body).toBeDefined();
 				expect(res.body.pokerIsOver).toEqual(false);
-				expect(res.body.userEstimate).toEqual(["", false]);
+				expect(res.body.userEstimate).toEqual(["3", true]);
 				expect(res.body.othersEstimates).toEqual([["", false]]);
 				expect(res.body.size).toEqual(10);
 				expect(res.body.rank).toEqual(0);
 			});
 	});
 
-	test('Second backlogItem Poker is no longer empty empty for sally', async () => {
+	test('Second backlogItem Poker is updated for sally', async () => {
 		await request(app)
 			.get(`/api/backlogItem/${backlogId2}/poker`)
 			.set('Cookie', [`user-auth=${sessionToken1}`])
@@ -353,13 +479,198 @@ describe("Invite API tests", () => {
 			.then((res) => {
 				expect(res.body).toBeDefined();
 				expect(res.body.pokerIsOver).toEqual(false);
-				expect(res.body.userEstimate).toEqual(["", false]);
+				expect(res.body.userEstimate).toEqual(["4", true]);
 				expect(res.body.othersEstimates).toEqual([["", false]]);
 				expect(res.body.size).toEqual(11);
 				expect(res.body.rank).toEqual(0);
 			});
 	});
 
+	test('Bobby estimates the first item at 1', async () => {
+		const body = {
+			"estimate": "1",
+		}
+		await request(app)
+			.post(`/api/backlogItem/${backlogId1}/poker`)
+			.set('Cookie', [`user-auth=${sessionToken2}`])
+			.send(body)
+			.expect(200)
+	});
+
+	test('Bobby estimates the second item at 2', async () => {
+		const body = {
+			"estimate": "2",
+		}
+		await request(app)
+			.post(`/api/backlogItem/${backlogId2}/poker`)
+			.set('Cookie', [`user-auth=${sessionToken2}`])
+			.send(body)
+			.expect(200)
+	});
+
+	test('Poker moved to next round. First backlogItem Poker is correct for Bobby', async () => {
+		await request(app)
+			.get(`/api/backlogItem/${backlogId1}/poker`)
+			.set('Cookie', [`user-auth=${sessionToken2}`])
+			.expect(200)
+			.then((res) => {
+				expect(res.body).toBeDefined();
+				expect(res.body.pokerIsOver).toEqual(false);
+				expect(res.body.userEstimate).toEqual(["1", false]);
+				expect(res.body.othersEstimates).toEqual([["3", false]]);
+				expect(res.body.size).toEqual(10);
+				expect(res.body.rank).toEqual(0);
+			});
+	});
+
+	test('Poker moved to next round. Second backlogItem Poker is correct for Bobby', async () => {
+		await request(app)
+			.get(`/api/backlogItem/${backlogId2}/poker`)
+			.set('Cookie', [`user-auth=${sessionToken2}`])
+			.expect(200)
+			.then((res) => {
+				expect(res.body).toBeDefined();
+				expect(res.body.pokerIsOver).toEqual(false);
+				expect(res.body.userEstimate).toEqual(["2", false]);
+				expect(res.body.othersEstimates).toEqual([["4", false]]);
+				expect(res.body.size).toEqual(11);
+				expect(res.body.rank).toEqual(0);
+			});
+	});
+
+	test('First backlogItem Poker is correct for Sally', async () => {
+		await request(app)
+			.get(`/api/backlogItem/${backlogId1}/poker`)
+			.set('Cookie', [`user-auth=${sessionToken1}`])
+			.expect(200)
+			.then((res) => {
+				expect(res.body).toBeDefined();
+				expect(res.body.pokerIsOver).toEqual(false);
+				expect(res.body.userEstimate).toEqual(["3", false]);
+				expect(res.body.othersEstimates).toEqual([["1", false]]);
+				expect(res.body.size).toEqual(10);
+				expect(res.body.rank).toEqual(0);
+			});
+	});
+
+	test('Second backlogItem Poker is correct for Sally', async () => {
+		await request(app)
+			.get(`/api/backlogItem/${backlogId2}/poker`)
+			.set('Cookie', [`user-auth=${sessionToken1}`])
+			.expect(200)
+			.then((res) => {
+				expect(res.body).toBeDefined();
+				expect(res.body.pokerIsOver).toEqual(false);
+				expect(res.body.userEstimate).toEqual(["4", false]);
+				expect(res.body.othersEstimates).toEqual([["2", false]]);
+				expect(res.body.size).toEqual(11);
+				expect(res.body.rank).toEqual(0);
+			});
+	});
+
+	test('Bobby reestimates the first item at 1', async () => {
+		const body = {
+			"estimate": "1",
+		}
+		await request(app)
+			.post(`/api/backlogItem/${backlogId1}/poker`)
+			.set('Cookie', [`user-auth=${sessionToken2}`])
+			.send(body)
+			.expect(200)
+	});
+
+	test('Bobby reestimates the second item at 2', async () => {
+		const body = {
+			"estimate": "2",
+		}
+		await request(app)
+			.post(`/api/backlogItem/${backlogId2}/poker`)
+			.set('Cookie', [`user-auth=${sessionToken2}`])
+			.send(body)
+			.expect(200)
+	});
+
+	test('First backlogItem Poker hides Bobbys new estimate for Sally', async () => {
+		await request(app)
+			.get(`/api/backlogItem/${backlogId1}/poker`)
+			.set('Cookie', [`user-auth=${sessionToken1}`])
+			.expect(200)
+			.then((res) => {
+				expect(res.body).toBeDefined();
+				expect(res.body.pokerIsOver).toEqual(false);
+				expect(res.body.userEstimate).toEqual(["3", false]);
+				expect(res.body.othersEstimates).toEqual([["1", true]]);
+				expect(res.body.size).toEqual(10);
+				expect(res.body.rank).toEqual(0);
+			});
+	});
+
+	test('Second backlogItem Poker hides Bobbys new estimate for Sally', async () => {
+		await request(app)
+			.get(`/api/backlogItem/${backlogId2}/poker`)
+			.set('Cookie', [`user-auth=${sessionToken1}`])
+			.expect(200)
+			.then((res) => {
+				expect(res.body).toBeDefined();
+				expect(res.body.pokerIsOver).toEqual(false);
+				expect(res.body.userEstimate).toEqual(["4", false]);
+				expect(res.body.othersEstimates).toEqual([["2", true]]);
+				expect(res.body.size).toEqual(11);
+				expect(res.body.rank).toEqual(0);
+			});
+	});
+
+	test('Sally reestimates the first item to 1 after bobby', async () => {
+		const body = {
+			"estimate": "1",
+		}
+		await request(app)
+			.post(`/api/backlogItem/${backlogId1}/poker`)
+			.set('Cookie', [`user-auth=${sessionToken1}`])
+			.send(body)
+			.expect(200)
+	});
+
+	test('Sally reestimates the second item to 1 after bobby', async () => {
+		const body = {
+			"estimate": "2",
+		}
+		await request(app)
+			.post(`/api/backlogItem/${backlogId2}/poker`)
+			.set('Cookie', [`user-auth=${sessionToken1}`])
+			.send(body)
+			.expect(200)
+	});
+
+	test('First backlogItem Poker is done', async () => {
+		await request(app)
+			.get(`/api/backlogItem/${backlogId1}/poker`)
+			.set('Cookie', [`user-auth=${sessionToken1}`])
+			.expect(200)
+			.then((res) => {
+				expect(res.body).toBeDefined();
+				expect(res.body.pokerIsOver).toEqual(true);
+				expect(res.body.userEstimate).toEqual(["1", true]);
+				expect(res.body.othersEstimates).toEqual([["1", true]]);
+				expect(res.body.size).toEqual(10);
+				expect(res.body.rank).toEqual(0);
+			});
+	});
+
+	test('Second backlogItem Poker is done', async () => {
+		await request(app)
+			.get(`/api/backlogItem/${backlogId2}/poker`)
+			.set('Cookie', [`user-auth=${sessionToken1}`])
+			.expect(200)
+			.then((res) => {
+				expect(res.body).toBeDefined();
+				expect(res.body.pokerIsOver).toEqual(true);
+				expect(res.body.userEstimate).toEqual(["2", true]);
+				expect(res.body.othersEstimates).toEqual([["2", true]]);
+				expect(res.body.size).toEqual(11);
+				expect(res.body.rank).toEqual(0);
+			});
+	});
 
 	let sessionToken3: string;
 	let joeId: number;
@@ -565,7 +876,6 @@ describe("Invite API tests", () => {
 	});
 
 	// now testing signing statuses with joins/leaves
-
 	test("getting signatures for unsigned release revision", async () => {
 
 		await request(app)

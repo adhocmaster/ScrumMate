@@ -190,7 +190,7 @@ export class BacklogItemRepository extends ModelRepository {
 			const shuffledPokerIdsWithoutUser = shuffledPokerIdNumbers.filter((id) => id !== userId);
 			const pokerUsersWithoutUserWithPreviousEstimatesAndCurrentStatuses = shuffledPokerIdsWithoutUser.map((id: number) => {
 				const [currentEstimate, previousEstimate, submitted] = backlogItemWithPoker.estimates[id];
-				return [backlogItemWithPoker.pokerIsOver ? String(currentEstimate) : String(previousEstimate), submitted]
+				return [backlogItemWithPoker.pokerIsOver ? currentEstimate : previousEstimate, submitted]
 			});
 
 			const pokerEstimates = Object.values(backlogItemWithPoker.estimates);
@@ -206,9 +206,19 @@ export class BacklogItemRepository extends ModelRepository {
 		}
 
 		const backlogItemWithPoker = await this.backlogSource.lookupBacklogById(backlogItemId);
+		const userHasEstimated = backlogItemWithPoker.estimates.hasOwnProperty(userId);
+
+		var userEstimate;
+		if (userHasEstimated) {
+			const [currentEstimate, previousEstimate, submitted] = backlogItemWithPoker.estimates[userId];
+			userEstimate = [currentEstimate, submitted];
+		} else {
+			userEstimate = ["", false];
+		}
+
 		return {
 			pokerIsOver: backlogItemWithPoker.pokerIsOver,
-			userEstimate: backlogItemWithPoker.estimates[userId] ?? ["", false],
+			userEstimate: userEstimate,
 			othersEstimates: await getTeamInfo(backlogItemWithPoker, this),
 			size: backlogItemWithPoker.size,
 			rank: backlogItemWithPoker.rank,
@@ -218,21 +228,36 @@ export class BacklogItemRepository extends ModelRepository {
 	public async placePokerEstimate(backlogItemId: number, estimate: number, userId: number): Promise<void> {
 		const backlogItemWithPoker = await this.backlogSource.lookupBacklogById(backlogItemId);
 
-		const estimatedUserIds = Object.keys(backlogItemWithPoker.estimates);
+		var estimatedUserIds = Object.keys(backlogItemWithPoker.estimates);
 		if (backlogItemWithPoker.pokerIsOver) {
-			for (const userId of estimatedUserIds) {
-				const [currentEstimate, previousEstimate, submitted] = backlogItemWithPoker.estimates[parseInt(userId)];
-				backlogItemWithPoker.estimates[parseInt(userId)] = [0, String(currentEstimate), false]
+			for (const userIdWithEstimate of estimatedUserIds) {
+				const userIdWithEstimateNumber = parseInt(userIdWithEstimate)
+				const [currentEstimate, previousEstimate, submitted] = backlogItemWithPoker.estimates[userIdWithEstimateNumber];
+				backlogItemWithPoker.estimates[userIdWithEstimateNumber] = [currentEstimate, currentEstimate, false]
 			}
 			backlogItemWithPoker.pokerIsOver = false;
 		}
 
-		const oldEstimate = backlogItemWithPoker.estimates[userId][1] ?? "";
-		backlogItemWithPoker.estimates[userId] = [estimate, oldEstimate, true];
+		const userHasEstimated = backlogItemWithPoker.estimates.hasOwnProperty(userId);
+		const oldEstimate = userHasEstimated ? backlogItemWithPoker.estimates[userId][1] : "";
+		backlogItemWithPoker.estimates[userId] = [String(estimate), oldEstimate, true];
+		estimatedUserIds = Object.keys(backlogItemWithPoker.estimates);
 
 		const projectWithUsers = await this.getProjectWithUsersFromBacklog(backlogItemId);
-		if (projectWithUsers.getTeamMembers().length + 1 === estimatedUserIds.length) {
-			backlogItemWithPoker.pokerIsOver = true;
+		const everyoneIsAccountedFor = projectWithUsers.getTeamMembers().length + 1 === estimatedUserIds.length;
+		const everyoneHasSubmitted = Object.values(backlogItemWithPoker.estimates).every((tuple) => tuple[2]);
+		if (everyoneIsAccountedFor && everyoneHasSubmitted) {
+			// check if everyone agrees. if yes mark as true. if no, copy estimate to prev estimate and undo submitted
+			const everyEstimateEqual = Object.values(backlogItemWithPoker.estimates).every((tuple) => tuple[0] === backlogItemWithPoker.estimates[userId][0])
+			if (everyEstimateEqual) {
+				backlogItemWithPoker.pokerIsOver = true;
+			} else {
+				for (const userIdWithEstimate of estimatedUserIds) {
+					const userIdWithEstimateNumber = parseInt(userIdWithEstimate)
+					const [currentEstimate, previousEstimate, submitted] = backlogItemWithPoker.estimates[userIdWithEstimateNumber];
+					backlogItemWithPoker.estimates[userIdWithEstimateNumber] = [currentEstimate, currentEstimate, false]
+				}
+			}
 		}
 
 		await this.backlogSource.save(backlogItemWithPoker);

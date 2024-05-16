@@ -35,9 +35,9 @@ export class BacklogItem {
 	pokerIsOver: boolean
 
 	// may need to change type to other json type if switching db
-	// map userId to [current round estimate, String(previous round estimate), estimatedThisRound]
+	// map userId to [String(current round estimate), String(previous round estimate), estimatedThisRound]
 	@Column({ type: 'simple-json', default: {} })
-	estimates: Record<number, [number, string, boolean]>;
+	estimates: Record<number, [string, string, boolean]>;
 
 	///// Relational /////
 
