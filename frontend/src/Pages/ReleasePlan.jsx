@@ -135,8 +135,6 @@ const ReleasePlan = ({ projectId }) => {
         }
       })
   }
-
-
   function createNewSprints() {
     console.log("creating new");
     var options = {
@@ -168,6 +166,7 @@ const ReleasePlan = ({ projectId }) => {
   useEffect(() => {
     fetchMostRecentRelease();
   }, []);
+
 
   useEffect(() => {
     fetchRelease(releaseId, setProblem, setGoals);
@@ -345,7 +344,7 @@ const ReleasePlan = ({ projectId }) => {
         <Grid container spacing={2}>
           {/* Sanity Check Graph */}
           <Grid item xs={6}>
-            <SanityCheckGraph />
+            <SanityCheckGraph sprints={sprints} />
           </Grid>
           <Grid item xs={6}>
             <SanityCheckText
