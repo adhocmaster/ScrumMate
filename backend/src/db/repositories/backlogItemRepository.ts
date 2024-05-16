@@ -3,6 +3,8 @@ import { BacklogItem, Priority, Story } from "../../entity/backlogItem";
 import { ModelRepository } from "./modelRepository";
 import { NotFoundError } from "../../helpers/errors";
 import { Sprint } from "../../entity/sprint";
+import { shuffle } from "lodash";
+import { Project } from "../../entity/project";
 
 export class BacklogItemRepository extends ModelRepository {
 
@@ -169,31 +171,57 @@ export class BacklogItemRepository extends ModelRepository {
 	}
 
 	public async getBacklogItemPoker(backlogItemId: number, userId: number): Promise<Object> {
-		const backlogItemWithPoker = await this.backlogSource.fetchBacklogWithPoker(backlogItemId);
-
-		const backlogItemWithParent = await this.backlogSource.fetchBacklogWithParent(backlogItemId);
-		var release = backlogItemWithParent.release;
-		if (backlogItemWithParent.sprint) {
-			release = (await this.sprintSource.lookupSprintByIdWithRelease(backlogItemWithParent.sprint.id)).release;
+		async function getProjectWithUsersFromBacklog(backlogItemId: number, repository: BacklogItemRepository): Promise<Project> {
+			const backlogItemWithParent = await repository.backlogSource.fetchBacklogWithParent(backlogItemId);
+			var release = backlogItemWithParent.release;
+			if (backlogItemWithParent.sprint) {
+				release = (await repository.sprintSource.lookupSprintByIdWithRelease(backlogItemWithParent.sprint.id)).release;
+			}
+			const project = (await repository.releaseSource.fetchReleaseWithProject(release.id)).project;
+			const projectWithUsers = await repository.projectSource.lookupProjectByIdWithUsers(project.id);
+			return projectWithUsers;
 		}
-		const project = (await this.releaseSource.fetchReleaseWithProject(release.id)).project;
-		const projectWithUsers = await this.projectSource.lookupProjectByIdWithUsers(project.id);
 
-		const pokerCompleted = backlogItemWithPoker.pokerCompleted;
+		async function getTeamInfo(backlogItemWithPoker: BacklogItem, repository: BacklogItemRepository): Promise<(string | boolean)[][]> {
+			const pokerUserIdStrings = Object.keys(backlogItemWithPoker.estimates);
+			const projectWithUsers = await getProjectWithUsersFromBacklog(backlogItemWithPoker.id, repository);
+
+			const shuffledPokerIdNumbers = shuffle(pokerUserIdStrings.map((idString) => parseInt(idString)))
+			const shuffledPokerIdsWithoutUser = shuffledPokerIdNumbers.filter((id) => id !== userId);
+			const pokerUsersWithoutUserWithPreviousEstimatesAndCurrentStatuses = shuffledPokerIdsWithoutUser.map((id: number) => {
+				const [currentEstimate, previousEstimate, submitted] = backlogItemWithPoker.estimates[id];
+				return [String(previousEstimate), submitted]
+			});
+
+			const pokerEstimates = Object.values(backlogItemWithPoker.estimates);
+			const numTeamMembers = projectWithUsers.teamMembers.length + 1;
+			const numEstimates = pokerEstimates.length;
+			const userHasEstimated = backlogItemWithPoker.estimates.hasOwnProperty(userId);
+			const numberOfUnestimatedTeamMembers = numTeamMembers - numEstimates;
+			const numberOfUnestimatedTeamMembersWithoutUser = numberOfUnestimatedTeamMembers - Number(!userHasEstimated);
+
+			const unestimatedTeamMembers = Array.from({ length: numberOfUnestimatedTeamMembersWithoutUser }, () => [...["", false]])
+
+			return [...pokerUsersWithoutUserWithPreviousEstimatesAndCurrentStatuses, ...unestimatedTeamMembers];
+		}
+
+
+		const backlogItemWithPoker = await this.backlogSource.lookupBacklogById(backlogItemId);
 		const userHasEstimated = backlogItemWithPoker.estimates.hasOwnProperty(userId);
-		const pokerEstimates = Object.values(backlogItemWithPoker.estimates);
-		const numEstimates = pokerEstimates.length;
-		const numTeamMembers = projectWithUsers.teamMembers.length + 1;
-
 		return {
-			pokerDone: pokerCompleted,
-			userEstimate: userHasEstimated,
-			numberOfOtherEstimates: numEstimates - Number(userHasEstimated),
-			numberOfOtherUnestimated: numTeamMembers - numEstimates - Number(!userHasEstimated),
+			pokerIsOver: backlogItemWithPoker.pokerIsOver,
+			userEstimate: userHasEstimated ? backlogItemWithPoker.estimates[userId] : ["", false],
+			othersEstimates: await getTeamInfo(backlogItemWithPoker, this),
 			size: backlogItemWithPoker.size,
-			estimates: pokerCompleted ? pokerEstimates : []
+			rank: backlogItemWithPoker.rank,
 		}
 	}
+
+	// public async placePokerEstimate(backlogItemId: number, estimate: number, userId: number) {
+	// 	const backlogItemWithPoker = await this.backlogSource.lookupBacklogById(backlogItemId);
+	// 	backlogItemWithPoker.estimates[userId] = estimate;
+	// 	await this.backlogSource.save(backlogItemWithPoker);
+	// }
 
 	public async lookupBacklogById(id: number): Promise<BacklogItem> {
 		return await this.backlogSource.lookupBacklogById(id);

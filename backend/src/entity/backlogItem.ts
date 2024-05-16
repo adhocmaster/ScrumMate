@@ -32,10 +32,12 @@ export class BacklogItem {
 	size: number // serves as SP, IH, etc...
 
 	@Column({ default: false })
-	pokerCompleted: boolean
+	pokerIsOver: boolean
 
-	@Column({ type: 'simple-json', default: {} }) // may need to change type to other json type if switching db
-	estimates: Record<number, number>; // map userId to estimate
+	// may need to change type to other json type if switching db
+	// map userId to [current round estimate, previous round estimate, estimatedThisRound]
+	@Column({ type: 'simple-json', default: {} })
+	estimates: Record<number, [number, number, boolean]>;
 
 	///// Relational /////
 
