@@ -1,52 +1,60 @@
-import React, { useState } from 'react';
-import PropTypes from 'prop-types';
-import Row from './Row';
-import Column from './Column';
-import reorder, { reorderQuoteMap } from '../reorder';
-import { DragDropContext, Droppable } from 'react-beautiful-dnd';
+import React, { useEffect, useState } from "react";
+import PropTypes from "prop-types";
+import Row from "./Row";
+import Column from "./Column";
+import reorder, { reorderQuoteMap } from "../reorder";
+import { DragDropContext, Droppable } from "react-beautiful-dnd";
 import { Box } from "@mui/material";
-import styled from "@xstyled/styled-components";
+import styled, { order } from "@xstyled/styled-components";
 import { colors } from "@atlaskit/theme";
 
 const Container = styled.div`
-  background-color: ${colors.B100};
-  min-height: 100vh;
-  /* like display:flex but will allow bleeding over the window width */
-  min-width: 100vw;
-  display: inline-flex;
+	background-color: ${colors.B100};
+	min-height: 100vh;
+	/* like display:flex but will allow bleeding over the window width */
+	min-width: 100vw;
+	display: inline-flex;
 `;
 
 const Board = ({
 	isCombineEnabled,
-	initial,
+	sprints,
+	setSprints,
 	useClone,
 	containerHeight,
 	withScrollableColumns,
 }) => {
-	const [columns, setColumns] = useState(initial);
-	const [ordered, setOrdered] = useState(Object.keys(initial));
+	// const [columns, setColumns] = useState(sprints); // { "finn": ["quote 1", "quote2"], "Jake": ["quote3", "quote 4"], "BMO": [...], ... } => [ [story 1, Story 2], [story 3, story 4], [], ... ]
+	const [ordered, setOrdered] = useState(Object.keys(sprints)); // ["Finn", "jake", ...] -> [0, 1, 2, 3, 4]
+	console.log(sprints);
+	console.log(Object.keys(sprints).map((indexStr) => parseInt(indexStr)));
+	console.log(ordered);
+
+	useEffect(() => {
+		setOrdered(Object.keys(sprints).map((indexStr) => parseInt(indexStr)));
+	}, [sprints]);
 
 	const onDragEnd = (result) => {
-		if (result.combine) {
-			if (result.type === 'COLUMN') {
-				const shallow = [...ordered];
-				shallow.splice(result.source.index, 1);
-				setOrdered(shallow);
-				return;
-			}
+		// if (result.combine) {
+		// 	if (result.type === 'COLUMN') {
+		// 		const shallow = [...ordered];
+		// 		shallow.splice(result.source.index, 1);
+		// 		setOrdered(shallow);
+		// 		return;
+		// 	}
 
-			const column = columns[result.source.droppableId];
-			const withQuoteRemoved = [...column];
+		// 	const column = columns[result.source.droppableId];
+		// 	const withQuoteRemoved = [...column];
 
-			withQuoteRemoved.splice(result.source.index, 1);
+		// 	withQuoteRemoved.splice(result.source.index, 1);
 
-			const orderedColumns = {
-				...columns,
-				[result.source.droppableId]: withQuoteRemoved,
-			};
-			setColumns(orderedColumns);
-			return;
-		}
+		// 	const orderedColumns = {
+		// 		...columns,
+		// 		[result.source.droppableId]: withQuoteRemoved,
+		// 	};
+		// 	setColumns(orderedColumns);
+		// 	return;
+		// }
 
 		// dropped nowhere
 		if (!result.destination) {
@@ -65,8 +73,12 @@ const Board = ({
 		}
 
 		// reordering column
-		if (result.type === 'COLUMN') {
-			const reorderedorder = reorder(ordered, source.index, destination.index);
+		if (result.type === "COLUMN") {
+			const reorderedorder = reorder(
+				ordered,
+				source.index,
+				destination.index
+			);
 
 			setOrdered(reorderedorder);
 
@@ -74,12 +86,12 @@ const Board = ({
 		}
 
 		const data = reorderQuoteMap({
-			quoteMap: columns,
+			quoteMap: sprints,
 			source,
 			destination,
 		});
 
-		setColumns(data.quoteMap);
+		setSprints(data.quoteMap);
 	};
 
 	return (
@@ -94,13 +106,16 @@ const Board = ({
 						isCombineEnabled={isCombineEnabled}
 					>
 						{(provided) => (
-							<div ref={provided.innerRef} {...provided.droppableProps}>
-								{ordered.slice(0, -1).map((key, index) => (
+							<div
+								ref={provided.innerRef}
+								{...provided.droppableProps}
+							>
+								{ordered.map((key, index) => (
 									<Row
 										key={key}
 										index={index}
-										title={key}
-										quotes={columns[key]}
+										title={key + 1}
+										stories={sprints[parseInt(key)].todos} // [story1, story2, story3, ...]
 										isScrollable={withScrollableColumns}
 										isCombineEnabled={isCombineEnabled}
 										useClone={useClone}
@@ -110,7 +125,7 @@ const Board = ({
 							</div>
 						)}
 					</Droppable>
-					<Droppable
+					{/* <Droppable
 						droppableId="BACKLOG"
 						type="BACKLOG"
 						direction="vertical" // Change to vertical
@@ -134,7 +149,7 @@ const Board = ({
 								{provided.placeholder}
 							</div>
 						)}
-					</Droppable>
+					</Droppable> */}
 				</Box>
 			</DragDropContext>
 		</>

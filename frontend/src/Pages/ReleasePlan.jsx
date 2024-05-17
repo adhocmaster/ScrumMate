@@ -6,8 +6,8 @@ import ButtonBar from "../Components/ReleasePlan/ButtonBar";
 import ContentBox from "../Components/common/ContentBox";
 import SanityCheckGraph from "../Components/ReleasePlan/SanityCheckGraph";
 import SanityCheckText from "../Components/ReleasePlan/SanityCheckText";
-import Board from "../Components/ReleasePlan/dragAndDrop/SprintsAndBacklog"
-import { generateQuoteMap } from '../Components/ReleasePlan/mockData';
+import Board from "../Components/ReleasePlan/dragAndDrop/SprintsAndBacklog";
+import { generateQuoteMap } from "../Components/ReleasePlan/mockData";
 
 const ReleasePlan = ({ projectId }) => {
 	const [sprints, setSprints] = useState([]);
@@ -47,18 +47,19 @@ const ReleasePlan = ({ projectId }) => {
 			credentials: "include",
 		};
 		try {
-			fetch(`http://localhost:8080/api/release/${releaseId}`, options).then(
-				(result) => {
-					if (result.status === 200) {
-						console.log(result);
-						result.json().then((response) => {
-							console.log(response);
-							setProblem(response.problemStatement);
-							setGoals(response.goalStatement);
-						});
-					}
+			fetch(
+				`http://localhost:8080/api/release/${releaseId}`,
+				options
+			).then((result) => {
+				if (result.status === 200) {
+					console.log(result);
+					result.json().then((response) => {
+						console.log(response);
+						setProblem(response.problemStatement);
+						setGoals(response.goalStatement);
+					});
 				}
-			);
+			});
 		} catch { }
 	}
 
@@ -167,12 +168,22 @@ const ReleasePlan = ({ projectId }) => {
 				</Typography>
 
 				{/* Problem Statement */}
-				<ContentBox title={"Problem Statement"} content={problemStatement} />
+				<ContentBox
+					title={"Problem Statement"}
+					content={problemStatement}
+				/>
 
 				{/* High Level Goals */}
-				<ContentBox title={"High Level Goals"} content={highLevelGoals} />
+				<ContentBox
+					title={"High Level Goals"}
+					content={highLevelGoals}
+				/>
 
-				<Board initial={data.medium} withScrollableColumns />
+				<Board
+					sprints={sprints}
+					setSprints={setSprints}
+					withScrollableColumns
+				/>
 				{/* <Board sprints={sprints} setSprints={setSprints} releaseId={releaseId} /> */}
 
 				{/* Sanity Check */}

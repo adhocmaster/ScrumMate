@@ -1,59 +1,59 @@
 /* eslint-disable react/destructuring-assignment */
 /* eslint-disable react/jsx-props-no-spreading */
-import React from 'react';
-import styled from '@xstyled/styled-components';
-import { Droppable, Draggable } from 'react-beautiful-dnd';
-import QuoteItem from './item';
-import Title from './title';
+import React from "react";
+import styled from "@xstyled/styled-components";
+import { Droppable, Draggable } from "react-beautiful-dnd";
+import QuoteItem from "./item";
+import Title from "./title";
 
 const grid = 8;
 const borderRadius = 2;
 
 export const getBackgroundColor = (isDraggingOver, isDraggingFrom) => {
 	if (isDraggingOver) {
-		return '#FFEBE6';
+		return "#FFEBE6";
 	}
 	if (isDraggingFrom) {
-		return '#E6FCFF';
+		return "#E6FCFF";
 	}
-	return '#EBECF0';
+	return "#EBECF0";
 };
 
 const Wrapper = styled.div`
-  background-color: ${(props) =>
+	background-color: ${(props) =>
 		getBackgroundColor(props.isDraggingOver, props.isDraggingFrom)};
-  display: flex;
-  flex-direction: row;
-  opacity: ${({ isDropDisabled }) => (isDropDisabled ? 0.5 : 'inherit')};
-  padding: ${grid}px;
-  border: ${grid}px;
-  padding-bottom: 0;
-  transition: background-color 0.2s ease, opacity 0.1s ease;
-  user-select: none;
+	display: flex;
+	flex-direction: row;
+	opacity: ${({ isDropDisabled }) => (isDropDisabled ? 0.5 : "inherit")};
+	padding: ${grid}px;
+	border: ${grid}px;
+	padding-bottom: 0;
+	transition: background-color 0.2s ease, opacity 0.1s ease;
+	user-select: none;
 `;
 
 const scrollContainerHeight = 250;
 
 const DropZone = styled.div`
-  /* stop the list collapsing when empty */
-  min-width: 500px;
-  min-height: 150px;
-  /*
-    not relying on the items for a margin-bottom
-    as it will collapse when the list is empty
+	/* stop the list collapsing when empty */
+	min-width: 500px;
+	min-height: 150px;
+	/*
+	not relying on the items for a margin-bottom
+	as it will collapse when the list is empty
   */
-  padding-bottom: ${grid}px;
-  display: flex;
-  flex-direction: row; /* Display children horizontally */
+	padding-bottom: ${grid}px;
+	display: flex;
+	flex-direction: row; /* Display children horizontally */
 `;
 
 const ScrollContainer = styled.div`
-  overflow-x: auto;
-  overflow-y: auto;
-  max-height: ${scrollContainerHeight}px;
-  width: 1000px;
-  display: flex;
-  flex-direction: row; /* Display children horizontally */
+	overflow-x: auto;
+	overflow-y: auto;
+	max-height: ${scrollContainerHeight}px;
+	width: 1000px;
+	display: flex;
+	flex-direction: row; /* Display children horizontally */
 `;
 
 /* stylelint-disable block-no-empty */
@@ -61,12 +61,12 @@ const Container = styled.div``;
 /* stylelint-enable */
 
 const InnerQuoteList = React.memo(function InnerQuoteList(props) {
-	return props.quotes.map((quote, index) => (
-		<Draggable key={quote.id} draggableId={quote.id} index={index}>
+	return props.stories.map((story, index) => (
+		<Draggable key={story.id} draggableId={String(story.id)} index={index}>
 			{(dragProvided, dragSnapshot) => (
 				<QuoteItem
-					key={quote.id}
-					quote={quote}
+					key={story.id}
+					backlogItem={story}
 					isDragging={dragSnapshot.isDragging}
 					isGroupedOver={Boolean(dragSnapshot.combineTargetFor)}
 					provided={dragProvided}
@@ -78,14 +78,14 @@ const InnerQuoteList = React.memo(function InnerQuoteList(props) {
 });
 
 function InnerList(props) {
-	const { quotes, dropProvided } = props;
+	const { stories, dropProvided } = props;
 	const title = props.title ? <Title>{props.title}</Title> : null;
 
 	return (
 		<Container>
 			{title}
 			<DropZone ref={dropProvided.innerRef}>
-				<InnerQuoteList quotes={quotes} />
+				<InnerQuoteList stories={stories} />
 				{dropProvided.placeholder}
 			</DropZone>
 		</Container>
@@ -99,10 +99,10 @@ export default function QuoteList(props) {
 		scrollContainerStyle,
 		isDropDisabled,
 		isCombineEnabled,
-		listId = 'LIST',
+		listId = "LIST",
 		listType,
 		style,
-		quotes,
+		stories,
 		title,
 		useClone,
 	} = props;
@@ -118,7 +118,7 @@ export default function QuoteList(props) {
 				useClone
 					? (provided, snapshot, descriptor) => (
 						<QuoteItem
-							quote={quotes[descriptor.source.index]}
+							quote={stories[descriptor.source.index]}
 							provided={provided}
 							isDragging={snapshot.isDragging}
 							isClone
@@ -139,14 +139,14 @@ export default function QuoteList(props) {
 					{internalScroll ? (
 						<ScrollContainer style={scrollContainerStyle}>
 							<InnerList
-								quotes={quotes}
+								stories={stories}
 								title={title}
 								dropProvided={dropProvided}
 							/>
 						</ScrollContainer>
 					) : (
 						<InnerList
-							quotes={quotes}
+							stories={stories}
 							title={title}
 							dropProvided={dropProvided}
 						/>
