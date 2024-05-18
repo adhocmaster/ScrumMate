@@ -43,8 +43,8 @@ AppDataSource.initialize().then(async () => {
 		await db.save(joinedUser)
 
 		const unjoinedUser = new User()
-		unjoinedUser.username = "billy"
-		unjoinedUser.email = "billy@gmail.com"
+		unjoinedUser.username = "unjoined"
+		unjoinedUser.email = "unjoined@gmail.com"
 		unjoinedUser.salt = "salt"
 		unjoinedUser.password = authentication(unjoinedUser.salt, "pass")
 		unjoinedUser.id = 3

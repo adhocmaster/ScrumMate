@@ -269,7 +269,7 @@ describe("Invite API tests", () => {
 				expect(res.body.pokerIsOver).toEqual(true);
 				expect(res.body.userEstimate).toEqual(["1", true]);
 				expect(res.body.othersEstimates).toEqual([]);
-				expect(res.body.size).toEqual(10);
+				expect(res.body.size).toEqual(1);
 				expect(res.body.rank).toEqual(0);
 			});
 	});
@@ -284,7 +284,7 @@ describe("Invite API tests", () => {
 				expect(res.body.pokerIsOver).toEqual(true);
 				expect(res.body.userEstimate).toEqual(["2", true]);
 				expect(res.body.othersEstimates).toEqual([]);
-				expect(res.body.size).toEqual(11);
+				expect(res.body.size).toEqual(2);
 				expect(res.body.rank).toEqual(0);
 			});
 	});
@@ -321,7 +321,7 @@ describe("Invite API tests", () => {
 				expect(res.body.pokerIsOver).toEqual(true);
 				expect(res.body.userEstimate).toEqual(["2", true]);
 				expect(res.body.othersEstimates).toEqual([]);
-				expect(res.body.size).toEqual(10);
+				expect(res.body.size).toEqual(2);
 				expect(res.body.rank).toEqual(0);
 			});
 	});
@@ -336,7 +336,7 @@ describe("Invite API tests", () => {
 				expect(res.body.pokerIsOver).toEqual(true);
 				expect(res.body.userEstimate).toEqual(["3", true]);
 				expect(res.body.othersEstimates).toEqual([]);
-				expect(res.body.size).toEqual(11);
+				expect(res.body.size).toEqual(3);
 				expect(res.body.rank).toEqual(0);
 			});
 	});
@@ -466,7 +466,7 @@ describe("Invite API tests", () => {
 				expect(res.body.pokerIsOver).toEqual(false);
 				expect(res.body.userEstimate).toEqual(["3", true]);
 				expect(res.body.othersEstimates).toEqual([["", false]]);
-				expect(res.body.size).toEqual(10);
+				expect(res.body.size).toEqual(2);
 				expect(res.body.rank).toEqual(0);
 			});
 	});
@@ -481,7 +481,7 @@ describe("Invite API tests", () => {
 				expect(res.body.pokerIsOver).toEqual(false);
 				expect(res.body.userEstimate).toEqual(["4", true]);
 				expect(res.body.othersEstimates).toEqual([["", false]]);
-				expect(res.body.size).toEqual(11);
+				expect(res.body.size).toEqual(3);
 				expect(res.body.rank).toEqual(0);
 			});
 	});
@@ -518,7 +518,7 @@ describe("Invite API tests", () => {
 				expect(res.body.pokerIsOver).toEqual(false);
 				expect(res.body.userEstimate).toEqual(["1", false]);
 				expect(res.body.othersEstimates).toEqual([["3", false]]);
-				expect(res.body.size).toEqual(10);
+				expect(res.body.size).toEqual(2);
 				expect(res.body.rank).toEqual(0);
 			});
 	});
@@ -533,7 +533,7 @@ describe("Invite API tests", () => {
 				expect(res.body.pokerIsOver).toEqual(false);
 				expect(res.body.userEstimate).toEqual(["2", false]);
 				expect(res.body.othersEstimates).toEqual([["4", false]]);
-				expect(res.body.size).toEqual(11);
+				expect(res.body.size).toEqual(3);
 				expect(res.body.rank).toEqual(0);
 			});
 	});
@@ -548,7 +548,7 @@ describe("Invite API tests", () => {
 				expect(res.body.pokerIsOver).toEqual(false);
 				expect(res.body.userEstimate).toEqual(["3", false]);
 				expect(res.body.othersEstimates).toEqual([["1", false]]);
-				expect(res.body.size).toEqual(10);
+				expect(res.body.size).toEqual(2);
 				expect(res.body.rank).toEqual(0);
 			});
 	});
@@ -563,7 +563,7 @@ describe("Invite API tests", () => {
 				expect(res.body.pokerIsOver).toEqual(false);
 				expect(res.body.userEstimate).toEqual(["4", false]);
 				expect(res.body.othersEstimates).toEqual([["2", false]]);
-				expect(res.body.size).toEqual(11);
+				expect(res.body.size).toEqual(3);
 				expect(res.body.rank).toEqual(0);
 			});
 	});
@@ -600,7 +600,7 @@ describe("Invite API tests", () => {
 				expect(res.body.pokerIsOver).toEqual(false);
 				expect(res.body.userEstimate).toEqual(["3", false]);
 				expect(res.body.othersEstimates).toEqual([["1", true]]);
-				expect(res.body.size).toEqual(10);
+				expect(res.body.size).toEqual(2);
 				expect(res.body.rank).toEqual(0);
 			});
 	});
@@ -615,7 +615,7 @@ describe("Invite API tests", () => {
 				expect(res.body.pokerIsOver).toEqual(false);
 				expect(res.body.userEstimate).toEqual(["4", false]);
 				expect(res.body.othersEstimates).toEqual([["2", true]]);
-				expect(res.body.size).toEqual(11);
+				expect(res.body.size).toEqual(3);
 				expect(res.body.rank).toEqual(0);
 			});
 	});
@@ -631,7 +631,7 @@ describe("Invite API tests", () => {
 			.expect(200)
 	});
 
-	test('Sally reestimates the second item to 1 after bobby', async () => {
+	test('Sally reestimates the second item to 2 after bobby', async () => {
 		const body = {
 			"estimate": "2",
 		}
@@ -652,7 +652,7 @@ describe("Invite API tests", () => {
 				expect(res.body.pokerIsOver).toEqual(true);
 				expect(res.body.userEstimate).toEqual(["1", true]);
 				expect(res.body.othersEstimates).toEqual([["1", true]]);
-				expect(res.body.size).toEqual(10);
+				expect(res.body.size).toEqual(1);
 				expect(res.body.rank).toEqual(0);
 			});
 	});
@@ -667,7 +667,7 @@ describe("Invite API tests", () => {
 				expect(res.body.pokerIsOver).toEqual(true);
 				expect(res.body.userEstimate).toEqual(["2", true]);
 				expect(res.body.othersEstimates).toEqual([["2", true]]);
-				expect(res.body.size).toEqual(11);
+				expect(res.body.size).toEqual(2);
 				expect(res.body.rank).toEqual(0);
 			});
 	});
