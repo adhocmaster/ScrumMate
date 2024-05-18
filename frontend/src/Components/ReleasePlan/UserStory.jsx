@@ -1,12 +1,13 @@
 import React, { useState } from "react";
 import {
-	Card, CardContent, Box, Typography, IconButton, Menu, MenuItem, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, Button, TextField, ToggleButtonGroup, ToggleButton,
+	Card, CardContent, Box, Typography, IconButton, Menu, MenuItem, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, Button, TextField, ToggleButtonGroup, ToggleButton, Grid, Divider,
 } from "@mui/material";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 
 const UserStory = ({ storyObject, deleteFunction, sprints, setSprints }) => {
 	const [anchorOpen, setAnchorOpen] = useState(false);
 	const [editDialogOpen, setEditDialogOpen] = useState(false);
+	const [pokerDialogOpen, setPokerDialogOpen] = useState(false);
 	const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
 
 	const [backlogItemType, setBacklogItemType] = useState("story");
@@ -31,7 +32,7 @@ const UserStory = ({ storyObject, deleteFunction, sprints, setSprints }) => {
 		setAnchorOpen(false);
 	};
 
-	const handleDialogOpen = () => {
+	const handleEditDialogOpen = () => {
 		setTempBacklogItemType(backlogItemType)
 		setTempRole(role)
 		setTempFunctionality(functionality)
@@ -42,7 +43,7 @@ const UserStory = ({ storyObject, deleteFunction, sprints, setSprints }) => {
 		handleMenuClose();
 	};
 
-	const handleDialogClose = () => {
+	const handleEditDialogClose = () => {
 		setEditDialogOpen(false);
 	};
 
@@ -55,8 +56,23 @@ const UserStory = ({ storyObject, deleteFunction, sprints, setSprints }) => {
 		setStoryPoints(tempStoryPoints);
 
 		saveEditedStory(storyObject.id);
-		handleDialogClose();
+		handleEditDialogClose();
 		handleMenuClose();
+	};
+
+	const handlePokerDialogOpen = () => {
+		setTempBacklogItemType(backlogItemType)
+		setTempRole(role)
+		setTempFunctionality(functionality)
+		setTempReasoning(reasoning)
+		setTempAcceptanceCriteria(acceptanceCriteria)
+		setTempStoryPoints(storyPoints)
+		setPokerDialogOpen(true);
+		handleMenuClose();
+	};
+
+	const handlePokerDialogClose = () => {
+		setPokerDialogOpen(false);
 	};
 
 	const handleDeleteDialogOpen = () => {
@@ -69,7 +85,7 @@ const UserStory = ({ storyObject, deleteFunction, sprints, setSprints }) => {
 	}
 
 	const handleDelete = () => {
-		handleDialogClose();
+		handleEditDialogClose();
 		deleteFunction(storyObject.id)
 	};
 
@@ -123,8 +139,8 @@ const UserStory = ({ storyObject, deleteFunction, sprints, setSprints }) => {
 		console.log(sprintsCopy)
 		setSprints(sprintsCopy);
 	}
-	
-	  	  
+
+
 
 	return (
 		<>
@@ -165,7 +181,12 @@ const UserStory = ({ storyObject, deleteFunction, sprints, setSprints }) => {
 						open={anchorOpen}
 						onClose={handleMenuClose}
 					>
-						<MenuItem onClick={handleDialogOpen}>Edit</MenuItem>
+						<MenuItem onClick={handleEditDialogOpen}>
+							Edit
+						</MenuItem>
+						<MenuItem onClick={handlePokerDialogOpen}>
+							Poker
+						</MenuItem>
 						<MenuItem onClick={handleDeleteDialogOpen} style={{ color: "red" }}>
 							Delete
 						</MenuItem>
@@ -198,7 +219,7 @@ const UserStory = ({ storyObject, deleteFunction, sprints, setSprints }) => {
 
 			<Dialog
 				open={editDialogOpen}
-				onClose={handleDialogClose}
+				onClose={handleEditDialogClose}
 				maxWidth="sm"
 				fullWidth
 			>
@@ -303,11 +324,139 @@ const UserStory = ({ storyObject, deleteFunction, sprints, setSprints }) => {
 					/>
 				</DialogContent>
 				<DialogActions>
-					<Button onClick={handleDialogClose}>Cancel</Button>
+					<Button onClick={handleEditDialogClose}>
+						Cancel
+					</Button>
 					<Button onClick={handleDeleteDialogOpen} color="error">
 						Delete
 					</Button>
 					<Button onClick={handleSave} color="primary">
+						Save
+					</Button>
+				</DialogActions>
+			</Dialog>
+
+			<Dialog
+				open={pokerDialogOpen}
+				onClose={handlePokerDialogClose}
+				maxWidth="md"
+				fullWidth
+			>
+				<DialogTitle >
+					<Typography variant="h5" gutterBottom>
+						Planning Poker
+					</Typography>
+				</DialogTitle>
+				<DialogContent>
+					<Grid container spacing={2}>
+						<Grid item xs={6}>
+							<Typography variant="h6" gutterBottom>
+								{storyObject.name}
+							</Typography>
+							<Box display="flex" alignItems="center" gap={1} mb={2}>
+								<Typography variant="body2" component="span">
+									As a(n)
+								</Typography>
+								<TextField
+									size="small"
+									label="Role"
+									value={tempRole}
+									onChange={(e) => setTempRole(e.target.value)}
+									sx={{
+										".MuiInputBase-input": {
+											fontSize: "0.875rem",
+											height: "auto",
+											padding: "5px 9px",
+										},
+										".MuiInputLabel-root": {
+											fontSize: "0.875rem",
+										},
+									}}
+								/>
+								<Typography variant="body2" component="span">
+									I want to be able to
+								</Typography>
+							</Box>
+
+							<TextField
+								autoFocus
+								margin="dense"
+								id="functionality-description"
+								label="Functionality Description"
+								type="text"
+								fullWidth
+								variant="outlined"
+								multiline
+								rows={4}
+								value={tempFunctionality}
+								onChange={(e) => setTempFunctionality(e.target.value)}
+								sx={{ marginBottom: 2 }}
+							/>
+
+							<Typography variant="body2" component="span" >
+								so that
+							</Typography>
+
+							<TextField
+								margin="dense"
+								id="reasoning"
+								label="Reasoning"
+								type="text"
+								fullWidth
+								variant="outlined"
+								multiline
+								rows={4}
+								value={tempReasoning}
+								onChange={(e) => setTempReasoning(e.target.value)}
+								sx={{ marginBottom: 2, marginTop: 2 }}
+							/>
+
+							<TextField
+								margin="dense"
+								id="acceptance-criteria"
+								label="Acceptance Criteria"
+								type="text"
+								fullWidth
+								variant="outlined"
+								multiline
+								rows={4}
+								value={tempAcceptanceCriteria}
+								onChange={(e) => setTempAcceptanceCriteria(e.target.value)}
+								sx={{ marginBottom: 2 }}
+							/>
+
+							<TextField
+								margin="dense"
+								id="story-points"
+								label="Story Points"
+								type="number"
+								fullWidth
+								variant="outlined"
+								value={tempStoryPoints}
+								onChange={(e) => setTempStoryPoints(e.target.value)}
+								InputProps={{ inputProps: { min: 0 } }}
+							/>
+						</Grid>
+
+						<Grid item xs={0.1}>
+							<Divider orientation="vertical" flexItem sx={{ height: "100%", backgroundColor: 'gray', width: "1px" }} />
+						</Grid>
+
+						<Grid item xs={5.7}>
+							<Typography variant="h6" gutterBottom>
+								Poker
+							</Typography>
+							<Typography variant="body1">
+								Poker stuff here
+							</Typography>
+						</Grid>
+					</Grid>
+				</DialogContent>
+				<DialogActions>
+					<Button onClick={handlePokerDialogClose}>
+						Cancel
+					</Button>
+					<Button onClick={handlePokerDialogClose} color="primary">
 						Save
 					</Button>
 				</DialogActions>
