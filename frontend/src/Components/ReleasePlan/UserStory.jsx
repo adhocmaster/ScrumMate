@@ -1,10 +1,12 @@
 import React, { useState } from "react";
 import {
-	Card, CardContent, Box, Typography, IconButton, Menu, MenuItem, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, Button, TextField, ToggleButtonGroup, ToggleButton, Grid, Divider,
+	Card, CardContent, Box, Typography, IconButton, Menu, MenuItem, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, Button, TextField, ToggleButtonGroup, ToggleButton, Grid, Divider, List, ListItem, ListItemIcon, Avatar, ListItemText, Slider
 } from "@mui/material";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
+import HistoryIcon from '@mui/icons-material/History';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 
-const UserStory = ({ storyObject, deleteFunction, sprints, setSprints }) => {
+const UserStory = ({ storyObject, deleteFunction, sprints, setSprints, sprintNumber }) => {
 	const [anchorOpen, setAnchorOpen] = useState(false);
 	const [editDialogOpen, setEditDialogOpen] = useState(false);
 	const [pokerDialogOpen, setPokerDialogOpen] = useState(false);
@@ -23,6 +25,16 @@ const UserStory = ({ storyObject, deleteFunction, sprints, setSprints }) => {
 	const [tempReasoning, setTempReasoning] = useState(reasoning);
 	const [tempAcceptanceCriteria, setTempAcceptanceCriteria] = useState(acceptanceCriteria);
 	const [tempStoryPoints, setTempStoryPoints] = useState(storyPoints);
+
+	const [pokerIsOver, setPokerIsOver] = useState(false);
+	const [userEstimate, setUserEstimate] = useState([1, false]);
+	const [teamEstimates, setTeamEstimates] = useState([["1", false], ["2", true], ["", false], ["", false], ["", false], ["", false], ["", false], ["", false], ["", false], ["", false], ["", false], ["", false], ["", false]]);
+	const [size, setSize] = useState([]);
+	const [rank, setRank] = useState(storyObject.rank + 1);
+	const [pokerSprintNumber, setPokerSprintNumber] = useState(sprintNumber);
+
+	const fibonacciNumberEstimates = [0, 1, 2, 3, 5, 8, 13, 21];
+	const pokerFibonacciMarks = fibonacciNumberEstimates.map(num => ({ value: num, label: `${num}` }))
 
 	const handleMenuClick = (event) => {
 		setAnchorOpen(event.currentTarget);
@@ -350,9 +362,15 @@ const UserStory = ({ storyObject, deleteFunction, sprints, setSprints }) => {
 				<DialogContent>
 					<Grid container spacing={2}>
 						<Grid item xs={6}>
-							<Typography variant="h6" gutterBottom>
-								{storyObject.name}
-							</Typography>
+							<Box display="flex" justifyContent="space-between" mb={2}>
+								<Typography variant="h6" gutterBottom>
+									{storyObject.name}
+								</Typography>
+								<Typography variant="h6" gutterBottom>
+									{`Sprint ${pokerSprintNumber} Item ${rank}`}
+								</Typography>
+							</Box>
+
 							<Box display="flex" alignItems="center" gap={1} mb={2}>
 								<Typography variant="body2" component="span">
 									As a(n)
@@ -442,24 +460,117 @@ const UserStory = ({ storyObject, deleteFunction, sprints, setSprints }) => {
 							<Divider orientation="vertical" flexItem sx={{ height: "100%", backgroundColor: 'gray', width: "1px" }} />
 						</Grid>
 
-						<Grid item xs={5.7}>
+						<Grid item xs={5.7} sx={{ position: 'relative' }}>
 							<Typography variant="h6" gutterBottom>
 								Poker
 							</Typography>
-							<Typography variant="body1">
-								Poker stuff here
-							</Typography>
+							<Divider />
+							<ListItem>
+								<ListItemIcon>
+									<Avatar>You</Avatar>
+								</ListItemIcon>
+								<ListItemText primary="You" />
+								<Grid container alignItems="center" justifyContent="flex-end">
+									<Grid item>
+										<Box display="flex" alignItems="center" mr={2}>
+											<ListItemText
+												primary={userEstimate[0]}
+												primaryTypographyProps={{ fontSize: 'larger' }}
+												sx={{ textAlign: 'right', fontSize: 'large' }}
+											/>
+										</Box>
+									</Grid>
+									<Grid item>
+										<ListItemIcon sx={{ minWidth: 'unset' }}>
+											{userEstimate[1] ? (
+												<CheckCircleIcon sx={{ color: 'green' }} fontSize="large" />
+											) : (
+												<HistoryIcon fontSize="large" />
+											)}
+										</ListItemIcon>
+									</Grid>
+								</Grid>
+							</ListItem>
+							<Divider />
+							<Box sx={{ maxHeight: 250, overflowY: 'auto' }}> {/* Set max height and enable overflow */}
+								<List fullWidth sx={{ bgcolor: 'background.paper' }}>
+									{teamEstimates.map((unsignedUser, index) => (
+										<React.Fragment key={index}>
+											<ListItem>
+												<ListItemIcon>
+													<Avatar>TM</Avatar>
+												</ListItemIcon>
+												<ListItemText primary="Anonymous Teammate" />
+												<Grid item>
+													<Box display="flex" alignItems="center" mr={2}>
+														<ListItemText
+															primary={unsignedUser[0]}
+															primaryTypographyProps={{ fontSize: 'larger' }}
+															sx={{ textAlign: 'right', fontSize: 'large' }}
+														/>
+													</Box>
+												</Grid>
+												<Grid item>
+													<ListItemIcon sx={{ minWidth: 'unset' }}>
+														{unsignedUser[1] ? (
+															<CheckCircleIcon sx={{ color: 'green' }} fontSize="large" />
+														) : (
+															<HistoryIcon fontSize="large" />
+														)}
+													</ListItemIcon>
+												</Grid>
+											</ListItem>
+											<Divider />
+										</React.Fragment>
+									))}
+								</List>
+							</Box>
+							<Divider />
+							<Box sx={{ pt: 2 }}>
+								<Typography variant="h6">
+									Make an estimate
+								</Typography>
+								<Box sx={{ pt: 2 }}>
+									<Slider
+										aria-label="Fibonacci slider"
+										defaultValue={userEstimate[0]}
+										getAriaValueText={item => `${item} SP`}
+										step={null}
+										valueLabelDisplay="auto"
+										marks={pokerFibonacciMarks}
+										min={0}
+										max={21}
+									/>
+								</Box>
+							</Box>
+							<Box
+								sx={{
+									position: 'absolute',
+									bottom: 0,
+									left: 0,
+									width: '99%',
+									display: 'flex',
+									flexDirection: 'column',
+									alignItems: 'stretch',
+									gap: 2,
+									padding: '2px 16px',
+									backgroundColor: 'transparent',
+								}}
+							>
+								<Button onClick={handlePokerDialogClose} variant="contained" sx={{ width: '100%' }}>
+									Submit
+								</Button>
+								<Button onClick={handlePokerDialogClose} variant="outlined" sx={{ width: '100%' }}>
+									Next Item
+								</Button>
+								<Button onClick={handlePokerDialogClose} variant="outlined" sx={{ width: '100%' }}>
+									Done
+								</Button>
+							</Box>
+
 						</Grid>
 					</Grid>
 				</DialogContent>
-				<DialogActions>
-					<Button onClick={handlePokerDialogClose}>
-						Cancel
-					</Button>
-					<Button onClick={handlePokerDialogClose} color="primary">
-						Save
-					</Button>
-				</DialogActions>
 			</Dialog>
 
 			<Dialog open={deleteDialogOpen} onClose={handleDeleteDialogClose}>
