@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
 	Card, CardContent, Box, Typography, IconButton, Menu, MenuItem, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, Button, TextField, ToggleButtonGroup, ToggleButton, Grid, Divider, List, ListItem, ListItemIcon, Avatar, ListItemText, Slider
 } from "@mui/material";
@@ -6,7 +6,7 @@ import MoreVertIcon from "@mui/icons-material/MoreVert";
 import HistoryIcon from '@mui/icons-material/History';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 
-const UserStory = ({ storyObject, deleteFunction, sprints, setSprints, sprintNumber }) => {
+const UserStory = ({ storyObject, deleteFunction, sprints, setSprints, sprintNumber, backlog }) => {
 	const [anchorOpen, setAnchorOpen] = useState(false);
 	const [editDialogOpen, setEditDialogOpen] = useState(false);
 	const [pokerDialogOpen, setPokerDialogOpen] = useState(false);
@@ -26,15 +26,20 @@ const UserStory = ({ storyObject, deleteFunction, sprints, setSprints, sprintNum
 	const [tempAcceptanceCriteria, setTempAcceptanceCriteria] = useState(acceptanceCriteria);
 	const [tempStoryPoints, setTempStoryPoints] = useState(storyPoints);
 
+	const [pokerId, setPokerID] = useState(storyObject.id);
 	const [pokerIsOver, setPokerIsOver] = useState(false);
+	const [pokerIsOverBuffer, setPokerIsOverBuffer] = useState(false);
 	const [userEstimate, setUserEstimate] = useState([1, false]);
-	const [teamEstimates, setTeamEstimates] = useState([["1", false], ["2", true], ["", false], ["", false], ["", false], ["", false], ["", false], ["", false], ["", false], ["", false], ["", false], ["", false], ["", false]]);
+	const [teamEstimates, setTeamEstimates] = useState([]);
 	const [size, setSize] = useState([]);
-	const [rank, setRank] = useState(storyObject.rank + 1);
-	const [pokerSprintNumber, setPokerSprintNumber] = useState(sprintNumber);
+	const storyNumber = storyObject.rank + 1;
+	const pokerSprintNumber = sprintNumber;
+	const [storyNumberBuffer, setStoryNumberBuffer] = useState(storyObject.rank + 1);
+	const [pokerSprintNumberBuffer, setPokerSprintNumberBuffer] = useState(sprintNumber);
 
 	const fibonacciNumberEstimates = [0, 1, 2, 3, 5, 8, 13, 21];
-	const pokerFibonacciMarks = fibonacciNumberEstimates.map(num => ({ value: num, label: `${num}` }))
+	const pokerFibonacciMarks = fibonacciNumberEstimates.map(num => ({ value: num, label: `${num}` }));
+	const [sliderValue, setSliderValue] = useState(userEstimate[0])
 
 	const handleMenuClick = (event) => {
 		setAnchorOpen(event.currentTarget);
@@ -73,19 +78,58 @@ const UserStory = ({ storyObject, deleteFunction, sprints, setSprints, sprintNum
 	};
 
 	const handlePokerDialogOpen = () => {
-		setTempBacklogItemType(backlogItemType)
-		setTempRole(role)
-		setTempFunctionality(functionality)
-		setTempReasoning(reasoning)
-		setTempAcceptanceCriteria(acceptanceCriteria)
-		setTempStoryPoints(storyPoints)
+		setPokerID(storyObject.id)
+		setTempBacklogItemType(backlogItemType);
+		setTempRole(role);
+		setTempFunctionality(functionality);
+		setTempReasoning(reasoning);
+		setTempAcceptanceCriteria(acceptanceCriteria);
+		setTempStoryPoints(storyPoints);
+
 		setPokerDialogOpen(true);
 		handleMenuClose();
 	};
 
 	const handlePokerDialogClose = () => {
+		setPokerIsOverBuffer(pokerIsOver);
+		setPokerSprintNumberBuffer(sprintNumber);
+		setStoryNumberBuffer(storyNumber);
 		setPokerDialogOpen(false);
 	};
+
+	const handlePokerSubmit = () => {
+		fetchPlacePosterEstimate();
+	};
+
+	const handlePokerNextItem = () => {
+		if (!sprints && !backlog) {
+			return
+		}
+		if (sprints) {
+			var sprintIndex = pokerSprintNumberBuffer - 1;
+			if (storyNumberBuffer === sprints[sprintIndex].todos.length) {
+				return // out of backlog items this sprint
+			}
+			setTempBacklogItemType(sprints[sprintIndex].todos[storyNumberBuffer].name);
+			setTempRole(sprints[sprintIndex].todos[storyNumberBuffer].userTypes);
+			setTempFunctionality(sprints[sprintIndex].todos[storyNumberBuffer].functionalityDescription);
+			setTempReasoning(sprints[sprintIndex].todos[storyNumberBuffer].reasoning);
+			setTempAcceptanceCriteria(sprints[sprintIndex].todos[storyNumberBuffer].acceptanceCriteria);
+			setTempStoryPoints(sprints[sprintIndex].todos[storyNumberBuffer].size);
+			setPokerID(sprints[sprintIndex].todos[storyNumberBuffer].id);
+		} else {
+			if (storyNumberBuffer === backlog.length) {
+				return // out of backlog items in release backlog
+			}
+			setTempBacklogItemType(backlog[storyNumberBuffer].name);
+			setTempRole(backlog[storyNumberBuffer].userTypes);
+			setTempFunctionality(backlog[storyNumberBuffer].functionalityDescription);
+			setTempReasoning(backlog[storyNumberBuffer].reasoning);
+			setTempAcceptanceCriteria(backlog[storyNumberBuffer].acceptanceCriteria);
+			setTempStoryPoints(backlog[storyNumberBuffer].size);
+			setPokerID(backlog[storyNumberBuffer].id);
+		}
+	}
 
 	const handleDeleteDialogOpen = () => {
 		handleMenuClose();
@@ -152,7 +196,68 @@ const UserStory = ({ storyObject, deleteFunction, sprints, setSprints, sprintNum
 		setSprints(sprintsCopy);
 	}
 
+	function fetchGetPokerInformation() {
+		var options = {
+			method: "get",
+			credentials: "include",
+		};
+		try {
+			fetch(
+				`http://localhost:8080/api/backlogItem/${pokerId}/poker`,
+				options
+			).then((result) => {
+				if (result.status === 200) {
+					result.json().then((resultJson) => {
+						const {
+							pokerIsOver,
+							userEstimate,
+							othersEstimates,
+							rank,
+							size,
+						} = resultJson;
+						setPokerIsOver(pokerIsOver);
+						setPokerIsOverBuffer(pokerIsOver);
+						setUserEstimate(userEstimate);
+						setSliderValue(userEstimate[0] ? userEstimate[0] : 0);
+						setTeamEstimates(othersEstimates);
+						setStoryNumberBuffer(rank + 1);
+						setSize(size);
+					})
+				}
+			});
+		} catch {
+			return null;
+		}
+	}
 
+	function fetchPlacePosterEstimate() {
+		var options = {
+			method: "post",
+			credentials: "include",
+			headers: {
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify({
+				estimate: sliderValue,
+			}),
+		};
+		try {
+			fetch(
+				`http://localhost:8080/api/backlogItem/${pokerId}/poker`,
+				options
+			).then((result) => {
+				if (result.status === 200) {
+					fetchGetPokerInformation()
+				}
+			});
+		} catch {
+			return null;
+		}
+	}
+
+	useEffect(() => {
+		fetchGetPokerInformation();
+	}, [pokerId]);
 
 	return (
 		<>
@@ -358,6 +463,7 @@ const UserStory = ({ storyObject, deleteFunction, sprints, setSprints, sprintNum
 					<Typography variant="h5" gutterBottom>
 						Planning Poker
 					</Typography>
+					<Divider />
 				</DialogTitle>
 				<DialogContent>
 					<Grid container spacing={2}>
@@ -366,11 +472,16 @@ const UserStory = ({ storyObject, deleteFunction, sprints, setSprints, sprintNum
 								<Typography variant="h6" gutterBottom>
 									{storyObject.name}
 								</Typography>
-								<Typography variant="h6" gutterBottom>
-									{`Sprint ${pokerSprintNumber} Item ${rank}`}
-								</Typography>
+								{sprints ?
+									<Typography variant="h6" gutterBottom>
+										{`Sprint ${pokerSprintNumber} Item ${storyNumberBuffer}`}
+									</Typography>
+									:
+									<Typography variant="h6" gutterBottom>
+										{`Product Backlog Item ${storyNumberBuffer}`}
+									</Typography>
+								}
 							</Box>
-
 							<Box display="flex" alignItems="center" gap={1} mb={2}>
 								<Typography variant="body2" component="span">
 									As a(n)
@@ -526,29 +637,12 @@ const UserStory = ({ storyObject, deleteFunction, sprints, setSprints, sprintNum
 								</List>
 							</Box>
 							<Divider />
-							<Box sx={{ pt: 2 }}>
-								<Typography variant="h6">
-									Make an estimate
-								</Typography>
-								<Box sx={{ pt: 2 }}>
-									<Slider
-										aria-label="Fibonacci slider"
-										defaultValue={userEstimate[0]}
-										getAriaValueText={item => `${item} SP`}
-										step={null}
-										valueLabelDisplay="auto"
-										marks={pokerFibonacciMarks}
-										min={0}
-										max={21}
-									/>
-								</Box>
-							</Box>
 							<Box
 								sx={{
 									position: 'absolute',
 									bottom: 0,
 									left: 0,
-									width: '99%',
+									width: '98%',
 									display: 'flex',
 									flexDirection: 'column',
 									alignItems: 'stretch',
@@ -557,15 +651,59 @@ const UserStory = ({ storyObject, deleteFunction, sprints, setSprints, sprintNum
 									backgroundColor: 'transparent',
 								}}
 							>
-								<Button onClick={handlePokerDialogClose} variant="contained" sx={{ width: '100%' }}>
-									Submit
-								</Button>
-								<Button onClick={handlePokerDialogClose} variant="outlined" sx={{ width: '100%' }}>
-									Next Item
-								</Button>
-								<Button onClick={handlePokerDialogClose} variant="outlined" sx={{ width: '100%' }}>
-									Done
-								</Button>
+								{pokerIsOver && pokerIsOverBuffer ?
+									<>
+										<Typography variant="h6">
+											Poker is complete
+										</Typography>
+										<Typography component='div'>
+											The team agreed on
+											{' '}
+											<Box fontWeight='bold' display='inline'>
+												{size}
+											</Box>
+											{' '}
+											Story Points
+										</Typography>
+										<Button onClick={() => { setPokerIsOverBuffer(false) }} variant="outlined" sx={{ width: '100%' }}>
+											Redo Poker
+										</Button>
+										<Button onClick={handlePokerNextItem} variant="contained" sx={{ width: '100%' }}>
+											Next Item
+										</Button>
+										<Button onClick={handlePokerDialogClose} variant="outlined" sx={{ width: '100%' }}>
+											Done
+										</Button>
+									</>
+									:
+									<>
+										<Typography variant="h6">
+											Make an estimate
+										</Typography>
+										<Slider
+											aria-label="Fibonacci slider"
+											key={`slider-${userEstimate[0]}`}
+											defaultValue={userEstimate[0]}
+											// value={userEstimate[0]}
+											getAriaValueText={item => `${item} SP`}
+											step={null}
+											valueLabelDisplay="auto"
+											marks={pokerFibonacciMarks}
+											min={0}
+											max={21}
+											onChangeCommitted={(e, val) => { setSliderValue(val) }}
+										/>
+										<Button onClick={handlePokerSubmit} variant="contained" sx={{ width: '100%' }}>
+											Submit
+										</Button>
+										<Button onClick={handlePokerNextItem} variant="outlined" sx={{ width: '100%' }}>
+											Next Item
+										</Button>
+										<Button onClick={handlePokerDialogClose} variant="outlined" sx={{ width: '100%' }}>
+											Done
+										</Button>
+									</>
+								}
 							</Box>
 
 						</Grid>
