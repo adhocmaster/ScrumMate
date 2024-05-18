@@ -153,7 +153,6 @@ const UserStory = ({ storyObject, deleteFunction, sprints, setSprints, sprintNum
 			acceptanceCriteria: tempAcceptanceCriteria,
 			storyPoints: tempStoryPoints,
 		}
-		const sprintNumber = sprints.find(sprint => sprint.todos.some(todo => todo.id === storyId))?.sprintNumber;
 
 		var options = {
 			method: "post",
@@ -177,7 +176,10 @@ const UserStory = ({ storyObject, deleteFunction, sprints, setSprints, sprintNum
 				`http://localhost:8080/api/story/${storyId}/edit`,
 				options
 			).then((result) => {
-				setStoryWrapper(newStoryObj, sprintNumber, storyId)
+				if (sprints) {
+					const sprintNumber = sprints.find(sprint => sprint.todos.some(todo => todo.id === storyId))?.sprintNumber;
+					setStoryWrapper(newStoryObj, sprintNumber, storyId)
+				}
 				if (result.status !== 200) {
 					console.log("error", result);
 				}
@@ -222,6 +224,8 @@ const UserStory = ({ storyObject, deleteFunction, sprints, setSprints, sprintNum
 						setTeamEstimates(othersEstimates);
 						setStoryNumberBuffer(rank + 1);
 						setSize(size);
+						setStoryPoints(size);
+						setTempStoryPoints(size);
 					})
 				}
 			});

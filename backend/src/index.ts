@@ -34,18 +34,27 @@ AppDataSource.initialize().then(async () => {
 		productOwner1.id = 1
 		await db.save(productOwner1)
 
-		const user = new User()
-		user.username = "joe"
-		user.email = "joe@gmail.com"
-		user.salt = "salt"
-		user.password = authentication(user.salt, "pass")
-		user.id = 2
-		await db.save(user)
+		const joinedUser = new User()
+		joinedUser.username = "joe"
+		joinedUser.email = "joe@gmail.com"
+		joinedUser.salt = "salt"
+		joinedUser.password = authentication(joinedUser.salt, "pass")
+		joinedUser.id = 2
+		await db.save(joinedUser)
+
+		const unjoinedUser = new User()
+		unjoinedUser.username = "billy"
+		unjoinedUser.email = "billy@gmail.com"
+		unjoinedUser.salt = "salt"
+		unjoinedUser.password = authentication(unjoinedUser.salt, "pass")
+		unjoinedUser.id = 3
+		await db.save(unjoinedUser)
 
 		var project1 = new Project()
 		project1.name = "scrum tools"
 		project1.numRevisions = 2
 		project1.productOwner = productOwner1
+		project1.teamMembers = [joinedUser]
 		project1.id = 1
 		await db.save(project1)
 
