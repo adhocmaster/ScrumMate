@@ -272,6 +272,7 @@ export class BacklogItemRepository extends ModelRepository {
 			const everyEstimateEqual = Object.values(backlogItemWithPoker.estimates).every((tuple) => tuple[0] === backlogItemWithPoker.estimates[userId][0])
 			if (everyEstimateEqual) {
 				backlogItemWithPoker.pokerIsOver = true;
+				backlogItemWithPoker.size = parseInt(backlogItemWithPoker.estimates[userId][0]);
 			} else {
 				nextRoundPoker(backlogItemWithPoker);
 			}

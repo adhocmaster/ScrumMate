@@ -34,10 +34,27 @@ AppDataSource.initialize().then(async () => {
 		productOwner1.id = 1
 		await db.save(productOwner1)
 
+		const joinedUser = new User()
+		joinedUser.username = "joe"
+		joinedUser.email = "joe@gmail.com"
+		joinedUser.salt = "salt"
+		joinedUser.password = authentication(joinedUser.salt, "pass")
+		joinedUser.id = 2
+		await db.save(joinedUser)
+
+		const unjoinedUser = new User()
+		unjoinedUser.username = "unjoined"
+		unjoinedUser.email = "unjoined@gmail.com"
+		unjoinedUser.salt = "salt"
+		unjoinedUser.password = authentication(unjoinedUser.salt, "pass")
+		unjoinedUser.id = 3
+		await db.save(unjoinedUser)
+
 		var project1 = new Project()
 		project1.name = "scrum tools"
 		project1.numRevisions = 2
 		project1.productOwner = productOwner1
+		project1.teamMembers = [joinedUser]
 		project1.id = 1
 		await db.save(project1)
 
@@ -153,7 +170,7 @@ AppDataSource.initialize().then(async () => {
 		backlog_r2_1.userTypes = "student";
 		backlog_r2_1.functionalityDescription = "manage my events in various time frames"
 		backlog_r2_1.reasoning = " I can get the amount of detail I need to plan my schedule"
-		backlog_r2_1.acceptanceCriteria = "can eat fish and survive"
+		backlog_r2_1.acceptanceCriteria = "Can switch from daily to weekly to monthly view and vis versa"
 		backlog_r2_1.size = 8;
 		backlog_r2_1.rank = 0
 		await db.save(backlog_r2_1);
@@ -177,7 +194,7 @@ AppDataSource.initialize().then(async () => {
 		backlog_r2_3.reasoning = "I can plan for the short, medium and long term as needed"
 		backlog_r2_3.acceptanceCriteria = "Able to move from daily view to monthly view with UI and gestures"
 		backlog_r2_3.size = 1;
-		backlog_r2_3.rank = 1
+		backlog_r2_3.rank = 2
 		await db.save(backlog_r2_3);
 	}
 
