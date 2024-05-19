@@ -1,11 +1,10 @@
 import { Release } from "../../entity/release";
-import { BacklogItem, Priority, Story } from "../../entity/backlogItem";
+import { ActionItem, ActionType, BacklogItem, Priority, Story } from "../../entity/backlogItem";
 import { ModelRepository } from "./modelRepository";
 import { NotFoundError } from "../../helpers/errors";
 import { Sprint } from "../../entity/sprint";
 import { shuffle } from "lodash";
 import { Project } from "../../entity/project";
-import user from "router/user";
 
 export class BacklogItemRepository extends ModelRepository {
 
@@ -41,6 +40,34 @@ export class BacklogItemRepository extends ModelRepository {
 		release.backlogItemCount += 1
 		await this.releaseSource.save(release)
 		return newStory
+	}
+
+	public async createNewSprintAction(sprintId: number, actionType: ActionType, description: string, storyPoints: number): Promise<ActionItem> {
+		const sprint = await this.sprintSource.lookupSprintById(sprintId)
+		const newAction = new ActionItem()
+		newAction.actionType = actionType
+		newAction.description = description
+		newAction.size = storyPoints
+		newAction.sprint = sprint
+		newAction.rank = sprint.backlogItemCount
+		await this.backlogSource.save(newAction)
+		sprint.backlogItemCount += 1
+		await this.sprintSource.save(sprint)
+		return newAction
+	}
+
+	public async createNewBacklogAction(releaseId: number, actionType: ActionType, description: string, storyPoints: number): Promise<ActionItem> {
+		const release = await this.releaseSource.lookupReleaseById(releaseId)
+		const newAction = new ActionItem()
+		newAction.actionType = actionType
+		newAction.description = description
+		newAction.size = storyPoints
+		newAction.release = release
+		newAction.rank = release.backlogItemCount
+		await this.backlogSource.save(newAction)
+		release.backlogItemCount += 1
+		await this.releaseSource.save(release)
+		return newAction
 	}
 
 	public async updateStory(storyId: number, userTypes?: string, functionalityDescription?: string, reasoning?: string, acceptanceCriteria?: string, storyPoints?: number, priority?: Priority, rank?: number): Promise<Story> {

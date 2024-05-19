@@ -11,7 +11,7 @@ export enum Priority {
 	HIGH = 4,
 }
 
-export enum ActionCategory {
+export enum ActionType {
 	BUG = 1,
 	SYSTEMFEATURE = 2,
 	SPIKE = 3,
@@ -182,17 +182,17 @@ export class ActionItem extends BacklogItem {
 
 	@Column({
 		type: "enum",
-		enum: ActionCategory,
-		default: ActionCategory.BUG
+		enum: ActionType,
+		default: ActionType.BUG
 	})
-	category: ActionCategory
+	actionType: ActionType
 
 	@Column()
 	description: string
 
 	copy(actionItem: ActionItem): void {
 		super.copy(actionItem)
-		this.category = actionItem.category;
+		this.actionType = actionItem.actionType;
 		this.description = actionItem.description;
 	}
 }

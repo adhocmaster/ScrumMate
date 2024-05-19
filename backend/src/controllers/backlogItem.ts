@@ -35,6 +35,32 @@ export const createNewBacklogStory = async (req: express.Request, res: express.R
 	return res.json(newStory);
 }
 
+export const createAction = async (req: express.Request, res: express.Response) => {
+	const db = Database.getInstance();
+	const { sprintId } = req.params;
+	const {
+		actionType,
+		description,
+		storyPoints,
+	} = req.body;
+	verifyParameters(actionType, description, storyPoints);
+	const newStory = await db.getBacklogItemRepository.createNewSprintAction(parseInt(sprintId), actionType, description, storyPoints);
+	return res.json(newStory);
+}
+
+export const createNewBacklogAction = async (req: express.Request, res: express.Response) => {
+	const db = Database.getInstance();
+	const { releaseId } = req.params;
+	const {
+		actionType,
+		description,
+		storyPoints,
+	} = req.body;
+	verifyParameters(actionType, description, storyPoints);
+	const newStory = await db.getBacklogItemRepository.createNewBacklogAction(parseInt(releaseId), actionType, description, storyPoints);
+	return res.json(newStory);
+}
+
 export const editStory = async (req: express.Request, res: express.Response) => {
 	const db = Database.getInstance()
 	const { storyId } = req.params
