@@ -259,12 +259,17 @@ const ReleasePlan = ({ projectId }) => {
           < ContentBox title={"Problem Statement"} content={problemStatement} />
           :
           <TextField
-            minRows={3}
-            style={{ width: "1160px" }}
+            sx={{
+              margin: '5px 10px',
+              height: "130px",
+            }}
+            minRows={4}
+            maxRows={4}
+            style={{ width: "98%" }}
             value={problemStatement}
             onChange={editProblem}
             multiline
-            sx={{ height: "130px" }}
+
           />}
 
         {/* High Level Goals */}
@@ -287,8 +292,13 @@ const ReleasePlan = ({ projectId }) => {
           <ContentBox content={highLevelGoals} />
           :
           <TextField
-            minRows={3}
-            style={{ width: "1160px" }}
+            sx={{
+              margin: '5px 10px',
+              height: "130px",
+            }}
+            minRows={4}
+            maxRows={4}
+            style={{ width: "98%" }}
             value={highLevelGoals}
             onChange={editGoals}
             multiline
@@ -301,6 +311,7 @@ const ReleasePlan = ({ projectId }) => {
           <Grid item xs={9}>
             <Typography
               marginLeft={4}
+              maxRows={4}
               textAlign="left"
               fontWeight="bold"
               fontSize={14}
