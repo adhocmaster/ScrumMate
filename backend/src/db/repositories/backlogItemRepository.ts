@@ -326,8 +326,4 @@ export class BacklogItemRepository extends ModelRepository {
 		return await this.backlogSource.lookupBacklogById(id);
 	}
 
-	public async lookupStoryById(id: number): Promise<Story> {
-		return await this.backlogSource.lookupStoryById(id);
-	}
-
 }
