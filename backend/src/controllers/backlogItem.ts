@@ -73,7 +73,22 @@ export const editStory = async (req: express.Request, res: express.Response) => 
 		priority,
 		rank,
 	} = req.body
-	const story = await db.getBacklogItemRepository.updateStory(parseInt(storyId), userTypes, functionalityDescription, reasoning, acceptanceCriteria, storyPoints, priority, parseInt(rank))
+	const parsedRank = rank ? parseInt(rank) : null;
+	const story = await db.getBacklogItemRepository.updateStory(parseInt(storyId), userTypes, functionalityDescription, reasoning, acceptanceCriteria, storyPoints, priority, parsedRank)
+	return res.json(story)
+};
+
+export const editAction = async (req: express.Request, res: express.Response) => {
+	const db = Database.getInstance()
+	const { actionId } = req.params
+	const {
+		actionType,
+		description,
+		storyPoints,
+		rank,
+	} = req.body
+	const parsedRank = rank ? parseInt(rank) : null;
+	const story = await db.getBacklogItemRepository.updateAction(parseInt(actionId), actionType, description, storyPoints, parsedRank)
 	return res.json(story)
 };
 
