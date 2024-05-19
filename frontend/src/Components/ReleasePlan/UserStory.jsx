@@ -345,7 +345,14 @@ const UserStory = ({ storyObject, deleteFunction, sprints, setSprints, sprintNum
 					>
 						{
 							showAcceptanceCriteria ?
-								acceptanceCriteria :
+								<>
+									<Box fontWeight='bold' display='inline'>
+										Acceptance Criteria:
+									</Box>
+									{' '}
+									{acceptanceCriteria}
+								</>
+								:
 								`As a(n) ${role} I want to be able to ${functionality} so that ${reasoning}.`
 						}
 					</Typography>
