@@ -5,10 +5,17 @@ import { User } from "./User"
 import { getMaybeUndefined, addMaybeUndefined, removeMaybeUndefined } from "./utils/addGetList"
 
 export enum Priority {
-	HIGH = 4,
-	MEDIUM = 3,
-	LOW = 2,
 	NONE = 1,
+	LOW = 2,
+	MEDIUM = 3,
+	HIGH = 4,
+}
+
+export enum ActionCategory {
+	BUG = 1,
+	SYSTEMFEATURE = 2,
+	SPIKE = 3,
+	INFRASTRUCTURE = 4,
 }
 
 @Entity()
@@ -170,40 +177,22 @@ export class Task extends BacklogItem {
 }
 
 @ChildEntity()
-export class Spike extends BacklogItem {
-	public name = "Spike";
+export class ActionItem extends BacklogItem {
+	public name = "ActionItem";
+
+	@Column({
+		type: "enum",
+		enum: ActionCategory,
+		default: ActionCategory.BUG
+	})
+	category: ActionCategory
 
 	@Column()
 	description: string
 
-	copy(spike: Spike): void {
-		super.copy(spike)
-		this.description = spike.description;
-	}
-}
-
-@ChildEntity()
-export class Infrastructure extends BacklogItem {
-	public name = "Infrastructure";
-
-	@Column()
-	description: string
-
-	copy(infrastructure: Infrastructure): void {
-		super.copy(infrastructure)
-		this.description = infrastructure.description;
-	}
-}
-
-@ChildEntity()
-export class Bug extends BacklogItem {
-	public name = "Bug";
-
-	@Column()
-	description: string
-
-	copy(bug: Bug): void {
-		super.copy(bug)
-		this.description = bug.description;
+	copy(actionItem: ActionItem): void {
+		super.copy(actionItem)
+		this.category = actionItem.category;
+		this.description = actionItem.description;
 	}
 }

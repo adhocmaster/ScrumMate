@@ -3,7 +3,7 @@ import { Project } from "../../src/entity/project"
 import { Release } from "../../src/entity/release";
 import { Sprint } from "../../src/entity/sprint";
 import { DataSource } from "typeorm";
-import { Bug, Epic, Infrastructure, Spike, Story, Task, BacklogItem } from "../../src/entity/backlogItem";
+import { Epic, Story, Task, ActionItem, BacklogItem } from "../../src/entity/backlogItem";
 import { UserRole } from "../../src/entity/roles";
 
 function makeRandomId(length: number) {
@@ -66,7 +66,7 @@ const AppDataSource = new DataSource({
 	database: "test",
 	synchronize: true,
 	logging: false,
-	entities: [User, Project, Release, Sprint, UserRole, BacklogItem, Epic, Story, Task, Spike, Infrastructure, Bug],
+	entities: [User, Project, Release, Sprint, UserRole, BacklogItem, Epic, Story, Task, ActionItem],
 	migrations: [],
 	subscribers: [],
 })
@@ -137,7 +137,7 @@ describe('testing that everything can be saved and loaded from database', () => 
 	const sprint1 = new Sprint()
 	const sprint2 = new Sprint()
 	const role = new UserRole()
-	const spike = new Spike()
+	const spike = new ActionItem()
 	const story1 = new Story()
 	const task1 = new Task()
 	const task2 = new Task()
