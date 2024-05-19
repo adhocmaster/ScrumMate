@@ -5,12 +5,15 @@ import {
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import HistoryIcon from '@mui/icons-material/History';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import NextPlanOutlinedIcon from '@mui/icons-material/NextPlanOutlined';
 
 const UserStory = ({ storyObject, deleteFunction, sprints, setSprints, sprintNumber, backlog }) => {
 	const [anchorOpen, setAnchorOpen] = useState(false);
 	const [editDialogOpen, setEditDialogOpen] = useState(false);
 	const [pokerDialogOpen, setPokerDialogOpen] = useState(false);
-	const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
+	const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+
+	const [showAcceptanceCriteria, setShowAcceptanceCriteria] = useState(false);
 
 	const [backlogItemType, setBacklogItemType] = useState("story");
 	const [role, setRole] = useState(storyObject.userTypes);
@@ -48,6 +51,10 @@ const UserStory = ({ storyObject, deleteFunction, sprints, setSprints, sprintNum
 	const handleMenuClose = () => {
 		setAnchorOpen(false);
 	};
+
+	const handleToggleAcceptanceCriteria = () => {
+		setShowAcceptanceCriteria(!showAcceptanceCriteria);
+	}
 
 	const handleEditDialogOpen = () => {
 		setTempBacklogItemType(backlogItemType)
@@ -295,6 +302,18 @@ const UserStory = ({ storyObject, deleteFunction, sprints, setSprints, sprintNum
 					>
 						<MoreVertIcon />
 					</IconButton>
+
+					<IconButton
+						aria-label="settings"
+						aria-controls="menu-userstory"
+						aria-haspopup="true"
+						onClick={handleToggleAcceptanceCriteria}
+						size="large"
+						sx={{ position: "absolute", bottom: -1, left: 30 }}
+					>
+						<NextPlanOutlinedIcon />
+					</IconButton>
+
 					<Menu
 						id="menu-userstory"
 						anchorEl={anchorOpen}
@@ -324,7 +343,11 @@ const UserStory = ({ storyObject, deleteFunction, sprints, setSprints, sprintNum
 							hyphens: "auto",
 						}}
 					>
-						{`As a(n) ${role} I want to be able to ${functionality} so that ${reasoning}.`}
+						{
+							showAcceptanceCriteria ?
+								acceptanceCriteria :
+								`As a(n) ${role} I want to be able to ${functionality} so that ${reasoning}.`
+						}
 					</Typography>
 
 					<Typography
