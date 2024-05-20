@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Typography, Box, TextField } from "@mui/material";
 import { Grid, Divider } from "@mui/material";
 import { IconButton } from "@mui/material";
@@ -14,360 +14,375 @@ import { TextareaAutosize } from '@mui/base/TextareaAutosize';
 
 
 const ReleasePlan = ({ projectId }) => {
-  const [sprints, setSprints] = useState([]);
-  const [open, setOpen] = useState(true);
-  const [problemStatement, setProblem] = useState("");
-  const [highLevelGoals, setGoals] = useState("");
-  const [releaseId, setId] = useState(null);
-  const [fullySigned, setFullySigned] = useState(false);
+	const [sprints, setSprints] = useState([]);
+	const [open, setOpen] = useState(true);
+	const [problemStatement, setProblem] = useState("");
+	const [highLevelGoals, setGoals] = useState("");
+	const [releaseId, setId] = useState(null);
+	const [fullySigned, setFullySigned] = useState(false);
+	const [signatures, setSignatures] = useState([[], [], null]);
 
-  const handleChangeHighLevelGoals = (event) => {
-    setGoals(event.target.value);
-  }
-
-  function fetchMostRecentRelease() {
-    console.log("about to most recent release");
-    var options = {
-      method: "get",
-      credentials: "include",
-    };
-    try {
-      fetch(
-        `http://localhost:8080/api/project/${projectId}/recentRelease`,
-        options
-      ).then((result) => {
-        if (result.status === 200) {
-          console.log(result);
-          result.json().then((response) => {
-            console.log(response);
-            console.log(response.fullySigned)
-            setFullySigned(response.fullySigned)
-            //setProblem(response.problemStatement);
-            //setGoals(response.goalStatement);
-            setId(response.id);
-          });
-        }
-      });
-    } catch { }
-  }
-
-  function fetchRelease(releaseId, setProblem, setGoals) {
-    console.log("about to fetch a release");
-    var options = {
-      method: "get",
-      credentials: "include",
-    };
-    try {
-      fetch(`http://localhost:8080/api/release/${releaseId}`, options).then(
-        (result) => {
-          if (result.status === 200) {
-            console.log(result);
-            result.json().then((response) => {
-              //console.log(response);
-              setFullySigned(response.fullySigned);
-              setProblem(response.problemStatement);
-              setGoals(response.goalStatement);
-            });
-          }
-        }
-      );
-    } catch { }
-  }
-
-  function fetchSprints(releaseId) {
-    var options = {
-      method: "get",
-      credentials: "include",
-    };
-    try {
-      fetch(
-        `http://localhost:8080/api/release/${releaseId}/sprints`,
-        options
-      ).then((result) => {
-        if (result.status === 200) {
-          result.json().then((response) => {
-            setSprints(response);
-          });
-        } else {
-          setSprints([]);
-        }
-      });
-    } catch { }
-  }
-
-  //updates the problem statement
-  function editProblem(e) {
-    var options = {
-      method: "POST",
-      credentials: "include",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ problemStatement: e.target.value },
-        { goalStatement: e.target.value }),
-    };
-    fetch(`http://localhost:8080/api/release/${releaseId}/edit`, options)
-      .then((result) => {
-        if (result.status === 200) {
-          result.json().then((response) => {
-            setProblem(response.problemStatement);
-          });
-        }
-      })
-  }
-
-  //updates the HighLevelGoals
-  function editGoals(e) {
-    var options = {
-      method: "POST",
-      credentials: "include",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ goalStatement: e.target.value }),
-    };
-    fetch(`http://localhost:8080/api/release/${releaseId}/edit`, options)
-      .then((result) => {
-        if (result.status === 200) {
-          result.json().then((response) => {
-            setGoals(response.goalStatement);
-          });
-        }
-      })
-  }
-  function createNewSprints() {
-    console.log("creating new");
-    var options = {
-      method: "POST",
-      credentials: "include",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ sprintNumber: sprints.length + 1 }),
-    };
-
-    fetch(`http://localhost:8080/api/release/${releaseId}/sprint`, options)
-      .then((result) => {
-        if (result.status === 200) {
-          console.log(result);
-        }
-        console.log(result);
-        return result.json();
-      })
-      .then((response) => {
-        console.log(response);
-        setSprints((prevSprints) => [...prevSprints, response]);
-      })
-      .catch((error) => {
-        console.error("Error:", error);
-      });
-  }
-
-  useEffect(() => {
-    fetchMostRecentRelease();
-  }, []);
+	const handleChangeHighLevelGoals = (event) => {
+		setGoals(event.target.value);
+	}
 
 
-  useEffect(() => {
-    fetchRelease(releaseId, setProblem, setGoals);
-    fetchSprints(releaseId);
-  }, [releaseId]);
+	function fetchUserList() {
+		var options = {
+			method: 'get',
+			credentials: 'include'
+		}
+		try {
+			fetch(`http://localhost:8080/api/release/${releaseId}/signatures`, options).then((result) => {
+				if (result.status === 200) {
+					result.json().then((response) => {
+						setSignatures(response);
+					})
+				}
+			})
+		}
+		catch {
+			return;
+		}
+	};
 
-  const toggleDrawer = () => {
-    setOpen(!open);
-  };
+	function fetchMostRecentRelease() {
+		console.log("about to most recent release");
+		var options = {
+			method: "get",
+			credentials: "include",
+		};
+		try {
+			fetch(
+				`http://localhost:8080/api/project/${projectId}/recentRelease`,
+				options
+			).then((result) => {
+				if (result.status === 200) {
+					console.log(result);
+					result.json().then((response) => {
+						console.log(response);
+						setId(response.id);
+					});
+				}
+			});
+		} catch { }
+	}
 
-  const revisionsClick = (newReleaseId) => {
-    setId(newReleaseId);
-  };
+	function fetchRelease(releaseId, setProblem, setGoals) {
+		console.log("about to fetch a release");
+		var options = {
+			method: "get",
+			credentials: "include",
+		};
+		try {
+			fetch(`http://localhost:8080/api/release/${releaseId}`, options).then(
+				(result) => {
+					if (result.status === 200) {
+						console.log(result);
+						result.json().then((response) => {
+							setFullySigned(response.fullySigned);
+							setProblem(response.problemStatement);
+							setGoals(response.goalStatement);
+						});
+					}
+				}
+			);
+		} catch { }
+	}
 
-  return (
-    <Grid container spacing={2}>
-      {/* Revision Sidebar */}
-      <Grid item xs={open ? 2 : "auto"}>
-        <Sidebar
-          open={open}
-          toggleDrawer={toggleDrawer}
-          projectId={projectId}
-          itemClick={revisionsClick}
-          setFullySigned={setFullySigned}
-        />
-      </Grid>
+	function fetchSprints(releaseId) {
+		var options = {
+			method: "get",
+			credentials: "include",
+		};
+		try {
+			fetch(
+				`http://localhost:8080/api/release/${releaseId}/sprints`,
+				options
+			).then((result) => {
+				if (result.status === 200) {
+					result.json().then((response) => {
+						setSprints(response);
+					});
+				} else {
+					setSprints([]);
+				}
+			});
+		} catch { }
+	}
 
-      <Grid item xs={open ? 10 : 11}>
-        {/* Current Sprint */}
-        {/* TODO: update Sprint Number */}
-        <Typography
-          variant="h6"
-          marginTop={8}
-          marginBottom={2}
-          marginLeft={1}
-          textAlign={"left"}
-          sx={{
-            fontWeight: "bold",
-          }}
-        >
-          Current Sprint (#3):
-        </Typography>
+	// updates the problem statement
+	function editProblemStatement(e) {
+		var options = {
+			method: "POST",
+			credentials: "include",
+			headers: {
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify({ problemStatement: e.target.value },
+				{ goalStatement: e.target.value }),
+		};
+		fetch(`http://localhost:8080/api/release/${releaseId}/edit`, options)
+			.then((result) => {
+				if (result.status === 200) {
+					result.json().then((response) => {
+						setProblem(response.problemStatement);
+					});
+				}
+			})
+	}
 
-        <Box display="flex" justifyContent={"flex-start"}>
-          {/* TODO: Handle Button Clicks */}
-          <ButtonBar />
-        </Box>
+	// updates the HighLevelGoals
+	function editGoals(e) {
+		var options = {
+			method: "POST",
+			credentials: "include",
+			headers: {
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify({ goalStatement: e.target.value }),
+		};
+		fetch(`http://localhost:8080/api/release/${releaseId}/edit`, options)
+			.then((result) => {
+				if (result.status === 200) {
+					result.json().then((response) => {
+						setGoals(response.goalStatement);
+					});
+				}
+			})
+	}
 
-        <Divider
-          sx={{
-            margin: "20px 0px",
-            backgroundColor: "rgba(0, 0, 0, 0.5)",
-            height: "1.5px",
-          }}
-        />
+	function createNewSprints() {
+		console.log("creating new");
+		var options = {
+			method: "POST",
+			credentials: "include",
+			headers: {
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify({ sprintNumber: sprints.length + 1 }),
+		};
 
-        <Typography
-          marginBottom={2}
-          marginLeft={1}
-          textAlign={"left"}
-          fontWeight="bold"
-          fontSize={14}
-        >
-          Release Plan:
-        </Typography>
+		fetch(`http://localhost:8080/api/release/${releaseId}/sprint`, options)
+			.then((result) => {
+				if (result.status === 200) {
+					console.log(result);
+				}
+				console.log(result);
+				return result.json();
+			})
+			.then((response) => {
+				console.log(response);
+				setSprints((prevSprints) => [...prevSprints, response]);
+			})
+			.catch((error) => {
+				console.error("Error:", error);
+			});
+	}
 
-        {/* TODO: Change version number */}
-        <Typography
-          textAlign="left"
-          marginLeft={2}
-          marginBottom={2}
-          fontSize={14}
-        >
-          v1.0.0
-        </Typography>
+	useEffect(() => {
+		fetchUserList();
+	}, [releaseId])
 
-        {console.log("PS: " + problemStatement)}
-        {/* Problem Statement */}
-        <Typography
-          variant='body1'
-          marginBottom={2}
-          marginLeft={2}
-          textAlign={'left'}
-          fontWeight="bold"
-          fontSize={14}
-        >
-          Problem Statement
-        </Typography>
-        {fullySigned ?
-          < ContentBox title={"Problem Statement"} content={problemStatement} />
-          :
-          <TextField
-            sx={{
-              margin: '5px 10px',
-              height: "130px",
-            }}
-            minRows={4}
-            maxRows={4}
-            style={{ width: "98%" }}
-            value={problemStatement}
-            onChange={editProblem}
-            multiline
+	useEffect(() => {
+		fetchMostRecentRelease();
+	}, []);
 
-          />}
+	useEffect(() => {
+		fetchRelease(releaseId, setProblem, setGoals);
+		fetchSprints(releaseId);
+	}, [releaseId]);
 
-        {/* High Level Goals */}
+	const toggleDrawer = () => {
+		setOpen(!open);
+	};
 
-        <br />
-        {console.log("HLG: " + highLevelGoals)}
-        {console.log("PS: " + problemStatement)}
-        {/* Problem Statement */}
-        <Typography
-          variant='body1'
-          marginBottom={2}
-          marginLeft={2}
-          textAlign={'left'}
-          fontWeight="bold"
-          fontSize={14}
-        >
-          High Level Goals
-        </Typography>
-        {fullySigned ?
-          <ContentBox content={highLevelGoals} />
-          :
-          <TextField
-            sx={{
-              margin: '5px 10px',
-              height: "130px",
-            }}
-            minRows={4}
-            maxRows={4}
-            style={{ width: "98%" }}
-            value={highLevelGoals}
-            onChange={editGoals}
-            multiline
-          />}
+	const revisionsClick = (newReleaseId) => {
+		setId(newReleaseId);
+	};
+	return (
 
 
+		< Grid container spacing={2} >
+			{/* Revision Sidebar */}
+			< Grid item xs={open ? 2 : "auto"} >
+				<Sidebar
+					open={open}
+					toggleDrawer={toggleDrawer}
+					projectId={projectId}
+					itemClick={revisionsClick}
+					setFullySigned={setFullySigned}
+				/>
+			</Grid >
+			<Grid item xs={open ? 10 : 11}>
+				{/* Current Sprint */}
+				{/* TODO: update Sprint Number */}
+				<Typography
+					variant="h6"
+					marginTop={8}
+					marginBottom={2}
+					marginLeft={1}
+					textAlign={"left"}
+					sx={{
+						fontWeight: "bold",
+					}}
+				>
+					Current Sprint (#3):
+				</Typography>
 
-        <Grid container spacing={2}>
-          {/* Sprints */}
-          <Grid item xs={9}>
-            <Typography
-              marginLeft={4}
-              maxRows={4}
-              textAlign="left"
-              fontWeight="bold"
-              fontSize={14}
-            >
-              Sprints
-              <IconButton
-                sx={{
-                  marginBottom: "3px",
-                }}
-                onClick={createNewSprints}
-              >
-                <AddCircleOutlineIcon fontSize="small" />
-              </IconButton>
-            </Typography>
-            <DragList
-              marginLeft={2}
-              items={sprints}
-              setItems={setSprints}
-              releaseId={releaseId}
-            />
-            {/* {sprints != [] ? <DragList items={sprints} setItems={setSprints}/>: ''} */}
-          </Grid>
-          {/* Backlog */}
-          <Grid item xs={3}>
-            <Backlog releaseId={releaseId} />
-          </Grid>
-        </Grid>
-        {/* Sanity Check */}
-        <Typography
-          variant="h5"
-          fontWeight="bold"
-          gutterBottom
-          fontSize={14}
-          textAlign="left"
-          marginLeft={2}
-          marginTop={2}
-        >
-          Sanity Check
-        </Typography>
+				<Box display="flex" justifyContent={"flex-start"}>
+					{/* TODO: Handle Button Clicks */}
+					<ButtonBar />
+				</Box>
 
-        <Grid container spacing={2}>
-          {/* Sanity Check Graph */}
-          <Grid item xs={6}>
-            <SanityCheckGraph sprints={sprints} />
-          </Grid>
-          <Grid item xs={6}>
-            <SanityCheckText
-              text={
-                "Yes we can do it because no sprint looks like too much work. Lorem ipsum dolor sit amet …"
-              }
-            />
-          </Grid>
-        </Grid>
-      </Grid>
-    </Grid>
-  );
+				<Divider
+					sx={{
+						margin: "20px 0px",
+						backgroundColor: "rgba(0, 0, 0, 0.5)",
+						height: "1.5px",
+					}}
+				/>
+
+				<Typography
+					marginBottom={2}
+					marginLeft={1}
+					textAlign={"left"}
+					fontWeight="bold"
+					fontSize={14}
+				>
+					Release Plan:
+				</Typography>
+
+				{/* TODO: Change version number */}
+				<Typography
+					textAlign="left"
+					marginLeft={2}
+					marginBottom={2}
+					fontSize={14}
+				>
+					v1.0.0
+				</Typography>
+
+				{/* Problem Statement */}
+				<Typography
+					variant='body1'
+					marginBottom={2}
+					marginLeft={2}
+					textAlign={'left'}
+					fontWeight="bold"
+					fontSize={14}
+				>
+					Problem Statement
+					{console.log("This is the length: " + signatures[1].length)}
+				</Typography>
+				{signatures[1].length !== 0 ?
+					< ContentBox title={"Problem Statement"} content={problemStatement} />
+					:
+					<TextField
+						sx={{
+							margin: '5px 10px',
+							height: "130px",
+						}}
+						minRows={4}
+						maxRows={4}
+						style={{ width: "98%" }}
+						value={problemStatement}
+						onChange={editProblemStatement}
+						multiline
+
+					/>}
+				<br />
+				{/* High Level Goals */}
+				<Typography
+					variant='body1'
+					marginBottom={2}
+					marginLeft={2}
+					textAlign={'left'}
+					fontWeight="bold"
+					fontSize={14}
+				>
+					High Level Goals
+				</Typography>
+				{signatures[1].length !== 0 ?
+					<ContentBox content={highLevelGoals} />
+					:
+					<TextField
+						sx={{
+							margin: '5px 10px',
+							height: "130px",
+						}}
+						minRows={4}
+						maxRows={4}
+						style={{ width: "98%" }}
+						value={highLevelGoals}
+						onChange={editGoals}
+						multiline
+					/>}
+
+
+
+				<Grid container spacing={2}>
+					{/* Sprints */}
+					<Grid item xs={9}>
+						<Typography
+							marginLeft={4}
+							maxRows={4}
+							textAlign="left"
+							fontWeight="bold"
+							fontSize={14}
+						>
+							Sprints
+							<IconButton
+								sx={{
+									marginBottom: "3px",
+								}}
+								onClick={createNewSprints}
+							>
+								<AddCircleOutlineIcon fontSize="small" />
+							</IconButton>
+						</Typography>
+						<DragList
+							marginLeft={2}
+							items={sprints}
+							setItems={setSprints}
+							releaseId={releaseId}
+						/>
+						{/* {sprints != [] ? <DragList items={sprints} setItems={setSprints}/>: ''} */}
+					</Grid>
+					{/* Backlog */}
+					<Grid item xs={3}>
+						<Backlog releaseId={releaseId} />
+					</Grid>
+				</Grid>
+				{/* Sanity Check */}
+				<Typography
+					variant="h5"
+					fontWeight="bold"
+					gutterBottom
+					fontSize={14}
+					textAlign="left"
+					marginLeft={2}
+					marginTop={2}
+				>
+					Sanity Check
+				</Typography>
+
+				<Grid container spacing={2}>
+					{/* Sanity Check Graph */}
+					<Grid item xs={6}>
+						<SanityCheckGraph sprints={sprints} />
+					</Grid>
+					<Grid item xs={6}>
+						<SanityCheckText
+							text={
+								"Yes we can do it because no sprint looks like too much work. Lorem ipsum dolor sit amet …"
+							}
+						/>
+					</Grid>
+				</Grid>
+			</Grid>
+		</Grid >
+	);
 };
 
 export default ReleasePlan;
