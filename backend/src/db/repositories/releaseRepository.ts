@@ -1,7 +1,7 @@
 import { Sprint } from "../../entity/sprint";
 import { Release } from "../../entity/release";
 import { ModelRepository } from "./modelRepository";
-import { BacklogItem, Bug, Epic, Infrastructure, Spike, Story, Task } from "../../entity/backlogItem";
+import { Epic, Story, Task, ActionItem, BacklogItem } from "../../entity/backlogItem";
 import { User } from "../../entity/User";
 // import { SigningError } from "../../helpers/errors";
 
@@ -41,9 +41,7 @@ export class ReleaseRepository extends ModelRepository {
 			["Epic", Epic],
 			["Story", Story],
 			["Task", Task],
-			["Spike", Spike],
-			["Infrastructure", Infrastructure],
-			["Bug", Bug],
+			["ActionItem", ActionItem],
 			["BacklogItem", BacklogItem],
 		])
 		for (const backlogItem of sourceList) {
