@@ -12,10 +12,6 @@ import {
 	DialogTitle,
 	DialogActions,
 	DialogContent,
-	FormControl,
-	InputLabel,
-	Select,
-	MenuItem,
 	TextField,
 	IconButton,
 	ToggleButtonGroup,
@@ -26,6 +22,7 @@ import UserStory from "./UserStory";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import AddIcon from "@mui/icons-material/Add";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
+import { InputLabel, Select, MenuItem, FormControl } from '@mui/material';
 
 const Backlog = ({ releaseId }) => {
 	const [backlogItems, setBacklogItems] = useState([]);
@@ -36,9 +33,9 @@ const Backlog = ({ releaseId }) => {
 	const [reasoning, setReasoning] = useState("");
 	const [acceptanceCriteria, setAcceptanceCriteria] = useState("");
 	const [storyPoints, setStoryPoints] = useState(0);
+	const [priority, setPriority] = useState(1)
 
 	const [dialogOpen, setDialogOpen] = useState(false);
-
 	const openDialogForNewStory = () => {
 		setDialogOpen(true);
 	};
@@ -244,7 +241,7 @@ const Backlog = ({ releaseId }) => {
 						sx={{ marginBottom: 2 }}
 					/>
 
-					<TextField
+					{/* <TextField
 						margin="dense"
 						id="story-points"
 						label="Story Points"
@@ -262,7 +259,23 @@ const Backlog = ({ releaseId }) => {
 								min: 0, // Minimum value
 							},
 						}}
-					/>
+					/> */}
+					<FormControl fullWidth>
+						<InputLabel id="priority-select-label">Priority</InputLabel>
+						<Select
+							labelId="priority-select-label"
+							id="demo-simple-select"
+							value={priority}
+							label="Priority"
+							onChange={(event) => setPriority(event.target.value)}
+						>
+							<MenuItem value={4}>High</MenuItem>
+							<MenuItem value={3}>Medium</MenuItem>
+							<MenuItem value={2}>Low</MenuItem>
+							<MenuItem value={1}>None</MenuItem>
+						</Select>
+					</FormControl>
+
 				</DialogContent>
 				<DialogActions>
 					<Button onClick={handleDialogClose}>Cancel</Button>

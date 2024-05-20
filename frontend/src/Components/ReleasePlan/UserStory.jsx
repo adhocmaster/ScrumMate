@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from "react";
 import {
-	Card, CardContent, Box, Typography, IconButton, Menu, MenuItem, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, Button, TextField, ToggleButtonGroup, ToggleButton, Grid, Divider, List, ListItem, ListItemIcon, Avatar, ListItemText, Slider
+	Card, CardContent, Box, Typography, IconButton, Menu, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, Button, TextField, ToggleButtonGroup, ToggleButton, Grid, Divider, List, ListItem, ListItemIcon, Avatar, ListItemText, Slider
 } from "@mui/material";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import HistoryIcon from '@mui/icons-material/History';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import { InputLabel, Select, MenuItem, FormControl } from '@mui/material';
+
 
 const UserStory = ({ storyObject, deleteFunction, sprints, setSprints, sprintNumber, backlog }) => {
 	const [anchorOpen, setAnchorOpen] = useState(false);
@@ -18,6 +20,7 @@ const UserStory = ({ storyObject, deleteFunction, sprints, setSprints, sprintNum
 	const [reasoning, setReasoning] = useState(storyObject.reasoning);
 	const [acceptanceCriteria, setAcceptanceCriteria] = useState(storyObject.acceptanceCriteria);
 	const [storyPoints, setStoryPoints] = useState(storyObject.size);
+	const [priority, setPriority] = useState(storyObject.priority)
 
 	const [tempBacklogItemType, setTempBacklogItemType] = useState(backlogItemType);
 	const [tempRole, setTempRole] = useState(role);
@@ -432,7 +435,7 @@ const UserStory = ({ storyObject, deleteFunction, sprints, setSprints, sprintNum
 						sx={{ marginBottom: 2 }}
 					/>
 
-					<TextField
+					{/* <TextField
 						margin="dense"
 						id="story-points"
 						label="Story Points"
@@ -442,7 +445,24 @@ const UserStory = ({ storyObject, deleteFunction, sprints, setSprints, sprintNum
 						value={tempStoryPoints}
 						onChange={(e) => setTempStoryPoints(e.target.value)}
 						InputProps={{ inputProps: { min: 0 } }}
-					/>
+					/> */}
+
+					<FormControl fullWidth>
+						<InputLabel id="priority-select-label">Priority</InputLabel>
+						<Select
+							labelId="priority-select-label"
+							id="demo-simple-select"
+							value={priority}
+							label="Priority"
+							onChange={(event) => setPriority(event.target.value)}
+						>
+							<MenuItem value={4}>High</MenuItem>
+							<MenuItem value={3}>Medium</MenuItem>
+							<MenuItem value={2}>Low</MenuItem>
+							<MenuItem value={1}>None</MenuItem>
+						</Select>
+					</FormControl>
+
 				</DialogContent>
 				<DialogActions>
 					<Button onClick={handleEditDialogClose}>
@@ -558,17 +578,35 @@ const UserStory = ({ storyObject, deleteFunction, sprints, setSprints, sprintNum
 								sx={{ marginBottom: 2 }}
 							/>
 
-							<TextField
-								margin="dense"
-								id="story-points"
-								label="Story Points"
-								type="number"
-								fullWidth
-								variant="outlined"
-								value={tempStoryPoints}
-								onChange={(e) => setTempStoryPoints(e.target.value)}
-								InputProps={{ inputProps: { min: 0 } }}
-							/>
+							<Box display="flex" alignItems="center" gap={1} mb={2}>
+								<FormControl fullWidth>
+									<InputLabel id="priority-select-label">Priority</InputLabel>
+									<Select
+										labelId="priority-select-label"
+										id="demo-simple-select"
+										value={priority}
+										label="Priority"
+										onChange={(event) => setPriority(event.target.value)}
+									>
+										<MenuItem value={4}>High</MenuItem>
+										<MenuItem value={3}>Medium</MenuItem>
+										<MenuItem value={2}>Low</MenuItem>
+										<MenuItem value={1}>None</MenuItem>
+									</Select>
+								</FormControl>
+
+								<TextField
+									margin="dense"
+									id="story-points"
+									label="Story Points"
+									type="number"
+									fullWidth
+									variant="outlined"
+									value={tempStoryPoints}
+									onChange={(e) => setTempStoryPoints(e.target.value)}
+									InputProps={{ inputProps: { min: 0 } }}
+								/>
+							</Box>
 						</Grid>
 
 						<Grid item xs={0.1}>
