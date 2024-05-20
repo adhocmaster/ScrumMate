@@ -319,9 +319,8 @@ const ReleasePlan = ({ projectId }) => {
 					</Grid>
 					{/* Backlog */}
 					<Grid item xs={3}>
-
-            {console.log("can edit release plan" + lockPage)}
-						<Backlog releaseId={releaseId} canEdit={lockPage}/>
+      
+						<Backlog releaseId={releaseId} lockPage={lockPage}/>
 					</Grid>
 				</Grid>
 				{/* Sanity Check */}
