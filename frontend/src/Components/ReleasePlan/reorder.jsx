@@ -10,9 +10,13 @@ const reorder = (list, startIndex, endIndex) => {
 export default reorder;
 
 export const reorderQuoteMap = ({ quoteMap, source, destination }) => {
-	const current = [...quoteMap[source.droppableId]];
-	const next = [...quoteMap[destination.droppableId]];
-	const target = current[source.index];
+	console.log(quoteMap)
+	console.log(source)
+	const sourceSprintId = source.droppableId.slice(8);
+	const destinationSprintId = destination.droppableId.slice(8);
+	const currentSprint = quoteMap[sourceSprintId];
+	const next = quoteMap[destinationSprintId];
+	const target = currentSprint[source.index];
 
 	// moving to same list
 	if (source.droppableId === destination.droppableId) {

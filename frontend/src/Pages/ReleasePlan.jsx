@@ -293,7 +293,7 @@ const ReleasePlan = ({ projectId }) => {
 
 
 
-				<Board sprints={sprints} withScrollableColumns />
+				<Board sprints={sprints} setSprints={setSprints} withScrollableColumns />
 				{/* <Board sprints={sprints} setSprints={setSprints} releaseId={releaseId} /> */}
 
 				{/* <Grid container spacing={2}>

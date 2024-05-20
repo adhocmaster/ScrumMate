@@ -61,12 +61,12 @@ const Container = styled.div``;
 /* stylelint-enable */
 
 const InnerQuoteList = React.memo(function InnerQuoteList(props) {
-	return props.quotes.map((quote, index) => (
-		<Draggable key={quote.id} draggableId={quote.id} index={index}>
+	return props.todos.map((todo, index) => (
+		<Draggable key={todo.id} draggableId={`${todo.id}`} index={index}>
 			{(dragProvided, dragSnapshot) => (
 				<QuoteItem
-					key={quote.id}
-					quote={quote}
+					key={`item ${todo.id}`}
+					todo={todo}
 					isDragging={dragSnapshot.isDragging}
 					isGroupedOver={Boolean(dragSnapshot.combineTargetFor)}
 					provided={dragProvided}
@@ -78,14 +78,14 @@ const InnerQuoteList = React.memo(function InnerQuoteList(props) {
 });
 
 function InnerList(props) {
-	const { quotes, dropProvided } = props;
+	const { todos, dropProvided } = props;
 	const title = props.title ? <Title>{props.title}</Title> : null;
 
 	return (
 		<Container>
 			{title}
 			<DropZone ref={dropProvided.innerRef}>
-				<InnerQuoteList quotes={quotes} />
+				<InnerQuoteList todos={todos} />
 				{dropProvided.placeholder}
 			</DropZone>
 		</Container>
@@ -116,18 +116,6 @@ export default function QuoteList(props) {
 			ignoreContainerClipping={ignoreContainerClipping}
 			isDropDisabled={isDropDisabled}
 			isCombineEnabled={isCombineEnabled}
-			renderClone={
-				useClone
-					? (provided, snapshot, descriptor) => (
-						<QuoteItem
-							quote={todos[descriptor.source.index]}
-							provided={provided}
-							isDragging={snapshot.isDragging}
-							isClone
-						/>
-					)
-					: null
-			}
 			direction="horizontal"
 		>
 			{(dropProvided, dropSnapshot) => (
@@ -141,14 +129,14 @@ export default function QuoteList(props) {
 					{internalScroll ? (
 						<ScrollContainer style={scrollContainerStyle}>
 							<InnerList
-								quotes={todos}
+								todos={todos}
 								title={title}
 								dropProvided={dropProvided}
 							/>
 						</ScrollContainer>
 					) : (
 						<InnerList
-							quotes={todos}
+							todos={todos}
 							title={title}
 							dropProvided={dropProvided}
 						/>

@@ -112,27 +112,25 @@ function getStyle(provided, style) {
 // things we should be doing in the selector as we do not know if consumers
 // will be using PureComponent
 function QuoteItem(props) {
-	const { quote, isDragging, isGroupedOver, provided, style, isClone, index } =
+	const { todo, isDragging, isGroupedOver, provided, style, isClone, index } =
 		props;
 
 	return (
 		<Container
-			href={quote.author.url}
 			isDragging={isDragging}
 			isGroupedOver={isGroupedOver}
 			isClone={isClone}
-			colors={quote.author.colors}
 			ref={provided.innerRef}
 			{...provided.draggableProps}
 			{...provided.dragHandleProps}
 			style={getStyle(provided, style)}
 			data-is-dragging={isDragging}
-			data-testid={quote.id}
+			data-testid={todo.id}
 			data-index={index}
-			aria-label={`${quote.author.name} quote ${quote.content}`}
+			aria-label={`${todo.id} quote ${todo.id}`}
 		>
 			<Content>
-				<BlockQuote>{quote.content}</BlockQuote>
+				<BlockQuote>{todo.id}</BlockQuote>
 			</Content>
 		</Container>
 	);

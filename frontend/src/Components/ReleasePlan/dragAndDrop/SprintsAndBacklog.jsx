@@ -1,11 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import Row from './Row';
 import Column from './Column';
 import reorder, { reorderQuoteMap } from '../reorder';
 import { DragDropContext, Droppable } from 'react-beautiful-dnd';
 import { Box } from "@mui/material";
-import styled from "@xstyled/styled-components";
+import styled, { order } from "@xstyled/styled-components";
 import { colors } from "@atlaskit/theme";
 
 const Container = styled.div`
@@ -19,12 +19,16 @@ const Container = styled.div`
 const Board = ({
 	isCombineEnabled,
 	sprints,
+	setSprints,
 	useClone,
 	containerHeight,
 	withScrollableColumns,
 }) => {
-	const [columns, setColumns] = useState(sprints);
-	const [ordered, setOrdered] = useState(Object.keys(sprints));
+
+	const [ordered, setOrdered] = useState([]);
+	useEffect(() => {
+		setOrdered(Object.keys(sprints));
+	}, [sprints]);
 
 	const onDragEnd = (result) => {
 		if (result.combine) {
@@ -35,16 +39,16 @@ const Board = ({
 				return;
 			}
 
-			const column = columns[result.source.droppableId];
+			const column = sprints[result.source.droppableId];
 			const withQuoteRemoved = [...column];
 
 			withQuoteRemoved.splice(result.source.index, 1);
 
-			const orderedColumns = {
-				...columns,
+			const orderedsprints = {
+				...sprints,
 				[result.source.droppableId]: withQuoteRemoved,
 			};
-			setColumns(orderedColumns);
+			setSprints(orderedsprints);
 			return;
 		}
 
@@ -74,12 +78,12 @@ const Board = ({
 		}
 
 		const data = reorderQuoteMap({
-			quoteMap: columns,
+			quoteMap: sprints,
 			source,
 			destination,
 		});
 
-		setColumns(data.quoteMap);
+		setSprints(data.quoteMap);
 	};
 
 	return (
@@ -95,12 +99,12 @@ const Board = ({
 					>
 						{(provided) => (
 							<div ref={provided.innerRef} {...provided.droppableProps}>
-								{ordered.slice(0, -1).map((key, index) => (
+								{ordered.map((key, index) => (
 									<Row
-										key={key}
+										key={"sprintkey" + key}
 										index={index}
-										title={key}
-										sprint={columns[key]}
+										title={"sprintId" + key}
+										sprint={sprints[key]}
 										isScrollable={withScrollableColumns}
 										isCombineEnabled={isCombineEnabled}
 										useClone={useClone}
@@ -110,7 +114,7 @@ const Board = ({
 							</div>
 						)}
 					</Droppable>
-					<Droppable
+					{/* <Droppable
 						droppableId="BACKLOG"
 						type="BACKLOG"
 						direction="vertical" // Change to vertical
@@ -124,7 +128,7 @@ const Board = ({
 										key={key}
 										index={3}
 										title={key}
-										quotes={columns[key]}
+										quotes={sprints[key]}
 										isScrollable={withScrollableColumns}
 										isCombineEnabled={isCombineEnabled}
 										useClone={useClone}
@@ -134,7 +138,7 @@ const Board = ({
 								{provided.placeholder}
 							</div>
 						)}
-					</Droppable>
+					</Droppable> */}
 				</Box>
 			</DragDropContext>
 		</>
