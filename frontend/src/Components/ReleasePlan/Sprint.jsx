@@ -4,6 +4,7 @@ import AddIcon from '@mui/icons-material/Add';
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import UserStory from "./UserStory";
 import DeleteConfirmation from "./DeleteConfirmation";
+import { InputLabel, Select, MenuItem, FormControl } from '@mui/material';
 
 const Sprint = ({ index, items, setItems, userStories }) => {
 	const [stories, setStories] = useState(userStories);
@@ -15,7 +16,7 @@ const Sprint = ({ index, items, setItems, userStories }) => {
 	const [reasoning, setReasoning] = useState('');
 	const [acceptanceCriteria, setAcceptanceCriteria] = useState('');
 	const [storyPoints, setStoryPoints] = useState(0);
-
+	const [priority, setPriority] = useState(1)
 
 	// Function to handle the reordering of stories (content within the cards).
 	function reorderStories(result) {
@@ -50,6 +51,14 @@ const Sprint = ({ index, items, setItems, userStories }) => {
 			.then((response) => response.json())
 			.then((result) => {
 				setStories(result)
+				setItems((currentItems) => {
+					const updatedItems = [...currentItems];
+					const sprintIndex = updatedItems.findIndex(s => s.todos.some(t => t.id === storyId));
+					if (sprintIndex !== -1) {
+						updatedItems[sprintIndex].todos = result;
+					}
+					return updatedItems;
+				});
 			}).catch((error) => console.log("error deleting story"));
 	};
 
@@ -65,7 +74,7 @@ const Sprint = ({ index, items, setItems, userStories }) => {
 		);
 	};
 
-	//for + popup
+	// for + popup
 	const openDialogForNewStory = () => {
 		setBacklogItemType('story');
 		setRole('');
@@ -73,6 +82,7 @@ const Sprint = ({ index, items, setItems, userStories }) => {
 		setReasoning('');
 		setAcceptanceCriteria('');
 		setStoryPoints(0);
+		setPriority(1);
 		setDialogOpen(true);
 	};
 
@@ -88,8 +98,8 @@ const Sprint = ({ index, items, setItems, userStories }) => {
 			reasoning,
 			acceptanceCriteria,
 			storyPoints,
+			priority,
 		};
-		console.log('Creating new story:', newStory);
 		saveNewStory(newStory, sprintId);
 		setDialogOpen(false);
 	};
@@ -108,8 +118,7 @@ const Sprint = ({ index, items, setItems, userStories }) => {
 				reasoning: newStory.reasoning,
 				acceptanceCriteria: newStory.acceptanceCriteria,
 				storyPoints: newStory.storyPoints,
-				priority: 1
-				// priority?
+				priority: newStory.priority
 			}),
 		};
 
@@ -121,13 +130,9 @@ const Sprint = ({ index, items, setItems, userStories }) => {
 				if (result.status !== 200) {
 					console.log("error", result);
 				}
-				console.log(items)
 				result.json().then((jsonResult) => {
-					console.log(jsonResult)
 					const sprintsCopy = [...items];
 					const indexOfSprint = sprintsCopy.findIndex((sprint) => sprint.id === sprintId);
-					console.log(indexOfSprint)
-					console.log(sprintsCopy[indexOfSprint])
 					sprintsCopy[indexOfSprint].todos.push(jsonResult)
 					setItems(sprintsCopy);
 				})
@@ -259,7 +264,7 @@ const Sprint = ({ index, items, setItems, userStories }) => {
 											sx={{ marginBottom: 2 }}
 										/>
 
-										<TextField
+										{/* <TextField
 											margin="dense"
 											id="story-points"
 											label="Story Points"
@@ -268,17 +273,34 @@ const Sprint = ({ index, items, setItems, userStories }) => {
 											variant="outlined"
 											value={storyPoints}
 											onChange={(e) => {
-											  // Check if the entered value is a number and is not empty
-											  if (!isNaN(e.target.value) && e.target.value.trim() !== '') {
-												setStoryPoints(e.target.value);
-											  }
+												// Check if the entered value is a number and is not empty
+												if (!isNaN(e.target.value) && e.target.value.trim() !== '') {
+													setStoryPoints(e.target.value);
+												}
 											}}
 											InputProps={{
-											  inputProps: {
-												min: 0 // Minimum value
-											  }
+												inputProps: {
+													min: 0 // Minimum value
+												}
 											}}
-										/>
+										/> */}
+
+										<FormControl fullWidth>
+											<InputLabel id="priority-select-label">Priority</InputLabel>
+											<Select
+												labelId="priority-select-label"
+												id="demo-simple-select"
+												value={priority}
+												label="Priority"
+												onChange={(event) => setPriority(event.target.value)}
+											>
+												<MenuItem value={4}>High</MenuItem>
+												<MenuItem value={3}>Medium</MenuItem>
+												<MenuItem value={2}>Low</MenuItem>
+												<MenuItem value={1}>None</MenuItem>
+											</Select>
+										</FormControl>
+
 									</DialogContent>
 									<DialogActions>
 										<Button onClick={handleDialogClose}>Cancel</Button>
@@ -337,6 +359,9 @@ const Sprint = ({ index, items, setItems, userStories }) => {
 												<UserStory
 													storyObject={storyObj}
 													deleteFunction={deleteStory}
+													sprints={items}
+													setSprints={setItems}
+													sprintNumber={index + 1}
 												/>
 											</div>
 										}
