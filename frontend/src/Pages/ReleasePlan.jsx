@@ -168,11 +168,6 @@ const ReleasePlan = ({ projectId }) => {
 		setId(newReleaseId);
 	};
 
-	const data = {
-		medium: generateQuoteMap(100),
-		large: generateQuoteMap(500),
-	};
-
 	return (
 
 
@@ -290,9 +285,7 @@ const ReleasePlan = ({ projectId }) => {
 						multiline
 					/>}
 
-
-
-				<Board initial={data.medium} withScrollableColumns />
+				<Board initial={sprints} withScrollableColumns />
 				{/* <Board sprints={sprints} setSprints={setSprints} releaseId={releaseId} /> */}
 
 				{/* 

@@ -117,22 +117,20 @@ function QuoteItem(props) {
 
 	return (
 		<Container
-			href={quote.author.url}
 			isDragging={isDragging}
 			isGroupedOver={isGroupedOver}
 			isClone={isClone}
-			colors={quote.author.colors}
 			ref={provided.innerRef}
 			{...provided.draggableProps}
 			{...provided.dragHandleProps}
 			style={getStyle(provided, style)}
 			data-is-dragging={isDragging}
-			data-testid={quote.id}
+			data-testid={"data-testid" + quote.id}
 			data-index={index}
-			aria-label={`${quote.author.name} quote ${quote.content}`}
+			aria-label={`${quote.id} quote ${quote.id}`}
 		>
 			<Content>
-				<BlockQuote>{quote.content}</BlockQuote>
+				<BlockQuote>{"content: " + quote.id}</BlockQuote>
 			</Content>
 		</Container>
 	);

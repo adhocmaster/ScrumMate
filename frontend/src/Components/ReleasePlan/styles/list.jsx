@@ -62,10 +62,10 @@ const Container = styled.div``;
 
 const InnerQuoteList = React.memo(function InnerQuoteList(props) {
 	return props.quotes.map((quote, index) => (
-		<Draggable key={quote.id} draggableId={quote.id} index={index}>
+		<Draggable key={"cardId" + quote.id} draggableId={"draggableId" + quote.id} index={index}>
 			{(dragProvided, dragSnapshot) => (
 				<QuoteItem
-					key={quote.id}
+					key={"cardId" + quote.id}
 					quote={quote}
 					isDragging={dragSnapshot.isDragging}
 					isGroupedOver={Boolean(dragSnapshot.combineTargetFor)}
@@ -114,18 +114,6 @@ export default function QuoteList(props) {
 			ignoreContainerClipping={ignoreContainerClipping}
 			isDropDisabled={isDropDisabled}
 			isCombineEnabled={isCombineEnabled}
-			renderClone={
-				useClone
-					? (provided, snapshot, descriptor) => (
-						<QuoteItem
-							quote={quotes[descriptor.source.index]}
-							provided={provided}
-							isDragging={snapshot.isDragging}
-							isClone
-						/>
-					)
-					: null
-			}
 			direction="horizontal"
 		>
 			{(dropProvided, dropSnapshot) => (

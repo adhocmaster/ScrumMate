@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import Row from './Row';
 import Column from './Column';
@@ -23,8 +23,19 @@ const Board = ({
 	containerHeight,
 	withScrollableColumns,
 }) => {
-	const [columns, setColumns] = useState(initial);
-	const [ordered, setOrdered] = useState(Object.keys(initial));
+	const sprintTodos = initial.map(sprint => sprint.todos)
+	const sprintListObject = Object.assign({}, sprintTodos)
+	const [columns, setColumns] = useState({});
+	const [ordered, setOrdered] = useState([]);
+
+	useEffect(() => {
+		setColumns(sprintListObject);
+		setOrdered(Object.keys(sprintListObject));
+	}, [initial]);
+
+	console.log(sprintListObject)
+	console.log(columns)
+	console.log(ordered)
 
 	const onDragEnd = (result) => {
 		if (result.combine) {
@@ -95,11 +106,11 @@ const Board = ({
 					>
 						{(provided) => (
 							<div ref={provided.innerRef} {...provided.droppableProps}>
-								{ordered.slice(0, -1).map((key, index) => (
+								{ordered.map((key, index) => (
 									<Row
 										key={key}
 										index={index}
-										title={key}
+										title={"sprint" + key}
 										quotes={columns[key]}
 										isScrollable={withScrollableColumns}
 										isCombineEnabled={isCombineEnabled}
@@ -110,7 +121,7 @@ const Board = ({
 							</div>
 						)}
 					</Droppable>
-					<Droppable
+					{/* <Droppable
 						droppableId="BACKLOG"
 						type="BACKLOG"
 						direction="vertical" // Change to vertical
@@ -134,7 +145,7 @@ const Board = ({
 								{provided.placeholder}
 							</div>
 						)}
-					</Droppable>
+					</Droppable> */}
 				</Box>
 			</DragDropContext>
 		</>
