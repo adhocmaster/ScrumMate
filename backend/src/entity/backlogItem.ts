@@ -28,6 +28,17 @@ export class BacklogItem {
 	@Column()
 	rank: number // "index"
 
+	@Column()
+	size: number // serves as SP, IH, etc...
+
+	@Column({ default: false })
+	pokerIsOver: boolean
+
+	// may need to change type to other json type if switching db
+	// map userId to [String(current round estimate), String(previous round estimate), estimatedThisRound]
+	@Column({ type: 'simple-json', default: {} })
+	estimates: Record<number, [string, string, boolean]>;
+
 	///// Relational /////
 
 	@ManyToOne(() => Release, (release) => release.backlog)
@@ -58,12 +69,14 @@ export class BacklogItem {
 		this.createdDate = backlogItem.createdDate;
 		this.updatedDate = backlogItem.updatedDate;
 		this.rank = backlogItem.rank;
+		this.size = backlogItem.size;
 	}
 }
 
 // How to handle these? display them in anything?
 // What fields do they have?
 // Maybe just leave this alone for now... we will surely get a US for it soon
+// Sponsor said ignore Epics for now
 @ChildEntity()
 export class Epic extends BacklogItem {
 	public name = "Epic";
@@ -104,9 +117,6 @@ export class Story extends BacklogItem {
 	@Column()
 	acceptanceCriteria: string
 
-	@Column()
-	storyPoints: number
-
 	@Column({
 		type: "enum",
 		enum: Priority,
@@ -139,7 +149,6 @@ export class Story extends BacklogItem {
 		this.functionalityDescription = story.functionalityDescription;
 		this.reasoning = story.reasoning;
 		this.acceptanceCriteria = story.acceptanceCriteria;
-		this.storyPoints = story.storyPoints;
 		this.priority = story.priority;
 	}
 }
@@ -151,16 +160,12 @@ export class Task extends BacklogItem {
 	@Column()
 	description: string
 
-	@Column()
-	idealHours: number // may need to specify float?
-
-	@ManyToOne(() => Story, (story) => story.tasks) // for tasks only
+	@ManyToOne(() => Story, (story) => story.tasks)
 	story: Story
 
 	copy(task: Task): void {
 		super.copy(task)
 		this.description = task.description;
-		this.idealHours = task.idealHours;
 	}
 }
 

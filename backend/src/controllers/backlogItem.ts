@@ -73,3 +73,19 @@ export const deleteBacklogItem = async (req: express.Request, res: express.Respo
 	verifyParameters(backlogItemId);
 	return res.json(await db.getBacklogItemRepository.deleteBacklogItem(parseInt(backlogItemId)));
 }
+
+export const getBacklogItemPoker = async (req: express.Request, res: express.Response) => {
+	const db = Database.getInstance();
+	const { backlogItemId } = req.params;
+	verifyParameters(backlogItemId);
+	return res.json(await db.getBacklogItemRepository.getBacklogItemPoker(parseInt(backlogItemId), req.userId));
+}
+
+export const placePokerEstimate = async (req: express.Request, res: express.Response) => {
+	const db = Database.getInstance();
+	const { backlogItemId } = req.params;
+	const { estimate } = req.body;
+	verifyParameters(backlogItemId, estimate);
+	await db.getBacklogItemRepository.placePokerEstimate(parseInt(backlogItemId), parseInt(estimate), req.userId);
+	return res.sendStatus(200);
+}

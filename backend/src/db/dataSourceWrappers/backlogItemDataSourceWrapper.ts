@@ -44,6 +44,20 @@ export class BacklogItemDataSourceWrapper extends ModelDataSourceWrapper {
 		return backlogItemWithParents[0]
 	}
 
+	// Do we even need this? estimates is a Column, not a relation
+	public async fetchBacklogWithPoker(backlogId: number): Promise<BacklogItem> {
+		const backlogItemWithPoker = await this.dataSource.getRepository(BacklogItem).find({
+			where: { id: backlogId },
+			relations: {
+				estimates: true,
+			},
+		})
+		if (!backlogItemWithPoker || backlogItemWithPoker.length === 0) {
+			throw new NotFoundError(`BacklogItem with backlogId ${backlogId} not found`)
+		}
+		return backlogItemWithPoker[0]
+	}
+
 	public async deleteBacklogItem(backlogId: number): Promise<DeleteResult> {
 		return await super.delete(BacklogItem, backlogId);
 	}
