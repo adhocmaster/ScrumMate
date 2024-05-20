@@ -3,7 +3,6 @@ import { Box, Paper, Typography } from '@mui/material';
 const SanityCheckGraph = ({ sprints }) => {
     const spTotals = sprints.map(sprint => sprint.todos.reduce((acc, item) => acc + Number(item.size), 0));
     const maxSP = Math.max(...spTotals, 10);
-    console.log(sprints)
     return (
         <Paper elevation={3} style={{ padding: '20px', width: '100%', maxWidth: '600px' }}>
             <Box display="flex" flexDirection="column" alignItems="flex-start">

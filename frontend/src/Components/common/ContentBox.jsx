@@ -1,23 +1,15 @@
+import { useState } from 'react';
 import { Card, CardContent, Typography } from '@mui/material';
+import { TextareaAutosize } from '@mui/base/TextareaAutosize';
 
 const ContentBox = ({ title, content }) => {
+
 	return (
 		<>
-			<Typography
-				variant='body1'
-				marginBottom={2}
-				marginLeft={2}
-				textAlign={'left'}
-				fontWeight="bold"
-				fontSize={14}
-			>
-				{title}
-			</Typography>
 
 			<Card
 				sx={{
 					minHeight: 100,
-					// maxWidth: '95%',
 					marginLeft: 2,
 					marginBottom: 2,
 					backgroundColor: 'lightgray',
@@ -29,6 +21,7 @@ const ContentBox = ({ title, content }) => {
 					</Typography>
 				</CardContent>
 			</Card>
+
 		</>
 	);
 };
