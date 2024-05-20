@@ -17,14 +17,6 @@ export class BacklogItemDataSourceWrapper extends ModelDataSourceWrapper {
 		return maybeBacklog
 	}
 
-	public async lookupStoryById(backlogId: number): Promise<Story> {
-		const maybeStory = (await this.lookupBacklogById(backlogId));
-		if (!(maybeStory instanceof Story)) {
-			throw new NotFoundError(`Story with backlogId ${backlogId} not found`)
-		}
-		return maybeStory;
-	}
-
 	public async fetchBacklogWithParent(backlogId: number): Promise<BacklogItem> {
 		const backlogItemWithParents = await this.dataSource.getRepository(BacklogItem).find({
 			where: { id: backlogId },
@@ -42,6 +34,20 @@ export class BacklogItemDataSourceWrapper extends ModelDataSourceWrapper {
 			"assertion fail: Backlog item has sprint and release parent"
 		);
 		return backlogItemWithParents[0]
+	}
+
+	// Do we even need this? estimates is a Column, not a relation
+	public async fetchBacklogWithPoker(backlogId: number): Promise<BacklogItem> {
+		const backlogItemWithPoker = await this.dataSource.getRepository(BacklogItem).find({
+			where: { id: backlogId },
+			relations: {
+				estimates: true,
+			},
+		})
+		if (!backlogItemWithPoker || backlogItemWithPoker.length === 0) {
+			throw new NotFoundError(`BacklogItem with backlogId ${backlogId} not found`)
+		}
+		return backlogItemWithPoker[0]
 	}
 
 	public async deleteBacklogItem(backlogId: number): Promise<DeleteResult> {

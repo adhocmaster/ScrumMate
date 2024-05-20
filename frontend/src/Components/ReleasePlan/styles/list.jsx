@@ -102,10 +102,12 @@ export default function QuoteList(props) {
 		listId = 'LIST',
 		listType,
 		style,
-		quotes,
+		sprint,
 		title,
 		useClone,
 	} = props;
+
+	const todos = sprint.todos
 
 	return (
 		<Droppable
@@ -118,7 +120,7 @@ export default function QuoteList(props) {
 				useClone
 					? (provided, snapshot, descriptor) => (
 						<QuoteItem
-							quote={quotes[descriptor.source.index]}
+							quote={todos[descriptor.source.index]}
 							provided={provided}
 							isDragging={snapshot.isDragging}
 							isClone
@@ -139,14 +141,14 @@ export default function QuoteList(props) {
 					{internalScroll ? (
 						<ScrollContainer style={scrollContainerStyle}>
 							<InnerList
-								quotes={quotes}
+								quotes={todos}
 								title={title}
 								dropProvided={dropProvided}
 							/>
 						</ScrollContainer>
 					) : (
 						<InnerList
-							quotes={quotes}
+							quotes={todos}
 							title={title}
 							dropProvided={dropProvided}
 						/>

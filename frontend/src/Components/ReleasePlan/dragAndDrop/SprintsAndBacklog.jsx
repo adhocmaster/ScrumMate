@@ -18,13 +18,13 @@ const Container = styled.div`
 
 const Board = ({
 	isCombineEnabled,
-	initial,
+	sprints,
 	useClone,
 	containerHeight,
 	withScrollableColumns,
 }) => {
-	const [columns, setColumns] = useState(initial);
-	const [ordered, setOrdered] = useState(Object.keys(initial));
+	const [columns, setColumns] = useState(sprints);
+	const [ordered, setOrdered] = useState(Object.keys(sprints));
 
 	const onDragEnd = (result) => {
 		if (result.combine) {
@@ -100,7 +100,7 @@ const Board = ({
 										key={key}
 										index={index}
 										title={key}
-										quotes={columns[key]}
+										sprint={columns[key]}
 										isScrollable={withScrollableColumns}
 										isCombineEnabled={isCombineEnabled}
 										useClone={useClone}

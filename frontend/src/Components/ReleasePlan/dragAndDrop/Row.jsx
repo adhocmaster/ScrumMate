@@ -32,7 +32,7 @@ const Header = styled.div`
 
 const Row = (props) => {
 	const title = props.title;
-	const quotes = props.quotes;
+	const sprint = props.sprint;
 	const index = props.index;
 
 	return (
@@ -54,7 +54,7 @@ const Row = (props) => {
 						style={{
 							backgroundColor: snapshot.isDragging ? colors.G50 : null,
 						}}
-						quotes={quotes}
+						sprint={sprint}
 						internalScroll={props.isScrollable}
 						isCombineEnabled={Boolean(props.isCombineEnabled)}
 						useClone={Boolean(props.useClone)}

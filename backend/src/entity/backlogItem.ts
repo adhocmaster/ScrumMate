@@ -5,10 +5,17 @@ import { User } from "./User"
 import { getMaybeUndefined, addMaybeUndefined, removeMaybeUndefined } from "./utils/addGetList"
 
 export enum Priority {
-	HIGH = 4,
-	MEDIUM = 3,
-	LOW = 2,
 	NONE = 1,
+	LOW = 2,
+	MEDIUM = 3,
+	HIGH = 4,
+}
+
+export enum ActionType {
+	BUG = 1,
+	SYSTEMFEATURE = 2,
+	SPIKE = 3,
+	INFRASTRUCTURE = 4,
 }
 
 @Entity()
@@ -27,6 +34,17 @@ export class BacklogItem {
 
 	@Column()
 	rank: number // "index"
+
+	@Column()
+	size: number // serves as SP, IH, etc...
+
+	@Column({ default: false })
+	pokerIsOver: boolean
+
+	// may need to change type to other json type if switching db
+	// map userId to [String(current round estimate), String(previous round estimate), estimatedThisRound]
+	@Column({ type: 'simple-json', default: {} })
+	estimates: Record<number, [string, string, boolean]>;
 
 	///// Relational /////
 
@@ -58,12 +76,14 @@ export class BacklogItem {
 		this.createdDate = backlogItem.createdDate;
 		this.updatedDate = backlogItem.updatedDate;
 		this.rank = backlogItem.rank;
+		this.size = backlogItem.size;
 	}
 }
 
 // How to handle these? display them in anything?
 // What fields do they have?
 // Maybe just leave this alone for now... we will surely get a US for it soon
+// Sponsor said ignore Epics for now
 @ChildEntity()
 export class Epic extends BacklogItem {
 	public name = "Epic";
@@ -104,9 +124,6 @@ export class Story extends BacklogItem {
 	@Column()
 	acceptanceCriteria: string
 
-	@Column()
-	storyPoints: number
-
 	@Column({
 		type: "enum",
 		enum: Priority,
@@ -139,7 +156,6 @@ export class Story extends BacklogItem {
 		this.functionalityDescription = story.functionalityDescription;
 		this.reasoning = story.reasoning;
 		this.acceptanceCriteria = story.acceptanceCriteria;
-		this.storyPoints = story.storyPoints;
 		this.priority = story.priority;
 	}
 }
@@ -151,54 +167,32 @@ export class Task extends BacklogItem {
 	@Column()
 	description: string
 
-	@Column()
-	idealHours: number // may need to specify float?
-
-	@ManyToOne(() => Story, (story) => story.tasks) // for tasks only
+	@ManyToOne(() => Story, (story) => story.tasks)
 	story: Story
 
 	copy(task: Task): void {
 		super.copy(task)
 		this.description = task.description;
-		this.idealHours = task.idealHours;
 	}
 }
 
 @ChildEntity()
-export class Spike extends BacklogItem {
-	public name = "Spike";
+export class ActionItem extends BacklogItem {
+	public name = "ActionItem";
+
+	@Column({
+		type: "enum",
+		enum: ActionType,
+		default: ActionType.BUG
+	})
+	actionType: ActionType
 
 	@Column()
 	description: string
 
-	copy(spike: Spike): void {
-		super.copy(spike)
-		this.description = spike.description;
-	}
-}
-
-@ChildEntity()
-export class Infrastructure extends BacklogItem {
-	public name = "Infrastructure";
-
-	@Column()
-	description: string
-
-	copy(infrastructure: Infrastructure): void {
-		super.copy(infrastructure)
-		this.description = infrastructure.description;
-	}
-}
-
-@ChildEntity()
-export class Bug extends BacklogItem {
-	public name = "Bug";
-
-	@Column()
-	description: string
-
-	copy(bug: Bug): void {
-		super.copy(bug)
-		this.description = bug.description;
+	copy(actionItem: ActionItem): void {
+		super.copy(actionItem)
+		this.actionType = actionItem.actionType;
+		this.description = actionItem.description;
 	}
 }
