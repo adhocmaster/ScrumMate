@@ -19,35 +19,13 @@ const ReleasePlan = ({ projectId }) => {
 	const [problemStatement, setProblem] = useState("");
 	const [highLevelGoals, setGoals] = useState("");
 	const [releaseId, setId] = useState(null);
-	const [fullySigned, setFullySigned] = useState(false);
-	const [signatures, setSignatures] = useState([[], [], null]);
+	const [lockPage, setLockPage] = useState(false);
 
 	const handleChangeHighLevelGoals = (event) => {
 		setGoals(event.target.value);
 	}
 
-
-	function fetchUserList() {
-		var options = {
-			method: 'get',
-			credentials: 'include'
-		}
-		try {
-			fetch(`http://localhost:8080/api/release/${releaseId}/signatures`, options).then((result) => {
-				if (result.status === 200) {
-					result.json().then((response) => {
-						setSignatures(response);
-					})
-				}
-			})
-		}
-		catch {
-			return;
-		}
-	};
-
 	function fetchMostRecentRelease() {
-		console.log("about to most recent release");
 		var options = {
 			method: "get",
 			credentials: "include",
@@ -58,9 +36,7 @@ const ReleasePlan = ({ projectId }) => {
 				options
 			).then((result) => {
 				if (result.status === 200) {
-					console.log(result);
 					result.json().then((response) => {
-						console.log(response);
 						setId(response.id);
 					});
 				}
@@ -78,9 +54,7 @@ const ReleasePlan = ({ projectId }) => {
 			fetch(`http://localhost:8080/api/release/${releaseId}`, options).then(
 				(result) => {
 					if (result.status === 200) {
-						console.log(result);
 						result.json().then((response) => {
-							setFullySigned(response.fullySigned);
 							setProblem(response.problemStatement);
 							setGoals(response.goalStatement);
 						});
@@ -181,10 +155,6 @@ const ReleasePlan = ({ projectId }) => {
 	}
 
 	useEffect(() => {
-		fetchUserList();
-	}, [releaseId])
-
-	useEffect(() => {
 		fetchMostRecentRelease();
 	}, []);
 
@@ -211,7 +181,8 @@ const ReleasePlan = ({ projectId }) => {
 					toggleDrawer={toggleDrawer}
 					projectId={projectId}
 					itemClick={revisionsClick}
-					setFullySigned={setFullySigned}
+					currentReleaseId={releaseId}
+					setLockPage={setLockPage}
 				/>
 			</Grid >
 			<Grid item xs={open ? 10 : 11}>
@@ -273,9 +244,8 @@ const ReleasePlan = ({ projectId }) => {
 					fontSize={14}
 				>
 					Problem Statement
-					{console.log("This is the length: " + signatures[1].length)}
 				</Typography>
-				{signatures[1].length !== 0 ?
+				{lockPage ?
 					< ContentBox title={"Problem Statement"} content={problemStatement} />
 					:
 					<TextField
@@ -291,8 +261,6 @@ const ReleasePlan = ({ projectId }) => {
 						multiline
 
 					/>}
-				<br />
-				{/* High Level Goals */}
 				<Typography
 					variant='body1'
 					marginBottom={2}
@@ -303,7 +271,7 @@ const ReleasePlan = ({ projectId }) => {
 				>
 					High Level Goals
 				</Typography>
-				{signatures[1].length !== 0 ?
+				{lockPage ?
 					<ContentBox content={highLevelGoals} />
 					:
 					<TextField

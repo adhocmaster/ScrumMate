@@ -7,7 +7,7 @@ import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import { Signing } from './Signing';
 
-const Sidebar = ({ open, toggleDrawer, projectId, itemClick, setFullySigned }) => {
+const Sidebar = ({ open, toggleDrawer, projectId, itemClick, setLockPage }) => {
 	const [selected, setSelected] = useState(null);
 	const [revisions, setRevisions] = useState([]);
 
@@ -79,6 +79,24 @@ const Sidebar = ({ open, toggleDrawer, projectId, itemClick, setFullySigned }) =
 		}
 	}
 
+	function fetchSetLock(releaseId) {
+		var options = {
+			method: 'get',
+			credentials: 'include'
+		}
+		try {
+			fetch(`http://localhost:8080/api/release/${releaseId}/signatures`, options).then((result) => {
+				if (result.status === 200) {
+					result.json().then((response) => {
+						setLockPage(response[1].length > 0);
+					})
+				}
+			})
+		}
+		catch {
+			return;
+		}
+	};
 
 	useEffect(() => {
 		fetchReleases();
@@ -167,17 +185,15 @@ const Sidebar = ({ open, toggleDrawer, projectId, itemClick, setFullySigned }) =
 						onClick={() => {
 							itemClick(revision.id);
 							setSelected(index);
+							fetchSetLock(revision.id);
 						}}
 						key={index}
 						sx={{ backgroundColor: selected === index ? 'lightgray' : 'white', }}
 					>
-
-						<Signing releaseId={revision.id} projectId={projectId} setFullySigned={setFullySigned} />
-
+						<Signing releaseId={revision.id} projectId={projectId} setLockPage={setLockPage} />
 						<Typography fontSize={14}>
 							{`${revision.revision} ${revision.revisionDate}`}
 						</Typography>
-
 						<IconButton
 							onClick={(e) => {
 								e.stopPropagation();
