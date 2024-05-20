@@ -27,7 +27,7 @@ import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import AddIcon from "@mui/icons-material/Add";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 
-const Backlog = ({ releaseId }) => {
+const Backlog = ({ releaseId, signatures }) => {
 	const [backlogItems, setBacklogItems] = useState([]);
 
 	const [backlogItemType, setBacklogItemType] = useState("story");
@@ -151,9 +151,12 @@ const Backlog = ({ releaseId }) => {
 				fontSize={14}
 			>
 				Backlog
+        {signatures ?
+            <></> 
+        :
 				<IconButton onClick={openDialogForNewStory} aria-label="add new story">
 					<AddCircleOutlineIcon fontSize="small" />
-				</IconButton>
+				</IconButton>}
 			</Typography>
 			<Dialog
 				open={dialogOpen}

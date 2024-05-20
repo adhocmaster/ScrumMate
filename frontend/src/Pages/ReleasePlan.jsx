@@ -319,7 +319,7 @@ const ReleasePlan = ({ projectId }) => {
 					</Grid>
 					{/* Backlog */}
 					<Grid item xs={3}>
-						<Backlog releaseId={releaseId} />
+						<Backlog releaseId={releaseId} signatures={lockPage}/>
 					</Grid>
 				</Grid>
 				{/* Sanity Check */}
