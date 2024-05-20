@@ -1,11 +1,10 @@
 import { Release } from "../../entity/release";
-import { BacklogItem, Priority, Story } from "../../entity/backlogItem";
+import { ActionItem, ActionType, BacklogItem, Priority, Story } from "../../entity/backlogItem";
 import { ModelRepository } from "./modelRepository";
 import { NotFoundError } from "../../helpers/errors";
 import { Sprint } from "../../entity/sprint";
 import { shuffle } from "lodash";
 import { Project } from "../../entity/project";
-import user from "router/user";
 
 export class BacklogItemRepository extends ModelRepository {
 
@@ -43,8 +42,36 @@ export class BacklogItemRepository extends ModelRepository {
 		return newStory
 	}
 
+	public async createNewSprintAction(sprintId: number, actionType: ActionType, description: string, storyPoints: number): Promise<ActionItem> {
+		const sprint = await this.sprintSource.lookupSprintById(sprintId)
+		const newAction = new ActionItem()
+		newAction.actionType = actionType
+		newAction.description = description
+		newAction.size = storyPoints
+		newAction.sprint = sprint
+		newAction.rank = sprint.backlogItemCount
+		await this.backlogSource.save(newAction)
+		sprint.backlogItemCount += 1
+		await this.sprintSource.save(sprint)
+		return newAction
+	}
+
+	public async createNewBacklogAction(releaseId: number, actionType: ActionType, description: string, storyPoints: number): Promise<ActionItem> {
+		const release = await this.releaseSource.lookupReleaseById(releaseId)
+		const newAction = new ActionItem()
+		newAction.actionType = actionType
+		newAction.description = description
+		newAction.size = storyPoints
+		newAction.release = release
+		newAction.rank = release.backlogItemCount
+		await this.backlogSource.save(newAction)
+		release.backlogItemCount += 1
+		await this.releaseSource.save(release)
+		return newAction
+	}
+
 	public async updateStory(storyId: number, userTypes?: string, functionalityDescription?: string, reasoning?: string, acceptanceCriteria?: string, storyPoints?: number, priority?: Priority, rank?: number): Promise<Story> {
-		const story = await this.backlogSource.lookupStoryById(storyId)
+		const story = await this.backlogSource.lookupBacklogById(storyId) as Story
 		story.userTypes = userTypes ?? story.userTypes
 		story.functionalityDescription = functionalityDescription ?? story.functionalityDescription
 		story.reasoning = reasoning ?? story.reasoning
@@ -53,6 +80,16 @@ export class BacklogItemRepository extends ModelRepository {
 		story.priority = priority ?? story.priority
 		await this.backlogSource.save(story)
 		return story;
+	}
+
+	public async updateAction(actionId: number, actionType?: ActionType, description?: string, storyPoints?: number, rank?: number): Promise<ActionItem> {
+		const actionItem = await this.backlogSource.lookupBacklogById(actionId) as ActionItem;
+		actionItem.actionType = actionType ?? actionItem.actionType
+		actionItem.description = description ?? actionItem.description
+		actionItem.size = storyPoints ?? actionItem.size
+		actionItem.rank = rank ?? actionItem.rank
+		await this.backlogSource.save(actionItem)
+		return actionItem;
 	}
 
 	// for each reordering, just take it out of the source, renumber the source, put it in the destination with new rank, and renumber the destination
@@ -158,6 +195,8 @@ export class BacklogItemRepository extends ModelRepository {
 				backlogItem.rank = index;
 				await this.backlogSource.save(backlogItem)
 			}
+			sprint.backlogItemCount -= 1;
+			await this.sprintSource.save(sprint);
 			return sprint.todos;
 		} else {
 			// backlog is parent
@@ -167,6 +206,8 @@ export class BacklogItemRepository extends ModelRepository {
 				backlogItem.rank = index;
 				await this.backlogSource.save(backlogItem)
 			}
+			release.backlogItemCount -= 1;
+			await this.releaseSource.save(release);
 			return release.backlog
 		}
 	}
@@ -283,10 +324,6 @@ export class BacklogItemRepository extends ModelRepository {
 
 	public async lookupBacklogById(id: number): Promise<BacklogItem> {
 		return await this.backlogSource.lookupBacklogById(id);
-	}
-
-	public async lookupStoryById(id: number): Promise<Story> {
-		return await this.backlogSource.lookupStoryById(id);
 	}
 
 }

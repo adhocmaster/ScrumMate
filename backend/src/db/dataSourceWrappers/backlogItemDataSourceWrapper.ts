@@ -17,14 +17,6 @@ export class BacklogItemDataSourceWrapper extends ModelDataSourceWrapper {
 		return maybeBacklog
 	}
 
-	public async lookupStoryById(backlogId: number): Promise<Story> {
-		const maybeStory = (await this.lookupBacklogById(backlogId));
-		if (!(maybeStory instanceof Story)) {
-			throw new NotFoundError(`Story with backlogId ${backlogId} not found`)
-		}
-		return maybeStory;
-	}
-
 	public async fetchBacklogWithParent(backlogId: number): Promise<BacklogItem> {
 		const backlogItemWithParents = await this.dataSource.getRepository(BacklogItem).find({
 			where: { id: backlogId },

@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
-import { Typography, Box } from "@mui/material";
+import React, { useState, useEffect, useRef } from "react";
+import { Typography, Box, TextField } from "@mui/material";
 import { Grid, Divider } from "@mui/material";
 import { IconButton } from "@mui/material";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
@@ -10,6 +10,8 @@ import DragList from "../Components/ReleasePlan/DragList";
 import Backlog from "../Components/ReleasePlan/Backlog";
 import SanityCheckGraph from "../Components/ReleasePlan/SanityCheckGraph";
 import SanityCheckText from "../Components/ReleasePlan/SanityCheckText";
+import { TextareaAutosize } from '@mui/base/TextareaAutosize';
+
 
 const ReleasePlan = ({ projectId }) => {
 	const [sprints, setSprints] = useState([]);
@@ -17,73 +19,112 @@ const ReleasePlan = ({ projectId }) => {
 	const [problemStatement, setProblem] = useState("");
 	const [highLevelGoals, setGoals] = useState("");
 	const [releaseId, setId] = useState(null);
+	const [lockPage, setLockPage] = useState(false);
 
-  function fetchMostRecentRelease() {
-    console.log("about to most recent release");
-    var options = {
-      method: "get",
-      credentials: "include",
-    };
-    try {
-      fetch(
-        `http://localhost:8080/api/project/${projectId}/recentRelease`,
-        options
-      ).then((result) => {
-        if (result.status === 200) {
-          console.log(result);
-          result.json().then((response) => {
-            console.log(response);
-            setProblem(response.problemStatement);
-            setGoals(response.goalStatement);
-            setId(response.id);
-          });
-        }
-      });
-    } catch { }
-  }
+	const handleChangeHighLevelGoals = (event) => {
+		setGoals(event.target.value);
+	}
 
-  function fetchRelease(releaseId, setProblem, setGoals) {
-    console.log("about to fetch a release");
-    var options = {
-      method: "get",
-      credentials: "include",
-    };
-    try {
-      fetch(`http://localhost:8080/api/release/${releaseId}`, options).then(
-        (result) => {
-          if (result.status === 200) {
-            console.log(result);
-            result.json().then((response) => {
-              console.log(response);
-              setProblem(response.problemStatement);
-              setGoals(response.goalStatement);
-            });
-          }
-        }
-      );
-    } catch { }
-  }
+	function fetchMostRecentRelease() {
+		var options = {
+			method: "get",
+			credentials: "include",
+		};
+		try {
+			fetch(
+				`http://localhost:8080/api/project/${projectId}/recentRelease`,
+				options
+			).then((result) => {
+				if (result.status === 200) {
+					result.json().then((response) => {
+						setId(response.id);
+					});
+				}
+			});
+		} catch { }
+	}
 
-  function fetchSprints(releaseId) {
-    var options = {
-      method: "get",
-      credentials: "include",
-    };
-    try {
-      fetch(
-        `http://localhost:8080/api/release/${releaseId}/sprints`,
-        options
-      ).then((result) => {
-        if (result.status === 200) {
-          result.json().then((response) => {
-            setSprints(response);
-          });
-        } else {
-          setSprints([]);
-        }
-      });
-    } catch { }
-  }
+	function fetchRelease(releaseId, setProblem, setGoals) {
+		console.log("about to fetch a release");
+		var options = {
+			method: "get",
+			credentials: "include",
+		};
+		try {
+			fetch(`http://localhost:8080/api/release/${releaseId}`, options).then(
+				(result) => {
+					if (result.status === 200) {
+						result.json().then((response) => {
+							setProblem(response.problemStatement);
+							setGoals(response.goalStatement);
+						});
+					}
+				}
+			);
+		} catch { }
+	}
+
+	function fetchSprints(releaseId) {
+		var options = {
+			method: "get",
+			credentials: "include",
+		};
+		try {
+			fetch(
+				`http://localhost:8080/api/release/${releaseId}/sprints`,
+				options
+			).then((result) => {
+				if (result.status === 200) {
+					result.json().then((response) => {
+						setSprints(response);
+					});
+				} else {
+					setSprints([]);
+				}
+			});
+		} catch { }
+	}
+
+	// updates the problem statement
+	function editProblemStatement(e) {
+		var options = {
+			method: "POST",
+			credentials: "include",
+			headers: {
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify({ problemStatement: e.target.value },
+				{ goalStatement: e.target.value }),
+		};
+		fetch(`http://localhost:8080/api/release/${releaseId}/edit`, options)
+			.then((result) => {
+				if (result.status === 200) {
+					result.json().then((response) => {
+						setProblem(response.problemStatement);
+					});
+				}
+			})
+	}
+
+	// updates the HighLevelGoals
+	function editGoals(e) {
+		var options = {
+			method: "POST",
+			credentials: "include",
+			headers: {
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify({ goalStatement: e.target.value }),
+		};
+		fetch(`http://localhost:8080/api/release/${releaseId}/edit`, options)
+			.then((result) => {
+				if (result.status === 200) {
+					result.json().then((response) => {
+						setGoals(response.goalStatement);
+					});
+				}
+			})
+	}
 
 	function createNewSprints() {
 		console.log("creating new");
@@ -129,19 +170,21 @@ const ReleasePlan = ({ projectId }) => {
 	const revisionsClick = (newReleaseId) => {
 		setId(newReleaseId);
 	};
-
 	return (
-		<Grid container spacing={2}>
+
+
+		< Grid container spacing={2} >
 			{/* Revision Sidebar */}
-			<Grid item xs={open ? 2 : "auto"}>
+			< Grid item xs={open ? 2 : "auto"} >
 				<Sidebar
 					open={open}
 					toggleDrawer={toggleDrawer}
 					projectId={projectId}
 					itemClick={revisionsClick}
+					currentReleaseId={releaseId}
+					setLockPage={setLockPage}
 				/>
-			</Grid>
-
+			</Grid >
 			<Grid item xs={open ? 10 : 11}>
 				{/* Current Sprint */}
 				{/* TODO: update Sprint Number */}
@@ -192,16 +235,66 @@ const ReleasePlan = ({ projectId }) => {
 				</Typography>
 
 				{/* Problem Statement */}
-				<ContentBox title={"Problem Statement"} content={problemStatement} />
+				<Typography
+					variant='body1'
+					marginBottom={2}
+					marginLeft={2}
+					textAlign={'left'}
+					fontWeight="bold"
+					fontSize={14}
+				>
+					Problem Statement
+				</Typography>
+				{lockPage ?
+					< ContentBox title={"Problem Statement"} content={problemStatement} />
+					:
+					<TextField
+						sx={{
+							margin: '5px 10px',
+							height: "130px",
+						}}
+						minRows={4}
+						maxRows={4}
+						style={{ width: "98%" }}
+						value={problemStatement}
+						onChange={editProblemStatement}
+						multiline
 
-				{/* High Level Goals */}
-				<ContentBox title={"High Level Goals"} content={highLevelGoals} />
+					/>}
+				<Typography
+					variant='body1'
+					marginBottom={2}
+					marginLeft={2}
+					textAlign={'left'}
+					fontWeight="bold"
+					fontSize={14}
+				>
+					High Level Goals
+				</Typography>
+				{lockPage ?
+					<ContentBox content={highLevelGoals} />
+					:
+					<TextField
+						sx={{
+							margin: '5px 10px',
+							height: "130px",
+						}}
+						minRows={4}
+						maxRows={4}
+						style={{ width: "98%" }}
+						value={highLevelGoals}
+						onChange={editGoals}
+						multiline
+					/>}
+
+
 
 				<Grid container spacing={2}>
 					{/* Sprints */}
 					<Grid item xs={9}>
 						<Typography
 							marginLeft={4}
+							maxRows={4}
 							textAlign="left"
 							fontWeight="bold"
 							fontSize={14}
@@ -242,22 +335,22 @@ const ReleasePlan = ({ projectId }) => {
 					Sanity Check
 				</Typography>
 
-        <Grid container spacing={2}>
-          {/* Sanity Check Graph */}
-          <Grid item xs={6}>
-            <SanityCheckGraph sprints={sprints} />
-          </Grid>
-          <Grid item xs={6}>
-            <SanityCheckText
-              text={
-                "Yes we can do it because no sprint looks like too much work. Lorem ipsum dolor sit amet …"
-              }
-            />
-          </Grid>
-        </Grid>
-      </Grid>
-    </Grid>
-  );
+				<Grid container spacing={2}>
+					{/* Sanity Check Graph */}
+					<Grid item xs={6}>
+						<SanityCheckGraph sprints={sprints} />
+					</Grid>
+					<Grid item xs={6}>
+						<SanityCheckText
+							text={
+								"Yes we can do it because no sprint looks like too much work. Lorem ipsum dolor sit amet …"
+							}
+						/>
+					</Grid>
+				</Grid>
+			</Grid>
+		</Grid >
+	);
 };
 
 export default ReleasePlan;

@@ -83,8 +83,6 @@ const Backlog = ({ releaseId }) => {
 				(result) => {
 					if (result.status === 200) {
 						result.json().then((response) => {
-							console.log(releaseId);
-							console.log(response);
 							const newBacklogItem = [...backlogItems, response];
 							setBacklogItems(newBacklogItem);
 						});
@@ -127,8 +125,6 @@ const Backlog = ({ releaseId }) => {
 			).then((result) => {
 				if (result.status === 200) {
 					result.json().then((response) => {
-						console.log(releaseId);
-						console.log(response);
 						setBacklogItems(response.backlog);
 					});
 				} else {
