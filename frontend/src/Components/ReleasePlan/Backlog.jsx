@@ -75,7 +75,7 @@ const Backlog = ({ releaseId }) => {
 				reasoning: reasoning,
 				acceptanceCriteria: acceptanceCriteria,
 				storyPoints: storyPoints,
-				priority: 1,
+				priority: priority,
 			}),
 		};
 		try {

@@ -98,8 +98,8 @@ const Sprint = ({ index, items, setItems, userStories }) => {
 			reasoning,
 			acceptanceCriteria,
 			storyPoints,
+			priority,
 		};
-		console.log('Creating new story:', newStory);
 		saveNewStory(newStory, sprintId);
 		setDialogOpen(false);
 	};
@@ -118,8 +118,7 @@ const Sprint = ({ index, items, setItems, userStories }) => {
 				reasoning: newStory.reasoning,
 				acceptanceCriteria: newStory.acceptanceCriteria,
 				storyPoints: newStory.storyPoints,
-				priority: 1
-				// priority?
+				priority: newStory.priority
 			}),
 		};
 
@@ -131,13 +130,9 @@ const Sprint = ({ index, items, setItems, userStories }) => {
 				if (result.status !== 200) {
 					console.log("error", result);
 				}
-				console.log(items)
 				result.json().then((jsonResult) => {
-					console.log(jsonResult)
 					const sprintsCopy = [...items];
 					const indexOfSprint = sprintsCopy.findIndex((sprint) => sprint.id === sprintId);
-					console.log(indexOfSprint)
-					console.log(sprintsCopy[indexOfSprint])
 					sprintsCopy[indexOfSprint].todos.push(jsonResult)
 					setItems(sprintsCopy);
 				})

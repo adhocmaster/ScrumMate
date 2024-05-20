@@ -170,7 +170,7 @@ const UserStory = ({ storyObject, deleteFunction, sprints, setSprints, sprintNum
 				reasoning: tempReasoning,
 				acceptanceCriteria: tempAcceptanceCriteria,
 				storyPoints: tempStoryPoints,
-				// priority?
+				priority: priority
 			}),
 		};
 
@@ -586,7 +586,7 @@ const UserStory = ({ storyObject, deleteFunction, sprints, setSprints, sprintNum
 										id="demo-simple-select"
 										value={priority}
 										label="Priority"
-										onChange={(event) => setPriority(event.target.value)}
+										onChange={(event) => { }}
 									>
 										<MenuItem value={4}>High</MenuItem>
 										<MenuItem value={3}>Medium</MenuItem>
