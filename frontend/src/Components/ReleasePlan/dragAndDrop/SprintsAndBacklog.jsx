@@ -23,8 +23,9 @@ const Board = ({
 	containerHeight,
 	withScrollableColumns,
 }) => {
-	const sprintTodos = initial.map(sprint => sprint.todos)
-	const sprintListObject = Object.assign({}, sprintTodos)
+	// const sprintTodos = initial.map(sprint => sprint.todos)
+	// const sprintListObject = Object.assign({}, sprintTodos)
+	const sprintListObject = initial.reduce((accumulator, sprint) => ({ ...accumulator, [sprint.sprintNumber]: sprint.todos }), {})
 	const [columns, setColumns] = useState({});
 	const [ordered, setOrdered] = useState([]);
 
@@ -32,10 +33,6 @@ const Board = ({
 		setColumns(sprintListObject);
 		setOrdered(Object.keys(sprintListObject));
 	}, [initial]);
-
-	console.log(sprintListObject)
-	console.log(columns)
-	console.log(ordered)
 
 	const onDragEnd = (result) => {
 		if (result.combine) {
@@ -110,7 +107,7 @@ const Board = ({
 									<Row
 										key={key}
 										index={index}
-										title={"sprint" + key}
+										title={key}
 										quotes={columns[key]}
 										isScrollable={withScrollableColumns}
 										isCombineEnabled={isCombineEnabled}
