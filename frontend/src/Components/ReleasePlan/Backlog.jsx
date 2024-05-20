@@ -294,6 +294,7 @@ const Backlog = ({ releaseId }) => {
 											<UserStory
 												storyObject={item}
 												deleteFunction={fetchDeleteStory}
+												backlog={backlogItems}
 											/>
 										</ListItem>
 									)}
