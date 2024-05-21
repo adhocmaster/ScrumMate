@@ -5,16 +5,14 @@ import Column from './Column';
 import reorder, { reorderQuoteMap } from '../reorder';
 import { DragDropContext, Droppable } from 'react-beautiful-dnd';
 import { Box, Grid, Typography, IconButton } from "@mui/material";
-import styled, { order } from "@xstyled/styled-components";
+import styled, { order, width } from "@xstyled/styled-components";
 import { colors } from "@atlaskit/theme";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 
 const Container = styled.div`
-  background-color: ${colors.B100};
-  min-height: 100vh;
-  /* like display:flex but will allow bleeding over the window width */
-  min-width: 100vw;
-  display: inline-flex;
+  min-width: 88%; // Ensure it takes the full width of the viewport
+  flex-direction: column; // Ensure items stack vertically
+  align-items: stretch;   // Ensure items take the full width
 `;
 
 const Board = ({
@@ -255,7 +253,7 @@ const Board = ({
 						isCombineEnabled={isCombineEnabled}
 					>
 						{(provided) => (
-							<div ref={provided.innerRef} {...provided.droppableProps}>
+							<Container ref={provided.innerRef} {...provided.droppableProps} >
 								<Grid item xs={15}>
 									<Typography
 										marginLeft={1}
@@ -291,7 +289,7 @@ const Board = ({
 									/>
 								))}
 								{provided.placeholder}
-							</div>
+							</Container>
 						)}
 					</Droppable>
 				</Box>

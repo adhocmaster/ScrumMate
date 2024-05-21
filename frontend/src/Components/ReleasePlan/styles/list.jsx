@@ -30,6 +30,7 @@ const Wrapper = styled.div`
   padding-bottom: 0;
   transition: background-color 0.2s ease, opacity 0.1s ease;
   user-select: none;
+  flex-grow: 1; // Allow it to grow and fill available space;
 `;
 
 const scrollContainerHeight = 250;
@@ -45,15 +46,16 @@ const DropZone = styled.div`
   padding-bottom: ${grid}px;
   display: flex;
   flex-direction: row; /* Display children horizontally */
+  flex-grow: 1; // Allow it to grow and fill available space
 `;
 
 const ScrollContainer = styled.div`
   overflow-x: auto;
   overflow-y: hidden;
   max-height: ${scrollContainerHeight}px;
-  width: 1000px;
+  width: 100%; // Use the full width
   display: flex;
-  flex-direction: row; /* Display children horizontally */
+  flex-direction: row;
 `;
 
 /* stylelint-disable block-no-empty */

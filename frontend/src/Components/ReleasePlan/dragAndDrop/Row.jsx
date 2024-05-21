@@ -20,6 +20,8 @@ const Container = styled.div`
   flex-direction: row;
   min-width: 100px;
   min-height: 252px;
+  width: 100%; // Ensure it takes the full width
+  flex-grow: 1; // Allow it to grow
 `;
 
 const Header = styled.div`
