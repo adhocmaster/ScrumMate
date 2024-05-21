@@ -40,6 +40,18 @@ const Row = (props) => {
 	const title = props.title;
 	const quotes = props.quotes;
 	const index = props.index;
+	const sprints = props.sprints;
+	const setSprints = props.setSprints;
+
+	const deleteSprint = (sprintId, index) => {
+		fetch(`http://localhost:8080/api/sprint/${sprintId}`, {
+			method: "DELETE",
+			credentials: "include",
+			headers: { "Content-Type": "application/json" },
+		}).catch((error) => console.log("error deleting sprint:"));
+		const updatedSprints = sprints.filter((_, i) => index !== i);
+		setSprints(updatedSprints);
+	};
 
 	return (
 		<Draggable draggableId={title} index={index} direction="horizontal">
@@ -71,12 +83,12 @@ const Row = (props) => {
 									<Typography sx={{ marginTop: 2 }} fontSize={14}>
 										{index + 1}
 									</Typography>
-									{/* <DeleteConfirmation
-									onDelete={() => {
-										const sprintId = items[index].id;
-										deleteSprint(sprintId, index);
-									}}
-								/> */}
+									<DeleteConfirmation
+										onDelete={() => {
+											const sprintId = sprints[index].id;
+											deleteSprint(sprintId, index);
+										}}
+									/>
 									{/* <IconButton onClick={openDialogForNewStory} color="primary" aria-label="add new story"> */}
 									<IconButton onClick={() => { }} color="primary" aria-label="add new story">
 										<AddIcon />

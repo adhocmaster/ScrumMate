@@ -9,6 +9,10 @@ import SanityCheckText from "../Components/ReleasePlan/SanityCheckText";
 import Board from "../Components/ReleasePlan/dragAndDrop/SprintsAndBacklog"
 import { generateQuoteMap } from '../Components/ReleasePlan/mockData';
 import { TextareaAutosize } from '@mui/base/TextareaAutosize';
+import AddCircleOutlineIcon from '@mui/icons-material/Add';
+import { IconButton } from "@mui/material";
+import Backlog from "../Components/ReleasePlan/Backlog";
+import DragList from "../Components/ReleasePlan/DragList";
 
 const ReleasePlan = ({ projectId }) => {
 	const [sprints, setSprints] = useState([]);
@@ -169,8 +173,6 @@ const ReleasePlan = ({ projectId }) => {
 	};
 
 	return (
-
-
 		< Grid container spacing={2} >
 			{/* Revision Sidebar */}
 			< Grid item xs={open ? 2 : "auto"} >
@@ -285,10 +287,10 @@ const ReleasePlan = ({ projectId }) => {
 						multiline
 					/>}
 
-				<Board initial={sprints} withScrollableColumns />
+				<Board sprints={sprints} setSprints={setSprints} withScrollableColumns />
 				{/* <Board sprints={sprints} setSprints={setSprints} releaseId={releaseId} /> */}
 
-				{/* 
+
 				<Grid container spacing={2}>
 					<Grid item xs={9}>
 						<Typography
@@ -318,7 +320,7 @@ const ReleasePlan = ({ projectId }) => {
 					<Grid item xs={3}>
 						<Backlog releaseId={releaseId} />
 					</Grid>
-				</Grid> */}
+				</Grid>
 
 				{/* Sanity Check */}
 				<Typography

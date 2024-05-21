@@ -18,21 +18,20 @@ const Container = styled.div`
 
 const Board = ({
 	isCombineEnabled,
-	initial,
+	sprints,
+	setSprints,
 	useClone,
 	containerHeight,
 	withScrollableColumns,
 }) => {
-	// const sprintTodos = initial.map(sprint => sprint.todos)
-	// const sprintListObject = Object.assign({}, sprintTodos)
-	const sprintListObject = initial.reduce((accumulator, sprint) => ({ ...accumulator, [sprint.sprintNumber]: sprint.todos }), {})
+	const sprintListObject = sprints.reduce((accumulator, sprint) => ({ ...accumulator, [sprint.sprintNumber]: sprint.todos }), {})
 	const [columns, setColumns] = useState({});
 	const [ordered, setOrdered] = useState([]);
 
 	useEffect(() => {
 		setColumns(sprintListObject);
 		setOrdered(Object.keys(sprintListObject));
-	}, [initial]);
+	}, [sprints]);
 
 	const onDragEnd = (result) => {
 		if (result.combine) {
@@ -112,6 +111,8 @@ const Board = ({
 										isScrollable={withScrollableColumns}
 										isCombineEnabled={isCombineEnabled}
 										useClone={useClone}
+										sprints={sprints}
+										setSprints={setSprints}
 									/>
 								))}
 								{provided.placeholder}
