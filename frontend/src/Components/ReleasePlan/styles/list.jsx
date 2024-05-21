@@ -49,7 +49,7 @@ const DropZone = styled.div`
 
 const ScrollContainer = styled.div`
   overflow-x: auto;
-  overflow-y: auto;
+  overflow-y: hidden;
   max-height: ${scrollContainerHeight}px;
   width: 1000px;
   display: flex;

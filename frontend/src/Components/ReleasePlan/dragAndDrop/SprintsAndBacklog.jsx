@@ -23,6 +23,7 @@ const Board = ({
 	useClone,
 	containerHeight,
 	withScrollableColumns,
+	releaseId,
 }) => {
 	const [columns, setColumns] = useState({});
 	const [ordered, setOrdered] = useState([]);
@@ -43,6 +44,28 @@ const Board = ({
 	// 	setColumns(sprintListObject);
 	// 	setOrdered(Object.keys(sprintListObject));
 	// }
+
+	async function fetchReorderSprints(
+		releaseId,
+		sprintStartIndex,
+		sprintEndIndex,
+		setItems
+	) {
+		fetch(`http://localhost:8080/api/release/${releaseId}/reorder`, {
+			method: "POST",
+			credentials: "include",
+			headers: {
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify({ sprintStartIndex, sprintEndIndex }),
+		})
+			.then((response) => response.json())
+			.then((data) => {
+				console.log(data);
+				setItems(data);
+			})
+			.catch((error) => { });
+	}
 
 	const onDragEnd = (result) => {
 		if (result.combine) {
@@ -88,6 +111,8 @@ const Board = ({
 
 			setOrdered(reorderedorder);
 
+			fetchReorderSprints(releaseId, source.index, destination.index, setSprints);
+
 			return;
 		}
 
@@ -95,6 +120,7 @@ const Board = ({
 			quoteMap: columns,
 			source,
 			destination,
+			sprints,
 		});
 
 		setColumns(data.quoteMap);

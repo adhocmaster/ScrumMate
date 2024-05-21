@@ -9,10 +9,61 @@ const reorder = (list, startIndex, endIndex) => {
 
 export default reorder;
 
-export const reorderQuoteMap = ({ quoteMap, source, destination }) => {
+async function fetchReorderBacklogItem(
+	sourceId,
+	destinationId,
+	sourceType,
+	sourceRank,
+	destinationType,
+	destinationRank
+) {
+	fetch(`http://localhost:8080/api/backlogItem/${sourceId}/${destinationId}/reorder`, {
+		method: "POST",
+		credentials: "include",
+		headers: {
+			"Content-Type": "application/json",
+		},
+		body: JSON.stringify({
+			sourceType: sourceType,
+			sourceRank: sourceRank,
+			destinationType: destinationType,
+			destinationRank: destinationRank,
+		}),
+	})
+		.then(() => {
+			console.log("done")
+		})
+		// .then((response) => response.json())
+		// .then((data) => {
+		// 	console.log(data);
+		// 	setItems(data);
+		// })
+		.catch((error) => { });
+}
+
+export const reorderQuoteMap = ({ quoteMap, source, destination, sprints }) => {
+	console.log("source", source)
+	console.log("destination", destination)
+
 	const current = [...quoteMap[source.droppableId]];
 	const next = [...quoteMap[destination.droppableId]];
 	const target = current[source.index];
+
+	const sourceBackendId = sprints.find(sprint => `${sprint.sprintNumber}` === source.droppableId).id;
+	const sourceRank = source.index;
+	const sourceType = source.droppableId === '0' ? "backlog" : "sprint";
+	const destinationBackendId = sprints.find(sprint => `${sprint.sprintNumber}` === destination.droppableId).id;
+	const destinationRank = destination.index;
+	const destinationType = destination.droppableId === '0' ? "backlog" : "sprint";
+
+	console.log("sourceBackendId", sourceBackendId)
+	console.log("sourceRank", sourceRank)
+	console.log("sourceType", sourceType)
+	console.log("destinationBackendId", destinationBackendId)
+	console.log("destRank", destinationRank)
+	console.log("destinationType", destinationType)
+
+	fetchReorderBacklogItem(sourceBackendId, destinationBackendId, sourceType, sourceRank, destinationType, destinationRank)
 
 	// moving to same list
 	if (source.droppableId === destination.droppableId) {
@@ -21,6 +72,7 @@ export const reorderQuoteMap = ({ quoteMap, source, destination }) => {
 			...quoteMap,
 			[source.droppableId]: reordered
 		};
+		fetchReorderBacklogItem(sourceBackendId, destinationBackendId, sourceType, sourceRank, destinationType, destinationRank)
 		return {
 			quoteMap: result
 		};

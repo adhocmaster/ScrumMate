@@ -160,7 +160,7 @@ const Row = (props) => {
 									}}
 								>
 									<Typography sx={{ marginTop: 2 }} fontSize={14}>
-										{index + 1}
+										{`Sprint ${index + 1}`}
 									</Typography>
 									<DeleteConfirmation
 										onDelete={() => {
@@ -304,7 +304,7 @@ const Row = (props) => {
 									</Dialog>
 
 									<Typography sx={{ marginBottom: 2 }} fontSize={14}>
-										8
+										{quotes.reduce((accumulator, todo) => accumulator + todo.size, 0)}
 									</Typography>
 								</Box>
 								<Box sx={{ height: "100%" }}>
