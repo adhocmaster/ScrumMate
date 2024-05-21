@@ -32,6 +32,9 @@ const Column = (props) => {
 	const title = props.title;
 	const quotes = props.quotes;
 	const index = props.index;
+	const backlogItems = props.backlogItems;
+	const setBacklogItems = props.setBacklogItems;
+
 	return (
 		<Draggable draggableId={title} index={index} isDragDisabled={true}>
 			{(provided, snapshot) => (

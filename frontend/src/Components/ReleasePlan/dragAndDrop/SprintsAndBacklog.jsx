@@ -28,22 +28,52 @@ const Board = ({
 	const [columns, setColumns] = useState({});
 	const [ordered, setOrdered] = useState([]);
 
+	const [backlogItems, setBacklogItems] = useState([]); // copy this into the first index of columns and ordered
+
+	function fetchBacklog() {
+		var options = {
+			method: "get",
+			credentials: "include",
+		};
+		try {
+			fetch(
+				`http://localhost:8080/api/release/${releaseId}/backlog`,
+				options
+			).then((result) => {
+				if (result.status === 200) {
+					result.json().then((response) => {
+						setBacklogItems(response.backlog);
+					});
+				} else {
+					setBacklogItems([]);
+				}
+			});
+		} catch { }
+	}
+
+	useEffect(() => {
+		fetchBacklog();
+	}, [releaseId]);
+
 	useEffect(() => {
 		// console.log('firing useeffect')
 		// console.log(sprints)
-		const sprintListObject = sprints.reduce((accumulator, sprint) => ({ ...accumulator, [sprint.sprintNumber]: sprint.todos }), {})
-		setColumns(sprintListObject);
-		setOrdered(Object.keys(sprintListObject));
+		const sprintListObject = sprints.reduce((accumulator, sprint) => ({ ...accumulator, [sprint.sprintNumber]: sprint.todos }), {});
+		const backlogAndSprints = {
+			0: backlogItems,
+			...sprintListObject,
+		}
+		// console.log("backlogAndSprints")
+		// console.log(backlogAndSprints)
+		setColumns(backlogAndSprints);
+		setOrdered(Object.keys(backlogAndSprints));
+		// console.log(Object.keys(backlogAndSprints))
+		// console.log(Object.keys(backlogAndSprints)[0])
+		// console.log([Object.keys(backlogAndSprints)[0]])
+		// console.log(backlogAndSprints[Object.keys(backlogAndSprints)[0]])
 		// console.log(columns)
 		// console.log(ordered)
-	}, [sprints]);
-
-	// const setSprintsAndColumnsAndOrdered = (newSprints) => {
-	// 	setSprints(newSprints);
-	// 	const sprintListObject = newSprints.reduce((accumulator, sprint) => ({ ...accumulator, [sprint.sprintNumber]: sprint.todos }), {})
-	// 	setColumns(sprintListObject);
-	// 	setOrdered(Object.keys(sprintListObject));
-	// }
+	}, [sprints, backlogItems]);
 
 	async function fetchReorderSprints(
 		releaseId,
@@ -121,6 +151,7 @@ const Board = ({
 			source,
 			destination,
 			sprints,
+			releaseId,
 		});
 
 		setColumns(data.quoteMap);
@@ -139,7 +170,7 @@ const Board = ({
 					>
 						{(provided) => (
 							<div ref={provided.innerRef} {...provided.droppableProps}>
-								{ordered.map((key, index) => (
+								{ordered.slice(1).map((key, index) => (
 									<Row
 										key={key}
 										index={index}
@@ -156,7 +187,7 @@ const Board = ({
 							</div>
 						)}
 					</Droppable>
-					{/* <Droppable
+					<Droppable
 						droppableId="BACKLOG"
 						type="BACKLOG"
 						direction="vertical" // Change to vertical
@@ -165,22 +196,24 @@ const Board = ({
 					>
 						{(provided) => (
 							<div ref={provided.innerRef} {...provided.droppableProps}>
-								{ordered.slice(-1).map((key, index) => (
+								{[ordered[0]].map((key, index) => (
 									<Column
 										key={key}
-										index={3}
+										index={index}
 										title={key}
 										quotes={columns[key]}
 										isScrollable={withScrollableColumns}
 										isCombineEnabled={isCombineEnabled}
 										useClone={useClone}
 										disableDrag={true}
+										backlogItems={backlogItems}
+										setBacklogItems={setBacklogItems}
 									/>
 								))}
 								{provided.placeholder}
 							</div>
 						)}
-					</Droppable> */}
+					</Droppable>
 				</Box>
 			</DragDropContext>
 		</>

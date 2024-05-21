@@ -32,7 +32,7 @@ const Wrapper = styled.div`
   width: 200px;
 `;
 
-const scrollContainerHeight = 500;
+const scrollContainerHeight = 700;
 
 const DropZone = styled.div`
   /* stop the list collapsing when empty */
@@ -54,12 +54,15 @@ const ScrollContainer = styled.div`
 const Container = styled.div``;
 /* stylelint-enable */
 
-const InnerQuoteList = React.memo(function InnerQuoteList(props) {
+const InnerQuoteList = (props) => {
+	if (props.quotes === undefined) {
+		return <></>
+	}
 	return props.quotes.map((quote, index) => (
-		<Draggable key={quote.id} draggableId={quote.id} index={index}>
+		<Draggable key={"cardId" + quote.id} draggableId={"draggableId" + quote.id} index={index}>
 			{(dragProvided, dragSnapshot) => (
 				<QuoteItem
-					key={quote.id}
+					key={"cardId" + quote.id}
 					quote={quote}
 					isDragging={dragSnapshot.isDragging}
 					isGroupedOver={Boolean(dragSnapshot.combineTargetFor)}
@@ -68,7 +71,7 @@ const InnerQuoteList = React.memo(function InnerQuoteList(props) {
 			)}
 		</Draggable>
 	));
-});
+};
 
 function InnerList(props) {
 	const { quotes, dropProvided } = props;
@@ -107,18 +110,6 @@ export default function QuoteList(props) {
 			ignoreContainerClipping={ignoreContainerClipping}
 			isDropDisabled={isDropDisabled}
 			isCombineEnabled={isCombineEnabled}
-			renderClone={
-				useClone
-					? (provided, snapshot, descriptor) => (
-						<QuoteItem
-							quote={quotes[descriptor.source.index]}
-							provided={provided}
-							isDragging={snapshot.isDragging}
-							isClone
-						/>
-					)
-					: null
-			}
 		>
 			{(dropProvided, dropSnapshot) => (
 				<Wrapper

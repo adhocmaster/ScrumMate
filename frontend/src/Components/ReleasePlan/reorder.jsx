@@ -41,27 +41,38 @@ async function fetchReorderBacklogItem(
 		.catch((error) => { });
 }
 
-export const reorderQuoteMap = ({ quoteMap, source, destination, sprints }) => {
-	console.log("source", source)
-	console.log("destination", destination)
+export const reorderQuoteMap = ({ quoteMap, source, destination, sprints, releaseId }) => {
+	// console.log("source", source)
+	// console.log("destination", destination)
 
 	const current = [...quoteMap[source.droppableId]];
 	const next = [...quoteMap[destination.droppableId]];
 	const target = current[source.index];
 
-	const sourceBackendId = sprints.find(sprint => `${sprint.sprintNumber}` === source.droppableId).id;
 	const sourceRank = source.index;
-	const sourceType = source.droppableId === '0' ? "backlog" : "sprint";
-	const destinationBackendId = sprints.find(sprint => `${sprint.sprintNumber}` === destination.droppableId).id;
 	const destinationRank = destination.index;
+	const sourceType = source.droppableId === '0' ? "backlog" : "sprint";
 	const destinationType = destination.droppableId === '0' ? "backlog" : "sprint";
+	var sourceBackendId, destinationBackendId;
+	if (sourceType === "sprint") {
+		sourceBackendId = sprints.find(sprint => `${sprint.sprintNumber}` === source.droppableId).id;
+	} else {
+		sourceBackendId = releaseId;
+	}
 
-	console.log("sourceBackendId", sourceBackendId)
-	console.log("sourceRank", sourceRank)
-	console.log("sourceType", sourceType)
-	console.log("destinationBackendId", destinationBackendId)
-	console.log("destRank", destinationRank)
-	console.log("destinationType", destinationType)
+	if (destinationType === "sprint") {
+		destinationBackendId = sprints.find(sprint => `${sprint.sprintNumber}` === destination.droppableId).id;
+	} else {
+		destinationBackendId = releaseId;
+
+	}
+
+	// console.log("sourceBackendId", sourceBackendId)
+	// console.log("sourceRank", sourceRank)
+	// console.log("sourceType", sourceType)
+	// console.log("destinationBackendId", destinationBackendId)
+	// console.log("destRank", destinationRank)
+	// console.log("destinationType", destinationType)
 
 	fetchReorderBacklogItem(sourceBackendId, destinationBackendId, sourceType, sourceRank, destinationType, destinationRank)
 
