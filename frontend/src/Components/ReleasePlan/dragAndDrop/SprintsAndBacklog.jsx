@@ -5,7 +5,7 @@ import Column from './Column';
 import reorder, { reorderQuoteMap } from '../reorder';
 import { DragDropContext, Droppable } from 'react-beautiful-dnd';
 import { Box } from "@mui/material";
-import styled from "@xstyled/styled-components";
+import styled, { order } from "@xstyled/styled-components";
 import { colors } from "@atlaskit/theme";
 
 const Container = styled.div`
@@ -24,14 +24,25 @@ const Board = ({
 	containerHeight,
 	withScrollableColumns,
 }) => {
-	const sprintListObject = sprints.reduce((accumulator, sprint) => ({ ...accumulator, [sprint.sprintNumber]: sprint.todos }), {})
 	const [columns, setColumns] = useState({});
 	const [ordered, setOrdered] = useState([]);
 
 	useEffect(() => {
+		// console.log('firing useeffect')
+		// console.log(sprints)
+		const sprintListObject = sprints.reduce((accumulator, sprint) => ({ ...accumulator, [sprint.sprintNumber]: sprint.todos }), {})
 		setColumns(sprintListObject);
 		setOrdered(Object.keys(sprintListObject));
+		// console.log(columns)
+		// console.log(ordered)
 	}, [sprints]);
+
+	// const setSprintsAndColumnsAndOrdered = (newSprints) => {
+	// 	setSprints(newSprints);
+	// 	const sprintListObject = newSprints.reduce((accumulator, sprint) => ({ ...accumulator, [sprint.sprintNumber]: sprint.todos }), {})
+	// 	setColumns(sprintListObject);
+	// 	setOrdered(Object.keys(sprintListObject));
+	// }
 
 	const onDragEnd = (result) => {
 		if (result.combine) {
