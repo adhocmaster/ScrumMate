@@ -12,7 +12,8 @@ const Container = styled.div`
   margin: ${grid}px;
   display: flex;
   flex-direction: row;
-  min-wideth: 100px;
+  min-width: 100px;
+  min-height: 252px;
 `;
 
 const Header = styled.div`

@@ -203,7 +203,6 @@ const UserStory = ({ storyObject, deleteFunction, sprints, setSprints, sprintNum
 		const sprintIndex = sprintsCopy.findIndex(sprint => sprint.sprintNumber === sprintNumber);
 		const storyIndex = sprintsCopy[sprintIndex].todos.findIndex(story => story.id === storyId);
 		sprintsCopy[sprintIndex].todos[storyIndex] = { ...sprintsCopy[sprintIndex].todos[storyIndex], ...newStoryObj };
-		console.log(sprintsCopy)
 		setSprints(sprintsCopy);
 	}
 

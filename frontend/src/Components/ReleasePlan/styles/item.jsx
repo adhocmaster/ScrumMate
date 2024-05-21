@@ -1,5 +1,6 @@
 import React from 'react';
 import styled from '@xstyled/styled-components';
+import UserStory from '../UserStory';
 
 const grid = 8;
 const borderRadius = 2;
@@ -46,8 +47,8 @@ const Container = styled.a`
 		isDragging ? `2px 2px 1px #A5ADBA` : 'none'};
   box-sizing: border-box;
   padding: ${grid}px;
-  height: 150px; /* Set a fixed height */
-  width: 150px;
+  height: auto; /* Set a fixed height */
+  width: 160px;
   margin-bottom: ${grid}px;
   user-select: none;
 
@@ -130,7 +131,8 @@ function QuoteItem(props) {
 			aria-label={`${quote.id} quote ${quote.id}`}
 		>
 			<Content>
-				<BlockQuote>{"content: " + quote.id}</BlockQuote>
+				{/* <BlockQuote>{"content: " + quote.id}</BlockQuote> */}
+				<UserStory storyObject={quote} />
 			</Content>
 		</Container>
 	);
