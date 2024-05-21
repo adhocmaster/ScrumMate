@@ -16,6 +16,7 @@ const Container = styled.div`
 
 const Header = styled.div`
   display: flex;
+  height: 0px;
   align-items: center;
   justify-content: center;
   border-top-left-radius: ${borderRadius}px;
@@ -45,7 +46,6 @@ const Column = (props) => {
 							{...provided.dragHandleProps}
 							aria-label={`${title} quote list`}
 						>
-							{title}
 						</Title>
 					</Header>
 					<QuoteList
