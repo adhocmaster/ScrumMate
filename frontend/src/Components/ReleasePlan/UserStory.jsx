@@ -152,6 +152,7 @@ const UserStory = ({ storyObject, deleteFunction, sprints, setSprints, sprintNum
 
 	const handleDelete = () => {
 		handleEditDialogClose();
+		console.log(`deleting ${storyObject.id}`)
 		deleteFunction(storyObject.id)
 	};
 
@@ -345,6 +346,7 @@ const UserStory = ({ storyObject, deleteFunction, sprints, setSprints, sprintNum
 							hyphens: "auto",
 						}}
 					>
+						{storyObject.id}{' '}
 						{
 							showAcceptanceCriteria ?
 								<>

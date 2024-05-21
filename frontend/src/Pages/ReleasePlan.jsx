@@ -288,7 +288,7 @@ const ReleasePlan = ({ projectId }) => {
 					/>}
 
 				<Board sprints={sprints} setSprints={setSprints} releaseId={releaseId} withScrollableColumns />
-
+				{/* 
 				<Grid container spacing={2}>
 					<Grid item xs={9}>
 						<Typography
@@ -318,7 +318,7 @@ const ReleasePlan = ({ projectId }) => {
 					<Grid item xs={3}>
 						<Backlog releaseId={releaseId} />
 					</Grid>
-				</Grid>
+				</Grid> */}
 
 				{/* Sanity Check */}
 				<Typography

@@ -97,8 +97,11 @@ const Board = ({
 			.catch((error) => { });
 	}
 
+	// TODO: Kinda buggy with dnd...
+	// not updating correctly? duplicated id??? showing up in next sprint??
+	//	Is it because it was declared with a certain sprint number?
+	// also need to handle release... diff function? 
 	const deleteStory = (storyId) => {
-		// TODO: find index and remove it and do setstate again
 		fetch(`http://localhost:8080/api/backlogItem/${storyId}/delete`, {
 			method: "POST",
 			credentials: "include",
@@ -111,6 +114,7 @@ const Board = ({
 					const sprintIndex = updatedItems.findIndex(s => s.todos.some(t => t.id === storyId));
 					if (sprintIndex !== -1) {
 						updatedItems[sprintIndex].todos = result;
+						// updatedItems[sprintIndex].todos = updatedItems[sprintIndex].todos.filter(todo => todo.id !== storyId)
 					}
 					return updatedItems;
 				});
@@ -202,6 +206,7 @@ const Board = ({
 										disableDrag={true}
 										backlogItems={backlogItems}
 										setBacklogItems={setBacklogItems}
+										releaseId={releaseId}
 										deleteStory={deleteStory}
 									/>
 								))}
@@ -229,6 +234,7 @@ const Board = ({
 										useClone={useClone}
 										sprints={sprints}
 										setSprints={setSprints}
+										releaseId={releaseId}
 										deleteStory={deleteStory}
 									/>
 								))}
