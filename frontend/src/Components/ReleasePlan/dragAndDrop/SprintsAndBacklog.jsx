@@ -162,32 +162,6 @@ const Board = ({
 			<DragDropContext onDragEnd={onDragEnd}>
 				<Box display="flex">
 					<Droppable
-						droppableId="board"
-						type="COLUMN"
-						direction="vertical" // Change to vertical
-						ignoreContainerClipping={Boolean(containerHeight)}
-						isCombineEnabled={isCombineEnabled}
-					>
-						{(provided) => (
-							<div ref={provided.innerRef} {...provided.droppableProps}>
-								{ordered.slice(1).map((key, index) => (
-									<Row
-										key={key}
-										index={index}
-										title={key}
-										quotes={columns[key]}
-										isScrollable={withScrollableColumns}
-										isCombineEnabled={isCombineEnabled}
-										useClone={useClone}
-										sprints={sprints}
-										setSprints={setSprints}
-									/>
-								))}
-								{provided.placeholder}
-							</div>
-						)}
-					</Droppable>
-					<Droppable
 						droppableId="BACKLOG"
 						type="BACKLOG"
 						direction="vertical" // Change to vertical
@@ -208,6 +182,32 @@ const Board = ({
 										disableDrag={true}
 										backlogItems={backlogItems}
 										setBacklogItems={setBacklogItems}
+									/>
+								))}
+								{provided.placeholder}
+							</div>
+						)}
+					</Droppable>
+					<Droppable
+						droppableId="board"
+						type="COLUMN"
+						direction="vertical" // Change to vertical
+						ignoreContainerClipping={Boolean(containerHeight)}
+						isCombineEnabled={isCombineEnabled}
+					>
+						{(provided) => (
+							<div ref={provided.innerRef} {...provided.droppableProps}>
+								{ordered.slice(1).map((key, index) => (
+									<Row
+										key={key}
+										index={index}
+										title={key}
+										quotes={columns[key]}
+										isScrollable={withScrollableColumns}
+										isCombineEnabled={isCombineEnabled}
+										useClone={useClone}
+										sprints={sprints}
+										setSprints={setSprints}
 									/>
 								))}
 								{provided.placeholder}
