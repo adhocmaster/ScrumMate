@@ -74,6 +74,8 @@ const InnerQuoteList = (props) => {
 					style={{ marginRight: grid }} // Add margin-right between items
 					sprints={props.sprints}
 					setSprints={props.setSprints}
+					sprintIndex={props.sprintIndex}
+					deleteStory={props.deleteStory}
 				/>
 			)}
 		</Draggable>
@@ -81,7 +83,7 @@ const InnerQuoteList = (props) => {
 };
 
 function InnerList(props) {
-	const { quotes, dropProvided, sprints, setSprints } = props;
+	const { quotes, dropProvided, sprints, setSprints, sprintIndex, deleteStory } = props;
 	const title = props.title ? <Title>{props.title}</Title> : null;
 
 	// console.log("innerlist", quotes)
@@ -90,7 +92,7 @@ function InnerList(props) {
 		<Container>
 			{title}
 			<DropZone ref={dropProvided.innerRef}>
-				<InnerQuoteList quotes={quotes} sprints={sprints} setSprints={setSprints} />
+				<InnerQuoteList quotes={quotes} sprints={sprints} setSprints={setSprints} sprintIndex={sprintIndex} deleteStory={deleteStory} />
 				{dropProvided.placeholder}
 			</DropZone>
 		</Container>
@@ -111,7 +113,9 @@ export default function QuoteList(props) {
 		title,
 		useClone,
 		sprints,
-		setSprints
+		setSprints,
+		sprintIndex,
+		deleteStory,
 	} = props;
 
 	// console.log("rendering quoteList", quotes)
@@ -139,6 +143,10 @@ export default function QuoteList(props) {
 								quotes={quotes}
 								title={title}
 								dropProvided={dropProvided}
+								sprints={sprints}
+								setSprints={setSprints}
+								sprintIndex={sprintIndex}
+								deleteStory={deleteStory}
 							/>
 						</ScrollContainer>
 					) : (
@@ -148,6 +156,8 @@ export default function QuoteList(props) {
 							dropProvided={dropProvided}
 							sprints={sprints}
 							setSprints={setSprints}
+							sprintIndex={sprintIndex}
+							deleteStory={deleteStory}
 						/>
 					)}
 				</Wrapper>

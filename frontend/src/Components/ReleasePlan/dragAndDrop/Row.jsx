@@ -42,6 +42,7 @@ const Row = (props) => {
 	const index = props.index;
 	const sprints = props.sprints;
 	const setSprints = props.setSprints;
+	const deleteStory = props.deleteStory;
 	// console.log("rendering row", index)
 	// console.log("quotes", quotes)
 
@@ -334,6 +335,8 @@ const Row = (props) => {
 						useClone={Boolean(props.useClone)}
 						sprints={sprints}
 						setSprints={setSprints}
+						sprintIndex={index}
+						deleteStory={deleteStory}
 					/>
 				</Container >
 			)

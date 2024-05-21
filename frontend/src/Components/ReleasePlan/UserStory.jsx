@@ -116,6 +116,7 @@ const UserStory = ({ storyObject, deleteFunction, sprints, setSprints, sprintNum
 		}
 		if (sprints) {
 			var sprintIndex = pokerSprintNumberBuffer - 1;
+			console.log(sprintIndex)
 			if (storyNumberBuffer === sprints[sprintIndex].todos.length) {
 				return // out of backlog items this sprint
 			}

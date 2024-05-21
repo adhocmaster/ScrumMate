@@ -113,7 +113,8 @@ function getStyle(provided, style) {
 // things we should be doing in the selector as we do not know if consumers
 // will be using PureComponent
 function QuoteItem(props) {
-	const { quote, isDragging, isGroupedOver, provided, style, isClone, index, backlog, sprints, setSprints } =
+	const { quote, isDragging, isGroupedOver, provided, style, isClone, index,
+		backlog, sprints, setSprints, sprintIndex, deleteStory, } =
 		props;
 
 	return (
@@ -132,7 +133,14 @@ function QuoteItem(props) {
 		>
 			<Content>
 				{/* <BlockQuote>{"content: " + quote.id}</BlockQuote> */}
-				<UserStory storyObject={quote} backlog={backlog} sprints={sprints} setSprints={setSprints} />
+				<UserStory
+					storyObject={quote}
+					backlog={backlog}
+					sprints={sprints}
+					setSprints={setSprints}
+					sprintNumber={parseInt(sprintIndex) + 1}
+					deleteFunction={deleteStory}
+				/>
 			</Content>
 		</Container>
 	);

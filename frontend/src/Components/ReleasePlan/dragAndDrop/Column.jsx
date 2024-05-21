@@ -34,6 +34,7 @@ const Column = (props) => {
 	const quotes = props.quotes;
 	const index = props.index;
 	const backlogItems = props.backlogItems;
+	const deleteStory = props.deleteStory;
 	// const setBacklogItems = props.setBacklogItems;
 
 	return (
@@ -59,6 +60,7 @@ const Column = (props) => {
 						isCombineEnabled={Boolean(props.isCombineEnabled)}
 						useClone={Boolean(props.useClone)}
 						backlog={backlogItems}
+						deleteStory={deleteStory}
 					/>
 				</Container>
 			)}

@@ -45,6 +45,8 @@ export const reorderQuoteMap = ({ quoteMap, source, destination, sprints, releas
 	// console.log("source", source)
 	// console.log("destination", destination)
 
+	// MUST update sprints
+
 	const current = [...quoteMap[source.droppableId]];
 	const next = [...quoteMap[destination.droppableId]];
 	const target = current[source.index];

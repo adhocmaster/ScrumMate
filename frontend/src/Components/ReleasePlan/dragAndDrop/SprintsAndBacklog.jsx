@@ -97,6 +97,26 @@ const Board = ({
 			.catch((error) => { });
 	}
 
+	const deleteStory = (storyId) => {
+		// TODO: find index and remove it and do setstate again
+		fetch(`http://localhost:8080/api/backlogItem/${storyId}/delete`, {
+			method: "POST",
+			credentials: "include",
+			headers: { "Content-Type": "application/json" },
+		})
+			.then((response) => response.json())
+			.then((result) => {
+				setSprints((currentItems) => {
+					const updatedItems = [...currentItems];
+					const sprintIndex = updatedItems.findIndex(s => s.todos.some(t => t.id === storyId));
+					if (sprintIndex !== -1) {
+						updatedItems[sprintIndex].todos = result;
+					}
+					return updatedItems;
+				});
+			}).catch((error) => console.log("error deleting story"));
+	};
+
 	const onDragEnd = (result) => {
 		if (result.combine) {
 			if (result.type === 'COLUMN') {
@@ -182,6 +202,7 @@ const Board = ({
 										disableDrag={true}
 										backlogItems={backlogItems}
 										setBacklogItems={setBacklogItems}
+										deleteStory={deleteStory}
 									/>
 								))}
 								{provided.placeholder}
@@ -208,6 +229,7 @@ const Board = ({
 										useClone={useClone}
 										sprints={sprints}
 										setSprints={setSprints}
+										deleteStory={deleteStory}
 									/>
 								))}
 								{provided.placeholder}
