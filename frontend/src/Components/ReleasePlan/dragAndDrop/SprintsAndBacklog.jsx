@@ -4,9 +4,10 @@ import Row from './Row';
 import Column from './Column';
 import reorder, { reorderQuoteMap } from '../reorder';
 import { DragDropContext, Droppable } from 'react-beautiful-dnd';
-import { Box } from "@mui/material";
+import { Box, Grid, Typography, IconButton } from "@mui/material";
 import styled, { order } from "@xstyled/styled-components";
 import { colors } from "@atlaskit/theme";
+import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 
 const Container = styled.div`
   background-color: ${colors.B100};
@@ -181,6 +182,38 @@ const Board = ({
 		setColumns(data.quoteMap);
 	};
 
+	function createNewSprints() {
+		console.log("creating new");
+		var options = {
+			method: "POST",
+			credentials: "include",
+			headers: {
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify({ sprintNumber: sprints.length + 1 }),
+		};
+
+		fetch(`http://localhost:8080/api/release/${releaseId}/sprint`, options)
+			.then((result) => {
+				if (result.status === 200) {
+					console.log(result);
+				}
+				console.log(result);
+				return result.json();
+			})
+			.then((response) => {
+				console.log(response);
+				response = {
+					...response,
+					todos: [],
+				}
+				setSprints((prevSprints) => [...prevSprints, response]);
+			})
+			.catch((error) => {
+				console.error("Error:", error);
+			});
+	}
+
 	return (
 		<>
 			<DragDropContext onDragEnd={onDragEnd}>
@@ -223,6 +256,25 @@ const Board = ({
 					>
 						{(provided) => (
 							<div ref={provided.innerRef} {...provided.droppableProps}>
+								<Grid item xs={15}>
+									<Typography
+										marginLeft={1}
+										maxRows={4}
+										textAlign="left"
+										fontWeight="bold"
+										fontSize={14}
+									>
+										Sprints
+										<IconButton
+											sx={{
+												marginBottom: "3px",
+											}}
+											onClick={createNewSprints}
+										>
+											<AddCircleOutlineIcon fontSize="small" />
+										</IconButton>
+									</Typography>
+								</Grid>
 								{ordered.slice(1).map((key, index) => (
 									<Row
 										key={key}

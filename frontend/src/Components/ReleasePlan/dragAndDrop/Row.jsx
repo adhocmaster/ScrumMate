@@ -125,38 +125,6 @@ const Row = (props) => {
 		}
 	}
 
-	function createNewSprints() {
-		console.log("creating new");
-		var options = {
-			method: "POST",
-			credentials: "include",
-			headers: {
-				"Content-Type": "application/json",
-			},
-			body: JSON.stringify({ sprintNumber: sprints.length + 1 }),
-		};
-
-		fetch(`http://localhost:8080/api/release/${releaseId}/sprint`, options)
-			.then((result) => {
-				if (result.status === 200) {
-					console.log(result);
-				}
-				console.log(result);
-				return result.json();
-			})
-			.then((response) => {
-				console.log(response);
-				response = {
-					...response,
-					todos: [],
-				}
-				setSprints((prevSprints) => [...prevSprints, response]);
-			})
-			.catch((error) => {
-				console.error("Error:", error);
-			});
-	}
-
 	const deleteSprint = (sprintId, index) => {
 		fetch(`http://localhost:8080/api/sprint/${sprintId}`, {
 			method: "DELETE",
@@ -169,29 +137,6 @@ const Row = (props) => {
 
 	return (
 		<>
-			{
-				index === 0 ?
-					<Grid item xs={9}>
-						<Typography
-							marginLeft={4}
-							maxRows={4}
-							textAlign="left"
-							fontWeight="bold"
-							fontSize={14}
-						>
-							Sprints
-							<IconButton
-								sx={{
-									marginBottom: "3px",
-								}}
-								onClick={createNewSprints}
-							>
-								<AddCircleOutlineIcon fontSize="small" />
-							</IconButton>
-						</Typography>
-					</Grid> :
-					<></>
-			}
 			<Draggable draggableId={title} index={index} direction="horizontal">
 				{(provided, snapshot) => (
 					<Container ref={provided.innerRef} {...provided.draggableProps}>
