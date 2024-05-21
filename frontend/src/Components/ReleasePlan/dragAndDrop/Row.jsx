@@ -363,7 +363,7 @@ const Row = (props) => {
 										</Dialog>
 
 										<Typography sx={{ marginBottom: 2 }} fontSize={14}>
-											{quotes.reduce((accumulator, todo) => accumulator + todo.size, 0)}
+											{quotes.reduce((accumulator, todo) => accumulator + todo.size, 0)} SP
 										</Typography>
 									</Box>
 									<Box sx={{ height: "100%" }}>
