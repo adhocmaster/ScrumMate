@@ -10,13 +10,15 @@ const Sprint = ({ index, items, setItems, userStories }) => {
 	const [stories, setStories] = useState(userStories);
 	const [dialogOpen, setDialogOpen] = useState(false);
 
-	const [backlogItemType, setBacklogItemType] = useState('story');
+	const [backlogItemType, setBacklogItemType] = useState('story'); // Default type
 	const [role, setRole] = useState('');
 	const [functionality, setFunctionality] = useState('');
 	const [reasoning, setReasoning] = useState('');
 	const [acceptanceCriteria, setAcceptanceCriteria] = useState('');
 	const [storyPoints, setStoryPoints] = useState(0);
 	const [priority, setPriority] = useState(1)
+	const [actionItemType, setActionItemType] = useState('bug'); // Default action item type
+  	const [description, setDescription] = useState(''); // Description for action items
 
 	// Function to handle the reordering of stories (content within the cards).
 	function reorderStories(result) {
@@ -84,6 +86,8 @@ const Sprint = ({ index, items, setItems, userStories }) => {
 		setStoryPoints(0);
 		setPriority(1);
 		setDialogOpen(true);
+		setActionItemType('bug');
+		setDescription('');
 	};
 
 	const handleDialogClose = () => {
@@ -181,11 +185,11 @@ const Sprint = ({ index, items, setItems, userStories }) => {
 										deleteSprint(sprintId, index);
 									}}
 								/>
-								<IconButton onClick={openDialogForNewStory} color="primary" aria-label="add new story">
+								<IconButton onClick={openDialogForNewStory} color="primary" aria-label="add new">
 									<AddIcon />
 								</IconButton>
 								<Dialog open={dialogOpen} onClose={handleDialogClose} maxWidth="sm" fullWidth>
-									<DialogTitle>Add New Story</DialogTitle>
+									<DialogTitle>Add New</DialogTitle>
 									<DialogContent>
 										<ToggleButtonGroup
 											color="primary"
@@ -196,9 +200,8 @@ const Sprint = ({ index, items, setItems, userStories }) => {
 											fullWidth
 											sx={{ marginBottom: 2 }}
 										>
-											<ToggleButton value="story">Story</ToggleButton>
-											<ToggleButton value="spike">Spike</ToggleButton>
-											<ToggleButton value="infrastructure">Infrastructure</ToggleButton>
+											<ToggleButton value="Story">Story</ToggleButton>
+											<ToggleButton value="Action-Item">Action Item</ToggleButton>
 										</ToggleButtonGroup>
 
 										<Box display="flex" alignItems="center" gap={1} mb={2}>
