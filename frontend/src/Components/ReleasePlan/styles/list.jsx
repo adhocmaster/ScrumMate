@@ -72,6 +72,8 @@ const InnerQuoteList = (props) => {
 					isGroupedOver={Boolean(dragSnapshot.combineTargetFor)}
 					provided={dragProvided}
 					style={{ marginRight: grid }} // Add margin-right between items
+					sprints={props.sprints}
+					setSprints={props.setSprints}
 				/>
 			)}
 		</Draggable>
@@ -79,7 +81,7 @@ const InnerQuoteList = (props) => {
 };
 
 function InnerList(props) {
-	const { quotes, dropProvided } = props;
+	const { quotes, dropProvided, sprints, setSprints } = props;
 	const title = props.title ? <Title>{props.title}</Title> : null;
 
 	// console.log("innerlist", quotes)
@@ -88,7 +90,7 @@ function InnerList(props) {
 		<Container>
 			{title}
 			<DropZone ref={dropProvided.innerRef}>
-				<InnerQuoteList quotes={quotes} />
+				<InnerQuoteList quotes={quotes} sprints={sprints} setSprints={setSprints} />
 				{dropProvided.placeholder}
 			</DropZone>
 		</Container>
@@ -108,6 +110,8 @@ export default function QuoteList(props) {
 		quotes,
 		title,
 		useClone,
+		sprints,
+		setSprints
 	} = props;
 
 	// console.log("rendering quoteList", quotes)
@@ -142,6 +146,8 @@ export default function QuoteList(props) {
 							quotes={quotes}
 							title={title}
 							dropProvided={dropProvided}
+							sprints={sprints}
+							setSprints={setSprints}
 						/>
 					)}
 				</Wrapper>

@@ -66,6 +66,7 @@ const InnerQuoteList = (props) => {
 					isDragging={dragSnapshot.isDragging}
 					isGroupedOver={Boolean(dragSnapshot.combineTargetFor)}
 					provided={dragProvided}
+					backlog={props.backlog}
 				/>
 			)}
 		</Draggable>
@@ -73,14 +74,14 @@ const InnerQuoteList = (props) => {
 };
 
 function InnerList(props) {
-	const { quotes, dropProvided } = props;
+	const { quotes, dropProvided, backlog } = props;
 	const title = props.title ? <Title>{props.title}</Title> : null;
 
 	return (
 		<Container>
 			{title}
 			<DropZone ref={dropProvided.innerRef}>
-				<InnerQuoteList quotes={quotes} />
+				<InnerQuoteList quotes={quotes} backlog={backlog} />
 				{dropProvided.placeholder}
 			</DropZone>
 		</Container>
@@ -100,6 +101,7 @@ export default function QuoteList(props) {
 		quotes,
 		title,
 		useClone,
+		backlog,
 	} = props;
 
 	return (
@@ -120,10 +122,10 @@ export default function QuoteList(props) {
 				>
 					{internalScroll ? (
 						<ScrollContainer style={scrollContainerStyle}>
-							<InnerList quotes={quotes} title={title} dropProvided={dropProvided} />
+							<InnerList quotes={quotes} title={title} dropProvided={dropProvided} backlog={backlog} />
 						</ScrollContainer>
 					) : (
-						<InnerList quotes={quotes} title={title} dropProvided={dropProvided} />
+						<InnerList quotes={quotes} title={title} dropProvided={dropProvided} backlog={backlog} />
 					)}
 				</Wrapper>
 			)}

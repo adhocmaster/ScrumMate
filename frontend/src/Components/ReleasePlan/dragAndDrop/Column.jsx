@@ -34,7 +34,7 @@ const Column = (props) => {
 	const quotes = props.quotes;
 	const index = props.index;
 	const backlogItems = props.backlogItems;
-	const setBacklogItems = props.setBacklogItems;
+	// const setBacklogItems = props.setBacklogItems;
 
 	return (
 		<Draggable draggableId={title} index={index} isDragDisabled={true}>
@@ -58,6 +58,7 @@ const Column = (props) => {
 						internalScroll={props.isScrollable}
 						isCombineEnabled={Boolean(props.isCombineEnabled)}
 						useClone={Boolean(props.useClone)}
+						backlog={backlogItems}
 					/>
 				</Container>
 			)}
