@@ -204,6 +204,32 @@ export class ReleaseRepository extends ModelRepository {
 		return [unsignedMembers, releaseWithSignatures.signatures, releaseWithSignatures.fullySigned];
 	}
 
+	public async getSigningCondition(releaseId: number): Promise<boolean> {
+		function backlogItemListHasUnestimated(backlogItemList: BacklogItem[]) {
+			for (const backlogItem of backlogItemList) {
+				if (!backlogItem.size) {
+					return true;
+				}
+			}
+			return false;
+		}
+
+		function sprintAttributesSet(sprint: Sprint) {
+			return !sprint.startDate || !sprint.endDate || !sprint.scrumMaster;
+		}
+
+		const releaseWithBacklog = await this.fetchReleaseWithBacklog(releaseId);
+		for (const sprint of releaseWithBacklog.sprints) {
+			if (sprintAttributesSet(sprint) || backlogItemListHasUnestimated(sprint.todos)) {
+				return false;
+			}
+		}
+		if (backlogItemListHasUnestimated(releaseWithBacklog.backlog)) {
+			return false
+		}
+		return true;
+	}
+
 	public async lookupReleaseById(id: number): Promise<Release> {
 		return await this.releaseSource.lookupReleaseById(id);
 	}

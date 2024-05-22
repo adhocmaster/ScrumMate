@@ -43,6 +43,9 @@ export class ReleaseDataSourceWrapper extends ModelDataSourceWrapper {
 			where: { id: releaseId },
 			relations: {
 				backlog: true,
+				sprints: {
+					todos: true,
+				}
 			},
 		})
 		if (!releaseWithBacklog || releaseWithBacklog.length === 0) {
