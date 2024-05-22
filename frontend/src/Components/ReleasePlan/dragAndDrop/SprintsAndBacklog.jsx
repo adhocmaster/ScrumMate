@@ -151,15 +151,13 @@ const Board = ({
 			return;
 		}
 
-		const data = reorderQuoteMap({
-			quoteMap: columns,
+		reorderQuoteMap({
+			sprints, setSprints,
+			backlogItems, setBacklogItems,
 			source,
 			destination,
-			sprints,
 			releaseId,
 		});
-
-		setColumns(data.quoteMap);
 	};
 
 	return (
@@ -175,22 +173,20 @@ const Board = ({
 					>
 						{(provided) => (
 							<div ref={provided.innerRef} {...provided.droppableProps}>
-								{[ordered[0]].map((key, index) => (
-									<Column
-										key={key}
-										index={index}
-										title={key}
-										quotes={columns[key]}
-										isScrollable={withScrollableColumns}
-										isCombineEnabled={isCombineEnabled}
-										useClone={useClone}
-										disableDrag={true}
-										backlogItems={backlogItems}
-										setBacklogItems={setBacklogItems}
-										releaseId={releaseId}
-										deleteStory={deleteStory}
-									/>
-								))}
+								<Column
+									key={"0"}
+									index={0}
+									title={"0"}
+									quotes={backlogItems}
+									isScrollable={withScrollableColumns}
+									isCombineEnabled={isCombineEnabled}
+									useClone={useClone}
+									disableDrag={true}
+									backlogItems={backlogItems}
+									setBacklogItems={setBacklogItems}
+									releaseId={releaseId}
+									deleteStory={deleteStory}
+								/>
 								{provided.placeholder}
 							</div>
 						)}
@@ -223,12 +219,12 @@ const Board = ({
 										</IconButton>
 									</Typography>
 								</Grid>
-								{ordered.slice(1).map((key, index) => (
+								{sprints.map((sprint, index) => (
 									<Row
-										key={key}
+										key={sprint.sprintNumber}
 										index={index}
-										title={key}
-										quotes={columns[key]}
+										title={sprint.sprintNumber}
+										quotes={sprint.todos}
 										isScrollable={withScrollableColumns}
 										isCombineEnabled={isCombineEnabled}
 										useClone={useClone}

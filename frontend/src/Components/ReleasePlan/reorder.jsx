@@ -41,15 +41,14 @@ async function fetchReorderBacklogItem(
 		.catch((error) => { });
 }
 
-export const reorderQuoteMap = ({ quoteMap, source, destination, sprints, releaseId }) => {
-	// console.log("source", source)
-	// console.log("destination", destination)
+export const reorderQuoteMap = ({ sprints, setSprints, backlog, setBacklogItems, source, destination, releaseId }) => {
+	console.log("source", source)
+	console.log("destination", destination)
 
-	// MUST update sprints
-
-	const current = [...quoteMap[source.droppableId]];
-	const next = [...quoteMap[destination.droppableId]];
-	const target = current[source.index];
+	// droppableId is "0" if its backlog, else string(sprintNumber)
+	// const currentList = source.droppableId === "0" ? [...backlog] : [...sprints[source.droppableId].todos];
+	// const nextList = destination.droppableId === "0" ? [...backlog] : [...sprints[destination.droppableId].todos];
+	// const itemToMove = currentList[source.index];
 
 	const sourceRank = source.index;
 	const destinationRank = destination.index;
@@ -75,37 +74,38 @@ export const reorderQuoteMap = ({ quoteMap, source, destination, sprints, releas
 	// console.log("destRank", destinationRank)
 	// console.log("destinationType", destinationType)
 
-	fetchReorderBacklogItem(sourceBackendId, destinationBackendId, sourceType, sourceRank, destinationType, destinationRank)
+	fetchReorderBacklogItem(sourceBackendId, destinationBackendId, sourceType, sourceRank, destinationType, destinationRank, setSprints, setBacklogItems)
 
 	// moving to same list
-	if (source.droppableId === destination.droppableId) {
-		const reordered = reorder(current, source.index, destination.index);
-		const result = {
-			...quoteMap,
-			[source.droppableId]: reordered
-		};
-		fetchReorderBacklogItem(sourceBackendId, destinationBackendId, sourceType, sourceRank, destinationType, destinationRank)
-		return {
-			quoteMap: result
-		};
-	}
+	// if (source.droppableId === destination.droppableId) {
+	// 	const reordered = reorder(current, source.index, destination.index);
+	// 	const result = {
+	// 		...quoteMap,
+	// 		[source.droppableId]: reordered
+	// 	};
+	// 	fetchReorderBacklogItem(sourceBackendId, destinationBackendId, sourceType, sourceRank, destinationType, destinationRank)
+	// 	return {
+	// 		quoteMap: result
+	// 	};
+	// }
 
-	// moving to different list
+	// // moving to different list
 
-	// remove from original
-	current.splice(source.index, 1);
-	// insert into next
-	next.splice(destination.index, 0, target);
+	// // remove from original
+	// current.splice(source.index, 1);
+	// // insert into next
+	// next.splice(destination.index, 0, target);
 
-	const result = {
-		...quoteMap,
-		[source.droppableId]: current,
-		[destination.droppableId]: next
-	};
+	// const result = {
+	// 	...quoteMap,
+	// 	[source.droppableId]: current,
+	// 	[destination.droppableId]: next
+	// };
 
-	return {
-		quoteMap: result
-	};
+	// return {
+	// 	backlog: newBacklog,
+	// 	sprints: newSprints
+	// };
 };
 
 export function moveBetween({ list1, list2, source, destination }) {
