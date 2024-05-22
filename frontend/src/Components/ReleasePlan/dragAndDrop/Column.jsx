@@ -62,6 +62,9 @@ const Column = (props) => {
 	const [priority, setPriority] = useState(1)
 
 	const [dialogOpen, setDialogOpen] = useState(false);
+	const [actionDialogOpen, setActionDialogOpen] = useState(false);
+	const [selectedItem, setSelectedItem] = useState('');
+	const [description, setDescription] = useState('');
 
 	const openDialogForNewStory = () => {
 		setDialogOpen(true);
@@ -69,6 +72,21 @@ const Column = (props) => {
 
 	const handleDialogClose = () => {
 		setDialogOpen(false);
+		setActionDialogOpen(false);
+
+	};
+
+	const openDialogForActionItems = () => {
+		setDialogOpen(false);
+		setActionDialogOpen(true);
+	};
+
+	const handleSelectChange = (event) => {
+		setSelectedItem(event.target.value);
+	};
+
+	const handleDescriptionChange = (event) => {
+		setDescription(event.target.value);
 	};
 
 	const handleAddBacklogItem = () => {
@@ -142,14 +160,16 @@ const Column = (props) => {
 						color="primary"
 						value={backlogItemType}
 						exclusive
-						onChange={(e, newType) => setBacklogItemType(newType)}
+						// onChange={(e, newType) => setBacklogItemType(newType)}
+						onChange={(e, newType) => {
+							newType === 'story' ? openDialogForNewStory() : openDialogForActionItems();
+						}}
 						aria-label="User story type"
 						fullWidth
 						sx={{ marginBottom: 2 }}
 					>
 						<ToggleButton value="story">Story</ToggleButton>
-						<ToggleButton value="spike">Spike</ToggleButton>
-						<ToggleButton value="infrastructure">Infrastructure</ToggleButton>
+						<ToggleButton value="action=items">Action Items</ToggleButton>
 					</ToggleButtonGroup>
 
 					<Box display="flex" alignItems="center" gap={1} mb={2}>
@@ -258,6 +278,45 @@ const Column = (props) => {
 					</Button>
 				</DialogActions>
 			</Dialog>
+
+			<Dialog open={actionDialogOpen} onClose={handleDialogClose} maxWidth="sm" fullWidth>
+				<DialogTitle>Add Action Item</DialogTitle>
+				<DialogContent>
+					<FormControl fullWidth margin="dense">
+						<InputLabel id="item-select-label">Item</InputLabel>
+						<Select
+							labelId="item-select-label"
+							id="item-select"
+							label="Item"
+							value={selectedItem}
+							onChange={handleSelectChange}
+							defaultValue=""
+						>
+							<MenuItem value="bug">Bug</MenuItem>
+							<MenuItem value="infrastructure">Infrastructure</MenuItem>
+							<MenuItem value="system-feature">System Feature</MenuItem>
+							<MenuItem value="spike">Spike</MenuItem>
+						</Select>
+					</FormControl>
+					<TextField
+						fullWidth
+						margin="dense"
+						id="action-item-description"
+						label="Description"
+						type="text"
+						variant="outlined"
+						multiline
+						rows={4}
+						value={description}
+						onChange={handleDescriptionChange}
+					/>
+				</DialogContent>
+				<DialogActions>
+					<Button onClick={handleDialogClose}>Cancel</Button>
+					<Button onClick={handleDialogClose}>Create Action Item</Button>
+				</DialogActions>
+			</Dialog>
+
 			<Draggable draggableId={title} index={index} isDragDisabled={true}>
 				{(provided, snapshot) => (
 					<Container ref={provided.innerRef} {...provided.draggableProps}>
