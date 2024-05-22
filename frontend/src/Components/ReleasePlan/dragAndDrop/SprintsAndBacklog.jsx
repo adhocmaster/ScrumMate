@@ -284,6 +284,7 @@ const Board = ({
 										useClone={useClone}
 										sprints={sprints}
 										setSprints={setSprints}
+										setBacklogItems={setBacklogItems}
 										releaseId={releaseId}
 										deleteStory={deleteStory}
 									/>

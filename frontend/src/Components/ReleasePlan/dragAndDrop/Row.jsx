@@ -46,6 +46,7 @@ const Row = (props) => {
 	const sprints = props.sprints;
 	const setSprints = props.setSprints;
 	const deleteStory = props.deleteStory;
+	const setBacklogItems = props.setBacklogItems;
 	const releaseId = props.releaseId;
 	// console.log("rendering row", index)
 	// console.log("quotes", quotes)
@@ -132,7 +133,13 @@ const Row = (props) => {
 			method: "DELETE",
 			credentials: "include",
 			headers: { "Content-Type": "application/json" },
-		}).catch((error) => console.log("error deleting sprint:"));
+		})
+			.then((response) => {
+				response.json().then(jsonResult => {
+					setBacklogItems(jsonResult[1])
+				})
+			})
+			.catch((error) => console.log("error deleting sprint:"));
 		const updatedSprints = sprints.filter((_, i) => index !== i);
 		setSprints(updatedSprints);
 	};
