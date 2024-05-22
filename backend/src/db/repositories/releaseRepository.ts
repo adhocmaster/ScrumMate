@@ -227,6 +227,7 @@ export class ReleaseRepository extends ModelRepository {
 		if (backlogItemListHasUnestimated(releaseWithBacklog.backlog)) {
 			return false
 		}
+
 		return true;
 	}
 

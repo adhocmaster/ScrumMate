@@ -8,62 +8,62 @@ import { Project } from "../../entity/project";
 
 export class BacklogItemRepository extends ModelRepository {
 
-	public async createNewSprintStory(sprintId: number, userTypes: string, functionalityDescription: string, reasoning: string, acceptanceCriteria: string, storyPoints: number, priority: Priority): Promise<Story> {
+	public async createNewSprintStory(sprintId: number, userTypes: string, functionalityDescription: string, reasoning: string, acceptanceCriteria: string, priority: Priority, storyPoints?: number): Promise<Story> {
 		const sprint = await this.sprintSource.lookupSprintById(sprintId)
 		const newStory = new Story()
 		newStory.userTypes = userTypes
 		newStory.functionalityDescription = functionalityDescription
 		newStory.reasoning = reasoning
 		newStory.acceptanceCriteria = acceptanceCriteria
-		newStory.size = storyPoints
 		newStory.priority = priority
 		newStory.sprint = sprint
 		newStory.rank = sprint.backlogItemCount
+		newStory.size = storyPoints
 		await this.backlogSource.save(newStory)
 		sprint.backlogItemCount += 1
 		await this.sprintSource.save(sprint)
 		return newStory
 	}
 
-	public async createNewBacklogStory(releaseId: number, userTypes: string, functionalityDescription: string, reasoning: string, acceptanceCriteria: string, storyPoints: number, priority: Priority): Promise<Story> {
+	public async createNewBacklogStory(releaseId: number, userTypes: string, functionalityDescription: string, reasoning: string, acceptanceCriteria: string, priority: Priority, storyPoints?: number): Promise<Story> {
 		const release = await this.releaseSource.lookupReleaseById(releaseId)
 		const newStory = new Story()
 		newStory.userTypes = userTypes
 		newStory.functionalityDescription = functionalityDescription
 		newStory.reasoning = reasoning
 		newStory.acceptanceCriteria = acceptanceCriteria
-		newStory.size = storyPoints
 		newStory.priority = priority
 		newStory.release = release
 		newStory.rank = release.backlogItemCount
+		newStory.size = storyPoints
 		await this.backlogSource.save(newStory)
 		release.backlogItemCount += 1
 		await this.releaseSource.save(release)
 		return newStory
 	}
 
-	public async createNewSprintAction(sprintId: number, actionType: ActionType, description: string, storyPoints: number): Promise<ActionItem> {
+	public async createNewSprintAction(sprintId: number, actionType: ActionType, description: string, storyPoints?: number): Promise<ActionItem> {
 		const sprint = await this.sprintSource.lookupSprintById(sprintId)
 		const newAction = new ActionItem()
 		newAction.actionType = actionType
 		newAction.description = description
-		newAction.size = storyPoints
 		newAction.sprint = sprint
 		newAction.rank = sprint.backlogItemCount
+		newAction.size = storyPoints
 		await this.backlogSource.save(newAction)
 		sprint.backlogItemCount += 1
 		await this.sprintSource.save(sprint)
 		return newAction
 	}
 
-	public async createNewBacklogAction(releaseId: number, actionType: ActionType, description: string, storyPoints: number): Promise<ActionItem> {
+	public async createNewBacklogAction(releaseId: number, actionType: ActionType, description: string, storyPoints?: number): Promise<ActionItem> {
 		const release = await this.releaseSource.lookupReleaseById(releaseId)
 		const newAction = new ActionItem()
 		newAction.actionType = actionType
 		newAction.description = description
-		newAction.size = storyPoints
 		newAction.release = release
 		newAction.rank = release.backlogItemCount
+		newAction.size = storyPoints
 		await this.backlogSource.save(newAction)
 		release.backlogItemCount += 1
 		await this.releaseSource.save(release)
