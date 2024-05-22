@@ -108,15 +108,14 @@ const Board = ({
 		})
 			.then((response) => response.json())
 			.then((result) => {
-				setSprints((currentItems) => {
-					const updatedItems = [...currentItems];
-					const sprintIndex = updatedItems.findIndex(s => s.todos.some(t => t.id === storyId));
-					if (sprintIndex !== -1) {
-						updatedItems[sprintIndex].todos = result;
-						// updatedItems[sprintIndex].todos = updatedItems[sprintIndex].todos.filter(todo => todo.id !== storyId)
-					}
-					return updatedItems;
-				});
+				if (result[0] === 0) {
+					setBacklogItems(result[1]);
+				} else {
+					const sprintsCopy = [...sprints];
+					const sprintIndex = result[0] - 1;
+					sprintsCopy[sprintIndex].todos = result[1];
+					setSprints(sprintsCopy);
+				}
 			}).catch((error) => console.log("error deleting story"));
 	};
 

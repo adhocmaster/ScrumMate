@@ -273,9 +273,10 @@ describe("Release API tests", () => {
 			.expect(200)
 			.then((res) => {
 				expect(res.body).toBeDefined();
-				expect(res.body.length).toBe(1)
-				expect(res.body[0].id).toBe(newStoryId)
-				expect(res.body[0].rank).toBe(0)
+				expect(res.body.length).toBe(2)
+				expect(res.body[0]).toBe(1)
+				expect(res.body[1][0].id).toBe(newStoryId)
+				expect(res.body[1][0].rank).toBe(0)
 			});
 	});
 
@@ -426,10 +427,12 @@ describe("Release API tests", () => {
 			.then((res) => {
 				expect(res.body).toBeDefined();
 				expect(res.body.length).toBe(2)
-				expect(res.body[0].id).toBe(newStoryId)
-				expect(res.body[0].rank).toBe(0)
-				expect(res.body[1].id).toBe(action1Id)
-				expect(res.body[1].rank).toBe(1)
+				expect(res.body[0]).toBe(1)
+				expect(res.body[1].length).toBe(2)
+				expect(res.body[1][0].id).toBe(newStoryId)
+				expect(res.body[1][0].rank).toBe(0)
+				expect(res.body[1][1].id).toBe(action1Id)
+				expect(res.body[1][1].rank).toBe(1)
 			});
 	});
 });
