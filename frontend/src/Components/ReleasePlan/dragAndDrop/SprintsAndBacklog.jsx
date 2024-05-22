@@ -221,9 +221,9 @@ const Board = ({
 								</Grid>
 								{sprints.map((sprint, index) => (
 									<Row
-										key={sprint.sprintNumber}
+										key={`${sprint.sprintNumber}`}
 										index={index}
-										title={sprint.sprintNumber}
+										title={`${sprint.sprintNumber}`}
 										quotes={sprint.todos}
 										isScrollable={withScrollableColumns}
 										isCombineEnabled={isCombineEnabled}

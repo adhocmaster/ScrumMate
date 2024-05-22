@@ -15,7 +15,13 @@ async function fetchReorderBacklogItem(
 	sourceType,
 	sourceRank,
 	destinationType,
-	destinationRank
+	destinationRank,
+	sprints,
+	setSprints,
+	backlogItems,
+	setBacklogItems,
+	sourceSprintNumber,
+	destinationSprintNumber,
 ) {
 	fetch(`http://localhost:8080/api/backlogItem/${sourceId}/${destinationId}/reorder`, {
 		method: "POST",
@@ -30,20 +36,60 @@ async function fetchReorderBacklogItem(
 			destinationRank: destinationRank,
 		}),
 	})
-		.then(() => {
-			// console.log("done")
+		.then((response) => {
+			if (response.status !== 200) {
+				console.log("Drag and drop error")
+				return;
+			}
+			// console.log("Drag and drop success")
+			return response.json();
 		})
-		// .then((response) => response.json())
-		// .then((data) => {
-		// 	console.log(data);
-		// 	setItems(data);
-		// })
+		.then((data) => {
+			// console.log("going 0");
+			console.log(data);
+			const newSourceList = data[0];
+			const newDestinationList = data[1];
+			// console.log("going 0.5");
+			// console.log(sprints)
+			const sprintsCopy = [...sprints];
+			// console.log(sprintsCopy)
+			// console.log("going 0.6");
+			// console.log(backlogItems)
+			var backlogCopy = [...backlogItems];
+			// console.log("going 1");
+
+			if (sourceSprintNumber === 0) {
+				backlogCopy = newSourceList;
+			} else {
+				const sourceSprintIndex = sourceSprintNumber - 1;
+				// console.log("going 1.5");
+				// console.log(sourceSprintNumber);
+				// console.log(sourceSprintIndex);
+				sprintsCopy[sourceSprintIndex].todos = newSourceList;
+				// console.log("going 1.6");
+			}
+			// console.log("going 2");
+
+			if (destinationSprintNumber === 0) {
+				backlogCopy = newDestinationList;
+			} else {
+				const destinationSprintIndex = destinationSprintNumber - 1;
+				sprintsCopy[destinationSprintIndex].todos = newDestinationList;
+			}
+
+			// console.log("backlogCopy is")
+			// console.log(backlogCopy)
+			// console.log("sprintsCopy is")
+			// console.log(sprintsCopy)
+			setSprints(sprintsCopy);
+			setBacklogItems(backlogCopy);
+		})
 		.catch((error) => { });
 }
 
-export const reorderQuoteMap = ({ sprints, setSprints, backlog, setBacklogItems, source, destination, releaseId }) => {
-	console.log("source", source)
-	console.log("destination", destination)
+export const reorderQuoteMap = ({ sprints, setSprints, backlogItems, setBacklogItems, source, destination, releaseId }) => {
+	// console.log("source", source)
+	// console.log("destination", destination)
 
 	// droppableId is "0" if its backlog, else string(sprintNumber)
 	// const currentList = source.droppableId === "0" ? [...backlog] : [...sprints[source.droppableId].todos];
@@ -55,17 +101,28 @@ export const reorderQuoteMap = ({ sprints, setSprints, backlog, setBacklogItems,
 	const sourceType = source.droppableId === '0' ? "backlog" : "sprint";
 	const destinationType = destination.droppableId === '0' ? "backlog" : "sprint";
 	var sourceBackendId, destinationBackendId;
+	var sourceSprintNumber, destinationSprintNumber; // 0 if backlog, else sprint number
 	if (sourceType === "sprint") {
-		sourceBackendId = sprints.find(sprint => `${sprint.sprintNumber}` === source.droppableId).id;
+		const sourceSprint = sprints.find(sprint => `${sprint.sprintNumber}` === source.droppableId);
+		sourceBackendId = sourceSprint.id;
+		sourceSprintNumber = sourceSprint.sprintNumber;
 	} else {
 		sourceBackendId = releaseId;
+		sourceSprintNumber = 0;
 	}
 
 	if (destinationType === "sprint") {
-		destinationBackendId = sprints.find(sprint => `${sprint.sprintNumber}` === destination.droppableId).id;
+		const destinationSprint = sprints.find(sprint => `${sprint.sprintNumber}` === destination.droppableId);
+		destinationBackendId = destinationSprint.id;
+		destinationSprintNumber = destinationSprint.sprintNumber;
 	} else {
 		destinationBackendId = releaseId;
+		destinationSprintNumber = 0;
 	}
+
+	// console.log('fuckin backlog is ', backlogItems)
+	// console.log('fuckin sourceSprintNumber is ', sourceSprintNumber)
+	// console.log('fuckin destinationSprintNumber is ', destinationSprintNumber)
 
 	// console.log("sourceBackendId", sourceBackendId)
 	// console.log("sourceRank", sourceRank)
@@ -74,7 +131,7 @@ export const reorderQuoteMap = ({ sprints, setSprints, backlog, setBacklogItems,
 	// console.log("destRank", destinationRank)
 	// console.log("destinationType", destinationType)
 
-	fetchReorderBacklogItem(sourceBackendId, destinationBackendId, sourceType, sourceRank, destinationType, destinationRank, setSprints, setBacklogItems)
+	fetchReorderBacklogItem(sourceBackendId, destinationBackendId, sourceType, sourceRank, destinationType, destinationRank, sprints, setSprints, backlogItems, setBacklogItems, sourceSprintNumber, destinationSprintNumber)
 
 	// moving to same list
 	// if (source.droppableId === destination.droppableId) {
