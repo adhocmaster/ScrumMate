@@ -18,7 +18,7 @@ export class BacklogItemRepository extends ModelRepository {
 		newStory.priority = priority
 		newStory.sprint = sprint
 		newStory.rank = sprint.backlogItemCount
-		newStory.size = storyPoints
+		newStory.size = storyPoints ?? null;
 		await this.backlogSource.save(newStory)
 		sprint.backlogItemCount += 1
 		await this.sprintSource.save(sprint)
@@ -35,7 +35,7 @@ export class BacklogItemRepository extends ModelRepository {
 		newStory.priority = priority
 		newStory.release = release
 		newStory.rank = release.backlogItemCount
-		newStory.size = storyPoints
+		newStory.size = storyPoints ?? null;
 		await this.backlogSource.save(newStory)
 		release.backlogItemCount += 1
 		await this.releaseSource.save(release)
@@ -49,7 +49,7 @@ export class BacklogItemRepository extends ModelRepository {
 		newAction.description = description
 		newAction.sprint = sprint
 		newAction.rank = sprint.backlogItemCount
-		newAction.size = storyPoints
+		newAction.size = storyPoints ?? null;
 		await this.backlogSource.save(newAction)
 		sprint.backlogItemCount += 1
 		await this.sprintSource.save(sprint)
@@ -63,7 +63,7 @@ export class BacklogItemRepository extends ModelRepository {
 		newAction.description = description
 		newAction.release = release
 		newAction.rank = release.backlogItemCount
-		newAction.size = storyPoints
+		newAction.size = storyPoints ?? null;
 		await this.backlogSource.save(newAction)
 		release.backlogItemCount += 1
 		await this.releaseSource.save(release)

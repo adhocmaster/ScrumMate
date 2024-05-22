@@ -204,27 +204,29 @@ export class ReleaseRepository extends ModelRepository {
 		return [unsignedMembers, releaseWithSignatures.signatures, releaseWithSignatures.fullySigned];
 	}
 
-	public async getSigningCondition(releaseId: number): Promise<boolean> {
-		function backlogItemListHasUnestimated(backlogItemList: BacklogItem[]) {
-			for (const backlogItem of backlogItemList) {
-				if (!backlogItem.size) {
-					return true;
-				}
+	private backlogItemListHasUnestimated(backlogItemList: BacklogItem[]) {
+		for (const backlogItem of backlogItemList) {
+			if (!backlogItem.size) {
+				return true;
 			}
-			return false;
 		}
+		return false;
+	}
 
-		function sprintAttributesSet(sprint: Sprint) {
-			return !sprint.startDate || !sprint.endDate || !sprint.scrumMaster;
-		}
+	private sprintAttributesSet(sprint: Sprint) {
+		return !sprint.startDate || !sprint.endDate || !sprint.scrumMaster;
+	}
 
+	public async getSigningCondition(releaseId: number): Promise<boolean> {
 		const releaseWithBacklog = await this.fetchReleaseWithBacklog(releaseId);
+
 		for (const sprint of releaseWithBacklog.sprints) {
-			if (sprintAttributesSet(sprint) || backlogItemListHasUnestimated(sprint.todos)) {
+			const sprintWithScrumMaster = await this.sprintSource.lookupSprintByIdWithScrumMaster(sprint.id);
+			if (this.sprintAttributesSet(sprintWithScrumMaster) || this.backlogItemListHasUnestimated(sprint.todos)) {
 				return false;
 			}
 		}
-		if (backlogItemListHasUnestimated(releaseWithBacklog.backlog)) {
+		if (this.backlogItemListHasUnestimated(releaseWithBacklog.backlog)) {
 			return false
 		}
 

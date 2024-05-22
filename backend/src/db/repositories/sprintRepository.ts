@@ -8,11 +8,12 @@ export class SprintRepository extends ModelRepository {
 		const release = await this.releaseSource.lookupReleaseById(releaseId)
 		const newSprint = new Sprint()
 		newSprint.sprintNumber = sprintNumber
-		newSprint.startDate = startDate
-		newSprint.endDate = endDate
+		newSprint.startDate = startDate ?? null
+		newSprint.endDate = endDate ?? null
 		newSprint.goal = goal ?? ""
 		newSprint.release = release
 		newSprint.backlogItemCount = 0
+		newSprint.scrumMaster = null
 		await this.sprintSource.save(newSprint)
 		return newSprint
 	}
