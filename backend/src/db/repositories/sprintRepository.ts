@@ -17,12 +17,18 @@ export class SprintRepository extends ModelRepository {
 		return newSprint
 	}
 
-	public async updateSprint(sprintId: number, sprintNumber?: number, startDate?: Date, endDate?: Date, goal?: string): Promise<Sprint> {
-		const sprint = await this.sprintSource.lookupSprintById(sprintId)
+	public async updateSprint(sprintId: number, sprintNumber?: number, startDate?: Date, endDate?: Date, goal?: string, scrumMasterId?: number): Promise<Sprint> {
+		const sprint = await this.sprintSource.lookupSprintById(sprintId);
 		sprint.sprintNumber = sprintNumber ?? sprint.sprintNumber
 		sprint.startDate = startDate ?? sprint.startDate
 		sprint.endDate = endDate ?? sprint.endDate
 		sprint.goal = goal ?? sprint.goal
+
+		if (scrumMasterId) {
+			const newScrumMaster = await this.userSource.lookupUserById(scrumMasterId);
+			sprint.scrumMaster = newScrumMaster;
+		}
+
 		await this.sprintSource.save(sprint)
 		return sprint
 	}
