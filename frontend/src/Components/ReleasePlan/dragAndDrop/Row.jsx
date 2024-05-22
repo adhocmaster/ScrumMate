@@ -136,12 +136,11 @@ const Row = (props) => {
 		})
 			.then((response) => {
 				response.json().then(jsonResult => {
+					setSprints(jsonResult[0])
 					setBacklogItems(jsonResult[1])
 				})
 			})
 			.catch((error) => console.log("error deleting sprint:"));
-		const updatedSprints = sprints.filter((_, i) => index !== i);
-		setSprints(updatedSprints);
 	};
 
 	return (

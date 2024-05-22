@@ -121,7 +121,6 @@ const Board = ({
 	};
 
 	function createNewSprints() {
-		console.log("creating new");
 		var options = {
 			method: "POST",
 			credentials: "include",
@@ -134,13 +133,10 @@ const Board = ({
 		fetch(`http://localhost:8080/api/release/${releaseId}/sprint`, options)
 			.then((result) => {
 				if (result.status === 200) {
-					console.log(result);
+					return result.json();
 				}
-				console.log(result);
-				return result.json();
 			})
 			.then((response) => {
-				console.log(response);
 				response = {
 					...response,
 					todos: [],
