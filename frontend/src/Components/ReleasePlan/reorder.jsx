@@ -66,7 +66,6 @@ export const reorderQuoteMap = ({ quoteMap, source, destination, sprints, releas
 		destinationBackendId = sprints.find(sprint => `${sprint.sprintNumber}` === destination.droppableId).id;
 	} else {
 		destinationBackendId = releaseId;
-
 	}
 
 	// console.log("sourceBackendId", sourceBackendId)

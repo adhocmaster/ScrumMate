@@ -90,7 +90,6 @@ const Board = ({
 		})
 			.then((response) => response.json())
 			.then((data) => {
-				console.log(data);
 				setItems(data);
 			})
 			.catch((error) => { });
@@ -148,27 +147,6 @@ const Board = ({
 	}
 
 	const onDragEnd = (result) => {
-		if (result.combine) {
-			if (result.type === 'COLUMN') {
-				const shallow = [...ordered];
-				shallow.splice(result.source.index, 1);
-				setOrdered(shallow);
-				return;
-			}
-
-			const column = columns[result.source.droppableId];
-			const withQuoteRemoved = [...column];
-
-			withQuoteRemoved.splice(result.source.index, 1);
-
-			const orderedColumns = {
-				...columns,
-				[result.source.droppableId]: withQuoteRemoved,
-			};
-			setColumns(orderedColumns);
-			return;
-		}
-
 		// dropped nowhere
 		if (!result.destination) {
 			return;
