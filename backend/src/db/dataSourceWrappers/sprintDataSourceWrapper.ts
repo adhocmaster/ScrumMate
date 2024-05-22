@@ -41,24 +41,6 @@ export class SprintDataSourceWrapper extends ModelDataSourceWrapper {
 		return maybeSprint[0]
 	}
 
-	public async moveSprintTodosToBacklog(releaseId: number, sprintId: number): Promise<void> {
-		const maybeSprintWithTodos = await this.lookupSprintByIdWithTodos(sprintId);
-		const maybeRelease = await this.dataSource.getRepository(Release).find({
-			where: { id: releaseId },
-			relations: {
-				sprints: true,
-				backlog: true
-			}
-		})
-		if (!maybeRelease || maybeRelease.length === 0) {
-			throw new NotFoundError(`Release with id ${releaseId} not found`)
-		}
-		maybeRelease[0].backlog = [...maybeSprintWithTodos.todos, ...maybeRelease[0].backlog]
-		await this.save(maybeRelease)
-		maybeSprintWithTodos.todos = []
-		await this.save(maybeSprintWithTodos)
-	}
-
 	public async getSprintsWithBacklog(releaseId: number): Promise<Sprint[]> {
 		const sprints = await this.dataSource.getRepository(Sprint).find({
 			relations: {

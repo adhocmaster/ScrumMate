@@ -39,10 +39,6 @@ export class SprintRepository extends ModelRepository {
 		return await this.sprintSource.lookupSprintByIdWithTodos(id);
 	}
 
-	public async moveSprintTodosToBacklog(releaseId: number, sprintId: number): Promise<void> {
-		return await this.sprintSource.moveSprintTodosToBacklog(releaseId, sprintId);
-	}
-
 	public async getSprintsWithBacklog(releaseId: number): Promise<Sprint[]> {
 		return await this.sprintSource.getSprintsWithBacklog(releaseId);
 	}

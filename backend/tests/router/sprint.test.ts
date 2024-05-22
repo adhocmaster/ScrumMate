@@ -256,8 +256,9 @@ describe("Sprint API tests", () => {
 			.then((res) => {
 				expect(res.body).toBeDefined();
 				expect(res.body.length).toBe(2);
-				expect(res.body[0].id).toBe(sprint3Id);
-				expect(res.body[1].id).toBe(sprint2Id);
+				expect(res.body[0][0].id).toBe(sprint3Id);
+				expect(res.body[0][1].id).toBe(sprint2Id);
+				expect(res.body[1].length).toBe(0);
 			});
 	});
 
@@ -341,8 +342,10 @@ describe("Sprint API tests", () => {
 			.expect(200)
 			.then((res) => {
 				expect(res.body).toBeDefined();
-				expect(res.body.length).toBe(1);
-				expect(res.body[0].id).toBe(sprint2Id);
+				expect(res.body.length).toBe(2);
+				expect(res.body[0][0].id).toBe(sprint2Id);
+				expect(res.body[1].length).toBe(1);
+				expect(res.body[1][0].id).toBe(backlogId);
 			});
 	});
 

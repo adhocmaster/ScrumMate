@@ -120,6 +120,38 @@ const Board = ({
 			}).catch((error) => console.log("error deleting story"));
 	};
 
+	function createNewSprints() {
+		console.log("creating new");
+		var options = {
+			method: "POST",
+			credentials: "include",
+			headers: {
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify({ sprintNumber: sprints.length + 1 }),
+		};
+
+		fetch(`http://localhost:8080/api/release/${releaseId}/sprint`, options)
+			.then((result) => {
+				if (result.status === 200) {
+					console.log(result);
+				}
+				console.log(result);
+				return result.json();
+			})
+			.then((response) => {
+				console.log(response);
+				response = {
+					...response,
+					todos: [],
+				}
+				setSprints((prevSprints) => [...prevSprints, response]);
+			})
+			.catch((error) => {
+				console.error("Error:", error);
+			});
+	}
+
 	const onDragEnd = (result) => {
 		if (result.combine) {
 			if (result.type === 'COLUMN') {
@@ -179,38 +211,6 @@ const Board = ({
 
 		setColumns(data.quoteMap);
 	};
-
-	function createNewSprints() {
-		console.log("creating new");
-		var options = {
-			method: "POST",
-			credentials: "include",
-			headers: {
-				"Content-Type": "application/json",
-			},
-			body: JSON.stringify({ sprintNumber: sprints.length + 1 }),
-		};
-
-		fetch(`http://localhost:8080/api/release/${releaseId}/sprint`, options)
-			.then((result) => {
-				if (result.status === 200) {
-					console.log(result);
-				}
-				console.log(result);
-				return result.json();
-			})
-			.then((response) => {
-				console.log(response);
-				response = {
-					...response,
-					todos: [],
-				}
-				setSprints((prevSprints) => [...prevSprints, response]);
-			})
-			.catch((error) => {
-				console.error("Error:", error);
-			});
-	}
 
 	return (
 		<>
