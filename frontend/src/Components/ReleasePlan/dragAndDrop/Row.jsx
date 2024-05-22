@@ -39,7 +39,15 @@ const Header = styled.div`
   width: 100;
 `;
 
+
 const Row = (props) => {
+	const ActionTypeEnum = {
+		BUG: 1,
+		SYSTEMFEATURE: 2,
+		SPIKE: 3,
+		INFRASTRUCTURE: 4,
+	}
+
 	const title = props.title;
 	const quotes = props.quotes;
 	const index = props.index;
@@ -54,8 +62,8 @@ const Row = (props) => {
 	const [dialogOpen, setDialogOpen] = useState(false);
 	const [actionDialogOpen, setActionDialogOpen] = useState(false);
 
-    const [selectedItem, setSelectedItem] = useState('');
-    const [description, setDescription] = useState('');
+	const [selectedItem, setSelectedItem] = useState('');
+	const [description, setDescription] = useState('');
 
 	const [backlogItemType, setBacklogItemType] = useState('story');
 	const [role, setRole] = useState('');
@@ -83,17 +91,19 @@ const Row = (props) => {
 	};
 
 	const openDialogForActionItems = () => {
-        setDialogOpen(false);
-        setActionDialogOpen(true);
-    };
+		setSelectedItem('');
+		setDescription('');
+		setDialogOpen(false);
+		setActionDialogOpen(true);
+	};
 
-    const handleSelectChange = (event) => {
-        setSelectedItem(event.target.value);
-    };
+	const handleSelectChange = (event) => {
+		setSelectedItem(event.target.value);
+	};
 
-    const handleDescriptionChange = (event) => {
-        setDescription(event.target.value);
-    };
+	const handleDescriptionChange = (event) => {
+		setDescription(event.target.value);
+	};
 
 	const handleCreate = (sprintId) => {
 		const newStory = {
@@ -108,6 +118,52 @@ const Row = (props) => {
 		saveNewStory(newStory, sprintId);
 		setDialogOpen(false);
 	};
+
+	const handleCreateActionItem = (sprintId) => {
+		const actionItem = {
+			selectedItem,
+			description,
+		};
+		saveNewActionItem(actionItem, sprintId);
+		openDialogForActionItems(false);
+	}
+
+	function saveNewActionItem(actionItem, sprintId) {
+		var options = {
+			method: "post",
+			credentials: "include",
+			headers: {
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify({
+				actionType: actionItem.selectedItem,
+				description: actionItem.description,
+				storyPoints: 0,
+			}),
+		};
+
+		try {
+			fetch(
+				`http://localhost:8080/api/sprint/${sprintId}/action`,
+				options
+			).then((result) => {
+				if (result.status !== 200) {
+					console.log("error", result);
+				}
+				result.json().then((jsonResult) => {
+					console.log(jsonResult)
+					const sprintsCopy = [...sprints];
+					const indexOfSprint = sprintsCopy.findIndex((sprint) => sprint.id === sprintId);
+					sprintsCopy[indexOfSprint].todos.push(jsonResult)
+					setSprints(sprintsCopy);
+				})
+			});
+		} catch {
+			return null;
+		}
+	}
+
+
 
 	function saveNewStory(newStory, sprintId) {
 		var options = {
@@ -212,8 +268,8 @@ const Row = (props) => {
 													exclusive
 													// onChange={(e, newType) => setBacklogItemType(newType)}
 													onChange={(e, newType) => {
-                                                        newType === 'story' ? openDialogForNewStory() : openDialogForActionItems();
-                                                    }}
+														newType === 'story' ? openDialogForNewStory() : openDialogForActionItems();
+													}}
 													aria-label="User story type"
 													fullWidth
 													sx={{ marginBottom: 2 }}
@@ -337,42 +393,51 @@ const Row = (props) => {
 										</Dialog>
 
 										<Dialog open={actionDialogOpen} onClose={handleDialogClose} maxWidth="sm" fullWidth>
-                                            <DialogTitle>Add Action Item</DialogTitle>
-                                            <DialogContent>
-                                                <FormControl fullWidth margin="dense">
-                                                    <InputLabel id="item-select-label">Item</InputLabel>
-                                                    <Select
-                                                        labelId="item-select-label"
-                                                        id="item-select"
-                                                        label="Item"
-                                                        value={selectedItem} 
-                                                        onChange={handleSelectChange} 
-                                                        defaultValue=""
-                                                    >
-                                                        <MenuItem value="bug">Bug</MenuItem>
-                                                        <MenuItem value="infrastructure">Infrastructure</MenuItem>
-                                                        <MenuItem value="system-feature">System Feature</MenuItem>
-                                                        <MenuItem value="spike">Spike</MenuItem>
-                                                    </Select>
-                                                </FormControl>
-                                                <TextField
-                                                    fullWidth
-                                                    margin="dense"
-                                                    id="action-item-description"
-                                                    label="Description"
-                                                    type="text"
-                                                    variant="outlined"
-                                                    multiline
-                                                    rows={4}
-                                                    value={description}
-                                                    onChange={handleDescriptionChange}
-                                                />
-                                            </DialogContent>
-                                            <DialogActions>
-                                                <Button onClick={handleDialogClose}>Cancel</Button>
-                                                <Button onClick={handleDialogClose}>Create Action Item</Button>
-                                            </DialogActions>
-                                        </Dialog>
+											<DialogTitle>Add Action Item</DialogTitle>
+											<DialogContent>
+												<FormControl fullWidth margin="dense">
+													<InputLabel id="item-select-label">Item</InputLabel>
+													<Select
+														labelId="item-select-label"
+														id="item-select"
+														label="Item"
+														value={selectedItem}
+														onChange={handleSelectChange}
+														defaultValue=""
+													>
+
+
+														<MenuItem value={ActionTypeEnum.BUG}>Bug</MenuItem>
+														<MenuItem value={ActionTypeEnum.INFRASTRUCTURE}>Infrastructure</MenuItem>
+														<MenuItem value={ActionTypeEnum.SYSTEMFEATURE}>System Feature</MenuItem>
+														<MenuItem value={ActionTypeEnum.SPIKE}>Spike</MenuItem>
+													</Select>
+												</FormControl>
+												<TextField
+													fullWidth
+													margin="dense"
+													id="action-item-description"
+													label="Description"
+													type="text"
+													variant="outlined"
+													multiline
+													rows={4}
+													value={description}
+													onChange={handleDescriptionChange}
+												/>
+											</DialogContent>
+											<DialogActions>
+												<Button onClick={handleDialogClose}>Cancel</Button>
+												<Button onClick={() => {
+													const sprintId = sprints[index].id;
+													handleCreateActionItem(sprintId);
+												}}
+													color="primary"
+												>
+													Create Action Item
+												</Button>
+											</DialogActions>
+										</Dialog>
 
 										<Typography sx={{ marginBottom: 2 }} fontSize={14}>
 											{quotes.reduce((accumulator, todo) => accumulator + todo.size, 0)} SP

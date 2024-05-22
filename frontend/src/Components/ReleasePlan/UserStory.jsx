@@ -346,6 +346,8 @@ const UserStory = ({ storyObject, deleteFunction, sprints, setSprints, sprintNum
 							hyphens: "auto",
 						}}
 					>
+						//action items
+						{(storyObject.name === 'ActionItem')}
 						{/* {storyObject.id}{' '} */}
 						{
 							showAcceptanceCriteria ?
