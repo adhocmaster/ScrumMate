@@ -139,10 +139,25 @@ export class ReleaseRepository extends ModelRepository {
 		return sprints;
 	}
 
-	/// return new list sorted by ascending sprint number
-	public async removeSprintFromRelease(sprintId: number): Promise<Sprint[]> {
+	public async moveSprintTodosToBacklog(releaseId: number, sprintId: number): Promise<BacklogItem[]> {
+		const sprintWithTodos = await this.sprintSource.lookupSprintByIdWithTodos(sprintId);
+		sprintWithTodos.todos.sort((a, b) => a.rank - b.rank);
+		const releaseWithBacklog = await this.releaseSource.fetchReleaseWithBacklog(releaseId);
+		releaseWithBacklog.backlog = sprintWithTodos.todos.concat(releaseWithBacklog.backlog);
+		releaseWithBacklog.backlog.forEach((item, index) => item.rank = index);
+		for (const backlogItem of releaseWithBacklog.backlog) {
+			await this.backlogSource.save(backlogItem);
+		}
+		await this.releaseSource.save(releaseWithBacklog);
+		sprintWithTodos.todos = [];
+		await this.sprintSource.save(sprintWithTodos);
+		return releaseWithBacklog.backlog;
+	}
+
+	/// return new list sorted by ascending sprint number, and the new bakclog
+	public async removeSprintFromRelease(sprintId: number): Promise<[Sprint[], BacklogItem[]]> {
 		const sprintWithRelease = await this.sprintSource.lookupSprintByIdWithRelease(sprintId)
-		await this.sprintSource.moveSprintTodosToBacklog(sprintWithRelease.release.id, sprintId)
+		const newProductBacklog = await this.moveSprintTodosToBacklog(sprintWithRelease.release.id, sprintId)
 		await this.sprintSource.deleteSprint(sprintId)
 		const releaseWithSprints = await this.releaseSource.fetchReleaseWithSprints(sprintWithRelease.release.id)
 		const sprintIndexPairs = releaseWithSprints.sprints.map((sprint, index) => ({ sprint, index }))
@@ -151,7 +166,7 @@ export class ReleaseRepository extends ModelRepository {
 			await this.sprintSource.save(sprint)
 		}
 		await this.releaseSource.save(releaseWithSprints)
-		return releaseWithSprints.sprints;
+		return [releaseWithSprints.sprints, newProductBacklog];
 	}
 
 	public async toggleSigning(userId: number, releaseId: number): Promise<(User[] | boolean)[]> {

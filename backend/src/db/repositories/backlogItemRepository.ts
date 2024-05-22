@@ -182,7 +182,7 @@ export class BacklogItemRepository extends ModelRepository {
 		backlogItemWithParent.release = parentRelease;
 	}
 
-	public async deleteBacklogItem(backlogItemId: number): Promise<BacklogItem[]> {
+	public async deleteBacklogItem(backlogItemId: number): Promise<[number, BacklogItem[]]> {
 		const backlogItem = await this.backlogSource.fetchBacklogWithParent(backlogItemId);
 		await this.moveBacklogItemToDeletedList(backlogItem);
 		// await this.backlogSource.deleteBacklogItem(backlogItemId);
@@ -197,7 +197,7 @@ export class BacklogItemRepository extends ModelRepository {
 			}
 			sprint.backlogItemCount -= 1;
 			await this.sprintSource.save(sprint);
-			return sprint.todos;
+			return [sprint.sprintNumber, sprint.todos];
 		} else {
 			// backlog is parent
 			const release = await this.releaseSource.fetchReleaseWithBacklog(backlogItem.release.id);
@@ -208,7 +208,7 @@ export class BacklogItemRepository extends ModelRepository {
 			}
 			release.backlogItemCount -= 1;
 			await this.releaseSource.save(release);
-			return release.backlog
+			return [0, release.backlog]
 		}
 	}
 

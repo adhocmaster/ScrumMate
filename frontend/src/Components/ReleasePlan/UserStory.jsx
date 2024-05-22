@@ -116,6 +116,7 @@ const UserStory = ({ storyObject, deleteFunction, sprints, setSprints, sprintNum
 		}
 		if (sprints) {
 			var sprintIndex = pokerSprintNumberBuffer - 1;
+			console.log(sprintIndex)
 			if (storyNumberBuffer === sprints[sprintIndex].todos.length) {
 				return // out of backlog items this sprint
 			}
@@ -151,6 +152,7 @@ const UserStory = ({ storyObject, deleteFunction, sprints, setSprints, sprintNum
 
 	const handleDelete = () => {
 		handleEditDialogClose();
+		console.log(`deleting ${storyObject.id}`)
 		deleteFunction(storyObject.id)
 	};
 
@@ -203,7 +205,6 @@ const UserStory = ({ storyObject, deleteFunction, sprints, setSprints, sprintNum
 		const sprintIndex = sprintsCopy.findIndex(sprint => sprint.sprintNumber === sprintNumber);
 		const storyIndex = sprintsCopy[sprintIndex].todos.findIndex(story => story.id === storyId);
 		sprintsCopy[sprintIndex].todos[storyIndex] = { ...sprintsCopy[sprintIndex].todos[storyIndex], ...newStoryObj };
-		console.log(sprintsCopy)
 		setSprints(sprintsCopy);
 	}
 
@@ -345,6 +346,7 @@ const UserStory = ({ storyObject, deleteFunction, sprints, setSprints, sprintNum
 							hyphens: "auto",
 						}}
 					>
+						{/* {storyObject.id}{' '} */}
 						{
 							showAcceptanceCriteria ?
 								<>

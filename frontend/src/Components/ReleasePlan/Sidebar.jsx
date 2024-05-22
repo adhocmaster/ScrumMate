@@ -190,7 +190,7 @@ const Sidebar = ({ open, toggleDrawer, projectId, itemClick, setLockPage }) => {
 						key={index}
 						sx={{ backgroundColor: selected === index ? 'lightgray' : 'white', }}
 					>
-						<Signing releaseId={revision.id} projectId={projectId} setLockPage={setLockPage} />
+						<Signing key={index} releaseId={revision.id} projectId={projectId} setLockPage={setLockPage} />
 						<Typography fontSize={14}>
 							{`${revision.revision} ${revision.revisionDate}`}
 						</Typography>
