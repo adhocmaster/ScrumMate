@@ -24,9 +24,6 @@ const Board = ({
 	withScrollableColumns,
 	releaseId,
 }) => {
-	const [columns, setColumns] = useState({});
-	const [ordered, setOrdered] = useState([]);
-
 	const [backlogItems, setBacklogItems] = useState([]); // copy this into the first index of columns and ordered
 
 	function fetchBacklog() {
@@ -53,26 +50,6 @@ const Board = ({
 	useEffect(() => {
 		fetchBacklog();
 	}, [releaseId]);
-
-	useEffect(() => {
-		// console.log('firing useeffect')
-		// console.log(sprints)
-		const sprintListObject = sprints.reduce((accumulator, sprint) => ({ ...accumulator, [sprint.sprintNumber]: sprint.todos }), {});
-		const backlogAndSprints = {
-			0: backlogItems,
-			...sprintListObject,
-		}
-		// console.log("backlogAndSprints")
-		// console.log(backlogAndSprints)
-		setColumns(backlogAndSprints);
-		setOrdered(Object.keys(backlogAndSprints));
-		// console.log(Object.keys(backlogAndSprints))
-		// console.log(Object.keys(backlogAndSprints)[0])
-		// console.log([Object.keys(backlogAndSprints)[0]])
-		// console.log(backlogAndSprints[Object.keys(backlogAndSprints)[0]])
-		// console.log(columns)
-		// console.log(ordered)
-	}, [sprints, backlogItems]);
 
 	async function fetchReorderSprints(
 		releaseId,
@@ -165,9 +142,9 @@ const Board = ({
 
 		// reordering column
 		if (result.type === 'COLUMN') {
-			const reorderedorder = reorder(ordered, source.index, destination.index);
+			const reorderedSprints = reorder(sprints, source.index, destination.index);
 
-			setOrdered(reorderedorder);
+			setSprints(reorderedSprints);
 
 			fetchReorderSprints(releaseId, source.index, destination.index, setSprints);
 
