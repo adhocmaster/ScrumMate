@@ -61,6 +61,6 @@ export const deleteSprint = async (req: express.Request, res: express.Response) 
 	const db = Database.getInstance();
 	const { sprintId } = req.params;
 	verifyParameters(sprintId);
-	const newSprintList = await db.getReleaseRepository.removeSprintFromRelease(parseInt(sprintId));
-	return res.json(newSprintList);
+	const [newSprintLists, newBacklog] = await db.getReleaseRepository.removeSprintFromRelease(parseInt(sprintId));
+	return res.json([newSprintLists, newBacklog]);
 }

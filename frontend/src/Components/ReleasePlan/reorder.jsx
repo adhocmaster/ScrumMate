@@ -96,28 +96,46 @@ export const reorderQuoteMap = ({ sprints, setSprints, backlogItems, setBacklogI
 	// const nextList = destination.droppableId === "0" ? [...backlog] : [...sprints[destination.droppableId].todos];
 	// const itemToMove = currentList[source.index];
 
+	const sprintsCopy = [...sprints]
+	const backlogItemsCopy = [...backlogItems]
+
 	const sourceRank = source.index;
 	const destinationRank = destination.index;
+
 	const sourceType = source.droppableId === '0' ? "backlog" : "sprint";
 	const destinationType = destination.droppableId === '0' ? "backlog" : "sprint";
+
 	var sourceBackendId, destinationBackendId;
 	var sourceSprintNumber, destinationSprintNumber; // 0 if backlog, else sprint number
+	var removedItem;
 	if (sourceType === "sprint") {
-		const sourceSprint = sprints.find(sprint => `${sprint.sprintNumber}` === source.droppableId);
+		const sprintIndex = parseInt(source.droppableId) - 1;
+		const sourceSprint = sprints[sprintIndex];
 		sourceBackendId = sourceSprint.id;
 		sourceSprintNumber = sourceSprint.sprintNumber;
+
+		const [removed] = sprintsCopy[sprintIndex].todos.splice(sourceRank, 1);
+		removedItem = removed;
 	} else {
 		sourceBackendId = releaseId;
 		sourceSprintNumber = 0;
+
+		const [removed] = backlogItemsCopy.splice(sourceRank, 1);
+		removedItem = removed;
 	}
 
 	if (destinationType === "sprint") {
-		const destinationSprint = sprints.find(sprint => `${sprint.sprintNumber}` === destination.droppableId);
+		const sprintIndex = parseInt(destination.droppableId) - 1;
+		const destinationSprint = sprints[sprintIndex];
 		destinationBackendId = destinationSprint.id;
 		destinationSprintNumber = destinationSprint.sprintNumber;
+
+		sprintsCopy[sprintIndex].todos.splice(destinationRank, 0, removedItem)
 	} else {
 		destinationBackendId = releaseId;
 		destinationSprintNumber = 0;
+
+		backlogItemsCopy.splice(destinationRank, 0, removedItem)
 	}
 
 	// console.log('fuckin backlog is ', backlogItems)
@@ -130,6 +148,9 @@ export const reorderQuoteMap = ({ sprints, setSprints, backlogItems, setBacklogI
 	// console.log("destinationBackendId", destinationBackendId)
 	// console.log("destRank", destinationRank)
 	// console.log("destinationType", destinationType)
+
+	setSprints(sprintsCopy);
+	setBacklogItems(backlogItemsCopy);
 
 	fetchReorderBacklogItem(sourceBackendId, destinationBackendId, sourceType, sourceRank, destinationType, destinationRank, sprints, setSprints, backlogItems, setBacklogItems, sourceSprintNumber, destinationSprintNumber)
 

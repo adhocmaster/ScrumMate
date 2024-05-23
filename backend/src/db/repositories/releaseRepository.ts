@@ -133,6 +133,7 @@ export class ReleaseRepository extends ModelRepository {
 		sprints.splice(destinationIndex, 0, item)
 		for (const { sprint, index } of sprints.map((sprint, index) => ({ sprint, index }))) {
 			sprint.sprintNumber = index + 1;
+			sprint.todos.sort((a, b) => a.rank - b.rank);
 			await this.sprintSource.save(sprint)
 		}
 		// await this.dataSource.save(sprints)
@@ -159,11 +160,12 @@ export class ReleaseRepository extends ModelRepository {
 		const sprintWithRelease = await this.sprintSource.lookupSprintByIdWithRelease(sprintId)
 		const newProductBacklog = await this.moveSprintTodosToBacklog(sprintWithRelease.release.id, sprintId)
 		await this.sprintSource.deleteSprint(sprintId)
-		const releaseWithSprints = await this.releaseSource.fetchReleaseWithSprints(sprintWithRelease.release.id)
+		const releaseWithSprints = await this.fetchReleaseWithSprints(sprintWithRelease.release.id)
 		const sprintIndexPairs = releaseWithSprints.sprints.map((sprint, index) => ({ sprint, index }))
 		for (const { sprint, index } of sprintIndexPairs) {
 			sprint.sprintNumber = index + 1;
-			await this.sprintSource.save(sprint)
+			sprint.todos.sort((a, b) => a.rank - b.rank);
+			await this.sprintSource.save(sprint);
 		}
 		await this.releaseSource.save(releaseWithSprints)
 		return [releaseWithSprints.sprints, newProductBacklog];

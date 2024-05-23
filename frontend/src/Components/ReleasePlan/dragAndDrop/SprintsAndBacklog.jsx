@@ -203,7 +203,6 @@ const Board = ({
 								<Grid item xs={15}>
 									<Typography
 										marginLeft={1}
-										maxRows={4}
 										textAlign="left"
 										fontWeight="bold"
 										fontSize={14}

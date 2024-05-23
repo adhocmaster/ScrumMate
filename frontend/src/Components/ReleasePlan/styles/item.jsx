@@ -5,21 +5,6 @@ import UserStory from '../UserStory';
 const grid = 8;
 const borderRadius = 2;
 
-const getBackgroundColor = (isDragging, isGroupedOver, authorColors) => {
-	if (isDragging) {
-		return authorColors.soft;
-	}
-
-	if (isGroupedOver) {
-		return '#EBECF0';
-	}
-
-	return '#FFFFFF';
-};
-
-const getBorderColor = (isDragging, authorColors) =>
-	isDragging ? authorColors.hard : 'transparent';
-
 const imageSize = 40;
 
 const CloneBadge = styled.div`
@@ -113,14 +98,13 @@ function getStyle(provided, style) {
 // things we should be doing in the selector as we do not know if consumers
 // will be using PureComponent
 function QuoteItem(props) {
-	const { quote, isDragging, isGroupedOver, provided, style, isClone, index,
+	const { quote, isDragging, provided, style, isClone, index,
 		backlog, sprints, setSprints, sprintIndex, deleteStory, } =
 		props;
 
 	return (
 		<Container
 			isDragging={isDragging}
-			isGroupedOver={isGroupedOver}
 			isClone={isClone}
 			ref={provided.innerRef}
 			{...provided.draggableProps}

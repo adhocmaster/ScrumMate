@@ -7,7 +7,7 @@ import QuoteItem from './item';
 import Title from './title';
 
 const grid = 8;
-const borderRadius = 2;
+const borderRadius = 0;
 
 export const getBackgroundColor = (isDraggingOver, isDraggingFrom) => {
 	if (isDraggingOver) {
@@ -71,7 +71,6 @@ const InnerQuoteList = (props) => {
 					key={"cardId" + quote.id}
 					quote={quote}
 					isDragging={dragSnapshot.isDragging}
-					isGroupedOver={Boolean(dragSnapshot.combineTargetFor)}
 					provided={dragProvided}
 					style={{ marginRight: grid }} // Add margin-right between items
 					sprints={props.sprints}
