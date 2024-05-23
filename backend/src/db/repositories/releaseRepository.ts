@@ -161,6 +161,7 @@ export class ReleaseRepository extends ModelRepository {
 		const newProductBacklog = await this.moveSprintTodosToBacklog(sprintWithRelease.release.id, sprintId)
 		await this.sprintSource.deleteSprint(sprintId)
 		const releaseWithSprints = await this.fetchReleaseWithSprints(sprintWithRelease.release.id)
+		releaseWithSprints.sprints.sort((a, b) => a.sprintNumber - b.sprintNumber)
 		const sprintIndexPairs = releaseWithSprints.sprints.map((sprint, index) => ({ sprint, index }))
 		for (const { sprint, index } of sprintIndexPairs) {
 			sprint.sprintNumber = index + 1;
