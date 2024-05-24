@@ -155,6 +155,7 @@ const Row = (props) => {
 		})
 			.then((response) => {
 				response.json().then(jsonResult => {
+					console.log(jsonResult)
 					setSprints(jsonResult[0])
 					setBacklogItems(jsonResult[1])
 				})

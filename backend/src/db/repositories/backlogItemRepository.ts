@@ -156,14 +156,21 @@ export class BacklogItemRepository extends ModelRepository {
 			await this.backlogSource.save(backlogItem)
 		}
 		destinationObj.backlogItemCount += 1;
-		await saveObj(destinationObj)
+		await saveObj(destinationObj);
 
-		setParent(item, destinationObj)
-		await this.backlogSource.save(item)
-		item.sprint = undefined
-		item.release = undefined
+		setParent(item, destinationObj);
+		await this.backlogSource.save(item);
+		item.sprint = undefined;
+		item.release = undefined;
 
-		return [sourceList, destinationList]
+		const finalSourceObj = await getObj(fromBacklog, sourceId);
+		const finalSourceList = getObjList(finalSourceObj);
+		finalSourceList.sort((a: BacklogItem, b: BacklogItem) => a.rank - b.rank)
+		const finalDestinationObj = await getObj(toBacklog, destinationId);
+		const finalDestinationList = getObjList(finalDestinationObj);
+		finalDestinationList.sort((a: BacklogItem, b: BacklogItem) => a.rank - b.rank)
+
+		return [finalSourceList, finalDestinationList]
 	}
 
 	private async moveBacklogItemToDeletedList(backlogItemWithParent: BacklogItem) {

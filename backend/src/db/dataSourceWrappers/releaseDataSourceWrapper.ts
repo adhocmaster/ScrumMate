@@ -29,7 +29,9 @@ export class ReleaseDataSourceWrapper extends ModelDataSourceWrapper {
 		const releaseWithSprints = await this.dataSource.getRepository(Release).find({
 			where: { id: releaseId },
 			relations: {
-				sprints: true,
+				sprints: {
+					todos: true,
+				},
 			},
 		})
 		if (!releaseWithSprints || releaseWithSprints.length === 0) {

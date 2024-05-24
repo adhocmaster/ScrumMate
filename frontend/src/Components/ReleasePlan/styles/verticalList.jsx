@@ -64,7 +64,6 @@ const InnerQuoteList = (props) => {
 					key={"cardId" + quote.id}
 					quote={quote}
 					isDragging={dragSnapshot.isDragging}
-					isGroupedOver={Boolean(dragSnapshot.combineTargetFor)}
 					provided={dragProvided}
 					backlog={props.backlog}
 					deleteStory={props.deleteStory}
