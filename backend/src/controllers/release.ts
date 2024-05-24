@@ -67,3 +67,11 @@ export const getSignatures = async (req: express.Request, res: express.Response)
 	const signatureLists = await db.getReleaseRepository.getSignatures(parseInt(releaseId));
 	return res.json(signatureLists);
 };
+
+export const getSigningCondition = async (req: express.Request, res: express.Response) => {
+	const db = Database.getInstance();
+	const { releaseId } = req.params;
+	verifyParameters(releaseId);
+	const readyToSign = await db.getReleaseRepository.getSigningCondition(parseInt(releaseId));
+	return res.json(readyToSign);
+};

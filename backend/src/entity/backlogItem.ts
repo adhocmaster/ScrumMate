@@ -35,7 +35,7 @@ export class BacklogItem {
 	@Column()
 	rank: number // "index"
 
-	@Column()
+	@Column({ nullable: true })
 	size: number // serves as SP, IH, etc...
 
 	@Column({ default: false })

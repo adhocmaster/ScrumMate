@@ -57,27 +57,35 @@ export class SprintDataSourceWrapper extends ModelDataSourceWrapper {
 		return sprints;
 	}
 
-	public async getSprintBacklog(sprintId: number): Promise<BacklogItem[]> {
+	public async getSprintsWithBacklogAndScrumMasters(releaseId: number): Promise<Sprint[]> {
+		const sprints = await this.dataSource.getRepository(Sprint).find({
+			relations: {
+				release: true,
+				todos: true,
+				scrumMaster: true,
+			},
+			where: {
+				release: { id: releaseId }
+			},
+		})
+		if (!sprints || sprints.length === 0) {
+			throw new NotFoundError(`Release with releaseId ${releaseId} not found`)
+		}
+		return sprints;
+	}
+
+	public async lookupSprintByIdWithScrumMaster(sprintId: number): Promise<Sprint> {
 		const maybeSprint = await this.dataSource.getRepository(Sprint).find({
 			where: { id: sprintId },
 			relations: {
-				todos: true
+				scrumMaster: true
 			},
 		})
 		if (!maybeSprint || maybeSprint.length === 0) {
 			throw new NotFoundError(`Sprint with id ${sprintId} not found`)
 		}
-		return maybeSprint[0].todos
+		return maybeSprint[0];
 	}
-
-	// public async deleteSprint(id: number): Promise<void> {
-	// 	try {
-	// 		await this.dataSource.getRepository(Sprint).delete(id)
-	// 	} catch (e) {
-	// 		console.log(e)
-	// 		throw new DeletionError(`Sprint with id ${id} failed to delete`)
-	// 	}
-	// }
 
 	public async deleteSprint(sprintId: number): Promise<DeleteResult> {
 		return await super.delete(Sprint, sprintId);
