@@ -9,6 +9,13 @@ import { InputLabel, Select, MenuItem, FormControl } from '@mui/material';
 import NextPlanOutlinedIcon from '@mui/icons-material/NextPlanOutlined';
 
 const UserStory = ({ storyObject, deleteFunction, sprints, setSprints, sprintNumber, backlog }) => {
+	const ActionTypeEnum = {
+		BUG: 1,
+		SYSTEMFEATURE: 2,
+		SPIKE: 3,
+		INFRASTRUCTURE: 4,
+	}
+
 	const [anchorOpen, setAnchorOpen] = useState(false);
 	const [editDialogOpen, setEditDialogOpen] = useState(false);
 	const [pokerDialogOpen, setPokerDialogOpen] = useState(false);
@@ -324,12 +331,12 @@ const UserStory = ({ storyObject, deleteFunction, sprints, setSprints, sprintNum
 						open={anchorOpen}
 						onClose={handleMenuClose}
 					>
-						<MenuItem onClick={handleEditDialogOpen}>
-							Edit
-						</MenuItem>
-						<MenuItem onClick={handlePokerDialogOpen}>
-							Poker
-						</MenuItem>
+						{storyObject.name != 'ActionItem' && (
+                            <>
+                                <MenuItem onClick={handleEditDialogOpen}>Edit</MenuItem>
+                                <MenuItem onClick={handlePokerDialogOpen}>Poker</MenuItem>
+                            </>
+                        )}
 						<MenuItem onClick={handleDeleteDialogOpen} style={{ color: "red" }}>
 							Delete
 						</MenuItem>
@@ -346,20 +353,26 @@ const UserStory = ({ storyObject, deleteFunction, sprints, setSprints, sprintNum
 							hyphens: "auto",
 						}}
 					>
-						//action items
-						{(storyObject.name === 'ActionItem')}
-						{/* {storyObject.id}{' '} */}
 						{
-							showAcceptanceCriteria ?
+							storyObject.name === 'ActionItem' ?
 								<>
-									<Box fontWeight='bold' display='inline'>
-										Acceptance Criteria:
+									<Box component="span" fontWeight="bold">
+										{({ [ActionTypeEnum.BUG]: 'Bug', [ActionTypeEnum.SYSTEMFEATURE]: 'System Feature', [ActionTypeEnum.SPIKE]: 'Spike', [ActionTypeEnum.INFRASTRUCTURE]: 'Infrastructure' }[storyObject.actionType] || 'Unknown Type')}
 									</Box>
-									{' '}
-									{acceptanceCriteria}
-								</>
-								:
-								`As a(n) ${role} I want to be able to ${functionality} so that ${reasoning}.`
+									{`: ${storyObject.description}`}
+								</> :
+								(
+									showAcceptanceCriteria ?
+										<>
+											<Box fontWeight='bold' display='inline'>
+												Acceptance Criteria:
+											</Box>
+											{' '}
+											{acceptanceCriteria}
+										</>
+										:
+										`As a(n) ${role} I want to be able to ${functionality} so that ${reasoning}.`
+								)
 						}
 					</Typography>
 

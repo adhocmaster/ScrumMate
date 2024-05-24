@@ -61,6 +61,7 @@ const Row = (props) => {
 
 	const [dialogOpen, setDialogOpen] = useState(false);
 	const [actionDialogOpen, setActionDialogOpen] = useState(false);
+	const [formType, setFormType] = useState('story'); // 'story' or 'action-item'
 
 	const [selectedItem, setSelectedItem] = useState('');
 	const [description, setDescription] = useState('');
@@ -82,7 +83,12 @@ const Row = (props) => {
 		setStoryPoints(0);
 		setPriority(1);
 		setDialogOpen(true);
+		setFormType('story');
 	};
+
+	const switchFormType = () => {
+        setFormType(formType === 'story' ? 'action-item' : 'story');
+    };
 
 	const handleDialogClose = () => {
 		setDialogOpen(false);
@@ -125,7 +131,7 @@ const Row = (props) => {
 			description,
 		};
 		saveNewActionItem(actionItem, sprintId);
-		openDialogForActionItems(false);
+		setActionDialogOpen(false);
 	}
 
 	function saveNewActionItem(actionItem, sprintId) {
@@ -151,7 +157,7 @@ const Row = (props) => {
 					console.log("error", result);
 				}
 				result.json().then((jsonResult) => {
-					console.log(jsonResult)
+					console.log(jsonResult.name)
 					const sprintsCopy = [...sprints];
 					const indexOfSprint = sprintsCopy.findIndex((sprint) => sprint.id === sprintId);
 					sprintsCopy[indexOfSprint].todos.push(jsonResult)
@@ -405,8 +411,6 @@ const Row = (props) => {
 														onChange={handleSelectChange}
 														defaultValue=""
 													>
-
-
 														<MenuItem value={ActionTypeEnum.BUG}>Bug</MenuItem>
 														<MenuItem value={ActionTypeEnum.INFRASTRUCTURE}>Infrastructure</MenuItem>
 														<MenuItem value={ActionTypeEnum.SYSTEMFEATURE}>System Feature</MenuItem>
