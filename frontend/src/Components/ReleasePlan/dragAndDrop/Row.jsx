@@ -60,13 +60,11 @@ const Row = (props) => {
 	// console.log("quotes", quotes)
 
 	const [dialogOpen, setDialogOpen] = useState(false);
-	const [actionDialogOpen, setActionDialogOpen] = useState(false);
-	const [formType, setFormType] = useState('story'); // 'story' or 'action-item'
 
 	const [selectedItem, setSelectedItem] = useState('');
 	const [description, setDescription] = useState('');
 
-	const [backlogItemType, setBacklogItemType] = useState('story');
+	const [backlogItemType, setBacklogItemType] = useState('story'); // 'story' or 'action-item'
 	const [role, setRole] = useState('');
 	const [functionality, setFunctionality] = useState('');
 	const [reasoning, setReasoning] = useState('');
@@ -83,24 +81,16 @@ const Row = (props) => {
 		setStoryPoints(0);
 		setPriority(1);
 		setDialogOpen(true);
-		setFormType('story');
+		setBacklogItemType('story');
 	};
 
 	const switchFormType = () => {
-        setFormType(formType === 'story' ? 'action-item' : 'story');
-    };
+		setBacklogItemType(backlogItemType === 'story' ? 'action-item' : 'story');
+	};
 
 	const handleDialogClose = () => {
 		setDialogOpen(false);
-		setActionDialogOpen(false);
 
-	};
-
-	const openDialogForActionItems = () => {
-		setSelectedItem('');
-		setDescription('');
-		setDialogOpen(false);
-		setActionDialogOpen(true);
 	};
 
 	const handleSelectChange = (event) => {
@@ -131,7 +121,7 @@ const Row = (props) => {
 			description,
 		};
 		saveNewActionItem(actionItem, sprintId);
-		setActionDialogOpen(false);
+		handleDialogClose();
 	}
 
 	function saveNewActionItem(actionItem, sprintId) {
@@ -266,181 +256,197 @@ const Row = (props) => {
 											<AddIcon />
 										</IconButton>
 										<Dialog open={dialogOpen} onClose={handleDialogClose} maxWidth="sm" fullWidth>
-											<DialogTitle>Add New Story</DialogTitle>
-											<DialogContent>
-												<ToggleButtonGroup
-													color="primary"
-													value={backlogItemType}
-													exclusive
-													// onChange={(e, newType) => setBacklogItemType(newType)}
-													onChange={(e, newType) => {
-														newType === 'story' ? openDialogForNewStory() : openDialogForActionItems();
-													}}
-													aria-label="User story type"
-													fullWidth
-													sx={{ marginBottom: 2 }}
-												>
-													<ToggleButton value="story">Story</ToggleButton>
-													<ToggleButton value="action-item">Action Item</ToggleButton>
-												</ToggleButtonGroup>
+											{
+												backlogItemType === "story" ?
+													<>
+														<DialogTitle>Add New Story</DialogTitle>
+														<DialogContent>
+															<ToggleButtonGroup
+																color="primary"
+																value={backlogItemType}
+																exclusive
+																// onChange={(e, newType) => setBacklogItemType(newType)}
+																onChange={switchFormType}
+																aria-label="User story type"
+																fullWidth
+																sx={{ marginBottom: 2 }}
+															>
+																<ToggleButton value="story">Story</ToggleButton>
+																<ToggleButton value="action-item">Action Item</ToggleButton>
+															</ToggleButtonGroup>
 
-												<Box display="flex" alignItems="center" gap={1} mb={2}>
-													<Typography variant="body2" component="span">
-														As a(n)
-													</Typography>
-													<TextField
-														size="small"
-														label="Role"
-														value={role}
-														onChange={(e) => setRole(e.target.value)}
-														fullWidth
-													/>
-													<Typography variant="body2" component="span">
-														I want to be able to
-													</Typography>
-												</Box>
+															<Box display="flex" alignItems="center" gap={1} mb={2}>
+																<Typography variant="body2" component="span">
+																	As a(n)
+																</Typography>
+																<TextField
+																	size="small"
+																	label="Role"
+																	value={role}
+																	onChange={(e) => setRole(e.target.value)}
+																	fullWidth
+																/>
+																<Typography variant="body2" component="span">
+																	I want to be able to
+																</Typography>
+															</Box>
 
-												<TextField
-													autoFocus
-													margin="dense"
-													id="functionality-description"
-													label="Functionality Description"
-													type="text"
-													fullWidth
-													variant="outlined"
-													multiline
-													rows={4}
-													value={functionality}
-													onChange={(e) => setFunctionality(e.target.value)}
-													sx={{ marginBottom: 2 }}
-												/>
+															<TextField
+																autoFocus
+																margin="dense"
+																id="functionality-description"
+																label="Functionality Description"
+																type="text"
+																fullWidth
+																variant="outlined"
+																multiline
+																rows={4}
+																value={functionality}
+																onChange={(e) => setFunctionality(e.target.value)}
+																sx={{ marginBottom: 2 }}
+															/>
 
-												<Typography variant="body2" component="span">
-													so that
-												</Typography>
+															<Typography variant="body2" component="span">
+																so that
+															</Typography>
 
-												<TextField
-													margin="dense"
-													id="reasoning"
-													label="Reasoning"
-													type="text"
-													fullWidth
-													variant="outlined"
-													multiline
-													rows={4}
-													value={reasoning}
-													onChange={(e) => setReasoning(e.target.value)}
-													sx={{ marginBottom: 2, marginTop: 2 }}
-												/>
+															<TextField
+																margin="dense"
+																id="reasoning"
+																label="Reasoning"
+																type="text"
+																fullWidth
+																variant="outlined"
+																multiline
+																rows={4}
+																value={reasoning}
+																onChange={(e) => setReasoning(e.target.value)}
+																sx={{ marginBottom: 2, marginTop: 2 }}
+															/>
 
-												<TextField
-													margin="dense"
-													id="acceptance-criteria"
-													label="Acceptance Criteria"
-													type="text"
-													fullWidth
-													variant="outlined"
-													multiline
-													rows={4}
-													value={acceptanceCriteria}
-													onChange={(e) => setAcceptanceCriteria(e.target.value)}
-													sx={{ marginBottom: 2 }}
-												/>
+															<TextField
+																margin="dense"
+																id="acceptance-criteria"
+																label="Acceptance Criteria"
+																type="text"
+																fullWidth
+																variant="outlined"
+																multiline
+																rows={4}
+																value={acceptanceCriteria}
+																onChange={(e) => setAcceptanceCriteria(e.target.value)}
+																sx={{ marginBottom: 2 }}
+															/>
 
-												{/* <TextField
-											margin="dense"
-											id="story-points"
-											label="Story Points"
-											type="number"
-											fullWidth
-											variant="outlined"
-											value={storyPoints}
-											onChange={(e) => {
-												// Check if the entered value is a number and is not empty
-												if (!isNaN(e.target.value) && e.target.value.trim() !== '') {
-													setStoryPoints(e.target.value);
-												}
-											}}
-											InputProps={{
-												inputProps: {
-													min: 0 // Minimum value
-												}
-											}}
-										/> */}
+															{/* <TextField
+																	margin="dense"
+																	id="story-points"
+																	label="Story Points"
+																	type="number"
+																	fullWidth
+																	variant="outlined"
+																	value={storyPoints}
+																	onChange={(e) => {
+																		// Check if the entered value is a number and is not empty
+																		if (!isNaN(e.target.value) && e.target.value.trim() !== '') {
+																			setStoryPoints(e.target.value);
+																		}
+																	}}
+																	InputProps={{
+																		inputProps: {
+																			min: 0 // Minimum value
+																		}
+																	}}
+																/> */}
 
-												<FormControl fullWidth>
-													<InputLabel id="priority-select-label">Priority</InputLabel>
-													<Select
-														labelId="priority-select-label"
-														id="demo-simple-select"
-														value={priority}
-														label="Priority"
-														onChange={(event) => setPriority(event.target.value)}
-													>
-														<MenuItem value={4}>High</MenuItem>
-														<MenuItem value={3}>Medium</MenuItem>
-														<MenuItem value={2}>Low</MenuItem>
-														<MenuItem value={1}>None</MenuItem>
-													</Select>
-												</FormControl>
+															<FormControl fullWidth>
+																<InputLabel id="priority-select-label">Priority</InputLabel>
+																<Select
+																	labelId="priority-select-label"
+																	id="demo-simple-select"
+																	value={priority}
+																	label="Priority"
+																	onChange={(event) => setPriority(event.target.value)}
+																>
+																	<MenuItem value={4}>High</MenuItem>
+																	<MenuItem value={3}>Medium</MenuItem>
+																	<MenuItem value={2}>Low</MenuItem>
+																	<MenuItem value={1}>None</MenuItem>
+																</Select>
+															</FormControl>
 
-											</DialogContent>
-											<DialogActions>
-												<Button onClick={handleDialogClose}>Cancel</Button>
-												<Button onClick={() => {
-													const sprintId = sprints[index].id;
-													handleCreate(sprintId);
-												}}
-													color="primary"
-												>
-													Create Story
-												</Button>
-											</DialogActions>
-										</Dialog>
-
-										<Dialog open={actionDialogOpen} onClose={handleDialogClose} maxWidth="sm" fullWidth>
-											<DialogTitle>Add Action Item</DialogTitle>
-											<DialogContent>
-												<FormControl fullWidth margin="dense">
-													<InputLabel id="item-select-label">Item</InputLabel>
-													<Select
-														labelId="item-select-label"
-														id="item-select"
-														label="Item"
-														value={selectedItem}
-														onChange={handleSelectChange}
-														defaultValue=""
-													>
-														<MenuItem value={ActionTypeEnum.BUG}>Bug</MenuItem>
-														<MenuItem value={ActionTypeEnum.INFRASTRUCTURE}>Infrastructure</MenuItem>
-														<MenuItem value={ActionTypeEnum.SYSTEMFEATURE}>System Feature</MenuItem>
-														<MenuItem value={ActionTypeEnum.SPIKE}>Spike</MenuItem>
-													</Select>
-												</FormControl>
-												<TextField
-													fullWidth
-													margin="dense"
-													id="action-item-description"
-													label="Description"
-													type="text"
-													variant="outlined"
-													multiline
-													rows={4}
-													value={description}
-													onChange={handleDescriptionChange}
-												/>
-											</DialogContent>
-											<DialogActions>
-												<Button onClick={handleDialogClose}>Cancel</Button>
-												<Button onClick={() => {
-													const sprintId = sprints[index].id;
-													handleCreateActionItem(sprintId);
-												}}
-													color="primary"
-												>
-													Create Action Item
-												</Button>
-											</DialogActions>
+														</DialogContent>
+														<DialogActions>
+															<Button onClick={handleDialogClose}>Cancel</Button>
+															<Button onClick={() => {
+																const sprintId = sprints[index].id;
+																handleCreate(sprintId);
+															}}
+																color="primary"
+															>
+																Create Story
+															</Button>
+														</DialogActions>
+													</>
+													:
+													<>
+														<DialogTitle>Add Action Item</DialogTitle>
+														<DialogContent>
+															<ToggleButtonGroup
+																color="primary"
+																value={backlogItemType}
+																exclusive
+																// onChange={(e, newType) => setBacklogItemType(newType)}
+																onChange={switchFormType}
+																aria-label="User story type"
+																fullWidth
+																sx={{ marginBottom: 2 }}
+															>
+																<ToggleButton value="story">Story</ToggleButton>
+																<ToggleButton value="action-item">Action Item</ToggleButton>
+															</ToggleButtonGroup>
+															<FormControl fullWidth margin="dense">
+																<InputLabel id="item-select-label">Item</InputLabel>
+																<Select
+																	labelId="item-select-label"
+																	id="item-select"
+																	label="Item"
+																	value={selectedItem}
+																	onChange={handleSelectChange}
+																	defaultValue=""
+																>
+																	<MenuItem value={ActionTypeEnum.BUG}>Bug</MenuItem>
+																	<MenuItem value={ActionTypeEnum.INFRASTRUCTURE}>Infrastructure</MenuItem>
+																	<MenuItem value={ActionTypeEnum.SYSTEMFEATURE}>System Feature</MenuItem>
+																	<MenuItem value={ActionTypeEnum.SPIKE}>Spike</MenuItem>
+																</Select>
+															</FormControl>
+															<TextField
+																fullWidth
+																margin="dense"
+																id="action-item-description"
+																label="Description"
+																type="text"
+																variant="outlined"
+																multiline
+																rows={4}
+																value={description}
+																onChange={handleDescriptionChange}
+															/>
+														</DialogContent>
+														<DialogActions>
+															<Button onClick={handleDialogClose}>Cancel</Button>
+															<Button onClick={() => {
+																const sprintId = sprints[index].id;
+																handleCreateActionItem(sprintId);
+															}}
+																color="primary"
+															>
+																Create Action Item
+															</Button>
+														</DialogActions>
+													</>
+											}
 										</Dialog>
 
 										<Typography sx={{ marginBottom: 2 }} fontSize={14}>
