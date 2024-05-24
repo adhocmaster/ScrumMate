@@ -8,8 +8,9 @@ import {
 import RestoreIcon from '@mui/icons-material/Restore';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 
-export const Signing = ({ releaseId, projectId, setLockPage }) => {
+export const Signing = ({ releaseId, projectId, setLockPage, problemStatement, highLevelGoals }) => {
 	const [open, setOpen] = useState(false);
+  const [openNotComplete, setOpenNotComplete] = useState(false);
 	const [signatures, setSignatures] = useState([[], [], null]);
 	const [ownUserId, setOwnUserId] = useState(null);
 	const [productOwnerId, setProductOwnerId] = useState(undefined);
@@ -24,6 +25,14 @@ export const Signing = ({ releaseId, projectId, setLockPage }) => {
 	const handleClickClose = () => {
 		setOpen(false);
 	}
+
+  const handleClickOpenNotComplete = () => {
+    setOpenNotComplete(true);
+  }
+
+  const handleClickCloseNotComplete = () => {
+    setOpenNotComplete(false);
+  }
 
 	const handleToggleSigningClick = () => {
 		fetchToggleSigning();
@@ -112,7 +121,18 @@ export const Signing = ({ releaseId, projectId, setLockPage }) => {
 
 	return (
 		<>
-			<IconButton onClick={handleClickOpen}>
+
+      {console.log("This is a log from signing for the problem statement: " + problemStatement)}
+      {console.log("This is a statement from signing for the high level goals: " + highLevelGoals)}
+			
+    {(problemStatement === "") || (highLevelGoals === "") ?
+    
+    <IconButton onClick={handleClickOpenNotComplete}>
+      <HistoryEduIcon/>
+    </IconButton>
+
+    :
+    <IconButton onClick={handleClickOpen}>
 				{
 					signatures[2] ?
 						<HistoryEduIcon style={{ color: 'green' }} /> :
@@ -120,8 +140,26 @@ export const Signing = ({ releaseId, projectId, setLockPage }) => {
 							<HistoryEduIcon style={{ color: '#ffcd38' }} /> :
 							<HistoryEduIcon />
 				}
-			</IconButton>
+			</IconButton>}
+
+
+
 			<Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'column' }}>
+
+
+        <Dialog open={openNotComplete} onClose={handleClickCloseNotComplete}>
+          <DialogTitle>
+            Hello!
+
+          </DialogTitle>
+            <Box sx={{ padding: '1px 10px' }} onClick={handleClickCloseNotComplete}>
+							<Button variant="contained" color="primary" fullWidth>
+									Sign Release Plan
+							</Button>
+						</Box>
+          </Dialog>
+
+
 
 				<Dialog open={open} onClose={handleClickClose} maxWidth="sm" fullWidth>
 					<DialogTitle>

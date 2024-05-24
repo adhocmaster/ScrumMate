@@ -7,7 +7,7 @@ import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import { Signing } from './Signing';
 
-const Sidebar = ({ open, toggleDrawer, projectId, itemClick, setLockPage }) => {
+const Sidebar = ({ open, toggleDrawer, projectId, itemClick, setLockPage, problemStatement, highLevelGoals }) => {
 	const [selected, setSelected] = useState(null);
 	const [revisions, setRevisions] = useState([]);
 
@@ -190,7 +190,8 @@ const Sidebar = ({ open, toggleDrawer, projectId, itemClick, setLockPage }) => {
 						key={index}
 						sx={{ backgroundColor: selected === index ? 'lightgray' : 'white', }}
 					>
-						<Signing releaseId={revision.id} projectId={projectId} setLockPage={setLockPage} />
+						<Signing releaseId={revision.id} projectId={projectId} setLockPage={setLockPage} 
+            problemStatement={problemStatement} highLevelGoals={highLevelGoals} />
 						<Typography fontSize={14}>
 							{`${revision.revision} ${revision.revisionDate}`}
 						</Typography>
