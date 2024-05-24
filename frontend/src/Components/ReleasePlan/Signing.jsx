@@ -3,14 +3,17 @@ import HistoryEduIcon from '@mui/icons-material/HistoryEdu'
 import {
 	IconButton, Dialog, DialogTitle, ListItemText,
 	ListItem, ListItemIcon, Avatar, Box, List, Button,
+	Typography,
 } from "@mui/material";
+
+import ReportProblemIcon from '@mui/icons-material/ReportProblem'
 
 import RestoreIcon from '@mui/icons-material/Restore';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 
 export const Signing = ({ releaseId, projectId, setLockPage, problemStatement, highLevelGoals }) => {
 	const [open, setOpen] = useState(false);
-  const [openNotComplete, setOpenNotComplete] = useState(false);
+	const [openNotComplete, setOpenNotComplete] = useState(false);
 	const [signatures, setSignatures] = useState([[], [], null]);
 	const [ownUserId, setOwnUserId] = useState(null);
 	const [productOwnerId, setProductOwnerId] = useState(undefined);
@@ -26,13 +29,13 @@ export const Signing = ({ releaseId, projectId, setLockPage, problemStatement, h
 		setOpen(false);
 	}
 
-  const handleClickOpenNotComplete = () => {
-    setOpenNotComplete(true);
-  }
+	const handleClickOpenNotComplete = () => {
+		setOpenNotComplete(true);
+	}
 
-  const handleClickCloseNotComplete = () => {
-    setOpenNotComplete(false);
-  }
+	const handleClickCloseNotComplete = () => {
+		setOpenNotComplete(false);
+	}
 
 	const handleToggleSigningClick = () => {
 		fetchToggleSigning();
@@ -122,42 +125,52 @@ export const Signing = ({ releaseId, projectId, setLockPage, problemStatement, h
 	return (
 		<>
 
-      {console.log("This is a log from signing for the problem statement: " + problemStatement)}
-      {console.log("This is a statement from signing for the high level goals: " + highLevelGoals)}
-			
-    {(problemStatement === "") || (highLevelGoals === "") ?
-    
-    <IconButton onClick={handleClickOpenNotComplete}>
-      <HistoryEduIcon/>
-    </IconButton>
+			{console.log("This is a log from signing for the problem statement: " + problemStatement)}
+			{console.log("This is a statement from signing for the high level goals: " + highLevelGoals)}
 
-    :
-    <IconButton onClick={handleClickOpen}>
-				{
-					signatures[2] ?
-						<HistoryEduIcon style={{ color: 'green' }} /> :
-						signatures[1].length > 0 ?
-							<HistoryEduIcon style={{ color: '#ffcd38' }} /> :
-							<HistoryEduIcon />
-				}
-			</IconButton>}
+			{(problemStatement === "") || (highLevelGoals === "") ?
+
+				<IconButton onClick={handleClickOpenNotComplete}>
+					<HistoryEduIcon />
+				</IconButton>
+
+				:
+				<IconButton onClick={handleClickOpen}>
+					{
+						signatures[2] ?
+							<HistoryEduIcon style={{ color: 'green' }} /> :
+							signatures[1].length > 0 ?
+								<HistoryEduIcon style={{ color: '#ffcd38' }} /> :
+								<HistoryEduIcon />
+					}
+				</IconButton>}
 
 
 
 			<Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'column' }}>
 
 
-        <Dialog open={openNotComplete} onClose={handleClickCloseNotComplete}>
-          <DialogTitle>
-            Hello!
-
-          </DialogTitle>
-            <Box sx={{ padding: '1px 10px' }} onClick={handleClickCloseNotComplete}>
-							<Button variant="contained" color="primary" fullWidth>
-									Sign Release Plan
-							</Button>
-						</Box>
-          </Dialog>
+				<Dialog open={openNotComplete} onClose={handleClickCloseNotComplete}>
+					<DialogTitle>
+						<Typography>
+							<ReportProblemIcon sx={{ padding: '1px 10px' }} style={{ color: '#ffcd38' }} />
+							Release is not ready!
+						</Typography>
+					</DialogTitle>
+					<Box sx={{ padding: '1px 10px' }}>
+						<Typography>
+							This revision is currently missing some information. Are you sure you want to begin signing?
+						</Typography>
+					</Box>
+					<Box sx={{ padding: '1px 10px' }} onClick={handleClickCloseNotComplete}>
+						<Button variant="outlined" color="primary" sx={{ width: '50%' }}>
+							Cancel
+						</Button>
+						<Button variant="outlined" color="primary" sx={{ width: '50%' }}>
+							Confirm
+						</Button>
+					</Box>
+				</Dialog>
 
 
 
