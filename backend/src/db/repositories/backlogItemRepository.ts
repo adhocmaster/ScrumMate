@@ -42,12 +42,13 @@ export class BacklogItemRepository extends ModelRepository {
 		return newStory
 	}
 
-	public async createNewSprintAction(sprintId: number, actionType: ActionType, description: string, storyPoints: number): Promise<ActionItem> {
+	public async createNewSprintAction(sprintId: number, actionType: ActionType, description: string, storyPoints: number, priority: Priority): Promise<ActionItem> {
 		const sprint = await this.sprintSource.lookupSprintById(sprintId)
 		const newAction = new ActionItem()
 		newAction.actionType = actionType
 		newAction.description = description
 		newAction.size = storyPoints
+		newAction.priority = priority
 		newAction.sprint = sprint
 		newAction.rank = sprint.backlogItemCount
 		await this.backlogSource.save(newAction)
@@ -56,12 +57,13 @@ export class BacklogItemRepository extends ModelRepository {
 		return newAction
 	}
 
-	public async createNewBacklogAction(releaseId: number, actionType: ActionType, description: string, storyPoints: number): Promise<ActionItem> {
+	public async createNewBacklogAction(releaseId: number, actionType: ActionType, description: string, storyPoints: number, priority: Priority): Promise<ActionItem> {
 		const release = await this.releaseSource.lookupReleaseById(releaseId)
 		const newAction = new ActionItem()
 		newAction.actionType = actionType
 		newAction.description = description
 		newAction.size = storyPoints
+		newAction.priority = priority
 		newAction.release = release
 		newAction.rank = release.backlogItemCount
 		await this.backlogSource.save(newAction)
@@ -82,11 +84,12 @@ export class BacklogItemRepository extends ModelRepository {
 		return story;
 	}
 
-	public async updateAction(actionId: number, actionType?: ActionType, description?: string, storyPoints?: number, rank?: number): Promise<ActionItem> {
+	public async updateAction(actionId: number, actionType?: ActionType, description?: string, storyPoints?: number, rank?: number, priority?: Priority): Promise<ActionItem> {
 		const actionItem = await this.backlogSource.lookupBacklogById(actionId) as ActionItem;
 		actionItem.actionType = actionType ?? actionItem.actionType
 		actionItem.description = description ?? actionItem.description
 		actionItem.size = storyPoints ?? actionItem.size
+		actionItem.priority = priority ?? actionItem.priority
 		actionItem.rank = rank ?? actionItem.rank
 		await this.backlogSource.save(actionItem)
 		return actionItem;
