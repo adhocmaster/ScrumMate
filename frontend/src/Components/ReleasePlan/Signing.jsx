@@ -125,8 +125,7 @@ export const Signing = ({ releaseId, projectId, setLockPage, problemStatement, h
 	return (
 		<>
 
-			{console.log("This is a log from signing for the problem statement: " + problemStatement)}
-			{console.log("This is a statement from signing for the high level goals: " + highLevelGoals)}
+
 
 			{(problemStatement === "") || (highLevelGoals === "") ?
 
@@ -148,29 +147,27 @@ export const Signing = ({ releaseId, projectId, setLockPage, problemStatement, h
 
 
 			<Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'column' }}>
-
-
 				<Dialog open={openNotComplete} onClose={handleClickCloseNotComplete}>
-					<DialogTitle>
-						<Typography>
-							<ReportProblemIcon sx={{ padding: '1px 10px' }} style={{ color: '#ffcd38' }} />
-							Release is not ready!
-						</Typography>
+					<DialogTitle sx={{ display: 'flex', alignItems: 'center' }}>
+						<ReportProblemIcon fontSize="large" sx={{ padding: '1px 10px', color: '#ffcd38' }} />
+						Release is not ready!
 					</DialogTitle>
 					<Box sx={{ padding: '1px 10px' }}>
 						<Typography>
 							This revision is currently missing some information. Are you sure you want to begin signing?
 						</Typography>
+						<br />
 					</Box>
 					<Box sx={{ padding: '1px 10px' }} onClick={handleClickCloseNotComplete}>
-						<Button variant="outlined" color="primary" sx={{ width: '50%' }}>
+						<Button variant="outlined" color="primary" sx={{ padding: '1px', width: '50%' }}>
 							Cancel
 						</Button>
-						<Button variant="outlined" color="primary" sx={{ width: '50%' }}>
+						<Button variant="outlined" color="primary" sx={{ paddingTop: '100px', padding: '1px', width: '50%' }}>
 							Confirm
 						</Button>
 					</Box>
-				</Dialog>
+					<br />
+				</Dialog >
 
 
 
