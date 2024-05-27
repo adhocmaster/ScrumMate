@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { Box, Divider, Typography, Paper, List, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, TextField, ToggleButtonGroup, ToggleButton, IconButton } from '@mui/material';
-import AddIcon from '@mui/icons-material/Add';
+import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
+import MenuIcon from '@mui/icons-material/Menu';
+import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import UserStory from "./UserStory";
 import DeleteConfirmation from "./DeleteConfirmation";
@@ -172,19 +174,31 @@ const Sprint = ({ index, items, setItems, userStories }) => {
 									marginLeft: 2,
 								}}
 							>
+
 								<Typography sx={{ marginTop: 2 }} fontSize={14}>
 									{index + 1}
 								</Typography>
-								<DeleteConfirmation
+
+                <IconButton onClick={openDialogForNewStory} color="primary" aria-label="add new story">
+									<AddCircleOutlineIcon />
+								</IconButton>
+
+                <IconButton>
+                  <MenuIcon />
+                </IconButton>
+
+                <IconButton>
+                  <MoreHorizIcon />
+                </IconButton>
+
+              {/*<DeleteConfirmation
 									onDelete={() => {
 										const sprintId = items[index].id;
 										deleteSprint(sprintId, index);
 									}}
-								/>
-								<IconButton onClick={openDialogForNewStory} color="primary" aria-label="add new story">
-									<AddIcon />
-								</IconButton>
-								<Dialog open={dialogOpen} onClose={handleDialogClose} maxWidth="sm" fullWidth>
+								/>*/}
+								
+                  <Dialog open={dialogOpen} onClose={handleDialogClose} maxWidth="sm" fullWidth>
 									<DialogTitle>Add New Story</DialogTitle>
 									<DialogContent>
 										<ToggleButtonGroup
@@ -316,7 +330,7 @@ const Sprint = ({ index, items, setItems, userStories }) => {
 								</Dialog>
 
 								<Typography sx={{ marginBottom: 2 }} fontSize={14}>
-									8
+									8 SP
 								</Typography>
 							</Box>
 							<Box sx={{ height: "100%" }}>
