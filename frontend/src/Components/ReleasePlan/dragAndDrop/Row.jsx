@@ -43,6 +43,7 @@ const Row = (props) => {
 	const title = props.title;
 	const quotes = props.quotes;
 	const index = props.index;
+	const lockPage = props.lockPage;
 	const sprints = props.sprints;
 	const setSprints = props.setSprints;
 	const deleteStory = props.deleteStory;
@@ -54,8 +55,8 @@ const Row = (props) => {
 	const [dialogOpen, setDialogOpen] = useState(false);
 	const [actionDialogOpen, setActionDialogOpen] = useState(false);
 
-    const [selectedItem, setSelectedItem] = useState('');
-    const [description, setDescription] = useState('');
+	const [selectedItem, setSelectedItem] = useState('');
+	const [description, setDescription] = useState('');
 
 	const [backlogItemType, setBacklogItemType] = useState('story');
 	const [role, setRole] = useState('');
@@ -83,17 +84,17 @@ const Row = (props) => {
 	};
 
 	const openDialogForActionItems = () => {
-        setDialogOpen(false);
-        setActionDialogOpen(true);
-    };
+		setDialogOpen(false);
+		setActionDialogOpen(true);
+	};
 
-    const handleSelectChange = (event) => {
-        setSelectedItem(event.target.value);
-    };
+	const handleSelectChange = (event) => {
+		setSelectedItem(event.target.value);
+	};
 
-    const handleDescriptionChange = (event) => {
-        setDescription(event.target.value);
-    };
+	const handleDescriptionChange = (event) => {
+		setDescription(event.target.value);
+	};
 
 	const handleCreate = (sprintId) => {
 		const newStory = {
@@ -165,7 +166,7 @@ const Row = (props) => {
 
 	return (
 		<>
-			<Draggable draggableId={title} index={index} direction="horizontal">
+			<Draggable draggableId={title} index={index} direction="horizontal" isDragDisabled={lockPage}>
 				{(provided, snapshot) => (
 					<Container ref={provided.innerRef} {...provided.draggableProps}>
 						<Header isDragging={snapshot.isDragging}>
@@ -213,8 +214,8 @@ const Row = (props) => {
 													exclusive
 													// onChange={(e, newType) => setBacklogItemType(newType)}
 													onChange={(e, newType) => {
-                                                        newType === 'story' ? openDialogForNewStory() : openDialogForActionItems();
-                                                    }}
+														newType === 'story' ? openDialogForNewStory() : openDialogForActionItems();
+													}}
 													aria-label="User story type"
 													fullWidth
 													sx={{ marginBottom: 2 }}
@@ -338,42 +339,42 @@ const Row = (props) => {
 										</Dialog>
 
 										<Dialog open={actionDialogOpen} onClose={handleDialogClose} maxWidth="sm" fullWidth>
-                                            <DialogTitle>Add Action Item</DialogTitle>
-                                            <DialogContent>
-                                                <FormControl fullWidth margin="dense">
-                                                    <InputLabel id="item-select-label">Item</InputLabel>
-                                                    <Select
-                                                        labelId="item-select-label"
-                                                        id="item-select"
-                                                        label="Item"
-                                                        value={selectedItem} 
-                                                        onChange={handleSelectChange} 
-                                                        defaultValue=""
-                                                    >
-                                                        <MenuItem value="bug">Bug</MenuItem>
-                                                        <MenuItem value="infrastructure">Infrastructure</MenuItem>
-                                                        <MenuItem value="system-feature">System Feature</MenuItem>
-                                                        <MenuItem value="spike">Spike</MenuItem>
-                                                    </Select>
-                                                </FormControl>
-                                                <TextField
-                                                    fullWidth
-                                                    margin="dense"
-                                                    id="action-item-description"
-                                                    label="Description"
-                                                    type="text"
-                                                    variant="outlined"
-                                                    multiline
-                                                    rows={4}
-                                                    value={description}
-                                                    onChange={handleDescriptionChange}
-                                                />
-                                            </DialogContent>
-                                            <DialogActions>
-                                                <Button onClick={handleDialogClose}>Cancel</Button>
-                                                <Button onClick={handleDialogClose}>Create Action Item</Button>
-                                            </DialogActions>
-                                        </Dialog>
+											<DialogTitle>Add Action Item</DialogTitle>
+											<DialogContent>
+												<FormControl fullWidth margin="dense">
+													<InputLabel id="item-select-label">Item</InputLabel>
+													<Select
+														labelId="item-select-label"
+														id="item-select"
+														label="Item"
+														value={selectedItem}
+														onChange={handleSelectChange}
+														defaultValue=""
+													>
+														<MenuItem value="bug">Bug</MenuItem>
+														<MenuItem value="infrastructure">Infrastructure</MenuItem>
+														<MenuItem value="system-feature">System Feature</MenuItem>
+														<MenuItem value="spike">Spike</MenuItem>
+													</Select>
+												</FormControl>
+												<TextField
+													fullWidth
+													margin="dense"
+													id="action-item-description"
+													label="Description"
+													type="text"
+													variant="outlined"
+													multiline
+													rows={4}
+													value={description}
+													onChange={handleDescriptionChange}
+												/>
+											</DialogContent>
+											<DialogActions>
+												<Button onClick={handleDialogClose}>Cancel</Button>
+												<Button onClick={handleDialogClose}>Create Action Item</Button>
+											</DialogActions>
+										</Dialog>
 
 										<Typography sx={{ marginBottom: 2 }} fontSize={14}>
 											{quotes.reduce((accumulator, todo) => accumulator + todo.size, 0)} SP
@@ -404,6 +405,7 @@ const Row = (props) => {
 							internalScroll={props.isScrollable}
 							isCombineEnabled={Boolean(props.isCombineEnabled)}
 							useClone={Boolean(props.useClone)}
+							lockPage={lockPage}
 							sprints={sprints}
 							setSprints={setSprints}
 							sprintIndex={index}

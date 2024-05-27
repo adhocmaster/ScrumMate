@@ -19,6 +19,7 @@ const Board = ({
 	isCombineEnabled,
 	sprints,
 	setSprints,
+	lockPage,
 	useClone,
 	containerHeight,
 	withScrollableColumns,
@@ -181,7 +182,6 @@ const Board = ({
 									isScrollable={withScrollableColumns}
 									isCombineEnabled={isCombineEnabled}
 									useClone={useClone}
-									disableDrag={true}
 									backlogItems={backlogItems}
 									setBacklogItems={setBacklogItems}
 									releaseId={releaseId}
@@ -227,6 +227,7 @@ const Board = ({
 										isScrollable={withScrollableColumns}
 										isCombineEnabled={isCombineEnabled}
 										useClone={useClone}
+										lockPage={lockPage}
 										sprints={sprints}
 										setSprints={setSprints}
 										setBacklogItems={setBacklogItems}
