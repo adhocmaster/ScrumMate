@@ -140,7 +140,6 @@ export class ReleaseRepository extends ModelRepository {
 
 	public async moveSprintTodosToBacklog(releaseId: number, sprintId: number): Promise<BacklogItem[]> {
 		const sprintWithTodos = await this.sprintSource.lookupSprintByIdWithTodos(sprintId);
-		sprintWithTodos.todos.sort((a, b) => a.rank - b.rank);
 		const releaseWithBacklog = await this.releaseSource.fetchReleaseWithBacklog(releaseId);
 		releaseWithBacklog.backlog = sprintWithTodos.todos.concat(releaseWithBacklog.backlog);
 		releaseWithBacklog.backlog.forEach((item, index) => item.rank = index);
