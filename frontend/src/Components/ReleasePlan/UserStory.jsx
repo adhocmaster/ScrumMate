@@ -262,13 +262,13 @@ const UserStory = ({ storyObject, deleteFunction, sprints, setSprints, sprintNum
 				`http://localhost:8080/api/action/${storyId}/edit`,
 				options
 			).then((result) => {
-				// if (sprints) {
-				// 	const sprintNumber = sprints.find(sprint => sprint.todos.some(todo => todo.id === storyId))?.sprintNumber;
-				// 	setStoryWrapper(newStoryObj, sprintNumber, storyId)
-				// }
-				// if (result.status !== 200) {
-				// 	console.log("error", result);
-				// }
+				if (sprints) {
+					const sprintNumber = sprints.find(sprint => sprint.todos.some(todo => todo.id === storyId))?.sprintNumber;
+					setStoryWrapper(newStoryObj, sprintNumber, storyId)
+				}
+				if (result.status !== 200) {
+					console.log("error", result);
+				}
 			});
 		} catch {
 			return null;
