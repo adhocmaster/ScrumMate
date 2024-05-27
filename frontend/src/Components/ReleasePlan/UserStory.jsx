@@ -25,7 +25,7 @@ const UserStory = ({ storyObject, deleteFunction, sprints, setSprints, sprintNum
 
 	const [actionType, setActionType] = useState(storyObject.actionType);
 	const [actionDescription, setActionDescription] = useState(storyObject.description);
-	const [actionPriority, setActionPriority] = useState(false);
+	const [actionPriority, setActionPriority] = useState(storyObject.priority);
 
 	const [tempActionType, setTempActionType] = useState(storyObject.actionType);
 	const [tempActionDescription, setTempActionDescription] = useState(storyObject.description);
