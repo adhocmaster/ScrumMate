@@ -20,8 +20,16 @@ const UserStory = ({ storyObject, deleteFunction, sprints, setSprints, sprintNum
 	const [editDialogOpen, setEditDialogOpen] = useState(false);
 	const [pokerDialogOpen, setPokerDialogOpen] = useState(false);
 	const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-
 	const [showAcceptanceCriteria, setShowAcceptanceCriteria] = useState(false);
+	// const [editActionDialogOpen, setEditActionDialogOpen] = useState(false);
+
+	// const [actionType, setActionType] = useState(storyObject.actionType);
+	// const [actionDescription, setActionDescription] = useState(storyObject.description);
+	// const [actionPriority, setActionPriority] = useState(false);
+
+	// const [tempActionType, setTempActionType] = useState(storyObject.actionType);
+	// const [tempActionDescription, setTempActionDescription] = useState(storyObject.description);
+	// const [tempActionPriority, setTempActionPriority] = useState(false);
 
 	const [backlogItemType, setBacklogItemType] = useState("story");
 	const [role, setRole] = useState(storyObject.userTypes);
@@ -79,6 +87,17 @@ const UserStory = ({ storyObject, deleteFunction, sprints, setSprints, sprintNum
 	const handleEditDialogClose = () => {
 		setEditDialogOpen(false);
 	};
+
+	// const handleEditActionDialogOpen = () => {
+	//	setTempActionType(actionType)
+	//  setTempActionDescription(actionDescription)
+	//  setTempActionPriority(actionPriority)
+	// 	setEditActionDialogOpen(true);
+	// };
+
+	// const handleEditActionDialogClose = () => {
+	// 	setEditActionDialogOpen(false);
+	// };
 
 	const handleSave = () => {
 		setBacklogItemType(tempBacklogItemType);
@@ -313,16 +332,18 @@ const UserStory = ({ storyObject, deleteFunction, sprints, setSprints, sprintNum
 						<MoreVertIcon />
 					</IconButton>
 
-					<IconButton
-						aria-label="settings"
-						aria-controls="menu-userstory"
-						aria-haspopup="true"
-						onClick={handleToggleAcceptanceCriteria}
-						size="large"
-						sx={{ position: "absolute", bottom: -1, left: 30 }}
-					>
-						<NextPlanOutlinedIcon />
-					</IconButton>
+					{storyObject.name != 'ActionItem' && (
+						<IconButton
+							aria-label="settings"
+							aria-controls="menu-userstory"
+							aria-haspopup="true"
+							onClick={handleToggleAcceptanceCriteria}
+							size="large"
+							sx={{ position: "absolute", bottom: -1, left: 30 }}
+						>
+							<NextPlanOutlinedIcon />
+						</IconButton>
+					)}
 
 					<Menu
 						id="menu-userstory"
@@ -331,12 +352,16 @@ const UserStory = ({ storyObject, deleteFunction, sprints, setSprints, sprintNum
 						open={anchorOpen}
 						onClose={handleMenuClose}
 					>
-						{storyObject.name != 'ActionItem' && (
-                            <>
-                                <MenuItem onClick={handleEditDialogOpen}>Edit</MenuItem>
-                                <MenuItem onClick={handlePokerDialogOpen}>Poker</MenuItem>
-                            </>
-                        )}
+						{storyObject.name !== 'ActionItem' ? (
+							<>
+								<MenuItem onClick={handlePokerDialogOpen}>Poker</MenuItem>
+								<MenuItem onClick={handleEditDialogOpen}>Edit</MenuItem>
+							</>
+						) : (
+							<>
+								{/* <MenuItem onClick={handleEditActionDialogOpen}>Edit</MenuItem> */}
+							</>
+						)}
 						<MenuItem onClick={handleDeleteDialogOpen} style={{ color: "red" }}>
 							Delete
 						</MenuItem>

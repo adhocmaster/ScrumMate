@@ -252,7 +252,6 @@ const Row = (props) => {
 											}}
 										/>
 										<IconButton onClick={openDialogForNewStory} color="primary" aria-label="add new story">
-											{/* <IconButton onClick={() => { }} color="primary" aria-label="add new story"> */}
 											<AddIcon />
 										</IconButton>
 										<Dialog open={dialogOpen} onClose={handleDialogClose} maxWidth="sm" fullWidth>
@@ -433,6 +432,23 @@ const Row = (props) => {
 																value={description}
 																onChange={handleDescriptionChange}
 															/>
+
+															<FormControl fullWidth sx={{ marginTop: 2 }}>
+																<InputLabel id="priority-select-label">Priority</InputLabel>
+																<Select
+																	labelId="priority-select-label"
+																	id="priority-select"
+																	value={priority}
+																	label="Priority"
+																	onChange={(event) => setPriority(event.target.value)}
+																>
+																	<MenuItem value={4}>High</MenuItem>
+																	<MenuItem value={3}>Medium</MenuItem>
+																	<MenuItem value={2}>Low</MenuItem>
+																	<MenuItem value={1}>None</MenuItem>
+																</Select>
+															</FormControl>
+
 														</DialogContent>
 														<DialogActions>
 															<Button onClick={handleDialogClose}>Cancel</Button>
