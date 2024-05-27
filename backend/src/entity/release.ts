@@ -58,6 +58,11 @@ export class Release {
 	removeSprint(sprint: Sprint): void {
 		this.sprints = removeMaybeUndefined(sprint, this.sprints)
 	}
+	sortSprints(): Sprint[] {
+		if (this.sprints) {
+			return this.sprints.sort((a: Sprint, b: Sprint) => a.sprintNumber - b.sprintNumber);
+		}
+	}
 
 	getSignatures(): User[] {
 		return getMaybeUndefined(this.signatures)

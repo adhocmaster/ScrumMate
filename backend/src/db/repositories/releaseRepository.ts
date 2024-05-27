@@ -116,7 +116,6 @@ export class ReleaseRepository extends ModelRepository {
 	/// return list sorted by ascending sprint number
 	public async getReleaseSprints(releaseId: number): Promise<Sprint[]> {
 		const sprints = await this.sprintSource.getSprintsWithBacklogAndScrumMasters(releaseId);
-		sprints.sort((a: Sprint, b: Sprint) => a.sprintNumber - b.sprintNumber)
 		for (const sprint of sprints) {
 			sprint.todos.sort((a: BacklogItem, b: BacklogItem) => a.rank - b.rank);
 		}
@@ -126,7 +125,6 @@ export class ReleaseRepository extends ModelRepository {
 	/// return new order sorted by ascending sprint number
 	public async reorderSprints(releaseId: number, startIndex: number, destinationIndex: number): Promise<Sprint[]> {
 		const sprints = await this.sprintSource.getSprintsWithBacklog(releaseId)
-		sprints.sort((a: Sprint, b: Sprint) => a.sprintNumber - b.sprintNumber)
 		const [item] = sprints.splice(startIndex, 1)
 		sprints.splice(destinationIndex, 0, item)
 		for (const { sprint, index } of sprints.map((sprint, index) => ({ sprint, index }))) {
@@ -158,7 +156,6 @@ export class ReleaseRepository extends ModelRepository {
 		const newProductBacklog = await this.moveSprintTodosToBacklog(sprintWithRelease.release.id, sprintId)
 		await this.sprintSource.deleteSprint(sprintId)
 		const releaseWithSprints = await this.fetchReleaseWithSprints(sprintWithRelease.release.id)
-		releaseWithSprints.sprints.sort((a, b) => a.sprintNumber - b.sprintNumber)
 		const sprintIndexPairs = releaseWithSprints.sprints.map((sprint, index) => ({ sprint, index }))
 		for (const { sprint, index } of sprintIndexPairs) {
 			sprint.sprintNumber = index + 1;

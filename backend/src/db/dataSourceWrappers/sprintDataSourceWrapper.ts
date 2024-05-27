@@ -73,6 +73,7 @@ export class SprintDataSourceWrapper extends ModelDataSourceWrapper {
 		if (!sprints || sprints.length === 0) {
 			throw new NotFoundError(`Release with releaseId ${releaseId} not found`)
 		}
+		sprints.sort((a: Sprint, b: Sprint) => a.sprintNumber - b.sprintNumber)
 		return sprints;
 	}
 
@@ -90,6 +91,7 @@ export class SprintDataSourceWrapper extends ModelDataSourceWrapper {
 		if (!sprints || sprints.length === 0) {
 			throw new NotFoundError(`Release with releaseId ${releaseId} not found`)
 		}
+		sprints.sort((a: Sprint, b: Sprint) => a.sprintNumber - b.sprintNumber)
 		return sprints;
 	}
 

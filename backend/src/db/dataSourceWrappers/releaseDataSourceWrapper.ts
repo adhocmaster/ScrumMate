@@ -49,7 +49,9 @@ export class ReleaseDataSourceWrapper extends ModelDataSourceWrapper {
 		const relations = {
 			includeSprints: { todos: true }
 		}
-		return await this.lookupReleaseByIdWithRelations(releaseId, relations);
+		const release = await this.lookupReleaseByIdWithRelations(releaseId, relations);
+		release.sortSprints();
+		return release;
 	}
 
 	public async fetchReleaseWithBacklog(releaseId: number): Promise<Release> {
