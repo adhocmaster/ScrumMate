@@ -21,15 +21,15 @@ const UserStory = ({ storyObject, deleteFunction, sprints, setSprints, sprintNum
 	const [pokerDialogOpen, setPokerDialogOpen] = useState(false);
 	const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
 	const [showAcceptanceCriteria, setShowAcceptanceCriteria] = useState(false);
-	// const [editActionDialogOpen, setEditActionDialogOpen] = useState(false);
+	const [editActionDialogOpen, setEditActionDialogOpen] = useState(false);
 
-	// const [actionType, setActionType] = useState(storyObject.actionType);
-	// const [actionDescription, setActionDescription] = useState(storyObject.description);
-	// const [actionPriority, setActionPriority] = useState(false);
+	const [actionType, setActionType] = useState(storyObject.actionType);
+	const [actionDescription, setActionDescription] = useState(storyObject.description);
+	const [actionPriority, setActionPriority] = useState(false);
 
-	// const [tempActionType, setTempActionType] = useState(storyObject.actionType);
-	// const [tempActionDescription, setTempActionDescription] = useState(storyObject.description);
-	// const [tempActionPriority, setTempActionPriority] = useState(false);
+	const [tempActionType, setTempActionType] = useState(storyObject.actionType);
+	const [tempActionDescription, setTempActionDescription] = useState(storyObject.description);
+	const [tempActionPriority, setTempActionPriority] = useState(false);
 
 	const [backlogItemType, setBacklogItemType] = useState("story");
 	const [role, setRole] = useState(storyObject.userTypes);
@@ -88,16 +88,26 @@ const UserStory = ({ storyObject, deleteFunction, sprints, setSprints, sprintNum
 		setEditDialogOpen(false);
 	};
 
-	// const handleEditActionDialogOpen = () => {
-	//	setTempActionType(actionType)
-	//  setTempActionDescription(actionDescription)
-	//  setTempActionPriority(actionPriority)
-	// 	setEditActionDialogOpen(true);
-	// };
+	const handleEditActionDialogOpen = () => {
+		setTempActionType(actionType)
+		setTempActionDescription(actionDescription)
+		setTempActionPriority(actionPriority)
+		setEditActionDialogOpen(true);
+		handleMenuClose();
+	};
 
-	// const handleEditActionDialogClose = () => {
-	// 	setEditActionDialogOpen(false);
-	// };
+	const handleEditActionDialogClose = () => {
+		setEditActionDialogOpen(false);
+	};
+
+	const handleActionSave = () => {
+		setActionType(tempActionType)
+		setActionDescription(tempActionDescription)
+		setActionPriority(tempActionPriority)
+		saveAction(storyObject.id);
+		handleEditActionDialogClose();
+		handleMenuClose();
+	};
 
 	const handleSave = () => {
 		setBacklogItemType(tempBacklogItemType);
@@ -220,6 +230,45 @@ const UserStory = ({ storyObject, deleteFunction, sprints, setSprints, sprintNum
 				if (result.status !== 200) {
 					console.log("error", result);
 				}
+			});
+		} catch {
+			return null;
+		}
+	}
+
+	function saveAction(storyId) {
+		const newStoryObj = {
+			actionType: tempActionType,
+			description: tempActionDescription,
+			priority: tempActionPriority,
+		}
+
+		var options = {
+			method: "post",
+			credentials: "include",
+			headers: {
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify({
+				actionType: tempActionType,
+				description: tempActionDescription,
+				priority: tempActionPriority,
+				storyPoints: 0,
+			}),
+		};
+
+		try {
+			fetch(
+				`http://localhost:8080/api/action/${storyId}/edit`,
+				options
+			).then((result) => {
+				// if (sprints) {
+				// 	const sprintNumber = sprints.find(sprint => sprint.todos.some(todo => todo.id === storyId))?.sprintNumber;
+				// 	setStoryWrapper(newStoryObj, sprintNumber, storyId)
+				// }
+				// if (result.status !== 200) {
+				// 	console.log("error", result);
+				// }
 			});
 		} catch {
 			return null;
@@ -359,7 +408,7 @@ const UserStory = ({ storyObject, deleteFunction, sprints, setSprints, sprintNum
 							</>
 						) : (
 							<>
-								{/* <MenuItem onClick={handleEditActionDialogOpen}>Edit</MenuItem> */}
+								<MenuItem onClick={handleEditActionDialogOpen}>Edit</MenuItem>
 							</>
 						)}
 						<MenuItem onClick={handleDeleteDialogOpen} style={{ color: "red" }}>
@@ -506,18 +555,6 @@ const UserStory = ({ storyObject, deleteFunction, sprints, setSprints, sprintNum
 						sx={{ marginBottom: 2 }}
 					/>
 
-					{/* <TextField
-						margin="dense"
-						id="story-points"
-						label="Story Points"
-						type="number"
-						fullWidth
-						variant="outlined"
-						value={tempStoryPoints}
-						onChange={(e) => setTempStoryPoints(e.target.value)}
-						InputProps={{ inputProps: { min: 0 } }}
-					/> */}
-
 					<FormControl fullWidth>
 						<InputLabel id="priority-select-label">Priority</InputLabel>
 						<Select
@@ -547,6 +584,75 @@ const UserStory = ({ storyObject, deleteFunction, sprints, setSprints, sprintNum
 					</Button>
 				</DialogActions>
 			</Dialog>
+
+
+			<Dialog
+				open={editActionDialogOpen}
+				onClose={handleEditActionDialogClose}
+				maxWidth="sm"
+				fullWidth
+			>
+				<DialogTitle>Edit:</DialogTitle>
+				<DialogContent>
+					<FormControl fullWidth margin="dense">
+						<InputLabel id="item-select-label">Item</InputLabel>
+						<Select
+							labelId="item-select-label"
+							id="item-select"
+							label="Item"
+							value={tempActionType}
+							onChange={(e) => setTempActionType(e.target.value)}
+							defaultValue=""
+						>
+							<MenuItem value={ActionTypeEnum.BUG}>Bug</MenuItem>
+							<MenuItem value={ActionTypeEnum.INFRASTRUCTURE}>Infrastructure</MenuItem>
+							<MenuItem value={ActionTypeEnum.SYSTEMFEATURE}>System Feature</MenuItem>
+							<MenuItem value={ActionTypeEnum.SPIKE}>Spike</MenuItem>
+						</Select>
+					</FormControl>
+					<TextField
+						fullWidth
+						margin="dense"
+						id="action-item-description"
+						label="Description"
+						type="text"
+						variant="outlined"
+						multiline
+						rows={4}
+						value={tempActionDescription}
+						onChange={(e) => setTempActionDescription(e.target.value)}
+					/>
+
+					<FormControl fullWidth sx={{ marginTop: 2 }}>
+						<InputLabel id="priority-select-label">Priority</InputLabel>
+						<Select
+							labelId="priority-select-label"
+							id="priority-select"
+							value={tempActionPriority}
+							label="Priority"
+							onChange={(event) => setTempActionPriority(event.target.value)}
+						>
+							<MenuItem value={4}>High</MenuItem>
+							<MenuItem value={3}>Medium</MenuItem>
+							<MenuItem value={2}>Low</MenuItem>
+							<MenuItem value={1}>None</MenuItem>
+						</Select>
+					</FormControl>
+
+				</DialogContent>
+				<DialogActions>
+					<Button onClick={handleEditActionDialogClose}>
+						Cancel
+					</Button>
+					<Button onClick={handleDeleteDialogOpen} color="error">
+						Delete
+					</Button>
+					<Button onClick={handleActionSave} color="primary">
+						Save
+					</Button>
+				</DialogActions>
+			</Dialog>
+
 
 			<Dialog
 				open={pokerDialogOpen}

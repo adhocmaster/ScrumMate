@@ -63,6 +63,8 @@ const Row = (props) => {
 
 	const [selectedItem, setSelectedItem] = useState('');
 	const [description, setDescription] = useState('');
+	const [actionPriority, setActionPriority] = useState(1)
+
 
 	const [backlogItemType, setBacklogItemType] = useState('story'); // 'story' or 'action-item'
 	const [role, setRole] = useState('');
@@ -119,6 +121,7 @@ const Row = (props) => {
 		const actionItem = {
 			selectedItem,
 			description,
+			actionPriority,
 		};
 		saveNewActionItem(actionItem, sprintId);
 		handleDialogClose();
@@ -134,6 +137,7 @@ const Row = (props) => {
 			body: JSON.stringify({
 				actionType: actionItem.selectedItem,
 				description: actionItem.description,
+				priority: actionItem.actionPriority,
 				storyPoints: 0,
 			}),
 		};
@@ -438,9 +442,9 @@ const Row = (props) => {
 																<Select
 																	labelId="priority-select-label"
 																	id="priority-select"
-																	value={priority}
+																	value={actionPriority}
 																	label="Priority"
-																	onChange={(event) => setPriority(event.target.value)}
+																	onChange={(event) => setActionPriority(event.target.value)}
 																>
 																	<MenuItem value={4}>High</MenuItem>
 																	<MenuItem value={3}>Medium</MenuItem>
