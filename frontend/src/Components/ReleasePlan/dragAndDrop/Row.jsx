@@ -51,6 +51,7 @@ const Row = (props) => {
 	const title = props.title;
 	const quotes = props.quotes;
 	const index = props.index;
+	const lockPage = props.lockPage;
 	const sprints = props.sprints;
 	const setSprints = props.setSprints;
 	const deleteStory = props.deleteStory;
@@ -64,7 +65,6 @@ const Row = (props) => {
 	const [selectedItem, setSelectedItem] = useState('');
 	const [description, setDescription] = useState('');
 	const [actionPriority, setActionPriority] = useState(1)
-
 
 	const [backlogItemType, setBacklogItemType] = useState('story'); // 'story' or 'action-item'
 	const [role, setRole] = useState('');
@@ -211,6 +211,7 @@ const Row = (props) => {
 		})
 			.then((response) => {
 				response.json().then(jsonResult => {
+					console.log(jsonResult)
 					setSprints(jsonResult[0])
 					setBacklogItems(jsonResult[1])
 				})
@@ -220,7 +221,7 @@ const Row = (props) => {
 
 	return (
 		<>
-			<Draggable draggableId={title} index={index} direction="horizontal">
+			<Draggable draggableId={title} index={index} direction="horizontal" isDragDisabled={lockPage}>
 				{(provided, snapshot) => (
 					<Container ref={provided.innerRef} {...provided.draggableProps}>
 						<Header isDragging={snapshot.isDragging}>
@@ -468,7 +469,6 @@ const Row = (props) => {
 													</>
 											}
 										</Dialog>
-
 										<Typography sx={{ marginBottom: 2 }} fontSize={14}>
 											{quotes.reduce((accumulator, todo) => accumulator + todo.size, 0)} SP
 										</Typography>
@@ -498,6 +498,7 @@ const Row = (props) => {
 							internalScroll={props.isScrollable}
 							isCombineEnabled={Boolean(props.isCombineEnabled)}
 							useClone={Boolean(props.useClone)}
+							lockPage={lockPage}
 							sprints={sprints}
 							setSprints={setSprints}
 							sprintIndex={index}

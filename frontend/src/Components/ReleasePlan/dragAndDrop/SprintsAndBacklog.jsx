@@ -19,14 +19,12 @@ const Board = ({
 	isCombineEnabled,
 	sprints,
 	setSprints,
+	lockPage,
 	useClone,
 	containerHeight,
 	withScrollableColumns,
 	releaseId,
 }) => {
-	const [columns, setColumns] = useState({});
-	const [ordered, setOrdered] = useState([]);
-
 	const [backlogItems, setBacklogItems] = useState([]); // copy this into the first index of columns and ordered
 
 	function fetchBacklog() {
@@ -53,26 +51,6 @@ const Board = ({
 	useEffect(() => {
 		fetchBacklog();
 	}, [releaseId]);
-
-	useEffect(() => {
-		// console.log('firing useeffect')
-		// console.log(sprints)
-		const sprintListObject = sprints.reduce((accumulator, sprint) => ({ ...accumulator, [sprint.sprintNumber]: sprint.todos }), {});
-		const backlogAndSprints = {
-			0: backlogItems,
-			...sprintListObject,
-		}
-		// console.log("backlogAndSprints")
-		// console.log(backlogAndSprints)
-		setColumns(backlogAndSprints);
-		setOrdered(Object.keys(backlogAndSprints));
-		// console.log(Object.keys(backlogAndSprints))
-		// console.log(Object.keys(backlogAndSprints)[0])
-		// console.log([Object.keys(backlogAndSprints)[0]])
-		// console.log(backlogAndSprints[Object.keys(backlogAndSprints)[0]])
-		// console.log(columns)
-		// console.log(ordered)
-	}, [sprints, backlogItems]);
 
 	async function fetchReorderSprints(
 		releaseId,
@@ -165,24 +143,22 @@ const Board = ({
 
 		// reordering column
 		if (result.type === 'COLUMN') {
-			const reorderedorder = reorder(ordered, source.index, destination.index);
+			const reorderedSprints = reorder(sprints, source.index, destination.index);
 
-			setOrdered(reorderedorder);
+			setSprints(reorderedSprints);
 
 			fetchReorderSprints(releaseId, source.index, destination.index, setSprints);
 
 			return;
 		}
 
-		const data = reorderQuoteMap({
-			quoteMap: columns,
+		reorderQuoteMap({
+			sprints, setSprints,
+			backlogItems, setBacklogItems,
 			source,
 			destination,
-			sprints,
 			releaseId,
 		});
-
-		setColumns(data.quoteMap);
 	};
 
 	return (
@@ -198,22 +174,19 @@ const Board = ({
 					>
 						{(provided) => (
 							<div ref={provided.innerRef} {...provided.droppableProps}>
-								{[ordered[0]].map((key, index) => (
-									<Column
-										key={key}
-										index={index}
-										title={key}
-										quotes={columns[key]}
-										isScrollable={withScrollableColumns}
-										isCombineEnabled={isCombineEnabled}
-										useClone={useClone}
-										disableDrag={true}
-										backlogItems={backlogItems}
-										setBacklogItems={setBacklogItems}
-										releaseId={releaseId}
-										deleteStory={deleteStory}
-									/>
-								))}
+								<Column
+									key={"0"}
+									index={0}
+									title={"0"}
+									quotes={backlogItems}
+									isScrollable={withScrollableColumns}
+									isCombineEnabled={isCombineEnabled}
+									useClone={useClone}
+									backlogItems={backlogItems}
+									setBacklogItems={setBacklogItems}
+									releaseId={releaseId}
+									deleteStory={deleteStory}
+								/>
 								{provided.placeholder}
 							</div>
 						)}
@@ -230,7 +203,6 @@ const Board = ({
 								<Grid item xs={15}>
 									<Typography
 										marginLeft={1}
-										maxRows={4}
 										textAlign="left"
 										fontWeight="bold"
 										fontSize={14}
@@ -246,15 +218,16 @@ const Board = ({
 										</IconButton>
 									</Typography>
 								</Grid>
-								{ordered.slice(1).map((key, index) => (
+								{sprints.map((sprint, index) => (
 									<Row
-										key={key}
+										key={`${sprint.sprintNumber}`}
 										index={index}
-										title={key}
-										quotes={columns[key]}
+										title={`${sprint.sprintNumber}`}
+										quotes={sprint.todos}
 										isScrollable={withScrollableColumns}
 										isCombineEnabled={isCombineEnabled}
 										useClone={useClone}
+										lockPage={lockPage}
 										sprints={sprints}
 										setSprints={setSprints}
 										setBacklogItems={setBacklogItems}

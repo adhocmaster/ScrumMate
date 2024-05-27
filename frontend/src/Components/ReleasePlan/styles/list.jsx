@@ -7,7 +7,7 @@ import QuoteItem from './item';
 import Title from './title';
 
 const grid = 8;
-const borderRadius = 2;
+const borderRadius = 0;
 
 export const getBackgroundColor = (isDraggingOver, isDraggingFrom) => {
 	if (isDraggingOver) {
@@ -65,13 +65,12 @@ const Container = styled.div``;
 const InnerQuoteList = (props) => {
 	// console.log("innerquoteList", props.quotes)
 	return props.quotes.map((quote, index) => (
-		<Draggable key={"cardId" + quote.id} draggableId={"draggableId" + quote.id} index={index}>
+		<Draggable key={"cardId" + quote.id} draggableId={"draggableId" + quote.id} index={index} isDragDisabled={props.lockPage}>
 			{(dragProvided, dragSnapshot) => (
 				<QuoteItem
 					key={"cardId" + quote.id}
 					quote={quote}
 					isDragging={dragSnapshot.isDragging}
-					isGroupedOver={Boolean(dragSnapshot.combineTargetFor)}
 					provided={dragProvided}
 					style={{ marginRight: grid }} // Add margin-right between items
 					sprints={props.sprints}
@@ -85,7 +84,7 @@ const InnerQuoteList = (props) => {
 };
 
 function InnerList(props) {
-	const { quotes, dropProvided, sprints, setSprints, sprintIndex, deleteStory } = props;
+	const { quotes, dropProvided, lockPage, sprints, setSprints, sprintIndex, deleteStory } = props;
 	const title = props.title ? <Title>{props.title}</Title> : null;
 
 	// console.log("innerlist", quotes)
@@ -94,7 +93,7 @@ function InnerList(props) {
 		<Container>
 			{title}
 			<DropZone ref={dropProvided.innerRef}>
-				<InnerQuoteList quotes={quotes} sprints={sprints} setSprints={setSprints} sprintIndex={sprintIndex} deleteStory={deleteStory} />
+				<InnerQuoteList quotes={quotes} lockPage={lockPage} sprints={sprints} setSprints={setSprints} sprintIndex={sprintIndex} deleteStory={deleteStory} />
 				{dropProvided.placeholder}
 			</DropZone>
 		</Container>
@@ -114,6 +113,7 @@ export default function QuoteList(props) {
 		quotes,
 		title,
 		useClone,
+		lockPage,
 		sprints,
 		setSprints,
 		sprintIndex,
@@ -145,6 +145,7 @@ export default function QuoteList(props) {
 								quotes={quotes}
 								title={title}
 								dropProvided={dropProvided}
+								lockPage={lockPage}
 								sprints={sprints}
 								setSprints={setSprints}
 								sprintIndex={sprintIndex}
@@ -156,6 +157,7 @@ export default function QuoteList(props) {
 							quotes={quotes}
 							title={title}
 							dropProvided={dropProvided}
+							lockPage={lockPage}
 							sprints={sprints}
 							setSprints={setSprints}
 							sprintIndex={sprintIndex}

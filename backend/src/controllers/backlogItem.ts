@@ -14,8 +14,8 @@ export const createStory = async (req: express.Request, res: express.Response) =
 		storyPoints,
 		priority,
 	} = req.body;
-	verifyParameters(userTypes, functionalityDescription, reasoning, acceptanceCriteria, storyPoints, priority);
-	const newStory = await db.getBacklogItemRepository.createNewSprintStory(parseInt(sprintId), userTypes, functionalityDescription, reasoning, acceptanceCriteria, storyPoints, priority);
+	verifyParameters(userTypes, functionalityDescription, reasoning, acceptanceCriteria, priority);
+	const newStory = await db.getBacklogItemRepository.createNewSprintStory(parseInt(sprintId), userTypes, functionalityDescription, reasoning, acceptanceCriteria, priority, storyPoints);
 	return res.json(newStory);
 }
 
@@ -30,8 +30,8 @@ export const createNewBacklogStory = async (req: express.Request, res: express.R
 		storyPoints,
 		priority,
 	} = req.body;
-	verifyParameters(userTypes, functionalityDescription, reasoning, acceptanceCriteria, storyPoints, priority);
-	const newStory = await db.getBacklogItemRepository.createNewBacklogStory(parseInt(releaseId), userTypes, functionalityDescription, reasoning, acceptanceCriteria, storyPoints, priority);
+	verifyParameters(userTypes, functionalityDescription, reasoning, acceptanceCriteria, priority);
+	const newStory = await db.getBacklogItemRepository.createNewBacklogStory(parseInt(releaseId), userTypes, functionalityDescription, reasoning, acceptanceCriteria, priority, storyPoints);
 	return res.json(newStory);
 }
 
@@ -44,8 +44,8 @@ export const createAction = async (req: express.Request, res: express.Response) 
 		storyPoints,
 		priority,
 	} = req.body;
-	verifyParameters(actionType, description, storyPoints, priority);
-	const newStory = await db.getBacklogItemRepository.createNewSprintAction(parseInt(sprintId), actionType, description, storyPoints, priority);
+	verifyParameters(actionType, description, priority);
+	const newStory = await db.getBacklogItemRepository.createNewSprintAction(parseInt(sprintId), actionType, description, priority, storyPoints);
 	return res.json(newStory);
 }
 
@@ -58,8 +58,8 @@ export const createNewBacklogAction = async (req: express.Request, res: express.
 		storyPoints,
 		priority,
 	} = req.body;
-	verifyParameters(actionType, description, storyPoints, priority);
-	const newStory = await db.getBacklogItemRepository.createNewBacklogAction(parseInt(releaseId), actionType, description, storyPoints, priority);
+	verifyParameters(actionType, description, priority);
+	const newStory = await db.getBacklogItemRepository.createNewBacklogAction(parseInt(releaseId), actionType, description, priority, storyPoints);
 	return res.json(newStory);
 }
 

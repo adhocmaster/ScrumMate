@@ -56,6 +56,7 @@ afterAll(async () => {
 
 describe("Release API tests", () => {
 	let sessionToken: string;
+	var userId: number;
 	test("CREATE USER", async () => {
 		const body = { username: "sallyg", email: "sallys@gmail.com", password: "password123" }
 		await request(app)
@@ -65,6 +66,7 @@ describe("Release API tests", () => {
 			.then((res) => {
 				expect(res.body.email).toEqual(body.email);
 				expect(res.body.id).toBeDefined();
+				userId = res.body.id;
 			});
 	});
 
@@ -125,6 +127,7 @@ describe("Release API tests", () => {
 			});
 	});
 
+	let releaseId: Number;
 	test('New Release 2', async () => {
 		const body = { "goalStatement": "release 2" }
 		await request(app)
@@ -136,10 +139,10 @@ describe("Release API tests", () => {
 				expect(res.body).toBeDefined();
 				expect(res.body.revision).toBeDefined();
 				expect(res.body.goalStatement).toBeDefined();
+				releaseId = res.body.id;
 			});
 	});
 
-	let releaseId: Number;
 	test("Get Releases of project with 3 releases", async () => {
 		await request(app)
 			.get(`/api/project/${projectId}/releases`)
@@ -148,7 +151,6 @@ describe("Release API tests", () => {
 			.then((res) => {
 				expect(res.body).toBeDefined();
 				expect(res.body.id).toBeDefined();
-				releaseId = res.body.id;
 				expect(res.body.releases.length).toEqual(3);
 			})
 	});
@@ -166,6 +168,169 @@ describe("Release API tests", () => {
 				expect(res.body.goalStatement).toBeDefined();
 				expect(res.body.goalStatement).toEqual("release EDITEd");
 			});
+	});
+
+	test("Get signability of empty release", async () => {
+		await request(app)
+			.get(`/api/release/${releaseId}/signingCondtion`)
+			.set('Cookie', [`user-auth=${sessionToken}`])
+			.expect(200)
+			.then((res) => {
+				expect(res.body).toBe(true);
+			})
+	});
+
+	var sprintId: number;
+	var sprintStoryId: number;
+	var backlogStoryId: number;
+	test('Create sprint and backlog items for release 3', async () => {
+		const sprint1Body = { "sprintNumber": 1 }
+		await request(app)
+			.post(`/api/release/${releaseId}/sprint`)
+			.set('Cookie', [`user-auth=${sessionToken}`])
+			.send(sprint1Body)
+			.expect(200)
+			.then((res) => {
+				// console.log(res.body)
+				expect(res.body).toBeDefined();
+				expect(res.body.startDate).toEqual(null);
+				expect(res.body.endDate).toEqual(null);
+				expect(res.body.scrumMaster).toEqual(null);
+				sprintId = res.body.id;
+			});
+
+		const productBacklogItemBody = {
+			"userTypes": "a",
+			"functionalityDescription": "a",
+			"reasoning": "a",
+			"acceptanceCriteria": "a",
+			"priority": 1,
+		}
+		await request(app)
+			.post(`/api/release/${releaseId}`)
+			.set('Cookie', [`user-auth=${sessionToken}`])
+			.send(productBacklogItemBody)
+			.expect(200)
+			.then((res) => {
+				expect(res.body).toBeDefined();
+				sprintStoryId = res.body.id;
+			});
+
+		const sprint1BacklogItemBody = {
+			"userTypes": "b",
+			"functionalityDescription": "b",
+			"reasoning": "b",
+			"acceptanceCriteria": "b",
+			"priority": 2,
+		}
+		await request(app)
+			.post(`/api/sprint/${sprintId}`)
+			.set('Cookie', [`user-auth=${sessionToken}`])
+			.send(sprint1BacklogItemBody)
+			.expect(200)
+			.then((res) => {
+				expect(res.body).toBeDefined();
+				backlogStoryId = res.body.id;
+			});
+	});
+
+	test("Get signability of release with an empty sprint", async () => {
+		await request(app)
+			.get(`/api/release/${releaseId}/signingCondtion`)
+			.set('Cookie', [`user-auth=${sessionToken}`])
+			.expect(200)
+			.then((res) => {
+				expect(res.body).toBe(false);
+			})
+	});
+
+	test("Add SM to sprint 1 but still not signable", async () => {
+		const body = { "scrumMasterId": userId }
+		await request(app)
+			.post(`/api/sprint/${sprintId}/edit`)
+			.set('Cookie', [`user-auth=${sessionToken}`])
+			.send(body)
+			.expect(200)
+			.then((res) => {
+				expect(res.body.scrumMaster.id).toBe(userId);
+			})
+
+		await request(app)
+			.get(`/api/release/${releaseId}/signingCondtion`)
+			.set('Cookie', [`user-auth=${sessionToken}`])
+			.expect(200)
+			.then((res) => {
+				expect(res.body).toBe(false);
+			})
+	});
+
+	test("Add dates to sprint 1 but still not signable", async () => {
+		const body = {
+			"startDate": new Date(),
+			"endDate": new Date(),
+		}
+		await request(app)
+			.post(`/api/sprint/${sprintId}/edit`)
+			.set('Cookie', [`user-auth=${sessionToken}`])
+			.send(body)
+			.expect(200)
+			.then((res) => {
+				expect(res.body.scrumMaster.id).toBe(userId);
+				expect(res.body.startDate).toBeDefined();
+				expect(res.body.endDate).toBeDefined();
+			})
+
+		await request(app)
+			.get(`/api/release/${releaseId}/signingCondtion`)
+			.set('Cookie', [`user-auth=${sessionToken}`])
+			.expect(200)
+			.then((res) => {
+				expect(res.body).toBe(false);
+			})
+	});
+
+	test("Add size to sprint story but still not signable", async () => {
+		const body = {
+			"storyPoints": 1,
+		}
+		await request(app)
+			.post(`/api/story/${sprintStoryId}/edit`)
+			.set('Cookie', [`user-auth=${sessionToken}`])
+			.send(body)
+			.expect(200)
+			.then((res) => {
+				expect(res.body.size).toBe(1);
+			})
+
+		await request(app)
+			.get(`/api/release/${releaseId}/signingCondtion`)
+			.set('Cookie', [`user-auth=${sessionToken}`])
+			.expect(200)
+			.then((res) => {
+				expect(res.body).toBe(false);
+			})
+	});
+
+	test("Add size to backlog story and is now signable", async () => {
+		const body = {
+			"storyPoints": 2,
+		}
+		await request(app)
+			.post(`/api/story/${backlogStoryId}/edit`)
+			.set('Cookie', [`user-auth=${sessionToken}`])
+			.send(body)
+			.expect(200)
+			.then((res) => {
+				expect(res.body.size).toBe(2);
+			})
+
+		await request(app)
+			.get(`/api/release/${releaseId}/signingCondtion`)
+			.set('Cookie', [`user-auth=${sessionToken}`])
+			.expect(200)
+			.then((res) => {
+				expect(res.body).toBe(true);
+			})
 	});
 
 });

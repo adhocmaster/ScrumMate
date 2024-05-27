@@ -115,7 +115,7 @@ export class ReleaseRepository extends ModelRepository {
 
 	/// return list sorted by ascending sprint number
 	public async getReleaseSprints(releaseId: number): Promise<Sprint[]> {
-		const sprints = await this.sprintSource.getSprintsWithBacklog(releaseId);
+		const sprints = await this.sprintSource.getSprintsWithBacklogAndScrumMasters(releaseId);
 		sprints.sort((a: Sprint, b: Sprint) => a.sprintNumber - b.sprintNumber)
 		for (const sprint of sprints) {
 			sprint.todos.sort((a: BacklogItem, b: BacklogItem) => a.rank - b.rank);
@@ -126,13 +126,12 @@ export class ReleaseRepository extends ModelRepository {
 	/// return new order sorted by ascending sprint number
 	public async reorderSprints(releaseId: number, startIndex: number, destinationIndex: number): Promise<Sprint[]> {
 		const sprints = await this.sprintSource.getSprintsWithBacklog(releaseId)
-		// unfortunately cant call getReleaseSprints() because we need the release too
-		// otherwise we need to take a performance hit looking up the release again
 		sprints.sort((a: Sprint, b: Sprint) => a.sprintNumber - b.sprintNumber)
 		const [item] = sprints.splice(startIndex, 1)
 		sprints.splice(destinationIndex, 0, item)
 		for (const { sprint, index } of sprints.map((sprint, index) => ({ sprint, index }))) {
 			sprint.sprintNumber = index + 1;
+			sprint.todos.sort((a, b) => a.rank - b.rank);
 			await this.sprintSource.save(sprint)
 		}
 		// await this.dataSource.save(sprints)
@@ -159,11 +158,13 @@ export class ReleaseRepository extends ModelRepository {
 		const sprintWithRelease = await this.sprintSource.lookupSprintByIdWithRelease(sprintId)
 		const newProductBacklog = await this.moveSprintTodosToBacklog(sprintWithRelease.release.id, sprintId)
 		await this.sprintSource.deleteSprint(sprintId)
-		const releaseWithSprints = await this.releaseSource.fetchReleaseWithSprints(sprintWithRelease.release.id)
+		const releaseWithSprints = await this.fetchReleaseWithSprints(sprintWithRelease.release.id)
+		releaseWithSprints.sprints.sort((a, b) => a.sprintNumber - b.sprintNumber)
 		const sprintIndexPairs = releaseWithSprints.sprints.map((sprint, index) => ({ sprint, index }))
 		for (const { sprint, index } of sprintIndexPairs) {
 			sprint.sprintNumber = index + 1;
-			await this.sprintSource.save(sprint)
+			sprint.todos.sort((a, b) => a.rank - b.rank);
+			await this.sprintSource.save(sprint);
 		}
 		await this.releaseSource.save(releaseWithSprints)
 		return [releaseWithSprints.sprints, newProductBacklog];
@@ -204,6 +205,35 @@ export class ReleaseRepository extends ModelRepository {
 		const allMembers = [projectWithMembers.productOwner, ...projectWithMembers.teamMembers];
 		const unsignedMembers = allMembers.filter((member) => !releaseWithSignatures.signatures.some((signature) => signature.id === member.id));
 		return [unsignedMembers, releaseWithSignatures.signatures, releaseWithSignatures.fullySigned];
+	}
+
+	private backlogItemListHasUnestimated(backlogItemList: BacklogItem[]) {
+		for (const backlogItem of backlogItemList) {
+			if (!backlogItem.size) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	private sprintAttributesSet(sprint: Sprint) {
+		return !sprint.startDate || !sprint.endDate || !sprint.scrumMaster;
+	}
+
+	public async getSigningCondition(releaseId: number): Promise<boolean> {
+		const releaseWithBacklog = await this.fetchReleaseWithBacklog(releaseId);
+
+		for (const sprint of releaseWithBacklog.sprints) {
+			const sprintWithScrumMaster = await this.sprintSource.lookupSprintByIdWithScrumMaster(sprint.id);
+			if (this.sprintAttributesSet(sprintWithScrumMaster) || this.backlogItemListHasUnestimated(sprint.todos)) {
+				return false;
+			}
+		}
+		if (this.backlogItemListHasUnestimated(releaseWithBacklog.backlog)) {
+			return false
+		}
+
+		return true;
 	}
 
 	public async lookupReleaseById(id: number): Promise<Release> {
