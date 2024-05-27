@@ -78,6 +78,11 @@ export class Release {
 	removeFromBacklog(backlogItem: BacklogItem): void {
 		this.backlog = removeMaybeUndefined(backlogItem, this.backlog)
 	}
+	sortBacklog(): BacklogItem[] {
+		if (this.backlog) {
+			return this.backlog.sort((a: BacklogItem, b: BacklogItem) => a.rank - b.rank);
+		}
+	}
 
 	getDeletedBacklogItems(): BacklogItem[] {
 		return getMaybeUndefined(this.backlog)

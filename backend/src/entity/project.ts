@@ -61,7 +61,7 @@ export class Project {
 	}
 	sortReleases(): Release[] {
 		if (this.releases) {
-			return this.releases.sort((a: Release, b: Release) => b.revision - a.revision)
+			return this.releases.sort((a: Release, b: Release) => b.revision - a.revision);
 		}
 	}
 

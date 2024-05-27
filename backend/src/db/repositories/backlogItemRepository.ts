@@ -208,7 +208,6 @@ export class BacklogItemRepository extends ModelRepository {
 		} else {
 			// backlog is parent
 			const release = await this.releaseSource.fetchReleaseWithBacklog(backlogItem.release.id);
-			release.backlog.sort((a: BacklogItem, b: BacklogItem) => a.rank - b.rank)
 			for (const { backlogItem, index } of release.backlog.map((backlogItem, index) => ({ backlogItem, index }))) {
 				backlogItem.rank = index;
 				await this.backlogSource.save(backlogItem)

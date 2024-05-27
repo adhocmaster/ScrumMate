@@ -19,11 +19,11 @@ export class ProjectDataSourceWrapper extends ModelDataSourceWrapper {
 			includeProductOwner?: boolean,
 			includeTeamMembers?: boolean,
 			includeInvitedUsers?: boolean,
-			includeReleases?: boolean,
+			includeReleases?: boolean | { signatures: boolean },
 			includeRoles?: boolean,
 		}
 	): Promise<Project> {
-		const backlogItemWithPoker = await this.dataSource.getRepository(Project).find({
+		const project = await this.dataSource.getRepository(Project).find({
 			where: { id: projectId },
 			relations: {
 				productOwner: includedRelations.includeProductOwner,
@@ -33,10 +33,10 @@ export class ProjectDataSourceWrapper extends ModelDataSourceWrapper {
 				roles: includedRelations.includeRoles,
 			},
 		});
-		if (!backlogItemWithPoker || backlogItemWithPoker.length === 0) {
+		if (!project || project.length === 0) {
 			throw new NotFoundError(`Project with projectId ${projectId} not found`);
 		}
-		return backlogItemWithPoker[0];
+		return project[0];
 	}
 
 	public async lookupProjectByIdWithUsers(id: number): Promise<Project> {
@@ -57,22 +57,16 @@ export class ProjectDataSourceWrapper extends ModelDataSourceWrapper {
 	}
 
 	public async fetchProjectWithReleases(id: number): Promise<Project> {
-		const maybeProject = await this.dataSource.getRepository(Project).find({
-			where: { id: id },
-			relations: {
-				releases: {
-					signatures: true
-				},
-			}
-		});
-		if (!maybeProject || maybeProject.length === 0) {
-			throw new NotFoundError(`Project with id ${id} not found`);
-		}
-		return maybeProject[0];
+		const relations = {
+			includeReleases: { signatures: true }
+		};
+		const project = await this.lookupProjectByIdWithRelations(id, relations);
+		project.sortReleases();
+		return project;
 	}
 
 	public async fetchMostRecentRelease(id: number): Promise<Release> {
-		return (await this.fetchProjectWithReleases(id)).sortReleases()[0];
+		return (await this.fetchProjectWithReleases(id)).releases[0];
 	}
 
 	public async deleteProject(projectId: number) {

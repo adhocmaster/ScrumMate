@@ -26,7 +26,7 @@ export class BacklogItemDataSourceWrapper extends ModelDataSourceWrapper {
 			includeAssignees?: boolean
 		}
 	): Promise<BacklogItem> {
-		const backlogItemWithPoker = await this.dataSource.getRepository(BacklogItem).find({
+		const backlogItem = await this.dataSource.getRepository(BacklogItem).find({
 			where: { id: backlogId },
 			relations: {
 				release: includedRelations.includeRelease,
@@ -35,10 +35,10 @@ export class BacklogItemDataSourceWrapper extends ModelDataSourceWrapper {
 				assignees: includedRelations.includeAssignees,
 			},
 		});
-		if (!backlogItemWithPoker || backlogItemWithPoker.length === 0) {
+		if (!backlogItem || backlogItem.length === 0) {
 			throw new NotFoundError(`BacklogItem with backlogId ${backlogId} not found`);
 		}
-		return backlogItemWithPoker[0]
+		return backlogItem[0]
 	}
 
 	public async fetchBacklogWithParent(backlogId: number): Promise<BacklogItem> {
