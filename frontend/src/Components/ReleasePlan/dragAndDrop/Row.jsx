@@ -82,6 +82,11 @@ const Row = (props) => {
 		setAcceptanceCriteria('');
 		setStoryPoints(0);
 		setPriority(1);
+
+		setSelectedItem('')
+		setDescription('')
+		setActionPriority(0)
+
 		setDialogOpen(true);
 		setBacklogItemType('story');
 	};
