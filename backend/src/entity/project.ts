@@ -59,6 +59,11 @@ export class Project {
 	removeRelease(release: Release): void {
 		this.releases = removeMaybeUndefined(release, this.releases)
 	}
+	sortReleases(): Release[] {
+		if (this.releases) {
+			return this.releases.sort((a: Release, b: Release) => b.revision - a.revision)
+		}
+	}
 
 	getRoles(): UserRole[] {
 		return getMaybeUndefined(this.roles)

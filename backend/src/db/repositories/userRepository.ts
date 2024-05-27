@@ -42,6 +42,7 @@ export class UserRepository extends ModelRepository {
 
 		// make the most recent fully signed revision (if there is one) no longer fully signed
 		const projectWithReleases = await this.projectSource.fetchProjectWithReleases(projectId);
+		projectWithReleases.sortReleases();
 		for (const release of projectWithReleases.releases) {
 			if (release.fullySigned) {
 				release.fullySigned = false
@@ -94,6 +95,7 @@ export class UserRepository extends ModelRepository {
 
 		// make the most recent fully signed revision (if there is one) no longer fully signed
 		const projectWithReleases = await this.projectSource.fetchProjectWithReleases(projectId);
+		projectWithReleases.sortReleases();
 		for (const release of projectWithReleases.releases) {
 			if (release.fullySigned) {
 				release.fullySigned = false
