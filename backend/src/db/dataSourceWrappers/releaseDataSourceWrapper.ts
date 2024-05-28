@@ -12,81 +12,74 @@ export class ReleaseDataSourceWrapper extends ModelDataSourceWrapper {
 		return maybeRelease
 	}
 
-	public async fetchReleaseWithProject(releaseId: number): Promise<Release> {
-		const releaseWithProject = (await this.dataSource.getRepository(Release).find({
+	public async lookupReleaseByIdWithRelations(
+		releaseId: number,
+		includedRelations: {
+			includeProject?: boolean,
+			includeSprints?: boolean | { todos: boolean },
+			includeSignatures?: boolean,
+			includeBacklog?: boolean,
+			includeDeletedBacklog?: boolean,
+		}
+	): Promise<Release> {
+		const release = await this.dataSource.getRepository(Release).find({
 			where: { id: releaseId },
 			relations: {
-				project: true
+				project: includedRelations.includeProject,
+				sprints: includedRelations.includeSprints,
+				signatures: includedRelations.includeSignatures,
+				backlog: includedRelations.includeBacklog,
+				deletedBacklog: includedRelations.includeDeletedBacklog,
 			},
-		}))
-		if (!releaseWithProject || releaseWithProject.length === 0) {
-			throw new NotFoundError(`Release with releaseId ${releaseId} not found`)
+		});
+		if (!release || release.length === 0) {
+			throw new NotFoundError(`Release with releaseId ${releaseId} not found`);
 		}
-		return releaseWithProject[0]
+		return release[0];
+	}
+
+	public async fetchReleaseWithProject(releaseId: number): Promise<Release> {
+		const relations = {
+			includeProject: true,
+		};
+		return await this.lookupReleaseByIdWithRelations(releaseId, relations);
 	}
 
 	public async fetchReleaseWithSprints(releaseId: number): Promise<Release> {
-		const releaseWithSprints = await this.dataSource.getRepository(Release).find({
-			where: { id: releaseId },
-			relations: {
-				sprints: {
-					todos: true,
-				},
-			},
-		})
-		if (!releaseWithSprints || releaseWithSprints.length === 0) {
-			throw new NotFoundError(`Release with releaseId ${releaseId} not found`)
+		const relations = {
+			includeSprints: { todos: true }
 		}
-		return releaseWithSprints[0]
+		const release = await this.lookupReleaseByIdWithRelations(releaseId, relations);
+		release.sortSprints();
+		return release;
 	}
 
 	public async fetchReleaseWithBacklog(releaseId: number): Promise<Release> {
-		const releaseWithBacklog = await this.dataSource.getRepository(Release).find({
-			where: { id: releaseId },
-			relations: {
-				backlog: true,
-				sprints: {
-					todos: true,
-				}
-			},
-		})
-		if (!releaseWithBacklog || releaseWithBacklog.length === 0) {
-			throw new NotFoundError(`Release with releaseId ${releaseId} not found`)
-		}
-		releaseWithBacklog[0].backlog.sort((a, b) => a.rank - b.rank)
-		return releaseWithBacklog[0]
+		const relations = {
+			includeBacklog: true,
+			includeSprints: { todos: true }
+		};
+		const release = await this.lookupReleaseByIdWithRelations(releaseId, relations);
+		release.sortBacklog();
+		return release;
 	}
 
 	public async fetchReleaseWithSignatures(releaseId: number): Promise<Release> {
-		const releaseWithSignatures = await this.dataSource.getRepository(Release).find({
-			where: { id: releaseId },
-			relations: {
-				signatures: true,
-			},
-		})
-		if (!releaseWithSignatures || releaseWithSignatures.length === 0) {
-			throw new NotFoundError(`Release with releaseId ${releaseId} not found`)
-		}
-		return releaseWithSignatures[0]
+		const relations = {
+			includeSignatures: true,
+		};
+		return await this.lookupReleaseByIdWithRelations(releaseId, relations);
 	}
 
 	public async fetchReleaseWithEverything(releaseId: number): Promise<Release> {
-		const releaseWithSprints = await this.dataSource.getRepository(Release).findOne({
-			where: { id: releaseId },
-			relations: {
-				project: true,
-				sprints: {
-					todos: true,
-				},
-				backlog: true,
-				deletedBacklog: true,
-				signatures: true,
-			},
-		})
-		if (!releaseWithSprints) {
-			throw new NotFoundError(`Release with releaseId ${releaseId} not found`)
-		}
-		return releaseWithSprints
+		const relations = {
+			includeProject: true,
+			includeSprints: { todos: true },
+			includeSignatures: true,
+			includeBacklog: true,
+			includeDeletedBacklog: true,
+		};
+		return await this.lookupReleaseByIdWithRelations(releaseId, relations);
 	}
 
 	public async deleteRelease(releaseId: number) {

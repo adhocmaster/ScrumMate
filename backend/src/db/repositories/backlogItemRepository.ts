@@ -124,58 +124,60 @@ export class BacklogItemRepository extends ModelRepository {
 				backlogItem.sprint = parent
 			}
 		}
+		const resetRanks = async (backlogItemList: BacklogItem[]) => {
+			for (const { backlogItem, index } of backlogItemList.map((backlogItem, index) => ({ backlogItem, index }))) {
+				backlogItem.rank = index;
+				await this.backlogSource.save(backlogItem);
+			}
+		}
 
 		const fromBacklog = sourceType === "backlog";
 		const toBacklog = destinationType === "backlog";
 
+		// remove backlogItem from source
 		const sourceObj = await getObj(fromBacklog, sourceId)
 		const sourceList = getObjList(sourceObj)
-		const destinationObj = await getObj(toBacklog, destinationId)
-		const destinationList = getObjList(destinationObj)
-
 		if (sourceIndex >= sourceList.length) {
 			throw new NotFoundError("Source index is out of bounds")
 		}
+		sourceList.sort((a: BacklogItem, b: BacklogItem) => a.rank - b.rank)
+		const [item] = sourceList.splice(sourceIndex, 1)
+		await resetRanks(sourceList);
+		sourceObj.backlogItemCount -= 1;
+		await saveObj(sourceObj);
+
+		// add backlogItem to destination
+		const destinationObj = await getObj(toBacklog, destinationId)
+		const destinationList = getObjList(destinationObj)
 		if (destinationIndex > destinationList.length) {
 			throw new NotFoundError("Destination index is out of bounds")
 		}
-
-		sourceList.sort((a: BacklogItem, b: BacklogItem) => a.rank - b.rank)
-		const [item] = sourceList.splice(sourceIndex, 1)
-		for (const { backlogItem, index } of sourceList.map((backlogItem, index) => ({ backlogItem, index }))) {
-			backlogItem.rank = index;
-			await this.backlogSource.save(backlogItem)
-		}
-		sourceObj.backlogItemCount -= 1;
-		await saveObj(sourceObj)
-
-		destinationList.sort((a: BacklogItem, b: BacklogItem) => a.rank - b.rank)
-		destinationList.splice(destinationIndex, 0, item)
-		for (const { backlogItem, index } of destinationList.map((backlogItem, index) => ({ backlogItem, index }))) {
-			backlogItem.rank = index;
-			await this.backlogSource.save(backlogItem)
-		}
+		destinationList.sort((a: BacklogItem, b: BacklogItem) => a.rank - b.rank);
+		destinationList.splice(destinationIndex, 0, item);
+		await resetRanks(destinationList);
 		destinationObj.backlogItemCount += 1;
 		await saveObj(destinationObj);
 
+		// set backlogItem's parent
 		setParent(item, destinationObj);
 		await this.backlogSource.save(item);
 		item.sprint = undefined;
 		item.release = undefined;
 
+		// fetch updated source list (in case source == destination)
 		const finalSourceObj = await getObj(fromBacklog, sourceId);
 		const finalSourceList = getObjList(finalSourceObj);
 		finalSourceList.sort((a: BacklogItem, b: BacklogItem) => a.rank - b.rank)
-		const finalDestinationObj = await getObj(toBacklog, destinationId);
-		const finalDestinationList = getObjList(finalDestinationObj);
-		finalDestinationList.sort((a: BacklogItem, b: BacklogItem) => a.rank - b.rank)
 
-		return [finalSourceList, finalDestinationList]
+		return [finalSourceList, destinationList]
 	}
 
 	private async moveBacklogItemToDeletedList(backlogItemWithParent: BacklogItem) {
+		// exactly one of them is null
 		const parentSprint = backlogItemWithParent.sprint;
 		const parentRelease = backlogItemWithParent.release;
+
+		// add to deletedFrom list
 		if (backlogItemWithParent.sprint) {
 			const sprintWithRelease = await this.sprintSource.lookupSprintByIdWithRelease(backlogItemWithParent.sprint.id);
 			backlogItemWithParent.deletedFrom = sprintWithRelease.release;
@@ -183,6 +185,8 @@ export class BacklogItemRepository extends ModelRepository {
 		} else {
 			backlogItemWithParent.deletedFrom = backlogItemWithParent.release;
 		}
+
+		// save info in backlog Item
 		backlogItemWithParent.release = null;
 		await this.backlogSource.save(backlogItemWithParent);
 		backlogItemWithParent.sprint = parentSprint;
@@ -208,7 +212,6 @@ export class BacklogItemRepository extends ModelRepository {
 		} else {
 			// backlog is parent
 			const release = await this.releaseSource.fetchReleaseWithBacklog(backlogItem.release.id);
-			release.backlog.sort((a: BacklogItem, b: BacklogItem) => a.rank - b.rank)
 			for (const { backlogItem, index } of release.backlog.map((backlogItem, index) => ({ backlogItem, index }))) {
 				backlogItem.rank = index;
 				await this.backlogSource.save(backlogItem)

@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToOne, OneToMany, JoinColumn, CreateDateColumn, ManyToMany, JoinTable } from "typeorm"
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToOne, OneToMany, JoinColumn, CreateDateColumn } from "typeorm"
 import { User } from "./User"
 import { Release } from "./release"
 import { BacklogItem } from "./backlogItem"
@@ -24,6 +24,9 @@ export class Sprint {
 	endDate: Date
 
 	get sprintDuration(): number {
+		if (!this.startDate || !this.endDate) {
+			return null;
+		}
 		var diff = this.startDate.getTime() - this.endDate.getTime()
 		return Math.ceil(diff / (1000 * 3600 * 24));
 	}
@@ -70,6 +73,12 @@ export class Sprint {
 	removeTODO(story: BacklogItem): void {
 		this.todos = removeMaybeUndefined(story, this.todos);
 	}
+	sortTODO(): BacklogItem[] {
+		if (this.todos) {
+			return this.todos.sort((a: BacklogItem, b: BacklogItem) => a.rank - b.rank);
+		}
+	}
+
 	copy(sprint: Sprint): void {
 		this.sprintNumber = sprint.sprintNumber;
 		this.startDate = sprint.startDate;

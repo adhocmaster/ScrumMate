@@ -60,6 +60,7 @@ export class ProjectRepository extends ModelRepository {
 
 		// check every revision that is not signed yet and make it fully signed if this was the missing signature
 		const projectWithReleases = await this.projectSource.fetchProjectWithReleases(projectId);
+		projectWithReleases.sortReleases();
 		for (const release of projectWithReleases.releases) {
 			if (!release.fullySigned && release.signatures.length === project.teamMembers.length + 1) { // +1 for PO
 				release.fullySigned = true;
@@ -159,7 +160,9 @@ export class ProjectRepository extends ModelRepository {
 	}
 
 	public async fetchProjectWithReleases(id: number): Promise<Project> {
-		return await this.projectSource.fetchProjectWithReleases(id);
+		const project = await this.projectSource.fetchProjectWithReleases(id);
+		project.sortReleases();
+		return project;
 	}
 
 	public async fetchMostRecentRelease(id: number): Promise<Release> {
