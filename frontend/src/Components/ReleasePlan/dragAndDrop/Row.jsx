@@ -64,13 +64,9 @@ const Row = (props) => {
 
 	const [selectedItem, setSelectedItem] = useState('');
 	const [description, setDescription] = useState('');
-<<<<<<< HEAD
 	const [actionPriority, setActionPriority] = useState('')
 	const [selectedItemError, setSelectedItemError] = useState(false);
 	const [actionPriorityError, setActionPriorityError] = useState(false);
-=======
-	const [actionPriority, setActionPriority] = useState(1)
->>>>>>> c8e767330ecfe79d2dcf16d9e18762c572b30214
 
 	const [backlogItemType, setBacklogItemType] = useState('story'); // 'story' or 'action-item'
 	const [role, setRole] = useState('');
