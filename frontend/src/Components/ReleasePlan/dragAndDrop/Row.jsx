@@ -77,34 +77,53 @@ const Row = (props) => {
 	const [priority, setPriority] = useState(1)
 
 	const openDialogForNewStory = () => {
-		setBacklogItemType('story');
-		setRole('');
-		setFunctionality('');
-		setReasoning('');
-		setAcceptanceCriteria('');
-		setStoryPoints(0);
-		setPriority(1);
-
-		setSelectedItem('')
-		setDescription('')
-		setActionPriority(0)
-
+		// setBacklogItemType('story');
+		// setRole('');
+		// setFunctionality('');
+		// setReasoning('');
+		// setAcceptanceCriteria('');
+		// setStoryPoints(0);
+		// setPriority(1);
+		// setSelectedItem('')
+		// setDescription('')
+		// setActionPriority('')
+		// setDialogOpen(true);
+		// setBacklogItemType('story');
+		if (backlogItemType === 'story') {
+			setRole('');
+			setFunctionality('');
+			setReasoning('');
+			setAcceptanceCriteria('');
+			setStoryPoints(0);
+			setPriority(1);
+		} else {
+			setSelectedItem('');
+			setDescription('');
+			setActionPriority('');
+			setSelectedItemError(false);
+			setActionPriorityError(false);
+		}
 		setDialogOpen(true);
-		setBacklogItemType('story');
 	};
-
-	const openDialogForNewActionItem = () => {
-		setSelectedItem('');
-		setDescription('');
-		setActionPriority('');
-		setSelectedItemError(false);
-		setActionPriorityError(false);
-		setBacklogItemType('action-item');
-		setDialogOpen(true);
-	  };
 
 	const switchFormType = () => {
 		setBacklogItemType(backlogItemType === 'story' ? 'action-item' : 'story');
+		if (backlogItemType === 'story') {
+			setSelectedItem('');
+			setDescription('');
+			setActionPriority('');
+			setSelectedItemError(false);
+			setActionPriorityError(false);
+			setBacklogItemType('action-item');
+		} else {
+			setRole('');
+			setFunctionality('');
+			setReasoning('');
+			setAcceptanceCriteria('');
+			setStoryPoints(0);
+			setPriority(1);
+			setBacklogItemType('story');
+		}
 	};
 
 	const handleDialogClose = () => {
