@@ -450,14 +450,20 @@ const UserStory = ({ storyObject, deleteFunction, sprints, setSprints, sprintNum
 						}
 					</Typography>
 
-					<Typography
-						variant="body1"
-						textAlign={"right"}
-						fontSize={14}
-						sx={{ position: "absolute", bottom: 10, right: 12 }}
-					>
-						{storyPoints} SP
-					</Typography>
+					{
+						storyObject.name === 'ActionItem' ?
+							<></>
+							:
+							<Typography
+								variant="body1"
+								textAlign={"right"}
+								fontSize={14}
+								sx={{ position: "absolute", bottom: 10, right: 12 }}
+							>
+								{storyPoints} SP
+							</Typography>
+					}
+
 				</CardContent>
 			</Card>
 
@@ -469,21 +475,7 @@ const UserStory = ({ storyObject, deleteFunction, sprints, setSprints, sprintNum
 			>
 				<DialogTitle>Edit:</DialogTitle>
 				<DialogContent>
-					<ToggleButtonGroup
-						color="primary"
-						value={tempBacklogItemType}
-						exclusive
-						onChange={(e, newType) => setTempBacklogItemType(newType)}
-						aria-label="User story type"
-						fullWidth
-						sx={{ marginBottom: 2 }}
-					>
-						<ToggleButton value="story">Story</ToggleButton>
-						<ToggleButton value="spike">Spike</ToggleButton>
-						<ToggleButton value="infrastructure">Infrastructure</ToggleButton>
-					</ToggleButtonGroup>
-
-					<Box display="flex" alignItems="center" gap={1} mb={2}>
+					<Box display="flex" alignItems="center" gap={1} mb={2} mt={1}>
 						<Typography variant="body2" component="span">
 							As a(n)
 						</Typography>

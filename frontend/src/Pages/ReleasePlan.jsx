@@ -284,38 +284,7 @@ const ReleasePlan = ({ projectId }) => {
 						multiline
 					/>}
 
-				<Board sprints={sprints} setSprints={setSprints} releaseId={releaseId} withScrollableColumns />
-				{/* 
-				<Grid container spacing={2}>
-					<Grid item xs={9}>
-						<Typography
-							marginLeft={4}
-							maxRows={4}
-							textAlign="left"
-							fontWeight="bold"
-							fontSize={14}
-						>
-							Sprints
-							<IconButton
-								sx={{
-									marginBottom: "3px",
-								}}
-								onClick={createNewSprints}
-							>
-								<AddCircleOutlineIcon fontSize="small" />
-							</IconButton>
-						</Typography>
-						<DragList
-							marginLeft={2}
-							items={sprints}
-							setItems={setSprints}
-							releaseId={releaseId}
-						/>
-					</Grid>
-					<Grid item xs={3}>
-						<Backlog releaseId={releaseId} />
-					</Grid>
-				</Grid> */}
+				<Board sprints={sprints} setSprints={setSprints} releaseId={releaseId} lockPage={lockPage} withScrollableColumns />
 
 				{/* Sanity Check */}
 				<Typography
