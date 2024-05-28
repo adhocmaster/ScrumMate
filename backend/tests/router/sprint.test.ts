@@ -56,6 +56,7 @@ afterAll(async () => {
 
 describe("Sprint API tests", () => {
 	let sessionToken: string;
+	let userId: number;
 	test("CREATE USER", async () => {
 		const body = { username: "sallyg", email: "sallys@gmail.com", password: "password123" }
 		await request(app)
@@ -65,6 +66,7 @@ describe("Sprint API tests", () => {
 			.then((res) => {
 				expect(res.body.email).toEqual(body.email);
 				expect(res.body.id).toBeDefined();
+				userId = res.body.id;
 			});
 	});
 
@@ -155,6 +157,57 @@ describe("Sprint API tests", () => {
 				expect(res.body.goal).toBeDefined();
 				expect(res.body.goal).toEqual("New sprint goal")
 				expect(res.body.sprintNumber).toBe(1);
+				expect(res.body.startDate).toBeDefined();
+				expect(res.body.endDate).toBeDefined();
+				expect(res.body.scrumMaster).toBe(null);
+			});
+	});
+
+	test('Add SM to Sprint', async () => {
+		const body = { "scrumMasterId": userId }
+		await request(app)
+			.post(`/api/sprint/${sprintId}/edit`)
+			.set('Cookie', [`user-auth=${sessionToken}`])
+			.send(body)
+			.expect(200)
+			.then((res) => {
+				expect(res.body).toBeDefined();
+				expect(res.body.goal).toBeDefined();
+				expect(res.body.goal).toEqual("New sprint goal")
+				expect(res.body.sprintNumber).toBe(1);
+				expect(res.body.startDate).toBeDefined();
+				expect(res.body.endDate).toBeDefined();
+				expect(res.body.scrumMaster.id).toBe(userId);
+			});
+	});
+
+	test('SM in in Sprint when fetching release', async () => {
+		await request(app)
+			.get(`/api/release/${releaseId}/sprints`)
+			.set('Cookie', [`user-auth=${sessionToken}`])
+			.expect(200)
+			.then((res) => {
+				expect(res.body).toBeDefined();
+				expect(res.body[0].id).toBe(sprintId);
+				expect(res.body[0].scrumMaster.id).toBe(userId);
+			});
+	});
+
+	test('Empty Sprint without still returns everything', async () => {
+		const body = {}
+		await request(app)
+			.post(`/api/sprint/${sprintId}/edit`)
+			.set('Cookie', [`user-auth=${sessionToken}`])
+			.send(body)
+			.expect(200)
+			.then((res) => {
+				expect(res.body).toBeDefined();
+				expect(res.body.goal).toBeDefined();
+				expect(res.body.goal).toEqual("New sprint goal")
+				expect(res.body.sprintNumber).toBe(1);
+				expect(res.body.startDate).toBeDefined();
+				expect(res.body.endDate).toBeDefined();
+				expect(res.body.scrumMaster.id).toBe(userId);
 			});
 	});
 
@@ -256,8 +309,9 @@ describe("Sprint API tests", () => {
 			.then((res) => {
 				expect(res.body).toBeDefined();
 				expect(res.body.length).toBe(2);
-				expect(res.body[0].id).toBe(sprint3Id);
-				expect(res.body[1].id).toBe(sprint2Id);
+				expect(res.body[0][0].id).toBe(sprint3Id);
+				expect(res.body[0][1].id).toBe(sprint2Id);
+				expect(res.body[1].length).toBe(0);
 			});
 	});
 
@@ -341,8 +395,10 @@ describe("Sprint API tests", () => {
 			.expect(200)
 			.then((res) => {
 				expect(res.body).toBeDefined();
-				expect(res.body.length).toBe(1);
-				expect(res.body[0].id).toBe(sprint2Id);
+				expect(res.body.length).toBe(2);
+				expect(res.body[0][0].id).toBe(sprint2Id);
+				expect(res.body[1].length).toBe(1);
+				expect(res.body[1][0].id).toBe(backlogId);
 			});
 	});
 

@@ -1,8 +1,6 @@
-import { DeletionError, NotFoundError } from "../../helpers/errors";
+import { NotFoundError } from "../../helpers/errors";
 import { ModelDataSourceWrapper } from "./modelDataSourceWrapper";
-import { Release } from "../../entity/release";
 import { Sprint } from "../../entity/sprint";
-import { BacklogItem } from "entity/backlogItem";
 import { DeleteResult } from "typeorm";
 
 export class SprintDataSourceWrapper extends ModelDataSourceWrapper {
@@ -15,87 +13,87 @@ export class SprintDataSourceWrapper extends ModelDataSourceWrapper {
 		return maybeSprint
 	}
 
-	public async lookupSprintByIdWithRelease(id: number): Promise<Sprint> {
-		const maybeSprint = await this.dataSource.getRepository(Sprint).find({
-			where: { id: id },
-			relations: {
-				release: true // must sort by sprint.sprintNumber later
-			},
-		})
-		if (!maybeSprint || maybeSprint.length === 0) {
-			throw new NotFoundError(`Sprint with id ${id} not found`)
+	public async lookupSprintByIdWithRelations(
+		sprintId: number,
+		includedRelations: {
+			includeScrumMaster?: boolean,
+			includeRelease?: boolean,
+			includeTodos?: boolean,
+			includeRoles?: boolean,
 		}
-		return maybeSprint[0]
+	): Promise<Sprint> {
+		const sprint = await this.dataSource.getRepository(Sprint).find({
+			where: { id: sprintId },
+			relations: {
+				scrumMaster: includedRelations.includeScrumMaster,
+				release: includedRelations.includeRelease,
+				todos: includedRelations.includeTodos,
+				roles: includedRelations.includeRoles,
+			},
+		});
+		if (!sprint || sprint.length === 0) {
+			throw new NotFoundError(`Sprint with sprintId ${sprintId} not found`);
+		}
+		return sprint[0];
 	}
 
-	public async lookupSprintByIdWithTodos(id: number): Promise<Sprint> {
-		const maybeSprint = await this.dataSource.getRepository(Sprint).find({
-			where: { id: id },
-			relations: {
-				todos: true // must sort by sprint.sprintNumber later
-			},
-		})
-		if (!maybeSprint || maybeSprint.length === 0) {
-			throw new NotFoundError(`Sprint with id ${id} not found`)
-		}
-		return maybeSprint[0]
+	public async lookupSprintByIdWithRelease(sprintId: number): Promise<Sprint> {
+		const relations = {
+			includeRelease: true,
+		};
+		return await this.lookupSprintByIdWithRelations(sprintId, relations);
 	}
 
-	public async moveSprintTodosToBacklog(releaseId: number, sprintId: number): Promise<void> {
-		const maybeSprintWithTodos = await this.lookupSprintByIdWithTodos(sprintId);
-		const maybeRelease = await this.dataSource.getRepository(Release).find({
-			where: { id: releaseId },
-			relations: {
-				sprints: true,
-				backlog: true
-			}
-		})
-		if (!maybeRelease || maybeRelease.length === 0) {
-			throw new NotFoundError(`Release with id ${releaseId} not found`)
-		}
-		maybeRelease[0].backlog = [...maybeSprintWithTodos.todos, ...maybeRelease[0].backlog]
-		await this.save(maybeRelease)
-		maybeSprintWithTodos.todos = []
-		await this.save(maybeSprintWithTodos)
+	public async lookupSprintByIdWithTodos(sprintId: number): Promise<Sprint> {
+		const relations = {
+			includeTodos: true,
+		};
+		const sprint = await this.lookupSprintByIdWithRelations(sprintId, relations);
+		sprint.sortTODO();
+		return sprint;
+	}
+
+	public async lookupSprintByIdWithScrumMaster(sprintId: number): Promise<Sprint> {
+		const relations = {
+			includeScrumMaster: true,
+		};
+		return await this.lookupSprintByIdWithRelations(sprintId, relations);
 	}
 
 	public async getSprintsWithBacklog(releaseId: number): Promise<Sprint[]> {
 		const sprints = await this.dataSource.getRepository(Sprint).find({
+			where: {
+				release: { id: releaseId }
+			},
 			relations: {
 				release: true,
 				todos: true,
-			},
-			where: {
-				release: { id: releaseId }
 			},
 		})
 		if (!sprints || sprints.length === 0) {
 			throw new NotFoundError(`Release with releaseId ${releaseId} not found`)
 		}
+		sprints.sort((a: Sprint, b: Sprint) => a.sprintNumber - b.sprintNumber)
 		return sprints;
 	}
 
-	public async getSprintBacklog(sprintId: number): Promise<BacklogItem[]> {
-		const maybeSprint = await this.dataSource.getRepository(Sprint).find({
-			where: { id: sprintId },
+	public async getSprintsWithBacklogAndScrumMasters(releaseId: number): Promise<Sprint[]> {
+		const sprints = await this.dataSource.getRepository(Sprint).find({
+			where: {
+				release: { id: releaseId }
+			},
 			relations: {
-				todos: true
+				release: true,
+				todos: true,
+				scrumMaster: true,
 			},
 		})
-		if (!maybeSprint || maybeSprint.length === 0) {
-			throw new NotFoundError(`Sprint with id ${sprintId} not found`)
+		if (!sprints || sprints.length === 0) {
+			throw new NotFoundError(`Release with releaseId ${releaseId} not found`)
 		}
-		return maybeSprint[0].todos
+		sprints.sort((a: Sprint, b: Sprint) => a.sprintNumber - b.sprintNumber)
+		return sprints;
 	}
-
-	// public async deleteSprint(id: number): Promise<void> {
-	// 	try {
-	// 		await this.dataSource.getRepository(Sprint).delete(id)
-	// 	} catch (e) {
-	// 		console.log(e)
-	// 		throw new DeletionError(`Sprint with id ${id} failed to delete`)
-	// 	}
-	// }
 
 	public async deleteSprint(sprintId: number): Promise<DeleteResult> {
 		return await super.delete(Sprint, sprintId);

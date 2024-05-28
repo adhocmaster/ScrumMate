@@ -8,62 +8,64 @@ import { Project } from "../../entity/project";
 
 export class BacklogItemRepository extends ModelRepository {
 
-	public async createNewSprintStory(sprintId: number, userTypes: string, functionalityDescription: string, reasoning: string, acceptanceCriteria: string, storyPoints: number, priority: Priority): Promise<Story> {
+	public async createNewSprintStory(sprintId: number, userTypes: string, functionalityDescription: string, reasoning: string, acceptanceCriteria: string, priority: Priority, storyPoints?: number): Promise<Story> {
 		const sprint = await this.sprintSource.lookupSprintById(sprintId)
 		const newStory = new Story()
 		newStory.userTypes = userTypes
 		newStory.functionalityDescription = functionalityDescription
 		newStory.reasoning = reasoning
 		newStory.acceptanceCriteria = acceptanceCriteria
-		newStory.size = storyPoints
 		newStory.priority = priority
 		newStory.sprint = sprint
 		newStory.rank = sprint.backlogItemCount
+		newStory.size = storyPoints ?? null;
 		await this.backlogSource.save(newStory)
 		sprint.backlogItemCount += 1
 		await this.sprintSource.save(sprint)
 		return newStory
 	}
 
-	public async createNewBacklogStory(releaseId: number, userTypes: string, functionalityDescription: string, reasoning: string, acceptanceCriteria: string, storyPoints: number, priority: Priority): Promise<Story> {
+	public async createNewBacklogStory(releaseId: number, userTypes: string, functionalityDescription: string, reasoning: string, acceptanceCriteria: string, priority: Priority, storyPoints?: number): Promise<Story> {
 		const release = await this.releaseSource.lookupReleaseById(releaseId)
 		const newStory = new Story()
 		newStory.userTypes = userTypes
 		newStory.functionalityDescription = functionalityDescription
 		newStory.reasoning = reasoning
 		newStory.acceptanceCriteria = acceptanceCriteria
-		newStory.size = storyPoints
 		newStory.priority = priority
 		newStory.release = release
 		newStory.rank = release.backlogItemCount
+		newStory.size = storyPoints ?? null;
 		await this.backlogSource.save(newStory)
 		release.backlogItemCount += 1
 		await this.releaseSource.save(release)
 		return newStory
 	}
 
-	public async createNewSprintAction(sprintId: number, actionType: ActionType, description: string, storyPoints: number): Promise<ActionItem> {
+	public async createNewSprintAction(sprintId: number, actionType: ActionType, description: string, priority: Priority, storyPoints?: number): Promise<ActionItem> {
 		const sprint = await this.sprintSource.lookupSprintById(sprintId)
 		const newAction = new ActionItem()
 		newAction.actionType = actionType
 		newAction.description = description
-		newAction.size = storyPoints
+		newAction.priority = priority
 		newAction.sprint = sprint
 		newAction.rank = sprint.backlogItemCount
+		newAction.size = storyPoints ?? null;
 		await this.backlogSource.save(newAction)
 		sprint.backlogItemCount += 1
 		await this.sprintSource.save(sprint)
 		return newAction
 	}
 
-	public async createNewBacklogAction(releaseId: number, actionType: ActionType, description: string, storyPoints: number): Promise<ActionItem> {
+	public async createNewBacklogAction(releaseId: number, actionType: ActionType, description: string, priority: Priority, storyPoints?: number): Promise<ActionItem> {
 		const release = await this.releaseSource.lookupReleaseById(releaseId)
 		const newAction = new ActionItem()
 		newAction.actionType = actionType
 		newAction.description = description
-		newAction.size = storyPoints
+		newAction.priority = priority
 		newAction.release = release
 		newAction.rank = release.backlogItemCount
+		newAction.size = storyPoints ?? null;
 		await this.backlogSource.save(newAction)
 		release.backlogItemCount += 1
 		await this.releaseSource.save(release)
@@ -82,11 +84,12 @@ export class BacklogItemRepository extends ModelRepository {
 		return story;
 	}
 
-	public async updateAction(actionId: number, actionType?: ActionType, description?: string, storyPoints?: number, rank?: number): Promise<ActionItem> {
+	public async updateAction(actionId: number, actionType?: ActionType, description?: string, storyPoints?: number, rank?: number, priority?: Priority): Promise<ActionItem> {
 		const actionItem = await this.backlogSource.lookupBacklogById(actionId) as ActionItem;
 		actionItem.actionType = actionType ?? actionItem.actionType
 		actionItem.description = description ?? actionItem.description
 		actionItem.size = storyPoints ?? actionItem.size
+		actionItem.priority = priority ?? actionItem.priority
 		actionItem.rank = rank ?? actionItem.rank
 		await this.backlogSource.save(actionItem)
 		return actionItem;
@@ -124,51 +127,60 @@ export class BacklogItemRepository extends ModelRepository {
 				backlogItem.sprint = parent
 			}
 		}
+		const resetRanks = async (backlogItemList: BacklogItem[]) => {
+			for (const { backlogItem, index } of backlogItemList.map((backlogItem, index) => ({ backlogItem, index }))) {
+				backlogItem.rank = index;
+				await this.backlogSource.save(backlogItem);
+			}
+		}
 
 		const fromBacklog = sourceType === "backlog";
 		const toBacklog = destinationType === "backlog";
 
+		// remove backlogItem from source
 		const sourceObj = await getObj(fromBacklog, sourceId)
 		const sourceList = getObjList(sourceObj)
-		const destinationObj = await getObj(toBacklog, destinationId)
-		const destinationList = getObjList(destinationObj)
-
 		if (sourceIndex >= sourceList.length) {
 			throw new NotFoundError("Source index is out of bounds")
 		}
+		sourceList.sort((a: BacklogItem, b: BacklogItem) => a.rank - b.rank)
+		const [item] = sourceList.splice(sourceIndex, 1)
+		await resetRanks(sourceList);
+		sourceObj.backlogItemCount -= 1;
+		await saveObj(sourceObj);
+
+		// add backlogItem to destination
+		const destinationObj = await getObj(toBacklog, destinationId)
+		const destinationList = getObjList(destinationObj)
 		if (destinationIndex > destinationList.length) {
 			throw new NotFoundError("Destination index is out of bounds")
 		}
-
-		sourceList.sort((a: BacklogItem, b: BacklogItem) => a.rank - b.rank)
-		const [item] = sourceList.splice(sourceIndex, 1)
-		for (const { backlogItem, index } of sourceList.map((backlogItem, index) => ({ backlogItem, index }))) {
-			backlogItem.rank = index;
-			await this.backlogSource.save(backlogItem)
-		}
-		sourceObj.backlogItemCount -= 1;
-		await saveObj(sourceObj)
-
-		destinationList.sort((a: BacklogItem, b: BacklogItem) => a.rank - b.rank)
-		destinationList.splice(destinationIndex, 0, item)
-		for (const { backlogItem, index } of destinationList.map((backlogItem, index) => ({ backlogItem, index }))) {
-			backlogItem.rank = index;
-			await this.backlogSource.save(backlogItem)
-		}
+		destinationList.sort((a: BacklogItem, b: BacklogItem) => a.rank - b.rank);
+		destinationList.splice(destinationIndex, 0, item);
+		await resetRanks(destinationList);
 		destinationObj.backlogItemCount += 1;
-		await saveObj(destinationObj)
+		await saveObj(destinationObj);
 
-		setParent(item, destinationObj)
-		await this.backlogSource.save(item)
-		item.sprint = undefined
-		item.release = undefined
+		// set backlogItem's parent
+		setParent(item, destinationObj);
+		await this.backlogSource.save(item);
+		item.sprint = undefined;
+		item.release = undefined;
 
-		return [sourceList, destinationList]
+		// fetch updated source list (in case source == destination)
+		const finalSourceObj = await getObj(fromBacklog, sourceId);
+		const finalSourceList = getObjList(finalSourceObj);
+		finalSourceList.sort((a: BacklogItem, b: BacklogItem) => a.rank - b.rank)
+
+		return [finalSourceList, destinationList]
 	}
 
 	private async moveBacklogItemToDeletedList(backlogItemWithParent: BacklogItem) {
+		// exactly one of them is null
 		const parentSprint = backlogItemWithParent.sprint;
 		const parentRelease = backlogItemWithParent.release;
+
+		// add to deletedFrom list
 		if (backlogItemWithParent.sprint) {
 			const sprintWithRelease = await this.sprintSource.lookupSprintByIdWithRelease(backlogItemWithParent.sprint.id);
 			backlogItemWithParent.deletedFrom = sprintWithRelease.release;
@@ -176,13 +188,15 @@ export class BacklogItemRepository extends ModelRepository {
 		} else {
 			backlogItemWithParent.deletedFrom = backlogItemWithParent.release;
 		}
+
+		// save info in backlog Item
 		backlogItemWithParent.release = null;
 		await this.backlogSource.save(backlogItemWithParent);
 		backlogItemWithParent.sprint = parentSprint;
 		backlogItemWithParent.release = parentRelease;
 	}
 
-	public async deleteBacklogItem(backlogItemId: number): Promise<BacklogItem[]> {
+	public async deleteBacklogItem(backlogItemId: number): Promise<[number, BacklogItem[]]> {
 		const backlogItem = await this.backlogSource.fetchBacklogWithParent(backlogItemId);
 		await this.moveBacklogItemToDeletedList(backlogItem);
 		// await this.backlogSource.deleteBacklogItem(backlogItemId);
@@ -197,18 +211,17 @@ export class BacklogItemRepository extends ModelRepository {
 			}
 			sprint.backlogItemCount -= 1;
 			await this.sprintSource.save(sprint);
-			return sprint.todos;
+			return [sprint.sprintNumber, sprint.todos];
 		} else {
 			// backlog is parent
 			const release = await this.releaseSource.fetchReleaseWithBacklog(backlogItem.release.id);
-			release.backlog.sort((a: BacklogItem, b: BacklogItem) => a.rank - b.rank)
 			for (const { backlogItem, index } of release.backlog.map((backlogItem, index) => ({ backlogItem, index }))) {
 				backlogItem.rank = index;
 				await this.backlogSource.save(backlogItem)
 			}
 			release.backlogItemCount -= 1;
 			await this.releaseSource.save(release);
-			return release.backlog
+			return [0, release.backlog]
 		}
 	}
 

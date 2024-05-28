@@ -8,7 +8,7 @@ import { User } from '../../src/entity/User';
 import { Project } from '../../src/entity/project';
 import { UserRole } from '../../src/entity/roles';
 import { Sprint } from '../../src/entity/sprint';
-import { BacklogItem, ActionType } from '../../src/entity/backlogItem';
+import { BacklogItem, ActionType, Priority } from '../../src/entity/backlogItem';
 import cookieParser from 'cookie-parser';
 import { Codes } from '../../src/helpers/errors';
 let app = express();
@@ -273,9 +273,10 @@ describe("Release API tests", () => {
 			.expect(200)
 			.then((res) => {
 				expect(res.body).toBeDefined();
-				expect(res.body.length).toBe(1)
-				expect(res.body[0].id).toBe(newStoryId)
-				expect(res.body[0].rank).toBe(0)
+				expect(res.body.length).toBe(2)
+				expect(res.body[0]).toBe(1)
+				expect(res.body[1][0].id).toBe(newStoryId)
+				expect(res.body[1][0].rank).toBe(0)
 			});
 	});
 
@@ -299,6 +300,7 @@ describe("Release API tests", () => {
 			"actionType": ActionType.BUG,
 			"description": "zombies spawn in wrong lane",
 			"storyPoints": 21,
+			"priority": Priority.HIGH,
 		}
 		await request(app)
 			.post(`/api/sprint/${sprintId}/action`)
@@ -320,6 +322,7 @@ describe("Release API tests", () => {
 			"actionType": ActionType.SPIKE,
 			"description": "learn how to code in Swift",
 			"storyPoints": 13,
+			"priority": Priority.HIGH,
 		}
 		await request(app)
 			.post(`/api/release/${releaseId}/action`)
@@ -426,10 +429,12 @@ describe("Release API tests", () => {
 			.then((res) => {
 				expect(res.body).toBeDefined();
 				expect(res.body.length).toBe(2)
-				expect(res.body[0].id).toBe(newStoryId)
-				expect(res.body[0].rank).toBe(0)
-				expect(res.body[1].id).toBe(action1Id)
-				expect(res.body[1].rank).toBe(1)
+				expect(res.body[0]).toBe(1)
+				expect(res.body[1].length).toBe(2)
+				expect(res.body[1][0].id).toBe(newStoryId)
+				expect(res.body[1][0].rank).toBe(0)
+				expect(res.body[1][1].id).toBe(action1Id)
+				expect(res.body[1][1].rank).toBe(1)
 			});
 	});
 });

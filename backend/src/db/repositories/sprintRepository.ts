@@ -8,21 +8,28 @@ export class SprintRepository extends ModelRepository {
 		const release = await this.releaseSource.lookupReleaseById(releaseId)
 		const newSprint = new Sprint()
 		newSprint.sprintNumber = sprintNumber
-		newSprint.startDate = startDate ?? new Date()
-		newSprint.endDate = endDate ?? new Date()
+		newSprint.startDate = startDate ?? null
+		newSprint.endDate = endDate ?? null
 		newSprint.goal = goal ?? ""
 		newSprint.release = release
 		newSprint.backlogItemCount = 0
+		newSprint.scrumMaster = null
 		await this.sprintSource.save(newSprint)
 		return newSprint
 	}
 
-	public async updateSprint(sprintId: number, sprintNumber?: number, startDate?: Date, endDate?: Date, goal?: string): Promise<Sprint> {
-		const sprint = await this.sprintSource.lookupSprintById(sprintId)
+	public async updateSprint(sprintId: number, sprintNumber?: number, startDate?: Date, endDate?: Date, goal?: string, scrumMasterId?: number): Promise<Sprint> {
+		const sprint = await this.sprintSource.lookupSprintByIdWithScrumMaster(sprintId);
 		sprint.sprintNumber = sprintNumber ?? sprint.sprintNumber
 		sprint.startDate = startDate ?? sprint.startDate
 		sprint.endDate = endDate ?? sprint.endDate
 		sprint.goal = goal ?? sprint.goal
+
+		if (scrumMasterId) {
+			const newScrumMaster = await this.userSource.lookupUserById(scrumMasterId);
+			sprint.scrumMaster = newScrumMaster;
+		}
+
 		await this.sprintSource.save(sprint)
 		return sprint
 	}
@@ -37,10 +44,6 @@ export class SprintRepository extends ModelRepository {
 
 	public async lookupSprintByIdWithTodos(id: number): Promise<Sprint> {
 		return await this.sprintSource.lookupSprintByIdWithTodos(id);
-	}
-
-	public async moveSprintTodosToBacklog(releaseId: number, sprintId: number): Promise<void> {
-		return await this.sprintSource.moveSprintTodosToBacklog(releaseId, sprintId);
 	}
 
 	public async getSprintsWithBacklog(releaseId: number): Promise<Sprint[]> {

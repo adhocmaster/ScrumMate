@@ -1,17 +1,15 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Typography, Box, TextField } from "@mui/material";
 import { Grid, Divider } from "@mui/material";
-import { IconButton } from "@mui/material";
-import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import Sidebar from "../Components/ReleasePlan/Sidebar";
 import ButtonBar from "../Components/ReleasePlan/ButtonBar";
 import ContentBox from "../Components/common/ContentBox";
-import DragList from "../Components/ReleasePlan/DragList";
-import Backlog from "../Components/ReleasePlan/Backlog";
 import SanityCheckGraph from "../Components/ReleasePlan/SanityCheckGraph";
 import SanityCheckText from "../Components/ReleasePlan/SanityCheckText";
+import Board from "../Components/ReleasePlan/dragAndDrop/SprintsAndBacklog"
 import { TextareaAutosize } from '@mui/base/TextareaAutosize';
-
+import AddCircleOutlineIcon from '@mui/icons-material/Add';
+import { IconButton } from "@mui/material";
 
 const ReleasePlan = ({ projectId }) => {
 	const [sprints, setSprints] = useState([]);
@@ -170,9 +168,8 @@ const ReleasePlan = ({ projectId }) => {
 	const revisionsClick = (newReleaseId) => {
 		setId(newReleaseId);
 	};
+
 	return (
-
-
 		< Grid container spacing={2} >
 			{/* Revision Sidebar */}
 			< Grid item xs={open ? 2 : "auto"} >
@@ -289,41 +286,8 @@ const ReleasePlan = ({ projectId }) => {
 						multiline
 					/>}
 
+				<Board sprints={sprints} setSprints={setSprints} releaseId={releaseId} lockPage={lockPage} withScrollableColumns />
 
-
-				<Grid container spacing={2}>
-					{/* Sprints */}
-					<Grid item xs={9}>
-						<Typography
-							marginLeft={4}
-							maxRows={4}
-							textAlign="left"
-							fontWeight="bold"
-							fontSize={14}
-						>
-							Sprints
-							<IconButton
-								sx={{
-									marginBottom: "3px",
-								}}
-								onClick={createNewSprints}
-							>
-								<AddCircleOutlineIcon fontSize="small" />
-							</IconButton>
-						</Typography>
-						<DragList
-							marginLeft={2}
-							items={sprints}
-							setItems={setSprints}
-							releaseId={releaseId}
-						/>
-						{/* {sprints != [] ? <DragList items={sprints} setItems={setSprints}/>: ''} */}
-					</Grid>
-					{/* Backlog */}
-					<Grid item xs={3}>
-						<Backlog releaseId={releaseId} />
-					</Grid>
-				</Grid>
 				{/* Sanity Check */}
 				<Typography
 					variant="h5"

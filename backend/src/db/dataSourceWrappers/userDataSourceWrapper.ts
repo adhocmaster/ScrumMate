@@ -28,33 +28,45 @@ export class UserDataSourceWrapper extends ModelDataSourceWrapper {
 		return maybeUser;
 	}
 
-	public async fetchUserWithProjects(id: number): Promise<User> {
-		const maybeUserList = await this.dataSource.getRepository(User).find({
-			where: { id: id },
-			relations: {
-				ownedProjects: true,
-				joinedProjects: true
-			}
-		})
-		if (!maybeUserList || maybeUserList.length === 0) {
-			throw new NotFoundError(`User with id ${id} not found`)
+	public async lookupUserByIdWithRelations(
+		userId: number,
+		includedRelations: {
+			includeOwnedProjects?: boolean,
+			includeJoinedProjects?: boolean,
+			includeProjectInvites?: boolean,
+			includeSignedReleases?: boolean,
+			includeAssignments?: boolean,
 		}
-		// Sometimes its not included ???
-		return maybeUserList[0]
+	): Promise<User> {
+		const user = await this.dataSource.getRepository(User).find({
+			where: { id: userId },
+			relations: {
+				ownedProjects: includedRelations.includeOwnedProjects,
+				joinedProjects: includedRelations.includeJoinedProjects,
+				projectInvites: includedRelations.includeProjectInvites,
+				signedReleases: includedRelations.includeSignedReleases,
+				assignments: includedRelations.includeAssignments,
+			},
+		});
+		if (!user || user.length === 0) {
+			throw new NotFoundError(`User with userId ${userId} not found`);
+		}
+		return user[0];
 	}
 
-	public async fetchUserWithProjectInvites(id: number): Promise<User> {
-		const maybeUserList = await this.dataSource.getRepository(User).find({
-			where: { id: id },
-			relations: {
-				projectInvites: true
-			}
-		})
-		if (!maybeUserList || maybeUserList.length === 0) {
-			throw new NotFoundError(`User with id ${id} not found`)
-		}
-		// Sometimes its not included ???
-		return maybeUserList[0]
+	public async fetchUserWithProjects(userId: number): Promise<User> {
+		const relations = {
+			includeOwnedProjects: true,
+			includeJoinedProjects: true,
+		};
+		return await this.lookupUserByIdWithRelations(userId, relations);
+	}
+
+	public async fetchUserWithProjectInvites(userId: number): Promise<User> {
+		const relations = {
+			includeProjectInvites: true,
+		};
+		return await this.lookupUserByIdWithRelations(userId, relations);
 	}
 
 	public async fetchUserByEmailWithProjectInvites(email: string): Promise<User> {

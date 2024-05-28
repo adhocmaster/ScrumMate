@@ -35,7 +35,7 @@ export class BacklogItem {
 	@Column()
 	rank: number // "index"
 
-	@Column()
+	@Column({ nullable: true })
 	size: number // serves as SP, IH, etc...
 
 	@Column({ default: false })
@@ -190,9 +190,17 @@ export class ActionItem extends BacklogItem {
 	@Column()
 	description: string
 
+	@Column({
+		type: "enum",
+		enum: Priority,
+		default: Priority.NONE
+	})
+	priority: Priority
+
 	copy(actionItem: ActionItem): void {
 		super.copy(actionItem)
 		this.actionType = actionItem.actionType;
 		this.description = actionItem.description;
+		this.priority = actionItem.priority;
 	}
 }

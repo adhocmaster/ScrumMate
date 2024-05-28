@@ -9,12 +9,27 @@ import { InputLabel, Select, MenuItem, FormControl } from '@mui/material';
 import NextPlanOutlinedIcon from '@mui/icons-material/NextPlanOutlined';
 
 const UserStory = ({ storyObject, deleteFunction, sprints, setSprints, sprintNumber, backlog }) => {
+	const ActionTypeEnum = {
+		BUG: 1,
+		SYSTEMFEATURE: 2,
+		SPIKE: 3,
+		INFRASTRUCTURE: 4,
+	}
+
 	const [anchorOpen, setAnchorOpen] = useState(false);
 	const [editDialogOpen, setEditDialogOpen] = useState(false);
 	const [pokerDialogOpen, setPokerDialogOpen] = useState(false);
 	const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-
 	const [showAcceptanceCriteria, setShowAcceptanceCriteria] = useState(false);
+	const [editActionDialogOpen, setEditActionDialogOpen] = useState(false);
+
+	const [actionType, setActionType] = useState(storyObject.actionType);
+	const [actionDescription, setActionDescription] = useState(storyObject.description);
+	const [actionPriority, setActionPriority] = useState(storyObject.priority);
+
+	const [tempActionType, setTempActionType] = useState(storyObject.actionType);
+	const [tempActionDescription, setTempActionDescription] = useState(storyObject.description);
+	const [tempActionPriority, setTempActionPriority] = useState(false);
 
 	const [backlogItemType, setBacklogItemType] = useState("story");
 	const [role, setRole] = useState(storyObject.userTypes);
@@ -73,6 +88,27 @@ const UserStory = ({ storyObject, deleteFunction, sprints, setSprints, sprintNum
 		setEditDialogOpen(false);
 	};
 
+	const handleEditActionDialogOpen = () => {
+		setTempActionType(actionType)
+		setTempActionDescription(actionDescription)
+		setTempActionPriority(actionPriority)
+		setEditActionDialogOpen(true);
+		handleMenuClose();
+	};
+
+	const handleEditActionDialogClose = () => {
+		setEditActionDialogOpen(false);
+	};
+
+	const handleActionSave = () => {
+		setActionType(tempActionType)
+		setActionDescription(tempActionDescription)
+		setActionPriority(tempActionPriority)
+		saveAction(storyObject.id);
+		handleEditActionDialogClose();
+		handleMenuClose();
+	};
+
 	const handleSave = () => {
 		setBacklogItemType(tempBacklogItemType);
 		setRole(tempRole);
@@ -116,6 +152,7 @@ const UserStory = ({ storyObject, deleteFunction, sprints, setSprints, sprintNum
 		}
 		if (sprints) {
 			var sprintIndex = pokerSprintNumberBuffer - 1;
+			console.log(sprintIndex)
 			if (storyNumberBuffer === sprints[sprintIndex].todos.length) {
 				return // out of backlog items this sprint
 			}
@@ -151,6 +188,7 @@ const UserStory = ({ storyObject, deleteFunction, sprints, setSprints, sprintNum
 
 	const handleDelete = () => {
 		handleEditDialogClose();
+		console.log(`deleting ${storyObject.id}`)
 		deleteFunction(storyObject.id)
 	};
 
@@ -198,12 +236,50 @@ const UserStory = ({ storyObject, deleteFunction, sprints, setSprints, sprintNum
 		}
 	}
 
+	function saveAction(storyId) {
+		const newStoryObj = {
+			actionType: tempActionType,
+			description: tempActionDescription,
+			priority: tempActionPriority,
+		}
+
+		var options = {
+			method: "post",
+			credentials: "include",
+			headers: {
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify({
+				actionType: tempActionType,
+				description: tempActionDescription,
+				priority: tempActionPriority,
+				storyPoints: 0,
+			}),
+		};
+
+		try {
+			fetch(
+				`http://localhost:8080/api/action/${storyId}/edit`,
+				options
+			).then((result) => {
+				if (sprints) {
+					const sprintNumber = sprints.find(sprint => sprint.todos.some(todo => todo.id === storyId))?.sprintNumber;
+					setStoryWrapper(newStoryObj, sprintNumber, storyId)
+				}
+				if (result.status !== 200) {
+					console.log("error", result);
+				}
+			});
+		} catch {
+			return null;
+		}
+	}
+
 	function setStoryWrapper(newStoryObj, sprintNumber, storyId) {
 		const sprintsCopy = [...sprints];
 		const sprintIndex = sprintsCopy.findIndex(sprint => sprint.sprintNumber === sprintNumber);
 		const storyIndex = sprintsCopy[sprintIndex].todos.findIndex(story => story.id === storyId);
 		sprintsCopy[sprintIndex].todos[storyIndex] = { ...sprintsCopy[sprintIndex].todos[storyIndex], ...newStoryObj };
-		console.log(sprintsCopy)
 		setSprints(sprintsCopy);
 	}
 
@@ -305,16 +381,18 @@ const UserStory = ({ storyObject, deleteFunction, sprints, setSprints, sprintNum
 						<MoreVertIcon />
 					</IconButton>
 
-					<IconButton
-						aria-label="settings"
-						aria-controls="menu-userstory"
-						aria-haspopup="true"
-						onClick={handleToggleAcceptanceCriteria}
-						size="large"
-						sx={{ position: "absolute", bottom: -1, left: 30 }}
-					>
-						<NextPlanOutlinedIcon />
-					</IconButton>
+					{storyObject.name != 'ActionItem' && (
+						<IconButton
+							aria-label="settings"
+							aria-controls="menu-userstory"
+							aria-haspopup="true"
+							onClick={handleToggleAcceptanceCriteria}
+							size="large"
+							sx={{ position: "absolute", bottom: -1, left: 30 }}
+						>
+							<NextPlanOutlinedIcon />
+						</IconButton>
+					)}
 
 					<Menu
 						id="menu-userstory"
@@ -323,12 +401,16 @@ const UserStory = ({ storyObject, deleteFunction, sprints, setSprints, sprintNum
 						open={anchorOpen}
 						onClose={handleMenuClose}
 					>
-						<MenuItem onClick={handleEditDialogOpen}>
-							Edit
-						</MenuItem>
-						<MenuItem onClick={handlePokerDialogOpen}>
-							Poker
-						</MenuItem>
+						{storyObject.name !== 'ActionItem' ? (
+							<>
+								<MenuItem onClick={handlePokerDialogOpen}>Poker</MenuItem>
+								<MenuItem onClick={handleEditDialogOpen}>Edit</MenuItem>
+							</>
+						) : (
+							<>
+								<MenuItem onClick={handleEditActionDialogOpen}>Edit</MenuItem>
+							</>
+						)}
 						<MenuItem onClick={handleDeleteDialogOpen} style={{ color: "red" }}>
 							Delete
 						</MenuItem>
@@ -346,27 +428,42 @@ const UserStory = ({ storyObject, deleteFunction, sprints, setSprints, sprintNum
 						}}
 					>
 						{
-							showAcceptanceCriteria ?
+							storyObject.name === 'ActionItem' ?
 								<>
-									<Box fontWeight='bold' display='inline'>
-										Acceptance Criteria:
+									<Box component="span" fontWeight="bold">
+										{({ [ActionTypeEnum.BUG]: 'Bug', [ActionTypeEnum.SYSTEMFEATURE]: 'System Feature', [ActionTypeEnum.SPIKE]: 'Spike', [ActionTypeEnum.INFRASTRUCTURE]: 'Infrastructure' }[storyObject.actionType] || 'Unknown Type')}
 									</Box>
-									{' '}
-									{acceptanceCriteria}
-								</>
-								:
-								`As a(n) ${role} I want to be able to ${functionality} so that ${reasoning}.`
+									{`: ${storyObject.description}`}
+								</> :
+								(
+									showAcceptanceCriteria ?
+										<>
+											<Box fontWeight='bold' display='inline'>
+												Acceptance Criteria:
+											</Box>
+											{' '}
+											{acceptanceCriteria}
+										</>
+										:
+										`As a(n) ${role} I want to be able to ${functionality} so that ${reasoning}.`
+								)
 						}
 					</Typography>
 
-					<Typography
-						variant="body1"
-						textAlign={"right"}
-						fontSize={14}
-						sx={{ position: "absolute", bottom: 10, right: 12 }}
-					>
-						{storyPoints} SP
-					</Typography>
+					{
+						storyObject.name === 'ActionItem' ?
+							<></>
+							:
+							<Typography
+								variant="body1"
+								textAlign={"right"}
+								fontSize={14}
+								sx={{ position: "absolute", bottom: 10, right: 12 }}
+							>
+								{storyPoints} SP
+							</Typography>
+					}
+
 				</CardContent>
 			</Card>
 
@@ -378,21 +475,7 @@ const UserStory = ({ storyObject, deleteFunction, sprints, setSprints, sprintNum
 			>
 				<DialogTitle>Edit:</DialogTitle>
 				<DialogContent>
-					<ToggleButtonGroup
-						color="primary"
-						value={tempBacklogItemType}
-						exclusive
-						onChange={(e, newType) => setTempBacklogItemType(newType)}
-						aria-label="User story type"
-						fullWidth
-						sx={{ marginBottom: 2 }}
-					>
-						<ToggleButton value="story">Story</ToggleButton>
-						<ToggleButton value="spike">Spike</ToggleButton>
-						<ToggleButton value="infrastructure">Infrastructure</ToggleButton>
-					</ToggleButtonGroup>
-
-					<Box display="flex" alignItems="center" gap={1} mb={2}>
+					<Box display="flex" alignItems="center" gap={1} mb={2} mt={1}>
 						<Typography variant="body2" component="span">
 							As a(n)
 						</Typography>
@@ -464,18 +547,6 @@ const UserStory = ({ storyObject, deleteFunction, sprints, setSprints, sprintNum
 						sx={{ marginBottom: 2 }}
 					/>
 
-					{/* <TextField
-						margin="dense"
-						id="story-points"
-						label="Story Points"
-						type="number"
-						fullWidth
-						variant="outlined"
-						value={tempStoryPoints}
-						onChange={(e) => setTempStoryPoints(e.target.value)}
-						InputProps={{ inputProps: { min: 0 } }}
-					/> */}
-
 					<FormControl fullWidth>
 						<InputLabel id="priority-select-label">Priority</InputLabel>
 						<Select
@@ -505,6 +576,75 @@ const UserStory = ({ storyObject, deleteFunction, sprints, setSprints, sprintNum
 					</Button>
 				</DialogActions>
 			</Dialog>
+
+
+			<Dialog
+				open={editActionDialogOpen}
+				onClose={handleEditActionDialogClose}
+				maxWidth="sm"
+				fullWidth
+			>
+				<DialogTitle>Edit:</DialogTitle>
+				<DialogContent>
+					<FormControl fullWidth margin="dense">
+						<InputLabel id="item-select-label">Item</InputLabel>
+						<Select
+							labelId="item-select-label"
+							id="item-select"
+							label="Item"
+							value={tempActionType}
+							onChange={(e) => setTempActionType(e.target.value)}
+							defaultValue=""
+						>
+							<MenuItem value={ActionTypeEnum.BUG}>Bug</MenuItem>
+							<MenuItem value={ActionTypeEnum.INFRASTRUCTURE}>Infrastructure</MenuItem>
+							<MenuItem value={ActionTypeEnum.SYSTEMFEATURE}>System Feature</MenuItem>
+							<MenuItem value={ActionTypeEnum.SPIKE}>Spike</MenuItem>
+						</Select>
+					</FormControl>
+					<TextField
+						fullWidth
+						margin="dense"
+						id="action-item-description"
+						label="Description"
+						type="text"
+						variant="outlined"
+						multiline
+						rows={4}
+						value={tempActionDescription}
+						onChange={(e) => setTempActionDescription(e.target.value)}
+					/>
+
+					<FormControl fullWidth sx={{ marginTop: 2 }}>
+						<InputLabel id="priority-select-label">Priority</InputLabel>
+						<Select
+							labelId="priority-select-label"
+							id="priority-select"
+							value={tempActionPriority}
+							label="Priority"
+							onChange={(event) => setTempActionPriority(event.target.value)}
+						>
+							<MenuItem value={4}>High</MenuItem>
+							<MenuItem value={3}>Medium</MenuItem>
+							<MenuItem value={2}>Low</MenuItem>
+							<MenuItem value={1}>None</MenuItem>
+						</Select>
+					</FormControl>
+
+				</DialogContent>
+				<DialogActions>
+					<Button onClick={handleEditActionDialogClose}>
+						Cancel
+					</Button>
+					<Button onClick={handleDeleteDialogOpen} color="error">
+						Delete
+					</Button>
+					<Button onClick={handleActionSave} color="primary">
+						Save
+					</Button>
+				</DialogActions>
+			</Dialog>
+
 
 			<Dialog
 				open={pokerDialogOpen}
