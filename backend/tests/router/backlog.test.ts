@@ -8,7 +8,7 @@ import { User } from '../../src/entity/User';
 import { Project } from '../../src/entity/project';
 import { UserRole } from '../../src/entity/roles';
 import { Sprint } from '../../src/entity/sprint';
-import { BacklogItem, ActionType } from '../../src/entity/backlogItem';
+import { BacklogItem, ActionType, Priority } from '../../src/entity/backlogItem';
 import cookieParser from 'cookie-parser';
 import { Codes } from '../../src/helpers/errors';
 let app = express();
@@ -300,6 +300,7 @@ describe("Release API tests", () => {
 			"actionType": ActionType.BUG,
 			"description": "zombies spawn in wrong lane",
 			"storyPoints": 21,
+			"priority": Priority.HIGH,
 		}
 		await request(app)
 			.post(`/api/sprint/${sprintId}/action`)
@@ -321,6 +322,7 @@ describe("Release API tests", () => {
 			"actionType": ActionType.SPIKE,
 			"description": "learn how to code in Swift",
 			"storyPoints": 13,
+			"priority": Priority.HIGH,
 		}
 		await request(app)
 			.post(`/api/release/${releaseId}/action`)

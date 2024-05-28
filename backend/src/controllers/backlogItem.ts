@@ -42,9 +42,10 @@ export const createAction = async (req: express.Request, res: express.Response) 
 		actionType,
 		description,
 		storyPoints,
+		priority,
 	} = req.body;
-	verifyParameters(actionType, description);
-	const newStory = await db.getBacklogItemRepository.createNewSprintAction(parseInt(sprintId), actionType, description, storyPoints);
+	verifyParameters(actionType, description, priority);
+	const newStory = await db.getBacklogItemRepository.createNewSprintAction(parseInt(sprintId), actionType, description, priority, storyPoints);
 	return res.json(newStory);
 }
 
@@ -55,9 +56,10 @@ export const createNewBacklogAction = async (req: express.Request, res: express.
 		actionType,
 		description,
 		storyPoints,
+		priority,
 	} = req.body;
-	verifyParameters(actionType, description);
-	const newStory = await db.getBacklogItemRepository.createNewBacklogAction(parseInt(releaseId), actionType, description, storyPoints);
+	verifyParameters(actionType, description, priority);
+	const newStory = await db.getBacklogItemRepository.createNewBacklogAction(parseInt(releaseId), actionType, description, priority, storyPoints);
 	return res.json(newStory);
 }
 
@@ -86,9 +88,10 @@ export const editAction = async (req: express.Request, res: express.Response) =>
 		description,
 		storyPoints,
 		rank,
+		priority,
 	} = req.body
 	const parsedRank = rank ? parseInt(rank) : null;
-	const story = await db.getBacklogItemRepository.updateAction(parseInt(actionId), actionType, description, storyPoints, parsedRank)
+	const story = await db.getBacklogItemRepository.updateAction(parseInt(actionId), actionType, description, storyPoints, parsedRank, priority)
 	return res.json(story)
 };
 
