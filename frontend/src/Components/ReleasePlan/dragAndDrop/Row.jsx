@@ -5,7 +5,7 @@ import { Draggable } from 'react-beautiful-dnd';
 import QuoteList from '../styles/list';
 import Title from '../styles/title';
 
-import { Box, Grid, Divider, Typography, Paper, List, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, TextField, ToggleButtonGroup, ToggleButton, IconButton } from '@mui/material';
+import { Box, Grid, Divider, Typography, Paper, List, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, TextField, ToggleButtonGroup, ToggleButton, IconButton, FormHelperText } from '@mui/material';
 import DeleteConfirmation from "../DeleteConfirmation";
 import { InputLabel, Select, MenuItem, FormControl } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
@@ -63,8 +63,9 @@ const Row = (props) => {
 
 	const [selectedItem, setSelectedItem] = useState('');
 	const [description, setDescription] = useState('');
-	const [actionPriority, setActionPriority] = useState(1)
-
+	const [actionPriority, setActionPriority] = useState('')
+	const [selectedItemError, setSelectedItemError] = useState(false);
+	const [actionPriorityError, setActionPriorityError] = useState(false);
 
 	const [backlogItemType, setBacklogItemType] = useState('story'); // 'story' or 'action-item'
 	const [role, setRole] = useState('');
@@ -86,6 +87,16 @@ const Row = (props) => {
 		setBacklogItemType('story');
 	};
 
+	const openDialogForNewActionItem = () => {
+		setSelectedItem('');
+		setDescription('');
+		setActionPriority('');
+		setSelectedItemError(false);
+		setActionPriorityError(false);
+		setBacklogItemType('action-item');
+		setDialogOpen(true);
+	  };
+
 	const switchFormType = () => {
 		setBacklogItemType(backlogItemType === 'story' ? 'action-item' : 'story');
 	};
@@ -97,6 +108,12 @@ const Row = (props) => {
 
 	const handleSelectChange = (event) => {
 		setSelectedItem(event.target.value);
+		setSelectedItemError(false);
+	};
+
+	const handleSelectChangePriority = (event) => {
+		setActionPriority(event.target.value);
+		setActionPriorityError(false);
 	};
 
 	const handleDescriptionChange = (event) => {
@@ -118,6 +135,20 @@ const Row = (props) => {
 	};
 
 	const handleCreateActionItem = (sprintId) => {
+		let hasError = false;
+
+		if (!selectedItem) {
+			setSelectedItemError(true);
+			hasError = true;
+		}
+
+		if (!actionPriority) {
+			setActionPriorityError(true);
+			hasError = true;
+		}
+		if (hasError) {
+			return;
+		}
 		const actionItem = {
 			selectedItem,
 			description,
@@ -415,6 +446,7 @@ const Row = (props) => {
 																	id="item-select"
 																	label="Item"
 																	value={selectedItem}
+																	error={selectedItemError}
 																	onChange={handleSelectChange}
 																	defaultValue=""
 																>
@@ -423,6 +455,9 @@ const Row = (props) => {
 																	<MenuItem value={ActionTypeEnum.SYSTEMFEATURE}>System Feature</MenuItem>
 																	<MenuItem value={ActionTypeEnum.SPIKE}>Spike</MenuItem>
 																</Select>
+																{selectedItemError && (
+																	<FormHelperText>Please select an item.</FormHelperText>
+																)}
 															</FormControl>
 															<TextField
 																fullWidth
@@ -444,13 +479,18 @@ const Row = (props) => {
 																	id="priority-select"
 																	value={actionPriority}
 																	label="Priority"
-																	onChange={(event) => setActionPriority(event.target.value)}
+																	onChange={handleSelectChangePriority}
+																	error={actionPriorityError}
+																	defaultValue=""
 																>
 																	<MenuItem value={4}>High</MenuItem>
 																	<MenuItem value={3}>Medium</MenuItem>
 																	<MenuItem value={2}>Low</MenuItem>
 																	<MenuItem value={1}>None</MenuItem>
 																</Select>
+																{actionPriorityError && (
+																	<FormHelperText>Please select a priority.</FormHelperText>
+																)}
 															</FormControl>
 
 														</DialogContent>
