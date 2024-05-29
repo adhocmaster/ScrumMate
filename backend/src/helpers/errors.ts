@@ -70,7 +70,7 @@ export class DeletionError extends Error {
 // 	}
 // }
 
-export function errorWrapper(func: { (req: express.Request, res: express.Response): Promise<express.Response>; (arg0: express.Request, arg1: express.Response): any; }) {
+export function errorWrapper(func: { (req: express.Request, res: express.Response): Promise<express.Response> }) {
 	return async function call(req: express.Request, res: express.Response) {
 		try {
 			// console.log(`running function ${func.name}`)
