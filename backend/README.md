@@ -2,6 +2,8 @@
 
 This is the backend folder for the Scrum Project Management tool. The backend is written in Typescript and is divided among several directories. This README will describe a high level overview of what is in each directory, and offer some advice to future developers.
 
+A video walkthrough is available [here](https://drive.google.com/file/d/11m9jsS4N0Vz7xaiTgbpU6GwBS-jTVDVu/view?usp=sharing).
+
 The backend was totally redone in Winter/Spring 2024. Please reach out to the current sponsors and ask for Andrew H.'s email if you have any questions.
 
 ## Getting started
