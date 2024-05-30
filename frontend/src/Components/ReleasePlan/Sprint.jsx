@@ -181,8 +181,8 @@ const Sprint = ({ index, items, setItems, userStories }) => {
 										deleteSprint(sprintId, index);
 									}}
 								/>*/}
-								
-                  <Dialog open={dialogOpen} onClose={handleDialogClose} maxWidth="sm" fullWidth>
+
+								<Dialog open={dialogOpen} onClose={handleDialogClose} maxWidth="sm" fullWidth>
 									<DialogTitle>Add New Story</DialogTitle>
 									<DialogContent>
 										<ToggleButtonGroup

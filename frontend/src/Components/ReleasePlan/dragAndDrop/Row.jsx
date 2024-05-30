@@ -309,23 +309,23 @@ const Row = (props) => {
 											{`Sprint ${index + 1}`}
 										</Typography>
 
-                   <IconButton onClick={openDialogForNewStory} color="primary" aria-label="add new story">
+										<IconButton onClick={openDialogForNewStory} color="primary" aria-label="add new story">
 											<AddCircleOutlineIcon />
-										</IconButton> 
+										</IconButton>
 
 
-			      
-                    <IconButton>
-                      <SprintOptions
-                        sprints={sprints}
-                        setSprints={setSprints}
-                        setBacklogItems={setBacklogItems}
-                        index={index}
-                      />
-                    </IconButton>
+
+										<IconButton>
+											<SprintOptions
+												sprints={sprints}
+												setSprints={setSprints}
+												setBacklogItems={setBacklogItems}
+												index={index}
+											/>
+										</IconButton>
 
 
-                    <Dialog open={dialogOpen} onClose={handleDialogClose} maxWidth="sm" fullWidth>
+										<Dialog open={dialogOpen} onClose={handleDialogClose} maxWidth="sm" fullWidth>
 											{
 												backlogItemType === "story" ?
 													<>

@@ -180,9 +180,9 @@ const ReleasePlan = ({ projectId }) => {
 					itemClick={revisionsClick}
 					currentReleaseId={releaseId}
 					setLockPage={setLockPage}
-          problemStatement={problemStatement}
-			    highLevelGoals={highLevelGoals}	
-      />
+					problemStatement={problemStatement}
+					highLevelGoals={highLevelGoals}
+				/>
 			</Grid >
 			<Grid item xs={open ? 10 : 11}>
 				{/* Current Sprint */}
