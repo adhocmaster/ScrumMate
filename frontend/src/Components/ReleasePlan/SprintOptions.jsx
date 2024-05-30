@@ -12,10 +12,10 @@ import DeleteConfirmation from './DeleteConfirmation'
 
 
 
-const SprintOptions = ({sprints, setSprints, setBacklogItems, index}) => {
+const SprintOptions = ({ sprints, setSprints, setBacklogItems, index }) => {
 
   const [open, setOpen] = useState(false);
-  
+
   const handleDelete = () => {
     handleClose();
   };
@@ -24,23 +24,23 @@ const SprintOptions = ({sprints, setSprints, setBacklogItems, index}) => {
     setOpen(false);
   };
 
-const deleteSprint = (sprintId, index) => {
-		fetch(`http://localhost:8080/api/sprint/${sprintId}`, {
-			method: "DELETE",
-			credentials: "include",
-			headers: { "Content-Type": "application/json" },
-		})
-			.then((response) => {
-				response.json().then(jsonResult => {
-					console.log(jsonResult)
-					setSprints(jsonResult[0])
-					setBacklogItems(jsonResult[1])
-				})
-			})
-			.catch((error) => console.log("error deleting sprint:"));
-	};
+  const deleteSprint = (sprintId, index) => {
+    fetch(`http://localhost:8080/api/sprint/${sprintId}`, {
+      method: "DELETE",
+      credentials: "include",
+      headers: { "Content-Type": "application/json" },
+    })
+      .then((response) => {
+        response.json().then(jsonResult => {
+          console.log(jsonResult)
+          setSprints(jsonResult[0])
+          setBacklogItems(jsonResult[1])
+        })
+      })
+      .catch((error) => console.log("error deleting sprint:"));
+  };
 
-  const master =[
+  const master = [
     {
       value: 'Scrum Master',
       label: 'Scrum Master'
@@ -49,7 +49,7 @@ const deleteSprint = (sprintId, index) => {
       value: 'bob',
       label: 'bob'
     }
-  
+
 
   ];
 
@@ -70,7 +70,7 @@ const deleteSprint = (sprintId, index) => {
             sx={{ width: '300px', paddingBottom: '20px' }}
             id="outlined-select-currency"
             select
-            defaultValue="Scrum Master" 
+            defaultValue="Scrum Master"
           >
             {master.map((option) => (
               <MenuItem key={option.value} value={option.value}>
