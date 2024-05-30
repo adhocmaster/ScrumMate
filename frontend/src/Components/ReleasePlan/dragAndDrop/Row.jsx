@@ -314,18 +314,14 @@ const Row = (props) => {
 										</IconButton> 
 
 
-										<DeleteConfirmation
-											onDelete={() => {
-												const sprintId = sprints[index].id;
-												deleteSprint(sprintId, index);
-											}}
-										/>
-
-
-
-					          
+			      
                     <IconButton>
-                      <SprintOptions />
+                      <SprintOptions
+                        sprints={sprints}
+                        setSprints={setSprints}
+                        setBacklogItems={setBacklogItems}
+                        index={index}
+                      />
                     </IconButton>
 
 
