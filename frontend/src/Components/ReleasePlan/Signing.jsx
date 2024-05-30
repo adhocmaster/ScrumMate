@@ -126,7 +126,7 @@ export const Signing = ({ releaseId, projectId, setLockPage, problemStatement, h
 		<>
 
 
-
+			{console.log(problemStatement)}
 			{(problemStatement === "") || (highLevelGoals === "") ?
 
 				<IconButton onClick={handleClickOpenNotComplete}>

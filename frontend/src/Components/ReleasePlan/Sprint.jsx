@@ -175,23 +175,7 @@ const Sprint = ({ index, items, setItems, userStories }) => {
 								}}
 							>
 
-								<Typography sx={{ marginTop: 2 }} fontSize={14}>
-									{index + 1}
-								</Typography>
-
-                <IconButton onClick={openDialogForNewStory} color="primary" aria-label="add new story">
-									<AddCircleOutlineIcon />
-								</IconButton>
-
-                <IconButton>
-                  <MenuIcon />
-                </IconButton>
-
-                <IconButton>
-                  <MoreHorizIcon />
-                </IconButton>
-
-              {/*<DeleteConfirmation
+								{/*<DeleteConfirmation
 									onDelete={() => {
 										const sprintId = items[index].id;
 										deleteSprint(sprintId, index);
