@@ -3,13 +3,17 @@ import HistoryEduIcon from '@mui/icons-material/HistoryEdu'
 import {
 	IconButton, Dialog, DialogTitle, ListItemText,
 	ListItem, ListItemIcon, Avatar, Box, List, Button,
+	Typography,
 } from "@mui/material";
+
+import ReportProblemIcon from '@mui/icons-material/ReportProblem'
 
 import RestoreIcon from '@mui/icons-material/Restore';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 
-export const Signing = ({ releaseId, projectId, setLockPage }) => {
+export const Signing = ({ releaseId, projectId, setLockPage, problemStatement, highLevelGoals }) => {
 	const [open, setOpen] = useState(false);
+	const [openNotComplete, setOpenNotComplete] = useState(false);
 	const [signatures, setSignatures] = useState([[], [], null]);
 	const [ownUserId, setOwnUserId] = useState(null);
 	const [productOwnerId, setProductOwnerId] = useState(undefined);
@@ -23,6 +27,14 @@ export const Signing = ({ releaseId, projectId, setLockPage }) => {
 
 	const handleClickClose = () => {
 		setOpen(false);
+	}
+
+	const handleClickOpenNotComplete = () => {
+		setOpenNotComplete(true);
+	}
+
+	const handleClickCloseNotComplete = () => {
+		setOpenNotComplete(false);
 	}
 
 	const handleToggleSigningClick = () => {
@@ -112,16 +124,52 @@ export const Signing = ({ releaseId, projectId, setLockPage }) => {
 
 	return (
 		<>
-			<IconButton onClick={handleClickOpen}>
-				{
-					signatures[2] ?
-						<HistoryEduIcon style={{ color: 'green' }} /> :
-						signatures[1].length > 0 ?
-							<HistoryEduIcon style={{ color: '#ffcd38' }} /> :
-							<HistoryEduIcon />
-				}
-			</IconButton>
+
+
+			{console.log(problemStatement)}
+			{(problemStatement === "") || (highLevelGoals === "") ?
+
+				<IconButton onClick={handleClickOpenNotComplete}>
+					<HistoryEduIcon />
+				</IconButton>
+
+				:
+				<IconButton onClick={handleClickOpen}>
+					{
+						signatures[2] ?
+							<HistoryEduIcon style={{ color: 'green' }} /> :
+							signatures[1].length > 0 ?
+								<HistoryEduIcon style={{ color: '#ffcd38' }} /> :
+								<HistoryEduIcon />
+					}
+				</IconButton>}
+
+
+
 			<Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'column' }}>
+				<Dialog open={openNotComplete} onClose={handleClickCloseNotComplete}>
+					<DialogTitle sx={{ display: 'flex', alignItems: 'center' }}>
+						<ReportProblemIcon fontSize="large" sx={{ padding: '1px 10px', color: '#ffcd38' }} />
+						Release is not ready!
+					</DialogTitle>
+					<Box sx={{ padding: '1px 10px' }}>
+						<Typography>
+							This revision is currently missing some information. Are you sure you want to begin signing?
+						</Typography>
+						<br />
+					</Box>
+					<Box sx={{ padding: '1px 10px' }} onClick={handleClickCloseNotComplete}>
+						<Button variant="outlined" color="primary" sx={{ padding: '1px', width: '50%' }}>
+							Cancel
+						</Button>
+						<Button variant="outlined" color="primary" sx={{ paddingTop: '100px', padding: '1px', width: '50%' }}>
+							Confirm
+						</Button>
+					</Box>
+					<br />
+				</Dialog >
+
+
 
 				<Dialog open={open} onClose={handleClickClose} maxWidth="sm" fullWidth>
 					<DialogTitle>

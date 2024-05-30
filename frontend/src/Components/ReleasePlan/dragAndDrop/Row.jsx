@@ -4,12 +4,14 @@ import { colors } from '@atlaskit/theme';
 import { Draggable } from 'react-beautiful-dnd';
 import QuoteList from '../styles/list';
 import Title from '../styles/title';
+import SprintOptions from '../SprintOptions'
 
 import { Box, Grid, Divider, Typography, Paper, List, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, TextField, ToggleButtonGroup, ToggleButton, IconButton, FormHelperText } from '@mui/material';
 import DeleteConfirmation from "../DeleteConfirmation";
 import { InputLabel, Select, MenuItem, FormControl } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
+import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 
 const grid = 8;
 const borderRadius = 2;
@@ -306,16 +308,24 @@ const Row = (props) => {
 										<Typography sx={{ marginTop: 2 }} fontSize={14}>
 											{`Sprint ${index + 1}`}
 										</Typography>
-										<DeleteConfirmation
-											onDelete={() => {
-												const sprintId = sprints[index].id;
-												deleteSprint(sprintId, index);
-											}}
-										/>
-										<IconButton onClick={openDialogForNewStory} color="primary" aria-label="add new story">
-											<AddIcon />
-										</IconButton>
-										<Dialog open={dialogOpen} onClose={handleDialogClose} maxWidth="sm" fullWidth>
+
+                   <IconButton onClick={openDialogForNewStory} color="primary" aria-label="add new story">
+											<AddCircleOutlineIcon />
+										</IconButton> 
+
+
+			      
+                    <IconButton>
+                      <SprintOptions
+                        sprints={sprints}
+                        setSprints={setSprints}
+                        setBacklogItems={setBacklogItems}
+                        index={index}
+                      />
+                    </IconButton>
+
+
+                    <Dialog open={dialogOpen} onClose={handleDialogClose} maxWidth="sm" fullWidth>
 											{
 												backlogItemType === "story" ?
 													<>

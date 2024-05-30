@@ -1,7 +1,7 @@
 import { useState } from 'react';
-import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@mui/material';
+import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Typography } from '@mui/material';
 import IconButton from '@mui/material/IconButton';
-import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
+import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';    
 
 const DeleteConfirmation = ({ onDelete }) => {
 	const [open, setOpen] = useState(false);
@@ -17,9 +17,9 @@ const DeleteConfirmation = ({ onDelete }) => {
 
 	return (
 		<>
-			<IconButton onClick={() => setOpen(true)}>
-				<DeleteOutlineIcon fontSize='medium' />
-			</IconButton>
+			<Button sx={{color: 'red'}} onClick={() => setOpen(true)}>
+        Delete     
+      </Button>	
 
 			<Dialog open={open} onClose={handleClose}>
 				<DialogTitle>

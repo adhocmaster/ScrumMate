@@ -7,7 +7,7 @@ import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import { Signing } from './Signing';
 
-const Sidebar = ({ open, toggleDrawer, projectId, itemClick, setLockPage }) => {
+const Sidebar = ({ open, toggleDrawer, projectId, itemClick, setLockPage, problemStatement, highLevelGoals }) => {
 	const [selected, setSelected] = useState(null);
 	const [revisions, setRevisions] = useState([]);
 
