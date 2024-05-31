@@ -14,15 +14,24 @@ const SprintOptions = ({ sprints, setSprints, setBacklogItems, index, projectId 
 	const sprint = sprints[index]
 
 	const [open, setOpen] = useState(false);
-	const [actualScrumMasterId, setActualScrumMasterId] = useState(sprint.scrumMaster ? sprint.scrumMaster.id : '')
 	const [scrumMasterId, setScrumMasterId] = useState(sprint.scrumMaster ? sprint.scrumMaster.id : '')
 	const [startDate, setStartDate] = useState(sprint.startDate ? dayjs(sprint.startDate) : null)
 	const [endDate, setEndDate] = useState(sprint.endDate ? dayjs(sprint.endDate) : null)
 	const [teamMembers, setTeamMembers] = useState([])
 
+	const [scrumMasterIdTemp, setScrumMasterIdTemp] = useState(sprint.scrumMaster ? sprint.scrumMaster.id : '')
+	const [startDateTemp, setStartDateTemp] = useState(sprint.startDate ? dayjs(sprint.startDate) : null)
+	const [endDateTemp, setEndDateTemp] = useState(sprint.endDate ? dayjs(sprint.endDate) : null)
+
+	const handleOpen = () => {
+		setScrumMasterIdTemp(scrumMasterId)
+		setStartDateTemp(startDate)
+		setEndDateTemp(endDate)
+		setOpen(true);
+	};
+
 	const handleClose = () => {
 		setOpen(false);
-		setScrumMasterId(actualScrumMasterId)
 	};
 
 	function fetchProjectMembers() {
@@ -56,9 +65,9 @@ const SprintOptions = ({ sprints, setSprints, setBacklogItems, index, projectId 
 				"Content-Type": "application/json",
 			},
 			body: JSON.stringify({
-				startDate: startDate,
-				endDate: endDate,
-				scrumMasterId: scrumMasterId,
+				startDate: startDateTemp,
+				endDate: endDateTemp,
+				scrumMasterId: scrumMasterIdTemp,
 			}),
 		};
 
@@ -69,13 +78,17 @@ const SprintOptions = ({ sprints, setSprints, setBacklogItems, index, projectId 
 			).then((result) => {
 				if (result.status === 200) {
 					result.json().then(jsonResult => {
-						setActualScrumMasterId(jsonResult.scrumMaster.id)
 						const sprintsCopy = [...sprints]
 						sprintsCopy[index].startDate = jsonResult.startDate
 						sprintsCopy[index].endDate = jsonResult.endDate
-						sprintsCopy[index].scrumMaster = jsonResult.scrumMaster
+						sprintsCopy[index].scrumMaster = jsonResult.scrumMaster ?? sprintsCopy[index].scrumMaster
 						setSprints(sprintsCopy)
-						setScrumMasterId(jsonResult.scrumMaster.id)
+						setScrumMasterId(sprintsCopy[index].scrumMaster ? sprintsCopy[index].scrumMaster.id : '')
+						setScrumMasterIdTemp(sprintsCopy[index].scrumMaster ? sprintsCopy[index].scrumMaster.id : '')
+						setStartDate(jsonResult.startDate ? dayjs(jsonResult.startDate) : null)
+						setStartDateTemp(jsonResult.startDate ? dayjs(jsonResult.startDate) : null)
+						setEndDate(jsonResult.endDate ? dayjs(jsonResult.endDate) : null)
+						setEndDateTemp(jsonResult.endDate ? dayjs(jsonResult.endDate) : null)
 					})
 				} else {
 					console.log("error", result);
@@ -104,7 +117,7 @@ const SprintOptions = ({ sprints, setSprints, setBacklogItems, index, projectId 
 
 	return (
 		<>
-			<IconButton onClick={() => setOpen(true)}>
+			<IconButton onClick={handleOpen}>
 				<MoreHorizIcon fontSize='medium' />
 			</IconButton>
 			<Dialog open={open} onClose={handleClose} sx={{ width: '100%' }}>
@@ -117,11 +130,11 @@ const SprintOptions = ({ sprints, setSprints, setBacklogItems, index, projectId 
 						<Select
 							labelId="scrum-master-select-label"
 							id="scrum-master-select"
-							key={scrumMasterId}
-							value={scrumMasterId}
+							key={scrumMasterIdTemp}
+							value={scrumMasterIdTemp}
 							label="Scrum Master"
 							onChange={(e) => {
-								setScrumMasterId(e.target.value)
+								setScrumMasterIdTemp(e.target.value)
 							}
 							}
 						>
@@ -138,14 +151,14 @@ const SprintOptions = ({ sprints, setSprints, setBacklogItems, index, projectId 
 						<LocalizationProvider dateAdapter={AdapterDayjs}>
 							<DatePicker
 								label="Start Date"
-								value={startDate}
-								onChange={setStartDate}
+								value={startDateTemp}
+								onChange={setStartDateTemp}
 								sx={{ mr: 2 }}
 							/>
 							<DatePicker
 								label="End Date"
-								value={endDate}
-								onChange={setEndDate}
+								value={endDateTemp}
+								onChange={setEndDateTemp}
 							/>
 						</LocalizationProvider>
 					</Box>
