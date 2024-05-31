@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
@@ -22,6 +22,19 @@ const SprintOptions = ({ sprints, setSprints, setBacklogItems, index, projectId 
 	const [scrumMasterIdTemp, setScrumMasterIdTemp] = useState(sprint.scrumMaster ? sprint.scrumMaster.id : '')
 	const [startDateTemp, setStartDateTemp] = useState(sprint.startDate ? dayjs(sprint.startDate) : null)
 	const [endDateTemp, setEndDateTemp] = useState(sprint.endDate ? dayjs(sprint.endDate) : null)
+
+	const handleIndexChange = () => {
+		setScrumMasterId(sprint.scrumMaster ? sprint.scrumMaster.id : '')
+		setStartDate(sprint.startDate ? dayjs(sprint.startDate) : null)
+		setEndDate(sprint.endDate ? dayjs(sprint.endDate) : null)
+		setScrumMasterIdTemp(sprint.scrumMaster ? sprint.scrumMaster.id : '')
+		setStartDateTemp(sprint.startDate ? dayjs(sprint.startDate) : null)
+		setEndDateTemp(sprint.endDate ? dayjs(sprint.endDate) : null)
+	}
+
+	useEffect(() => {
+		handleIndexChange()
+	}, [index])
 
 	const handleOpen = () => {
 		setScrumMasterIdTemp(scrumMasterId)

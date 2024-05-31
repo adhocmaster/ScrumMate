@@ -124,7 +124,7 @@ export class ReleaseRepository extends ModelRepository {
 
 	/// return new order sorted by ascending sprint number
 	public async reorderSprints(releaseId: number, startIndex: number, destinationIndex: number): Promise<Sprint[]> {
-		const sprints = await this.sprintSource.getSprintsWithBacklog(releaseId)
+		const sprints = await this.sprintSource.getSprintsWithBacklogAndScrumMasters(releaseId)
 		const [item] = sprints.splice(startIndex, 1)
 		sprints.splice(destinationIndex, 0, item)
 		for (const { sprint, index } of sprints.map((sprint, index) => ({ sprint, index }))) {

@@ -116,8 +116,8 @@ function QuoteItem(props) {
 			aria-label={`${quote.id} quote ${quote.id}`}
 		>
 			<Content>
-				{/* <BlockQuote>{"content: " + quote.id}</BlockQuote> */}
 				<UserStory
+					key={`quote-id-${quote.id}`}
 					storyObject={quote}
 					backlog={backlog}
 					sprints={sprints}
