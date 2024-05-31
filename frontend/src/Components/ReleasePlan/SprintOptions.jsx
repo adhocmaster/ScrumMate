@@ -8,6 +8,7 @@ import IconButton from '@mui/material/IconButton';
 import { Box } from '@mui/material';
 import DeleteConfirmation from './DeleteConfirmation'
 import { InputLabel, Select, MenuItem, FormControl } from '@mui/material';
+import dayjs from 'dayjs';
 
 const SprintOptions = ({ sprints, setSprints, setBacklogItems, index, projectId }) => {
 	const sprint = sprints[index]
@@ -15,6 +16,8 @@ const SprintOptions = ({ sprints, setSprints, setBacklogItems, index, projectId 
 	const [open, setOpen] = useState(false);
 	const [actualScrumMasterId, setActualScrumMasterId] = useState(sprint.scrumMaster ? sprint.scrumMaster.id : '')
 	const [scrumMasterId, setScrumMasterId] = useState(sprint.scrumMaster ? sprint.scrumMaster.id : '')
+	const [startDate, setStartDate] = useState(sprint.startDate ? dayjs(sprint.startDate) : null)
+	const [endDate, setEndDate] = useState(sprint.endDate ? dayjs(sprint.endDate) : null)
 	const [teamMembers, setTeamMembers] = useState([])
 
 	const handleClose = () => {
@@ -53,8 +56,8 @@ const SprintOptions = ({ sprints, setSprints, setBacklogItems, index, projectId 
 				"Content-Type": "application/json",
 			},
 			body: JSON.stringify({
-				// startDate: tempActionDescription,
-				// endDate: tempActionPriority,
+				startDate: startDate,
+				endDate: endDate,
 				scrumMasterId: scrumMasterId,
 			}),
 		};
@@ -66,13 +69,13 @@ const SprintOptions = ({ sprints, setSprints, setBacklogItems, index, projectId 
 			).then((result) => {
 				if (result.status === 200) {
 					result.json().then(jsonResult => {
+						setActualScrumMasterId(jsonResult.scrumMaster.id)
 						const sprintsCopy = [...sprints]
 						sprintsCopy[index].startDate = jsonResult.startDate
 						sprintsCopy[index].endDate = jsonResult.endDate
 						sprintsCopy[index].scrumMaster = jsonResult.scrumMaster
 						setSprints(sprintsCopy)
 						setScrumMasterId(jsonResult.scrumMaster.id)
-						setActualScrumMasterId(jsonResult.scrumMaster.id)
 					})
 				} else {
 					console.log("error", result);
@@ -112,27 +115,38 @@ const SprintOptions = ({ sprints, setSprints, setBacklogItems, index, projectId 
 					<FormControl fullWidth sx={{ mt: 1 }}>
 						<InputLabel id="scrum-master-select-label">Scrum Master</InputLabel>
 						<Select
-							labelId="demo-simple-select-label"
-							id="demo-simple-select"
+							labelId="scrum-master-select-label"
+							id="scrum-master-select"
+							key={scrumMasterId}
 							value={scrumMasterId}
 							label="Scrum Master"
 							onChange={(e) => {
-								console.log(e.target)
 								setScrumMasterId(e.target.value)
 							}
 							}
 						>
 							{
 								teamMembers.map(user =>
-									<MenuItem value={user.id}>{user.username}</MenuItem>
+									<MenuItem key={user.id} value={user.id}>
+										{user.username}
+									</MenuItem>
 								)
 							}
 						</Select>
 					</FormControl>
 					<Box sx={{ mt: 2 }}>
 						<LocalizationProvider dateAdapter={AdapterDayjs}>
-							<DatePicker label="Start Date" sx={{ mr: 2 }} />
-							<DatePicker label="End Date" />
+							<DatePicker
+								label="Start Date"
+								value={startDate}
+								onChange={setStartDate}
+								sx={{ mr: 2 }}
+							/>
+							<DatePicker
+								label="End Date"
+								value={endDate}
+								onChange={setEndDate}
+							/>
 						</LocalizationProvider>
 					</Box>
 				</DialogContent>

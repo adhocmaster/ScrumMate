@@ -219,7 +219,7 @@ const Board = ({
 										</IconButton>
 									</Typography>
 								</Grid>
-								{sprints.map((sprint, index) => (
+								{sprints.map((sprint, index) =>
 									<Row
 										key={`${sprint.sprintNumber}`}
 										index={index}
@@ -236,7 +236,7 @@ const Board = ({
 										projectId={projectId}
 										deleteStory={deleteStory}
 									/>
-								))}
+								)}
 								{provided.placeholder}
 							</Container>
 						)}
