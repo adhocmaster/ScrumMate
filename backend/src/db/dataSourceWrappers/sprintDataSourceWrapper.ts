@@ -60,23 +60,6 @@ export class SprintDataSourceWrapper extends ModelDataSourceWrapper {
 		return await this.lookupSprintByIdWithRelations(sprintId, relations);
 	}
 
-	public async getSprintsWithBacklog(releaseId: number): Promise<Sprint[]> {
-		const sprints = await this.dataSource.getRepository(Sprint).find({
-			where: {
-				release: { id: releaseId }
-			},
-			relations: {
-				release: true,
-				todos: true,
-			},
-		})
-		if (!sprints || sprints.length === 0) {
-			throw new NotFoundError(`Release with releaseId ${releaseId} not found`)
-		}
-		sprints.sort((a: Sprint, b: Sprint) => a.sprintNumber - b.sprintNumber)
-		return sprints;
-	}
-
 	public async getSprintsWithBacklogAndScrumMasters(releaseId: number): Promise<Sprint[]> {
 		const sprints = await this.dataSource.getRepository(Sprint).find({
 			where: {
