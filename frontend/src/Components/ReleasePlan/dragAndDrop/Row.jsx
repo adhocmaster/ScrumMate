@@ -261,22 +261,6 @@ const Row = (props) => {
 		}
 	}
 
-	const deleteSprint = (sprintId, index) => {
-		fetch(`http://localhost:8080/api/sprint/${sprintId}`, {
-			method: "DELETE",
-			credentials: "include",
-			headers: { "Content-Type": "application/json" },
-		})
-			.then((response) => {
-				response.json().then(jsonResult => {
-					console.log(jsonResult)
-					setSprints(jsonResult[0])
-					setBacklogItems(jsonResult[1])
-				})
-			})
-			.catch((error) => console.log("error deleting sprint:"));
-	};
-
 	return (
 		<>
 			<Draggable draggableId={title} index={index} direction="horizontal" isDragDisabled={lockPage}>
@@ -313,17 +297,12 @@ const Row = (props) => {
 											<AddCircleOutlineIcon />
 										</IconButton>
 
-
-
-										<IconButton>
-											<SprintOptions
-												sprints={sprints}
-												setSprints={setSprints}
-												setBacklogItems={setBacklogItems}
-												index={index}
-											/>
-										</IconButton>
-
+										<SprintOptions
+											sprints={sprints}
+											setSprints={setSprints}
+											setBacklogItems={setBacklogItems}
+											index={index}
+										/>
 
 										<Dialog open={dialogOpen} onClose={handleDialogClose} maxWidth="sm" fullWidth>
 											{

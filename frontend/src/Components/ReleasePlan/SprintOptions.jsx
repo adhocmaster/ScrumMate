@@ -5,20 +5,14 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@mui/material';
 import IconButton from '@mui/material/IconButton';
-import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
-import { Box, Typography, TextField, MenuItem } from '@mui/material';
+import { Box } from '@mui/material';
 import DeleteConfirmation from './DeleteConfirmation'
-
-
-
+import { InputLabel, Select, MenuItem, FormControl } from '@mui/material';
 
 const SprintOptions = ({ sprints, setSprints, setBacklogItems, index }) => {
 
 	const [open, setOpen] = useState(false);
-
-	const handleDelete = () => {
-		handleClose();
-	};
+	const [scrumMaster, setScrumMaster] = useState('')
 
 	const handleClose = () => {
 		setOpen(false);
@@ -40,19 +34,6 @@ const SprintOptions = ({ sprints, setSprints, setBacklogItems, index }) => {
 			.catch((error) => console.log("error deleting sprint:"));
 	};
 
-	const master = [
-		{
-			value: 'Scrum Master',
-			label: 'Scrum Master'
-		},
-		{
-			value: 'bob',
-			label: 'bob'
-		}
-
-
-	];
-
 	return (
 		<>
 			<IconButton onClick={() => setOpen(true)}>
@@ -60,73 +41,45 @@ const SprintOptions = ({ sprints, setSprints, setBacklogItems, index }) => {
 			</IconButton>
 
 			<Dialog open={open} onClose={handleClose} sx={{ width: '100%' }}>
+
 				<DialogTitle>
 					Sprints Options
 				</DialogTitle>
 
+				<DialogContent>
+					<FormControl fullWidth sx={{ mt: 1 }}>
+						<InputLabel id="scrum-master-select-label">Scrum Master</InputLabel>
+						<Select
+							labelId="demo-simple-select-label"
+							id="demo-simple-select"
+							value={scrumMaster}
+							label="Scrum Master"
+							onChange={(e) => setScrumMaster(e.target.value)}
+						>
+							<MenuItem value={10}>Ten</MenuItem>
+							<MenuItem value={20}>Twenty</MenuItem>
+							<MenuItem value={30}>Thirty</MenuItem>
+						</Select>
+					</FormControl>
+					<Box sx={{ mt: 2 }}>
+						<LocalizationProvider dateAdapter={AdapterDayjs}>
+							<DatePicker label="Start Date" sx={{ mr: 2 }} />
+							<DatePicker label="End Date" />
+						</LocalizationProvider>
+					</Box>
+				</DialogContent>
 
-				<Box sx={{ paddingLeft: '20px' }}>
-					<TextField
-						sx={{ width: '300px', paddingBottom: '20px' }}
-						id="outlined-select-currency"
-						select
-						defaultValue="Scrum Master"
-					>
-						{master.map((option) => (
-							<MenuItem key={option.value} value={option.value}>
-								{option.label}
-							</MenuItem>
-
-						))}
-					</TextField>
-				</Box>
-				<Box>
-					<LocalizationProvider dateAdapter={AdapterDayjs}>
-
-						<DatePicker
-							sx={{ paddingLeft: '20px' }}
-							label="Start Date"
-							componentsProps={{
-								textField: {
-									InputLabelProps: {
-										sx: {
-											paddingLeft: '25px', // Adjust the padding for the label
-										},
-									},
-								},
-							}}
-						/>
-
-						<DatePicker
-							sx={{ paddingLeft: '20px', paddingRight: '20px' }}
-							label="End Date"
-							componentsProps={{
-								textField: {
-									InputLabelProps: {
-										sx: {
-											paddingLeft: '25px', // Adjust the padding for the label
-											paddingRight: '25px', // Adjust the padding for the label
-										},
-									},
-								},
-							}}
-						/>
-
-					</LocalizationProvider>
-				</Box>
 				<DialogActions>
-
 					<Button>
 						Save
 					</Button>
-
 					<DeleteConfirmation
 						onDelete={() => {
 							const sprintId = sprints[index].id;
 							deleteSprint(sprintId, index);
+							handleClose();
 						}}
 					/>
-
 					<Button onClick={handleClose} color="primary">
 						Cancel
 					</Button>
