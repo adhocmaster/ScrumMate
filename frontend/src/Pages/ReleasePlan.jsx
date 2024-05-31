@@ -19,10 +19,6 @@ const ReleasePlan = ({ projectId }) => {
 	const [releaseId, setId] = useState(null);
 	const [lockPage, setLockPage] = useState(false);
 
-	const handleChangeHighLevelGoals = (event) => {
-		setGoals(event.target.value);
-	}
-
 	function fetchMostRecentRelease() {
 		var options = {
 			method: "get",
@@ -152,8 +148,6 @@ const ReleasePlan = ({ projectId }) => {
 					itemClick={revisionsClick}
 					currentReleaseId={releaseId}
 					setLockPage={setLockPage}
-					problemStatement={problemStatement}
-					highLevelGoals={highLevelGoals}
 				/>
 			</Grid >
 			<Grid item xs={open ? 10 : 11}>

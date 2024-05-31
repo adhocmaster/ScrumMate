@@ -11,12 +11,13 @@ import ReportProblemIcon from '@mui/icons-material/ReportProblem'
 import RestoreIcon from '@mui/icons-material/Restore';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 
-export const Signing = ({ releaseId, projectId, setLockPage, problemStatement, highLevelGoals }) => {
+export const Signing = ({ releaseId, projectId, setLockPage, clickDetector }) => {
 	const [open, setOpen] = useState(false);
 	const [openNotComplete, setOpenNotComplete] = useState(false);
 	const [signatures, setSignatures] = useState([[], [], null]);
 	const [ownUserId, setOwnUserId] = useState(null);
 	const [productOwnerId, setProductOwnerId] = useState(undefined);
+	const [canSign, setCanSign] = useState(false);
 
 	const handleClickOpen = () => {
 		fetchUserId();
@@ -122,29 +123,48 @@ export const Signing = ({ releaseId, projectId, setLockPage, problemStatement, h
 		}
 	}
 
+	function fetchCanSign() {
+		var options = {
+			method: 'get',
+			credentials: 'include'
+		}
+		try {
+			fetch(`http://localhost:8080/api/release/${releaseId}/signingCondtion`, options).then((result) => {
+				if (result.status === 200) {
+					result.json().then((response) => {
+						console.log("got ", response, "for ", releaseId)
+						setCanSign(response);
+					})
+				}
+			})
+		}
+		catch {
+			return;
+		}
+	};
+
+	useEffect(() => {
+		fetchCanSign()
+	}, [clickDetector])
+
 	return (
 		<>
-
-
-			{console.log(problemStatement)}
-			{(problemStatement === "") || (highLevelGoals === "") ?
-
-				<IconButton onClick={handleClickOpenNotComplete}>
-					<HistoryEduIcon />
-				</IconButton>
-
-				:
-				<IconButton onClick={handleClickOpen}>
-					{
-						signatures[2] ?
-							<HistoryEduIcon style={{ color: 'green' }} /> :
-							signatures[1].length > 0 ?
-								<HistoryEduIcon style={{ color: '#ffcd38' }} /> :
-								<HistoryEduIcon />
-					}
-				</IconButton>}
-
-
+			{
+				canSign ?
+					<IconButton onClick={handleClickOpen}>
+						{
+							signatures[2] ?
+								<HistoryEduIcon style={{ color: 'green' }} /> :
+								signatures[1].length > 0 ?
+									<HistoryEduIcon style={{ color: '#ffcd38' }} /> :
+									<HistoryEduIcon />
+						}
+					</IconButton>
+					:
+					<IconButton onClick={handleClickOpenNotComplete}>
+						<HistoryEduIcon />
+					</IconButton>
+			}
 
 			<Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'column' }}>
 				<Dialog open={openNotComplete} onClose={handleClickCloseNotComplete}>
