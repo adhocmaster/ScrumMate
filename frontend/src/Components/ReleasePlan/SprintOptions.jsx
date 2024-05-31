@@ -1,142 +1,201 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@mui/material';
 import IconButton from '@mui/material/IconButton';
-import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
-import { Box, Typography, TextField, MenuItem } from '@mui/material';
+import { Box } from '@mui/material';
 import DeleteConfirmation from './DeleteConfirmation'
+import { InputLabel, Select, MenuItem, FormControl } from '@mui/material';
+import dayjs from 'dayjs';
 
+const SprintOptions = ({ sprints, setSprints, setBacklogItems, index, projectId }) => {
+	const sprint = sprints[index]
 
+	const [open, setOpen] = useState(false);
+	const [scrumMasterId, setScrumMasterId] = useState(sprint.scrumMaster ? sprint.scrumMaster.id : '')
+	const [startDate, setStartDate] = useState(sprint.startDate ? dayjs(sprint.startDate) : null)
+	const [endDate, setEndDate] = useState(sprint.endDate ? dayjs(sprint.endDate) : null)
+	const [teamMembers, setTeamMembers] = useState([])
 
+	const [scrumMasterIdTemp, setScrumMasterIdTemp] = useState(sprint.scrumMaster ? sprint.scrumMaster.id : '')
+	const [startDateTemp, setStartDateTemp] = useState(sprint.startDate ? dayjs(sprint.startDate) : null)
+	const [endDateTemp, setEndDateTemp] = useState(sprint.endDate ? dayjs(sprint.endDate) : null)
 
-const SprintOptions = ({ sprints, setSprints, setBacklogItems, index }) => {
+	const handleIndexChange = () => {
+		setScrumMasterId(sprint.scrumMaster ? sprint.scrumMaster.id : '')
+		setStartDate(sprint.startDate ? dayjs(sprint.startDate) : null)
+		setEndDate(sprint.endDate ? dayjs(sprint.endDate) : null)
+		setScrumMasterIdTemp(sprint.scrumMaster ? sprint.scrumMaster.id : '')
+		setStartDateTemp(sprint.startDate ? dayjs(sprint.startDate) : null)
+		setEndDateTemp(sprint.endDate ? dayjs(sprint.endDate) : null)
+	}
 
-  const [open, setOpen] = useState(false);
+	useEffect(() => {
+		handleIndexChange()
+	}, [index])
 
-  const handleDelete = () => {
-    handleClose();
-  };
+	const handleOpen = () => {
+		setScrumMasterIdTemp(scrumMasterId)
+		setStartDateTemp(startDate)
+		setEndDateTemp(endDate)
+		setOpen(true);
+	};
 
-  const handleClose = () => {
-    setOpen(false);
-  };
+	const handleClose = () => {
+		setOpen(false);
+	};
 
-  const deleteSprint = (sprintId, index) => {
-    fetch(`http://localhost:8080/api/sprint/${sprintId}`, {
-      method: "DELETE",
-      credentials: "include",
-      headers: { "Content-Type": "application/json" },
-    })
-      .then((response) => {
-        response.json().then(jsonResult => {
-          console.log(jsonResult)
-          setSprints(jsonResult[0])
-          setBacklogItems(jsonResult[1])
-        })
-      })
-      .catch((error) => console.log("error deleting sprint:"));
-  };
+	function fetchProjectMembers() {
+		var options = {
+			method: 'get',
+			credentials: 'include'
+		}
+		try {
+			fetch(`http://localhost:8080/api/project/${projectId}/getMembers`, options).then((result) => {
+				if (result.status === 200) {
+					result.json().then((response) => {
+						setTeamMembers(response[2]);
+					})
+				}
+			})
+		}
+		catch {
+			return;
+		}
+	};
 
-  const master = [
-    {
-      value: 'Scrum Master',
-      label: 'Scrum Master'
-    },
-    {
-      value: 'bob',
-      label: 'bob'
-    }
+	useState(() => {
+		fetchProjectMembers()
+	}, [teamMembers])
 
+	function fetchSaveOptions() {
+		var options = {
+			method: "post",
+			credentials: "include",
+			headers: {
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify({
+				startDate: startDateTemp,
+				endDate: endDateTemp,
+				scrumMasterId: scrumMasterIdTemp,
+			}),
+		};
 
-  ];
+		try {
+			fetch(
+				`http://localhost:8080/api/sprint/${sprint.id}/edit`,
+				options
+			).then((result) => {
+				if (result.status === 200) {
+					result.json().then(jsonResult => {
+						const sprintsCopy = [...sprints]
+						sprintsCopy[index].startDate = jsonResult.startDate
+						sprintsCopy[index].endDate = jsonResult.endDate
+						sprintsCopy[index].scrumMaster = jsonResult.scrumMaster ?? sprintsCopy[index].scrumMaster
+						setSprints(sprintsCopy)
+						setScrumMasterId(sprintsCopy[index].scrumMaster ? sprintsCopy[index].scrumMaster.id : '')
+						setScrumMasterIdTemp(sprintsCopy[index].scrumMaster ? sprintsCopy[index].scrumMaster.id : '')
+						setStartDate(jsonResult.startDate ? dayjs(jsonResult.startDate) : null)
+						setStartDateTemp(jsonResult.startDate ? dayjs(jsonResult.startDate) : null)
+						setEndDate(jsonResult.endDate ? dayjs(jsonResult.endDate) : null)
+						setEndDateTemp(jsonResult.endDate ? dayjs(jsonResult.endDate) : null)
+					})
+				} else {
+					console.log("error", result);
+				}
+			});
+		} catch {
+			return null;
+		}
+	}
 
-  return (
-    <>
-      <IconButton onClick={() => setOpen(true)}>
-        <MoreHorizIcon fontSize='medium' />
-      </IconButton>
+	function deleteSprint(sprintId, index) {
+		fetch(`http://localhost:8080/api/sprint/${sprintId}`, {
+			method: "DELETE",
+			credentials: "include",
+			headers: { "Content-Type": "application/json" },
+		})
+			.then((response) => {
+				response.json().then(jsonResult => {
+					console.log(jsonResult)
+					setSprints(jsonResult[0])
+					setBacklogItems(jsonResult[1])
+				})
+			})
+			.catch((error) => console.log("error deleting sprint:"));
+	};
 
-      <Dialog open={open} onClose={handleClose} sx={{ width: '100%' }}>
-        <DialogTitle>
-          Sprints Options
-        </DialogTitle>
-
-
-        <Box sx={{ paddingLeft: '20px' }}>
-          <TextField
-            sx={{ width: '300px', paddingBottom: '20px' }}
-            id="outlined-select-currency"
-            select
-            defaultValue="Scrum Master"
-          >
-            {master.map((option) => (
-              <MenuItem key={option.value} value={option.value}>
-                {option.label}
-              </MenuItem>
-
-            ))}
-          </TextField>
-        </Box>
-        <Box>
-          <LocalizationProvider dateAdapter={AdapterDayjs}>
-
-            <DatePicker
-              sx={{ paddingLeft: '20px' }}
-              label="Start Date"
-              componentsProps={{
-                textField: {
-                  InputLabelProps: {
-                    sx: {
-                      paddingLeft: '25px', // Adjust the padding for the label
-                    },
-                  },
-                },
-              }}
-            />
-
-            <DatePicker
-              sx={{ paddingLeft: '20px', paddingRight: '20px' }}
-              label="End Date"
-              componentsProps={{
-                textField: {
-                  InputLabelProps: {
-                    sx: {
-                      paddingLeft: '25px', // Adjust the padding for the label
-                      paddingRight: '25px', // Adjust the padding for the label
-                    },
-                  },
-                },
-              }}
-            />
-
-          </LocalizationProvider>
-        </Box>
-        <DialogActions>
-
-          <Button>
-            Save
-          </Button>
-
-          <DeleteConfirmation
-            onDelete={() => {
-              const sprintId = sprints[index].id;
-              deleteSprint(sprintId, index);
-            }}
-          />
-
-          <Button onClick={handleClose} color="primary">
-            Cancel
-          </Button>
-        </DialogActions>
-      </Dialog>
-    </>
-
-
-  );
-
+	return (
+		<>
+			<IconButton onClick={handleOpen}>
+				<MoreHorizIcon fontSize='medium' />
+			</IconButton>
+			<Dialog open={open} onClose={handleClose} sx={{ width: '100%' }}>
+				<DialogTitle>
+					Sprints Options
+				</DialogTitle>
+				<DialogContent>
+					<FormControl fullWidth sx={{ mt: 1 }}>
+						<InputLabel id="scrum-master-select-label">Scrum Master</InputLabel>
+						<Select
+							labelId="scrum-master-select-label"
+							id="scrum-master-select"
+							key={scrumMasterIdTemp}
+							value={scrumMasterIdTemp}
+							label="Scrum Master"
+							onChange={(e) => {
+								setScrumMasterIdTemp(e.target.value)
+							}
+							}
+						>
+							{
+								teamMembers.map(user =>
+									<MenuItem key={user.id} value={user.id}>
+										{user.username}
+									</MenuItem>
+								)
+							}
+						</Select>
+					</FormControl>
+					<Box sx={{ mt: 2 }}>
+						<LocalizationProvider dateAdapter={AdapterDayjs}>
+							<DatePicker
+								label="Start Date"
+								value={startDateTemp}
+								onChange={setStartDateTemp}
+								sx={{ mr: 2 }}
+							/>
+							<DatePicker
+								label="End Date"
+								value={endDateTemp}
+								onChange={setEndDateTemp}
+							/>
+						</LocalizationProvider>
+					</Box>
+				</DialogContent>
+				<DialogActions>
+					<Button onClick={() => {
+						handleClose();
+						fetchSaveOptions()
+					}}>
+						Save
+					</Button>
+					<DeleteConfirmation
+						onDelete={() => {
+							deleteSprint(sprint.id, index);
+							handleClose();
+						}}
+					/>
+					<Button onClick={handleClose} color="primary">
+						Cancel
+					</Button>
+				</DialogActions>
+			</Dialog >
+		</>
+	);
 };
 
 export default SprintOptions

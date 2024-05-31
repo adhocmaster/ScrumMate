@@ -19,10 +19,6 @@ const ReleasePlan = ({ projectId }) => {
 	const [releaseId, setId] = useState(null);
 	const [lockPage, setLockPage] = useState(false);
 
-	const handleChangeHighLevelGoals = (event) => {
-		setGoals(event.target.value);
-	}
-
 	function fetchMostRecentRelease() {
 		var options = {
 			method: "get",
@@ -124,34 +120,6 @@ const ReleasePlan = ({ projectId }) => {
 			})
 	}
 
-	function createNewSprints() {
-		console.log("creating new");
-		var options = {
-			method: "POST",
-			credentials: "include",
-			headers: {
-				"Content-Type": "application/json",
-			},
-			body: JSON.stringify({ sprintNumber: sprints.length + 1 }),
-		};
-
-		fetch(`http://localhost:8080/api/release/${releaseId}/sprint`, options)
-			.then((result) => {
-				if (result.status === 200) {
-					console.log(result);
-				}
-				console.log(result);
-				return result.json();
-			})
-			.then((response) => {
-				console.log(response);
-				setSprints((prevSprints) => [...prevSprints, response]);
-			})
-			.catch((error) => {
-				console.error("Error:", error);
-			});
-	}
-
 	useEffect(() => {
 		fetchMostRecentRelease();
 	}, []);
@@ -180,9 +148,7 @@ const ReleasePlan = ({ projectId }) => {
 					itemClick={revisionsClick}
 					currentReleaseId={releaseId}
 					setLockPage={setLockPage}
-          problemStatement={problemStatement}
-			    highLevelGoals={highLevelGoals}	
-      />
+				/>
 			</Grid >
 			<Grid item xs={open ? 10 : 11}>
 				{/* Current Sprint */}
@@ -286,7 +252,7 @@ const ReleasePlan = ({ projectId }) => {
 						multiline
 					/>}
 
-				<Board sprints={sprints} setSprints={setSprints} releaseId={releaseId} lockPage={lockPage} withScrollableColumns />
+				<Board sprints={sprints} setSprints={setSprints} releaseId={releaseId} projectId={projectId} lockPage={lockPage} withScrollableColumns />
 
 				{/* Sanity Check */}
 				<Typography

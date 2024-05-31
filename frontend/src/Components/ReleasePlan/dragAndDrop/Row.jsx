@@ -59,6 +59,7 @@ const Row = (props) => {
 	const deleteStory = props.deleteStory;
 	const setBacklogItems = props.setBacklogItems;
 	const releaseId = props.releaseId;
+	const projectId = props.projectId;
 	// console.log("rendering row", index)
 	// console.log("quotes", quotes)
 
@@ -261,22 +262,6 @@ const Row = (props) => {
 		}
 	}
 
-	const deleteSprint = (sprintId, index) => {
-		fetch(`http://localhost:8080/api/sprint/${sprintId}`, {
-			method: "DELETE",
-			credentials: "include",
-			headers: { "Content-Type": "application/json" },
-		})
-			.then((response) => {
-				response.json().then(jsonResult => {
-					console.log(jsonResult)
-					setSprints(jsonResult[0])
-					setBacklogItems(jsonResult[1])
-				})
-			})
-			.catch((error) => console.log("error deleting sprint:"));
-	};
-
 	return (
 		<>
 			<Draggable draggableId={title} index={index} direction="horizontal" isDragDisabled={lockPage}>
@@ -309,23 +294,19 @@ const Row = (props) => {
 											{`Sprint ${index + 1}`}
 										</Typography>
 
-                   <IconButton onClick={openDialogForNewStory} color="primary" aria-label="add new story">
+										<IconButton onClick={openDialogForNewStory} color="primary" aria-label="add new story">
 											<AddCircleOutlineIcon />
-										</IconButton> 
+										</IconButton>
 
+										<SprintOptions
+											sprints={sprints}
+											setSprints={setSprints}
+											setBacklogItems={setBacklogItems}
+											index={index}
+											projectId={projectId}
+										/>
 
-			      
-                    <IconButton>
-                      <SprintOptions
-                        sprints={sprints}
-                        setSprints={setSprints}
-                        setBacklogItems={setBacklogItems}
-                        index={index}
-                      />
-                    </IconButton>
-
-
-                    <Dialog open={dialogOpen} onClose={handleDialogClose} maxWidth="sm" fullWidth>
+										<Dialog open={dialogOpen} onClose={handleDialogClose} maxWidth="sm" fullWidth>
 											{
 												backlogItemType === "story" ?
 													<>

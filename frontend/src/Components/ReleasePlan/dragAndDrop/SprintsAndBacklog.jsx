@@ -24,6 +24,7 @@ const Board = ({
 	containerHeight,
 	withScrollableColumns,
 	releaseId,
+	projectId,
 }) => {
 	const [backlogItems, setBacklogItems] = useState([]); // copy this into the first index of columns and ordered
 
@@ -218,7 +219,7 @@ const Board = ({
 										</IconButton>
 									</Typography>
 								</Grid>
-								{sprints.map((sprint, index) => (
+								{sprints.map((sprint, index) =>
 									<Row
 										key={`${sprint.sprintNumber}`}
 										index={index}
@@ -232,9 +233,10 @@ const Board = ({
 										setSprints={setSprints}
 										setBacklogItems={setBacklogItems}
 										releaseId={releaseId}
+										projectId={projectId}
 										deleteStory={deleteStory}
 									/>
-								))}
+								)}
 								{provided.placeholder}
 							</Container>
 						)}
