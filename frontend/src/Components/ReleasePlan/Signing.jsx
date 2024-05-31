@@ -4,6 +4,8 @@ import {
 	IconButton, Dialog, DialogTitle, ListItemText,
 	ListItem, ListItemIcon, Avatar, Box, List, Button,
 	Typography,
+	DialogContent,
+	DialogActions,
 } from "@mui/material";
 
 import ReportProblemIcon from '@mui/icons-material/ReportProblem'
@@ -39,10 +41,10 @@ export const Signing = ({ releaseId, projectId, setLockPage, clickDetector }) =>
 	}
 
 	const handleButtonClick = () => {
-		if (canSign) {
-			handleClickOpen()
-		} else {
+		if (!signatures[2] && !(signatures[1].length > 0) && !canSign) {
 			handleClickNotCompleteOpen()
+		} else {
+			handleClickOpen()
 		}
 	}
 
@@ -140,7 +142,6 @@ export const Signing = ({ releaseId, projectId, setLockPage, clickDetector }) =>
 			const result = await fetch(`http://localhost:8080/api/release/${releaseId}/signingCondtion`, options);
 			if (result.status === 200) {
 				const response = await result.json();
-				console.log("got", response, "for", releaseId)
 				setCanSign(response);
 			}
 		} catch {
@@ -166,26 +167,40 @@ export const Signing = ({ releaseId, projectId, setLockPage, clickDetector }) =>
 
 			<Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'column' }}>
 				{
-					!canSign ?
+					!signatures[2] && !(signatures[1].length > 0) && !canSign ?
 						<Dialog open={openNotComplete} onClose={handleClickNotCompleteClose}>
 							<DialogTitle sx={{ display: 'flex', alignItems: 'center' }}>
 								<ReportProblemIcon fontSize="large" sx={{ padding: '1px 10px', color: '#ffcd38' }} />
-								Release is not ready!
+								This release is not ready!
 							</DialogTitle>
-							<Box sx={{ padding: '1px 10px' }}>
+							<DialogContent>
 								<Typography>
-									This revision is currently missing some information. Are you sure you want to begin signing?
+									This revision is currently missing some information. Are you sure you want to begin signing it?
 								</Typography>
-								<br />
-							</Box>
-							<Box sx={{ padding: '1px 10px' }} onClick={handleClickNotCompleteClose}>
-								<Button variant="outlined" color="primary" sx={{ padding: '1px', width: '50%' }}>
+							</DialogContent>
+							<DialogActions>
+								<Button
+									variant="contained"
+									color="primary"
+									onClick={handleClickNotCompleteClose}
+									sx={{ padding: '1px', width: '50%' }}
+								>
 									Cancel
 								</Button>
-								<Button variant="outlined" color="primary" sx={{ paddingTop: '100px', padding: '1px', width: '50%' }}>
-									Confirm
+								<Button
+									variant="outlined"
+									color="primary"
+									onClick={(e) => {
+										e.stopPropagation();
+										setCanSign(true)
+										handleClickOpen();
+										handleClickNotCompleteClose();
+									}}
+									sx={{ paddingTop: '100px', padding: '1px', width: '50%' }}
+								>
+									Sign anyway
 								</Button>
-							</Box>
+							</DialogActions>
 							<br />
 						</Dialog >
 						:
