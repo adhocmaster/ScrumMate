@@ -293,19 +293,22 @@ const Row = (props) => {
 										<Typography sx={{ marginTop: 2 }} fontSize={14}>
 											{`Sprint ${index + 1}`}
 										</Typography>
+										{
+											lockPage ? <></> :
+												<>
+													<IconButton onClick={openDialogForNewStory} color="primary" aria-label="add new story">
+														<AddCircleOutlineIcon />
+													</IconButton>
 
-										<IconButton onClick={openDialogForNewStory} color="primary" aria-label="add new story">
-											<AddCircleOutlineIcon />
-										</IconButton>
-
-										<SprintOptions
-											sprints={sprints}
-											setSprints={setSprints}
-											setBacklogItems={setBacklogItems}
-											index={index}
-											projectId={projectId}
-										/>
-
+													<SprintOptions
+														sprints={sprints}
+														setSprints={setSprints}
+														setBacklogItems={setBacklogItems}
+														index={index}
+														projectId={projectId}
+													/>
+												</>
+										}
 										<Dialog open={dialogOpen} onClose={handleDialogClose} maxWidth="sm" fullWidth>
 											{
 												backlogItemType === "story" ?

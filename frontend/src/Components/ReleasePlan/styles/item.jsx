@@ -99,7 +99,7 @@ function getStyle(provided, style) {
 // will be using PureComponent
 function QuoteItem(props) {
 	const { quote, isDragging, provided, style, isClone, index,
-		backlog, sprints, setSprints, sprintIndex, deleteStory, } =
+		backlog, sprints, setSprints, sprintIndex, deleteStory, lockPage } =
 		props;
 
 	return (
@@ -124,6 +124,7 @@ function QuoteItem(props) {
 					setSprints={setSprints}
 					sprintNumber={parseInt(sprintIndex) + 1}
 					deleteFunction={deleteStory}
+					lockPage={lockPage}
 				/>
 			</Content>
 		</Container>

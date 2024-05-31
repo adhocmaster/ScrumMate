@@ -8,7 +8,7 @@ import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import { InputLabel, Select, MenuItem, FormControl } from '@mui/material';
 import NextPlanOutlinedIcon from '@mui/icons-material/NextPlanOutlined';
 
-const UserStory = ({ storyObject, deleteFunction, sprints, setSprints, sprintNumber, backlog }) => {
+const UserStory = ({ storyObject, deleteFunction, sprints, setSprints, sprintNumber, backlog, lockPage }) => {
 	const ActionTypeEnum = {
 		BUG: 1,
 		SYSTEMFEATURE: 2,
@@ -370,18 +370,23 @@ const UserStory = ({ storyObject, deleteFunction, sprints, setSprints, sprintNum
 						overflowY: "auto",
 					}}
 				>
-					<IconButton
-						aria-label="settings"
-						aria-controls="menu-userstory"
-						aria-haspopup="true"
-						onClick={handleMenuClick}
-						size="large"
-						sx={{ position: "absolute", bottom: -1, left: 0 }}
-					>
-						<MoreVertIcon />
-					</IconButton>
+					{
+						lockPage ?
+							<></>
+							:
+							<IconButton
+								aria-label="settings"
+								aria-controls="menu-userstory"
+								aria-haspopup="true"
+								onClick={handleMenuClick}
+								size="large"
+								sx={{ position: "absolute", bottom: -1, left: 0 }}
+							>
+								<MoreVertIcon />
+							</IconButton>
+					}
 
-					{storyObject.name != 'ActionItem' && (
+					{storyObject.name !== 'ActionItem' && (
 						<IconButton
 							aria-label="settings"
 							aria-controls="menu-userstory"

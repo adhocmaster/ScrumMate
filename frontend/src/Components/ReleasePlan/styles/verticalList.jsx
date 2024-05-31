@@ -58,13 +58,14 @@ const InnerQuoteList = (props) => {
 		return <></>
 	}
 	return props.quotes.map((quote, index) => (
-		<Draggable key={"cardId" + quote.id} draggableId={"draggableId" + quote.id} index={index}>
+		<Draggable key={"cardId" + quote.id} draggableId={"draggableId" + quote.id} index={index} isDragDisabled={props.lockPage}>
 			{(dragProvided, dragSnapshot) => (
 				<QuoteItem
 					key={"cardId" + quote.id}
 					quote={quote}
 					isDragging={dragSnapshot.isDragging}
 					provided={dragProvided}
+					lockPage={props.lockPage}
 					backlog={props.backlog}
 					deleteStory={props.deleteStory}
 				/>
@@ -74,14 +75,14 @@ const InnerQuoteList = (props) => {
 };
 
 function InnerList(props) {
-	const { quotes, dropProvided, backlog, deleteStory } = props;
+	const { quotes, dropProvided, lockPage, backlog, deleteStory } = props;
 	const title = props.title ? <Title>{props.title}</Title> : null;
 
 	return (
 		<Container>
 			{title}
 			<DropZone ref={dropProvided.innerRef}>
-				<InnerQuoteList quotes={quotes} backlog={backlog} deleteStory={deleteStory} />
+				<InnerQuoteList quotes={quotes} lockPage={lockPage} backlog={backlog} deleteStory={deleteStory} />
 				{dropProvided.placeholder}
 			</DropZone>
 		</Container>
@@ -101,6 +102,7 @@ export default function QuoteList(props) {
 		quotes,
 		title,
 		useClone,
+		lockPage,
 		backlog,
 		deleteStory,
 	} = props;
@@ -123,10 +125,10 @@ export default function QuoteList(props) {
 				>
 					{internalScroll ? (
 						<ScrollContainer style={scrollContainerStyle}>
-							<InnerList quotes={quotes} title={title} dropProvided={dropProvided} backlog={backlog} deleteStory={deleteStory} />
+							<InnerList quotes={quotes} title={title} dropProvided={dropProvided} lockPage={lockPage} backlog={backlog} deleteStory={deleteStory} />
 						</ScrollContainer>
 					) : (
-						<InnerList quotes={quotes} title={title} dropProvided={dropProvided} backlog={backlog} deleteStory={deleteStory} />
+						<InnerList quotes={quotes} title={title} dropProvided={dropProvided} lockPage={lockPage} backlog={backlog} deleteStory={deleteStory} />
 					)}
 				</Wrapper>
 			)}

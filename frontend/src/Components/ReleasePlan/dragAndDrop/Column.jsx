@@ -48,6 +48,7 @@ const Column = (props) => {
 	const title = props.title;
 	const quotes = props.quotes;
 	const index = props.index;
+	const lockPage = props.lockPage;
 	const backlogItems = props.backlogItems;
 	const setBacklogItems = props.setBacklogItems;
 	const deleteStory = props.deleteStory;
@@ -144,9 +145,13 @@ const Column = (props) => {
 				fontSize={14}
 			>
 				Backlog
-				<IconButton onClick={openDialogForNewStory} aria-label="add new story">
-					<AddCircleOutlineIcon fontSize="small" />
-				</IconButton>
+				{
+					lockPage ?
+						<></> :
+						<IconButton onClick={openDialogForNewStory} aria-label="add new story">
+							<AddCircleOutlineIcon fontSize="small" />
+						</IconButton>
+				}
 			</Typography>
 			<Dialog
 				open={dialogOpen}
@@ -338,6 +343,7 @@ const Column = (props) => {
 							internalScroll={props.isScrollable}
 							isCombineEnabled={Boolean(props.isCombineEnabled)}
 							useClone={Boolean(props.useClone)}
+							lockPage={lockPage}
 							backlog={backlogItems}
 							deleteStory={deleteStory}
 						/>
