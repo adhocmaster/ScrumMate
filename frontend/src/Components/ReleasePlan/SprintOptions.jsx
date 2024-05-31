@@ -11,15 +11,15 @@ import { InputLabel, Select, MenuItem, FormControl } from '@mui/material';
 
 const SprintOptions = ({ sprints, setSprints, setBacklogItems, index, projectId }) => {
 	const sprint = sprints[index]
-	var actualScrumMaster = sprint.scrumMaster ? sprint.scrumMaster.id : '';
 
 	const [open, setOpen] = useState(false);
-	const [scrumMasterId, setScrumMasterId] = useState(actualScrumMaster)
+	const [actualScrumMasterId, setActualScrumMasterId] = useState(sprint.scrumMaster ? sprint.scrumMaster.id : '')
+	const [scrumMasterId, setScrumMasterId] = useState(sprint.scrumMaster ? sprint.scrumMaster.id : '')
 	const [teamMembers, setTeamMembers] = useState([])
 
 	const handleClose = () => {
-		setScrumMasterId(actualScrumMaster)
 		setOpen(false);
+		setScrumMasterId(actualScrumMasterId)
 	};
 
 	function fetchProjectMembers() {
@@ -67,11 +67,12 @@ const SprintOptions = ({ sprints, setSprints, setBacklogItems, index, projectId 
 				if (result.status === 200) {
 					result.json().then(jsonResult => {
 						const sprintsCopy = [...sprints]
-						jsonResult.todos = sprintsCopy[index].todos
-						jsonResult.release = sprintsCopy[index].release
-						sprintsCopy[index] = jsonResult
-						console.log(sprintsCopy)
+						sprintsCopy[index].startDate = jsonResult.startDate
+						sprintsCopy[index].endDate = jsonResult.endDate
+						sprintsCopy[index].scrumMaster = jsonResult.scrumMaster
 						setSprints(sprintsCopy)
+						setScrumMasterId(jsonResult.scrumMaster.id)
+						setActualScrumMasterId(jsonResult.scrumMaster.id)
 					})
 				} else {
 					console.log("error", result);
