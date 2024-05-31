@@ -11,14 +11,14 @@ import { InputLabel, Select, MenuItem, FormControl } from '@mui/material';
 
 const SprintOptions = ({ sprints, setSprints, setBacklogItems, index, projectId }) => {
 	const sprint = sprints[index]
-	var actualScrumMaster = sprint.scrumMaster ?? '';
+	var actualScrumMaster = sprint.scrumMaster ? sprint.scrumMaster.id : '';
 
 	const [open, setOpen] = useState(false);
-	const [scrumMaster, setScrumMaster] = useState(actualScrumMaster)
+	const [scrumMasterId, setScrumMasterId] = useState(actualScrumMaster)
 	const [teamMembers, setTeamMembers] = useState([])
 
 	const handleClose = () => {
-		setScrumMaster(actualScrumMaster)
+		setScrumMasterId(actualScrumMaster)
 		setOpen(false);
 	};
 
@@ -55,7 +55,7 @@ const SprintOptions = ({ sprints, setSprints, setBacklogItems, index, projectId 
 			body: JSON.stringify({
 				// startDate: tempActionDescription,
 				// endDate: tempActionPriority,
-				scrumMasterId: scrumMaster.id,
+				scrumMasterId: scrumMasterId,
 			}),
 		};
 
@@ -113,11 +113,11 @@ const SprintOptions = ({ sprints, setSprints, setBacklogItems, index, projectId 
 						<Select
 							labelId="demo-simple-select-label"
 							id="demo-simple-select"
-							value={scrumMaster.id}
+							value={scrumMasterId}
 							label="Scrum Master"
 							onChange={(e) => {
 								console.log(e.target)
-								setScrumMaster(e.target)
+								setScrumMasterId(e.target.value)
 							}
 							}
 						>

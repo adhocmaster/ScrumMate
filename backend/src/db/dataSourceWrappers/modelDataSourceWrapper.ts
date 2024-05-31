@@ -22,7 +22,8 @@ export class ModelDataSourceWrapper {
 	public async save(item: any) {
 		try {
 			return await this.dataSource.manager.save(item);
-		} catch {
+		} catch (e) {
+			// console.log(e)
 			throw new NotSavedError(`Failed to save ${item}`)
 		}
 	}
