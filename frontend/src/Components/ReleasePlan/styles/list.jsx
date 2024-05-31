@@ -77,6 +77,7 @@ const InnerQuoteList = (props) => {
 					setSprints={props.setSprints}
 					sprintIndex={props.sprintIndex}
 					deleteStory={props.deleteStory}
+					lockPage={props.lockPage}
 				/>
 			)}
 		</Draggable>

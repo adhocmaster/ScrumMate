@@ -183,6 +183,7 @@ const Board = ({
 									isScrollable={withScrollableColumns}
 									isCombineEnabled={isCombineEnabled}
 									useClone={useClone}
+									lockPage={lockPage}
 									backlogItems={backlogItems}
 									setBacklogItems={setBacklogItems}
 									releaseId={releaseId}
@@ -209,14 +210,17 @@ const Board = ({
 										fontSize={14}
 									>
 										Sprints
-										<IconButton
-											sx={{
-												marginBottom: "3px",
-											}}
-											onClick={createNewSprints}
-										>
-											<AddCircleOutlineIcon fontSize="small" />
-										</IconButton>
+										{
+											lockPage ? <></> :
+												<IconButton
+													sx={{
+														marginBottom: "3px",
+													}}
+													onClick={createNewSprints}
+												>
+													<AddCircleOutlineIcon fontSize="small" />
+												</IconButton>
+										}
 									</Typography>
 								</Grid>
 								{sprints.map((sprint, index) =>
