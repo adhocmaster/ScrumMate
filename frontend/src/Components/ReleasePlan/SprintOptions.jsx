@@ -9,16 +9,80 @@ import { Box } from '@mui/material';
 import DeleteConfirmation from './DeleteConfirmation'
 import { InputLabel, Select, MenuItem, FormControl } from '@mui/material';
 
-const SprintOptions = ({ sprints, setSprints, setBacklogItems, index }) => {
+const SprintOptions = ({ sprints, setSprints, setBacklogItems, index, projectId }) => {
+	const sprint = sprints[index]
+	var actualScrumMaster = sprint.scrumMaster ?? '';
 
 	const [open, setOpen] = useState(false);
-	const [scrumMaster, setScrumMaster] = useState('')
+	const [scrumMaster, setScrumMaster] = useState(actualScrumMaster)
+	const [teamMembers, setTeamMembers] = useState([])
 
 	const handleClose = () => {
+		setScrumMaster(actualScrumMaster)
 		setOpen(false);
 	};
 
-	const deleteSprint = (sprintId, index) => {
+	function fetchProjectMembers() {
+		var options = {
+			method: 'get',
+			credentials: 'include'
+		}
+		try {
+			fetch(`http://localhost:8080/api/project/${projectId}/getMembers`, options).then((result) => {
+				if (result.status === 200) {
+					result.json().then((response) => {
+						setTeamMembers(response[2]);
+					})
+				}
+			})
+		}
+		catch {
+			return;
+		}
+	};
+
+	useState(() => {
+		fetchProjectMembers()
+	}, [teamMembers])
+
+	function fetchSaveOptions() {
+		var options = {
+			method: "post",
+			credentials: "include",
+			headers: {
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify({
+				// startDate: tempActionDescription,
+				// endDate: tempActionPriority,
+				scrumMasterId: scrumMaster.id,
+			}),
+		};
+
+		try {
+			fetch(
+				`http://localhost:8080/api/sprint/${sprint.id}/edit`,
+				options
+			).then((result) => {
+				if (result.status === 200) {
+					result.json().then(jsonResult => {
+						const sprintsCopy = [...sprints]
+						jsonResult.todos = sprintsCopy[index].todos
+						jsonResult.release = sprintsCopy[index].release
+						sprintsCopy[index] = jsonResult
+						console.log(sprintsCopy)
+						setSprints(sprintsCopy)
+					})
+				} else {
+					console.log("error", result);
+				}
+			});
+		} catch {
+			return null;
+		}
+	}
+
+	function deleteSprint(sprintId, index) {
 		fetch(`http://localhost:8080/api/sprint/${sprintId}`, {
 			method: "DELETE",
 			credentials: "include",
@@ -39,26 +103,29 @@ const SprintOptions = ({ sprints, setSprints, setBacklogItems, index }) => {
 			<IconButton onClick={() => setOpen(true)}>
 				<MoreHorizIcon fontSize='medium' />
 			</IconButton>
-
 			<Dialog open={open} onClose={handleClose} sx={{ width: '100%' }}>
-
 				<DialogTitle>
 					Sprints Options
 				</DialogTitle>
-
 				<DialogContent>
 					<FormControl fullWidth sx={{ mt: 1 }}>
 						<InputLabel id="scrum-master-select-label">Scrum Master</InputLabel>
 						<Select
 							labelId="demo-simple-select-label"
 							id="demo-simple-select"
-							value={scrumMaster}
+							value={scrumMaster.id}
 							label="Scrum Master"
-							onChange={(e) => setScrumMaster(e.target.value)}
+							onChange={(e) => {
+								console.log(e.target)
+								setScrumMaster(e.target)
+							}
+							}
 						>
-							<MenuItem value={10}>Ten</MenuItem>
-							<MenuItem value={20}>Twenty</MenuItem>
-							<MenuItem value={30}>Thirty</MenuItem>
+							{
+								teamMembers.map(user =>
+									<MenuItem value={user.id}>{user.username}</MenuItem>
+								)
+							}
 						</Select>
 					</FormControl>
 					<Box sx={{ mt: 2 }}>
@@ -68,15 +135,16 @@ const SprintOptions = ({ sprints, setSprints, setBacklogItems, index }) => {
 						</LocalizationProvider>
 					</Box>
 				</DialogContent>
-
 				<DialogActions>
-					<Button>
+					<Button onClick={() => {
+						handleClose();
+						fetchSaveOptions()
+					}}>
 						Save
 					</Button>
 					<DeleteConfirmation
 						onDelete={() => {
-							const sprintId = sprints[index].id;
-							deleteSprint(sprintId, index);
+							deleteSprint(sprint.id, index);
 							handleClose();
 						}}
 					/>
@@ -84,12 +152,9 @@ const SprintOptions = ({ sprints, setSprints, setBacklogItems, index }) => {
 						Cancel
 					</Button>
 				</DialogActions>
-			</Dialog>
+			</Dialog >
 		</>
-
-
 	);
-
 };
 
 export default SprintOptions

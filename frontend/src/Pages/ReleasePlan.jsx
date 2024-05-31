@@ -124,34 +124,6 @@ const ReleasePlan = ({ projectId }) => {
 			})
 	}
 
-	function createNewSprints() {
-		console.log("creating new");
-		var options = {
-			method: "POST",
-			credentials: "include",
-			headers: {
-				"Content-Type": "application/json",
-			},
-			body: JSON.stringify({ sprintNumber: sprints.length + 1 }),
-		};
-
-		fetch(`http://localhost:8080/api/release/${releaseId}/sprint`, options)
-			.then((result) => {
-				if (result.status === 200) {
-					console.log(result);
-				}
-				console.log(result);
-				return result.json();
-			})
-			.then((response) => {
-				console.log(response);
-				setSprints((prevSprints) => [...prevSprints, response]);
-			})
-			.catch((error) => {
-				console.error("Error:", error);
-			});
-	}
-
 	useEffect(() => {
 		fetchMostRecentRelease();
 	}, []);
@@ -286,7 +258,7 @@ const ReleasePlan = ({ projectId }) => {
 						multiline
 					/>}
 
-				<Board sprints={sprints} setSprints={setSprints} releaseId={releaseId} lockPage={lockPage} withScrollableColumns />
+				<Board sprints={sprints} setSprints={setSprints} releaseId={releaseId} projectId={projectId} lockPage={lockPage} withScrollableColumns />
 
 				{/* Sanity Check */}
 				<Typography

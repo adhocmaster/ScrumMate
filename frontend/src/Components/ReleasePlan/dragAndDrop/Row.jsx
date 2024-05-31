@@ -59,6 +59,7 @@ const Row = (props) => {
 	const deleteStory = props.deleteStory;
 	const setBacklogItems = props.setBacklogItems;
 	const releaseId = props.releaseId;
+	const projectId = props.projectId;
 	// console.log("rendering row", index)
 	// console.log("quotes", quotes)
 
@@ -302,6 +303,7 @@ const Row = (props) => {
 											setSprints={setSprints}
 											setBacklogItems={setBacklogItems}
 											index={index}
+											projectId={projectId}
 										/>
 
 										<Dialog open={dialogOpen} onClose={handleDialogClose} maxWidth="sm" fullWidth>
