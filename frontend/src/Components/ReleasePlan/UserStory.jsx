@@ -349,7 +349,7 @@ const UserStory = ({ storyObject, deleteFunction, sprints, setSprints, sprintNum
 								fontSize={14}
 								sx={{ position: "absolute", bottom: 10, right: 12 }}
 							>
-								{storyPoints} SP
+								{storyPoints ?? '--'} SP
 							</Typography>
 					}
 
