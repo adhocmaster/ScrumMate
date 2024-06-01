@@ -1,12 +1,8 @@
-import { useState } from 'react';
 import { Card, CardContent, Typography } from '@mui/material';
-import { TextareaAutosize } from '@mui/base/TextareaAutosize';
 
-const ContentBox = ({ title, content }) => {
-
+const ContentBox = ({ content }) => {
 	return (
 		<>
-
 			<Card
 				sx={{
 					minHeight: 100,
