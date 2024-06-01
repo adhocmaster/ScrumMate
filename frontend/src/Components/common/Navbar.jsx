@@ -3,7 +3,7 @@ import { AppBar, Toolbar, Typography } from '@mui/material';
 import { Link } from 'react-router-dom';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import { IconButton, Box } from '@mui/material';
-import scrumChampionImage from '../../Images/scrum_champion.png';
+import scrumChampionImage from '../../Images/scrum_champion_helmet.png';
 
 const Navbar = ({ isLoggedIn, onSignOut, projectName, setName }) => {
 	return (
@@ -29,12 +29,12 @@ const Navbar = ({ isLoggedIn, onSignOut, projectName, setName }) => {
 					>
 						{/* ScrumMate Text when clicked, links to dashboard */}
 						<Link exact to="/" style={{ textDecoration: 'none', color: 'white' }}>
-							<Box
-								component="img"
-								sx={{ height: 90, width: 90, paddingTop: 2 }}
-								src={scrumChampionImage}
-							/>
-
+							<Box display="flex" alignItems="center">
+								<img src={scrumChampionImage} alt="Image" style={{ width: '50px', height: 'auto', paddingBottom: '10px' }} />
+								<Typography variant="h6" sx={{ marginRight: 2 }}>
+									Scrum Champion
+								</Typography>
+							</Box>
 						</Link>
 					</Typography>
 
