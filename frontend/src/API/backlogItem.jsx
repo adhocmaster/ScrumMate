@@ -1,4 +1,4 @@
-import { apiCallGet, apiCallPost } from "./Calls";
+import { apiCallPost } from "./Calls";
 
 export function reorderBacklogItemAPI(
 	sourceId,
@@ -18,7 +18,3 @@ export function reorderBacklogItemAPI(
 	}
 	apiCallPost(`backlogItem/${sourceId}/${destinationId}/reorder`, body, resultSuccessHandler, resultFailureHandler);
 }
-
-// export function projectRowDataAPI(resultSuccessHandler, resultFailureHandler) {
-// 	apiCallGet(``, resultSuccessHandler, resultFailureHandler);
-// }

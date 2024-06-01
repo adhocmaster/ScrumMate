@@ -1,4 +1,4 @@
-import { apiCallPost, apiCallDelete, apiCallDeleteWithReturn } from "./Calls";
+import { apiCallPost, apiCallDeleteWithReturn } from "./Calls";
 
 export function newSprintActionAPI(
 	sprintId,

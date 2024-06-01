@@ -32,3 +32,10 @@ export function deleteProjectAPI(projectId, resultSuccessHandler, resultFailureH
 	apiCallDeleteWithoutReturn(`project/${projectId}`, resultSuccessHandler, resultFailureHandler);
 }
 
+export function projectReleasesAPI(projectId, resultSuccessHandler, resultFailureHandler) {
+	apiCallGet(`project/${projectId}/releases`, resultSuccessHandler, resultFailureHandler);
+}
+
+export function newReleaseAPI(projectId, resultSuccessHandler, resultFailureHandler) {
+	apiCallPost(`project/${projectId}/release`, {}, resultSuccessHandler, resultFailureHandler);
+}

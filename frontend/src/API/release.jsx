@@ -1,4 +1,4 @@
-import { apiCallGet, apiCallPost } from "./Calls";
+import { apiCallPost, apiCallGet } from "./Calls";
 
 export function newBacklogStoryAPI(
 	releaseId,
@@ -22,6 +22,10 @@ export function newBacklogStoryAPI(
 	apiCallPost(`release/${releaseId}`, body, resultSuccessHandler, resultFailureHandler);
 }
 
-// export function projectRowDataAPI(resultSuccessHandler, resultFailureHandler) {
-// 	apiCallGet(``, resultSuccessHandler, resultFailureHandler);
-// }
+export function copyReleaseAPI(releaseId, resultSuccessHandler, resultFailureHandler) {
+	apiCallPost(`release/${releaseId}/copy`, {}, resultSuccessHandler, resultFailureHandler);
+}
+
+export function getSignaturesAPI(releaseId, resultSuccessHandler, resultFailureHandler) {
+	apiCallGet(`release/${releaseId}/signatures`, resultSuccessHandler, resultFailureHandler);
+}
