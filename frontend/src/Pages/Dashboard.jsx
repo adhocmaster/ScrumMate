@@ -32,6 +32,8 @@ import Avatar from '@mui/material/Avatar';
 import Divider from '@mui/material/Divider';
 import NotificationsNoneIcon from '@mui/icons-material/NotificationsNone';
 import NotificationsActiveIcon from '@mui/icons-material/NotificationsActive';
+import { projectRowDataAPI, newProjectAPI, sendInviteAPI, projectUserListAPI, cancelInviteAPI, kickUserAPI, renameProjectAPI, deleteProjectAPI } from '../API/project';
+import { getUserIdAPI, acceptInviteAPI, rejectInviteAPI, fetchNotificationsAPI } from '../API/user'
 
 export default function Dashboard({ setName, setSelectedProjectId }) {
 	const [rows, setRows] = useState([]);
@@ -154,22 +156,7 @@ export default function Dashboard({ setName, setSelectedProjectId }) {
 	};
 
 	function fetchProjectRowData() {
-		var options = {
-			method: 'get',
-			credentials: 'include'
-		}
-		try {
-			fetch(`http://localhost:8080/api/user/projectRowData`, options).then((result) => {
-				if (result.status !== 200) {
-					console.log("error", result)
-				}
-				result.json().then((response) => {
-					setRows(response)
-				})
-			})
-		} catch {
-			return null;
-		}
+		projectRowDataAPI(setRows);
 	}
 
 	useEffect(() => {
@@ -177,28 +164,8 @@ export default function Dashboard({ setName, setSelectedProjectId }) {
 	}, []);
 
 	function fetchCreateNewProject() {
-		var options = {
-			method: 'post',
-			credentials: 'include',
-			headers: {
-				"Content-Type": "application/json",
-			},
-			body: JSON.stringify({
-				name: newProjectName
-			}),
-		}
-		try {
-			fetch(`http://localhost:8080/api/project`, options).then((result) => {
-				if (result.status !== 200) {
-					console.log("error", result)
-				}
-				result.json().then((response) => {
-					setRows(rows.concat(response))
-				})
-			})
-		} catch {
-			return null;
-		}
+		const resultSuccessHandler = (result) => setRows(rows.concat(result));
+		newProjectAPI(newProjectName, resultSuccessHandler);
 	}
 
 	function isValidProjectName(str) {
@@ -206,23 +173,7 @@ export default function Dashboard({ setName, setSelectedProjectId }) {
 	}
 
 	function fetchUserId() {
-		var options = {
-			method: 'get',
-			credentials: 'include',
-		}
-		try {
-			fetch(`http://localhost:8080/api/user`, options).then((result) => {
-				if (result.status !== 200) {
-					console.log("error", result)
-					return
-				}
-				result.json().then((response) => {
-					setOwnUserId(response);
-				})
-			})
-		} catch {
-			return;
-		}
+		getUserIdAPI(setOwnUserId);
 	}
 
 	useEffect(() => {
@@ -230,105 +181,34 @@ export default function Dashboard({ setName, setSelectedProjectId }) {
 	}, []);
 
 	function fetchUserList(projectId) {
-		var options = {
-			method: 'get',
-			credentials: 'include',
+		const resultSuccessHandler = (response) => {
+			setUserList(response)
 		}
-		try {
-			fetch(`http://localhost:8080/api/project/${projectId}/getMembers`, options).then((result) => {
-				if (result.status !== 200) {
-					console.log("error", result)
-					return
-				}
-				result.json().then((response) => {
-					setUserList(response)
-				})
-			})
-		} catch {
-			return;
-		}
+		projectUserListAPI(projectId, resultSuccessHandler);
 	}
 
 	function fetchSendInvite() {
-		var options = {
-			method: 'post',
-			credentials: 'include',
+		const resultSuccessHandler = (response) => {
+			setUserList(response);
+			setRecipient('')
+			setRecipientError(false);
 		}
-		try {
-			fetch(`http://localhost:8080/api/project/${sharingProjectId}/invite/${recipient}`, options).then((result) => {
-				if (result.status !== 200) {
-					console.log("error", result)
-					setRecipientError(true)
-					return
-				}
-				result.json().then((response) => {
-					setUserList(response);
-					setRecipient('')
-					setRecipientError(false);
-				})
-			})
-		} catch {
-			return;
+		const resultFailureHandler = (response) => {
+			setRecipientError(true)
 		}
+		sendInviteAPI(sharingProjectId, recipient, resultSuccessHandler, resultFailureHandler);
 	}
 
 	function fetchCancelInvite(userId) {
-		var options = {
-			method: 'post',
-			credentials: 'include',
-		}
-		try {
-			fetch(`http://localhost:8080/api/project/${sharingProjectId}/cancelInvite/${userId}`, options).then((result) => {
-				if (result.status !== 200) {
-					console.log("error", result)
-					return
-				}
-				result.json().then((response) => {
-					setUserList(response);
-				})
-			})
-		} catch {
-			return;
-		}
+		cancelInviteAPI(sharingProjectId, userId, setUserList);
 	}
 
 	function fetchKickTeamMember(userId) {
-		var options = {
-			method: 'post',
-			credentials: 'include',
-		}
-		try {
-			fetch(`http://localhost:8080/api/project/${sharingProjectId}/removeMember/${userId}`, options).then((result) => {
-				if (result.status !== 200) {
-					console.log("error", result)
-					return
-				}
-				result.json().then((response) => {
-					setUserList(response);
-				})
-			})
-		} catch {
-			return;
-		}
+		kickUserAPI(sharingProjectId, userId, setUserList);
 	}
 
 	function fetchNotifications() {
-		var options = {
-			method: 'get',
-			credentials: 'include',
-		}
-		try {
-			fetch(`http://localhost:8080/api/user/getInvites`, options).then((result) => {
-				if (result.status !== 200) {
-					console.log("error", result)
-				}
-				result.json().then((response) => {
-					setInviteList(response)
-				})
-			})
-		} catch {
-			return null;
-		}
+		fetchNotificationsAPI(setInviteList);
 	}
 
 	useEffect(() => {
@@ -336,88 +216,33 @@ export default function Dashboard({ setName, setSelectedProjectId }) {
 	}, []);
 
 	function fetchAcceptInvite(projectId) {
-		var options = {
-			method: 'post',
-			credentials: 'include',
+		const resultSuccessHandler = (response) => {
+			setInviteList(response[0]);
+			setRows(rows.concat(response[1]));
 		}
-		try {
-			fetch(`http://localhost:8080/api/user/acceptInvite/${projectId}`, options).then((result) => {
-				if (result.status !== 200) {
-					console.log("error", result)
-				}
-				result.json().then((response) => {
-					setInviteList(response[0])
-					setRows(rows.concat(response[1]))
-				})
-			})
-		} catch {
-			return null;
-		}
+		acceptInviteAPI(projectId, resultSuccessHandler);
 	}
 
 	function fetchRejectInvite(projectId) {
-		var options = {
-			method: 'post',
-			credentials: 'include',
-		}
-		try {
-			fetch(`http://localhost:8080/api/user/rejectInvite/${projectId}`, options).then((result) => {
-				if (result.status !== 200) {
-					console.log("error", result)
-				}
-				result.json().then((response) => {
-					setInviteList(response)
-				})
-			})
-		} catch {
-			return null;
-		}
+		rejectInviteAPI(projectId, setInviteList);
 	}
 
 	function fetchRenameProject() {
-		var options = {
-			method: 'PATCH',
-			credentials: 'include',
-			headers: {
-				"Content-Type": "application/json",
-			},
-			body: JSON.stringify({
-				name: renameProjectTextfield
-			}),
+		const resultSuccessHandler = (response) => {
+			const index = rows.findIndex(obj => obj.id === renameProjectId);
+			const rowsCopy = [...rows];
+			rowsCopy[index] = response;
+			setRows(rowsCopy);
 		}
-		try {
-			fetch(`http://localhost:8080/api/project/${renameProjectId}`, options).then((result) => {
-				if (result.status === 200) {
-					result.json().then((response) => {
-						const index = rows.findIndex(obj => obj.id === renameProjectId);
-						const rowsCopy = [...rows]
-						rowsCopy[index] = response;
-						setRows(rowsCopy)
-					})
-				}
-			})
-		} catch {
-			console.log("failed to rename project")
-			return null;
-		}
+		renameProjectAPI(renameProjectId, renameProjectTextfield, resultSuccessHandler);
 	}
 
 	function fetchDeleteProject() {
-		var options = {
-			method: 'DELETE',
-			credentials: 'include',
+		const resultSuccessHandler = (response) => {
+			const filtered = rows.filter((projRowData) => { return projRowData.id !== deleteProjectId });
+			setRows(filtered);
 		}
-		try {
-			fetch(`http://localhost:8080/api/project/${deleteProjectId}`, options).then((result) => {
-				if (result.status === 200) {
-					const filtered = rows.filter((projRowData) => { return projRowData.id !== deleteProjectId });
-					setRows(filtered)
-				}
-			})
-		} catch {
-			console.log("failed to delete project")
-			return null;
-		}
+		deleteProjectAPI(deleteProjectId, resultSuccessHandler);
 	}
 
 	function Row(projectData) {
@@ -638,7 +463,7 @@ export default function Dashboard({ setName, setSelectedProjectId }) {
 						<Divider />
 						{userList[0].map((user) => (
 							<>
-								<ListItem>
+								<ListItem key={user.id}>
 									<ListItemIcon>
 										<Avatar>Inv</Avatar>
 									</ListItemIcon>

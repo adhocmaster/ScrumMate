@@ -7,7 +7,7 @@ import Link from '@mui/material/Link';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import Checkbox from '@mui/material/Checkbox';
 import Alert from '@mui/material/Alert';
-import { loginAPI } from '../common/API';
+import { loginAPI } from '../../API/user';
 
 function SignInBox({ setIsLoggedIn, setColor }) {
 	const [email, setEmail] = useState('');
@@ -29,7 +29,6 @@ function SignInBox({ setIsLoggedIn, setColor }) {
 
 	const handleSignIn = async (email, password) => {
 		const resultSuccessHandler = () => {
-			console.log("succ2")
 			setIsLoggedIn(true);
 			setColor('#ffffff');
 			setPassword('');
