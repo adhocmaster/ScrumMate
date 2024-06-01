@@ -41,3 +41,11 @@ export function reorderSprintsAPI(releaseId, sprintStartIndex, sprintEndIndex, r
 export function newSprintAPI(releaseId, sprintNumber, resultSuccessHandler, resultFailureHandler) {
 	apiCallPost(`release/${releaseId}/sprint`, { sprintNumber }, resultSuccessHandler, resultFailureHandler);
 }
+
+export function toggleSigningAPI(releaseId, resultSuccessHandler, resultFailureHandler) {
+	apiCallPost(`release/${releaseId}/toggleSign`, {}, resultSuccessHandler, resultFailureHandler);
+}
+
+export function getSigningConditionAPI(releaseId, resultSuccessHandler, resultFailureHandler) {
+	apiCallGet(`release/${releaseId}/signingCondtion`, resultSuccessHandler, resultFailureHandler);
+}
