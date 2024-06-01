@@ -3,7 +3,7 @@
 The crux of the frontend app is mainly run through the src folder. There are two folders, Components and Pages. The main file that runs the frontend is the App.js file in src. 
 
 API Folder:
-- The API folder contains API call functions for interacting with the backend. This includes functions for handling release plans (release.jsx), projects, and user notifications, as well as centralizing API requests for a clear separation and simplifying the application's request process.
+- The API folder contains API call functions for interacting with the backend. This includes functions for handling release plans, projects, and user notifications, as well as centralizing API requests for a clear separation and simplifying the application's request process.
 
 Components Folder:
 - The components folder is organized into subfolders for better structure and maintainability. It contains UI elements and specific components used across different pages.
