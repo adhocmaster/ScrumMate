@@ -138,6 +138,7 @@ const ReleasePlan = ({ projectId }) => {
 				>
 					Problem Statement
 				</Typography>
+
 				{lockPage ?
 					< ContentBox title={"Problem Statement"} content={problemStatement} />
 					:
@@ -154,6 +155,7 @@ const ReleasePlan = ({ projectId }) => {
 						multiline
 
 					/>}
+
 				<Typography
 					variant='body1'
 					marginBottom={2}
@@ -164,6 +166,7 @@ const ReleasePlan = ({ projectId }) => {
 				>
 					High Level Goals
 				</Typography>
+
 				{lockPage ?
 					<ContentBox content={highLevelGoals} />
 					:

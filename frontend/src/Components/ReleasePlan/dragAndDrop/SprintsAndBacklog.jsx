@@ -5,8 +5,7 @@ import Column from './Column';
 import reorder, { reorderQuoteMap } from '../reorder';
 import { DragDropContext, Droppable } from 'react-beautiful-dnd';
 import { Box, Grid, Typography, IconButton } from "@mui/material";
-import styled, { order, width } from "@xstyled/styled-components";
-import { colors } from "@atlaskit/theme";
+import styled from "@xstyled/styled-components";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import { getBacklogAPI, newSprintAPI, reorderSprintsAPI } from '../../../API/release';
 import { deleteBacklogItemAPI } from '../../../API/backlogItem';
@@ -44,11 +43,11 @@ const Board = ({
 		fetchBacklog();
 	}, [releaseId]);
 
-	async function fetchReorderSprints(releaseId, sprintStartIndex, sprintEndIndex, setItems) {
+	function fetchReorderSprints(releaseId, sprintStartIndex, sprintEndIndex, setItems) {
 		reorderSprintsAPI(releaseId, sprintStartIndex, sprintEndIndex, setItems);
 	}
 
-	const deleteStory = (storyId) => {
+	function deleteStory(storyId) {
 		const resultSuccessHandler = (response) => {
 			if (response[0] === 0) {
 				setBacklogItems(response[1]);
@@ -93,11 +92,8 @@ const Board = ({
 		// reordering column
 		if (result.type === 'COLUMN') {
 			const reorderedSprints = reorder(sprints, source.index, destination.index);
-
 			setSprints(reorderedSprints);
-
 			fetchReorderSprints(releaseId, source.index, destination.index, setSprints);
-
 			return;
 		}
 
