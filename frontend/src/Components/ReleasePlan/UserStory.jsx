@@ -1,17 +1,12 @@
 import React, { useEffect, useState } from "react";
-import {
-	Card, CardContent, Box, Typography, IconButton, Menu, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, Button, TextField, ToggleButtonGroup, ToggleButton, Grid, Divider, List, ListItem, ListItemIcon, Avatar, ListItemText, Slider
-} from "@mui/material";
+import { Card, CardContent, Box, Typography, IconButton, Menu } from "@mui/material";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
-import HistoryIcon from '@mui/icons-material/History';
-import CheckCircleIcon from '@mui/icons-material/CheckCircle';
-import { InputLabel, Select, MenuItem, FormControl } from '@mui/material';
+import { MenuItem } from '@mui/material';
 import NextPlanOutlinedIcon from '@mui/icons-material/NextPlanOutlined';
-import { getPokerInformationAPI, placePokerEstimateAPI, saveActionItemAPI, saveBacklogItemAPI } from "../../API/backlogItem";
-import StoryEditDialog from "./StoryEditDialog";
+import { saveActionItemAPI, saveBacklogItemAPI } from "../../API/backlogItem";
 import DeleteConfirmationDialog from "./DeleteConfirmationDialog";
-import ActionEditDialog from "./ActionEditDialog";
 import PokerMenu from "./PokerMenu";
+import CardEditDialog from "./CardEditDialog";
 
 const UserStory = ({ storyObject, deleteFunction, sprints, setSprints, sprintNumber, backlog, setBacklogItems, lockPage }) => {
 	const ActionTypeEnum = {
@@ -268,6 +263,31 @@ const UserStory = ({ storyObject, deleteFunction, sprints, setSprints, sprintNum
 									storyPoints={storyPoints}
 								/>
 								<MenuItem onClick={handleEditDialogOpen}>Edit</MenuItem>
+								<CardEditDialog
+									editDialogOpen={editDialogOpen}
+									handleEditDialogClose={handleEditDialogClose}
+									tempRole={tempRole}
+									setTempRole={setTempRole}
+									tempFunctionality={tempFunctionality}
+									setTempFunctionality={setTempFunctionality}
+									tempReasoning={tempReasoning}
+									setTempReasoning={setTempReasoning}
+									tempAcceptanceCriteria={tempAcceptanceCriteria}
+									setTempAcceptanceCriteria={setTempAcceptanceCriteria}
+									tempPriority={tempPriority}
+									setTempPriority={setTempPriority}
+									handleDeleteDialogOpen={handleDeleteDialogOpen}
+									handleSave={handleSave}
+									editActionDialogOpen={editActionDialogOpen}
+									handleEditActionDialogClose={handleEditActionDialogClose}
+									tempActionType={tempActionType}
+									setTempActionType={setTempActionType}
+									tempActionDescription={tempActionDescription}
+									setTempActionDescription={setTempActionDescription}
+									tempActionPriority={tempActionPriority}
+									setTempActionPriority={setTempActionPriority}
+									handleActionSave={handleActionSave}
+								/>
 							</>
 						) : (
 							<>
@@ -335,77 +355,6 @@ const UserStory = ({ storyObject, deleteFunction, sprints, setSprints, sprintNum
 
 				</CardContent>
 			</Card>
-
-			<Dialog
-				open={editDialogOpen}
-				onClose={handleEditDialogClose}
-				maxWidth="sm"
-				fullWidth
-			>
-				<DialogTitle>Edit:</DialogTitle>
-				<DialogContent>
-					<Box
-						sx={{ mt: 1 }}
-					/>
-					<StoryEditDialog
-						role={tempRole}
-						setRole={setTempRole}
-						functionality={tempFunctionality}
-						setFunctionality={setTempFunctionality}
-						reasoning={tempReasoning}
-						setReasoning={setTempReasoning}
-						acceptanceCriteria={tempAcceptanceCriteria}
-						setAcceptanceCriteria={setTempAcceptanceCriteria}
-						priority={tempPriority}
-						setPriority={setTempPriority}
-					/>
-				</DialogContent>
-				<DialogActions>
-					<Button onClick={handleEditDialogClose}>
-						Cancel
-					</Button>
-					<Button onClick={handleDeleteDialogOpen} color="error">
-						Delete
-					</Button>
-					<Button onClick={handleSave} color="primary">
-						Save
-					</Button>
-				</DialogActions>
-			</Dialog>
-
-			<Dialog
-				open={editActionDialogOpen}
-				onClose={handleEditActionDialogClose}
-				maxWidth="sm"
-				fullWidth
-			>
-				<DialogTitle>Edit:</DialogTitle>
-				<DialogContent>
-					<ActionEditDialog
-						selectedItem={tempActionType}
-						setSelectedItem={setTempActionType}
-						description={tempActionDescription}
-						setDescription={setTempActionDescription}
-						actionPriority={tempActionPriority}
-						setActionPriority={setTempActionPriority}
-						selectedItemError={() => { }}
-						setSelectedItemError={() => { }}
-						actionPriorityError={() => { }}
-						setActionPriorityError={() => { }}
-					/>
-				</DialogContent>
-				<DialogActions>
-					<Button onClick={handleEditActionDialogClose}>
-						Cancel
-					</Button>
-					<Button onClick={handleDeleteDialogOpen} color="error">
-						Delete
-					</Button>
-					<Button onClick={handleActionSave} color="primary">
-						Save
-					</Button>
-				</DialogActions>
-			</Dialog>
 		</>
 	);
 };
