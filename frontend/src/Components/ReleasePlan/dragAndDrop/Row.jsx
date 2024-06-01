@@ -12,6 +12,7 @@ import { InputLabel, Select, MenuItem, FormControl } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
+import { newSprintActionAPI, newSprintStoryAPI } from '../../../API/sprint';
 
 const grid = 8;
 const borderRadius = 2;
@@ -187,79 +188,25 @@ const Row = (props) => {
 	}
 
 	function saveNewActionItem(actionItem, sprintId) {
-		var options = {
-			method: "post",
-			credentials: "include",
-			headers: {
-				"Content-Type": "application/json",
-			},
-			body: JSON.stringify({
-				actionType: actionItem.selectedItem,
-				description: actionItem.description,
-				priority: actionItem.actionPriority,
-				storyPoints: 0,
-			}),
-		};
-
-		try {
-			fetch(
-				`http://localhost:8080/api/sprint/${sprintId}/action`,
-				options
-			).then((result) => {
-				if (result.status !== 200) {
-					console.log("error", result);
-				}
-				result.json().then((jsonResult) => {
-					console.log(jsonResult.name)
-					const sprintsCopy = [...sprints];
-					const indexOfSprint = sprintsCopy.findIndex((sprint) => sprint.id === sprintId);
-					sprintsCopy[indexOfSprint].todos.push(jsonResult)
-					setSprints(sprintsCopy);
-				})
-			});
-		} catch {
-			return null;
+		const resultSuccessHandler = (response) => {
+			const sprintsCopy = [...sprints];
+			const indexOfSprint = sprintsCopy.findIndex((sprint) => sprint.id === sprintId);
+			sprintsCopy[indexOfSprint].todos.push(response)
+			setSprints(sprintsCopy);
 		}
+		newSprintActionAPI(sprintId, actionItem.selectedItem, actionItem.description, actionItem.actionPriority, resultSuccessHandler);
 	}
 
-
-
 	function saveNewStory(newStory, sprintId) {
-		var options = {
-			method: "post",
-			credentials: "include",
-			headers: {
-				"Content-Type": "application/json",
-			},
-			body: JSON.stringify({
-				// change type?
-				userTypes: newStory.role,
-				functionalityDescription: newStory.functionality,
-				reasoning: newStory.reasoning,
-				acceptanceCriteria: newStory.acceptanceCriteria,
-				storyPoints: newStory.storyPoints,
-				priority: newStory.priority
-			}),
-		};
-
-		try {
-			fetch(
-				`http://localhost:8080/api/sprint/${sprintId}`,
-				options
-			).then((result) => {
-				if (result.status !== 200) {
-					console.log("error", result);
-				}
-				result.json().then((jsonResult) => {
-					const sprintsCopy = [...sprints];
-					const indexOfSprint = sprintsCopy.findIndex((sprint) => sprint.id === sprintId);
-					sprintsCopy[indexOfSprint].todos.push(jsonResult)
-					setSprints(sprintsCopy);
-				})
-			});
-		} catch {
-			return null;
+		const resultSuccessHandler = (response) => {
+			const sprintsCopy = [...sprints];
+			const indexOfSprint = sprintsCopy.findIndex((sprint) => sprint.id === sprintId);
+			sprintsCopy[indexOfSprint].todos.push(response)
+			setSprints(sprintsCopy);
 		}
+		newSprintStoryAPI(sprintId, newStory.role, newStory.functionality, newStory.reasoning,
+			newStory.acceptanceCriteria, newStory.priority, resultSuccessHandler
+		);
 	}
 
 	return (
