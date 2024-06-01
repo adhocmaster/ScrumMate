@@ -67,6 +67,7 @@ const InnerQuoteList = (props) => {
 					provided={dragProvided}
 					lockPage={props.lockPage}
 					backlog={props.backlog}
+					setBacklogItems={props.setBacklogItems}
 					deleteStory={props.deleteStory}
 				/>
 			)}
@@ -75,14 +76,14 @@ const InnerQuoteList = (props) => {
 };
 
 function InnerList(props) {
-	const { quotes, dropProvided, lockPage, backlog, deleteStory } = props;
+	const { quotes, dropProvided, lockPage, backlog, setBacklogItems, deleteStory } = props;
 	const title = props.title ? <Title>{props.title}</Title> : null;
 
 	return (
 		<Container>
 			{title}
 			<DropZone ref={dropProvided.innerRef}>
-				<InnerQuoteList quotes={quotes} lockPage={lockPage} backlog={backlog} deleteStory={deleteStory} />
+				<InnerQuoteList quotes={quotes} lockPage={lockPage} backlog={backlog} setBacklogItems={setBacklogItems} deleteStory={deleteStory} />
 				{dropProvided.placeholder}
 			</DropZone>
 		</Container>
@@ -104,6 +105,7 @@ export default function QuoteList(props) {
 		useClone,
 		lockPage,
 		backlog,
+		setBacklogItems,
 		deleteStory,
 	} = props;
 
@@ -131,6 +133,7 @@ export default function QuoteList(props) {
 								dropProvided={dropProvided}
 								lockPage={lockPage}
 								backlog={backlog}
+								setBacklogItems={setBacklogItems}
 								deleteStory={deleteStory}
 							/>
 						</ScrollContainer>
@@ -141,6 +144,7 @@ export default function QuoteList(props) {
 							dropProvided={dropProvided}
 							lockPage={lockPage}
 							backlog={backlog}
+							setBacklogItems={setBacklogItems}
 							deleteStory={deleteStory}
 						/>
 					)}

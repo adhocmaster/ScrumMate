@@ -13,6 +13,8 @@ export default function PokerMenu({
 	handleMenuClose,
 	sprints,
 	backlog,
+	setSprints,
+	setBacklog,
 
 	setTempBacklogItemType,
 	setTempRole,
@@ -20,7 +22,6 @@ export default function PokerMenu({
 	setTempReasoning,
 	setTempAcceptanceCriteria,
 	setTempStoryPoints,
-	setStoryPoints,
 
 	tempRole,
 	tempFunctionality,
@@ -124,8 +125,16 @@ export default function PokerMenu({
 			setTeamEstimates(othersEstimates);
 			setStoryNumberBuffer(rank + 1);
 			setSize(size);
-			setStoryPoints(size);
 			setTempStoryPoints(size);
+			if (sprints) {
+				const sprintsCopy = [...sprints];
+				sprintsCopy[sprintNumber - 1].todos[rank].size = size;
+				setSprints(sprintsCopy);
+			} else {
+				const backlogCopy = [...backlog];
+				backlogCopy[rank].size = size;
+				setBacklog(backlogCopy);
+			}
 		}
 		getPokerInformationAPI(pokerId, resultSuccessHandler);
 	}

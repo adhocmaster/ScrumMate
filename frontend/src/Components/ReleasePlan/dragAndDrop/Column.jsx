@@ -84,6 +84,7 @@ const Column = (props) => {
 							useClone={Boolean(props.useClone)}
 							lockPage={lockPage}
 							backlog={backlogItems}
+							setBacklogItems={setBacklogItems}
 							deleteStory={deleteStory}
 						/>
 					</Container>

@@ -13,7 +13,7 @@ import DeleteConfirmationDialog from "./DeleteConfirmationDialog";
 import ActionEditDialog from "./ActionEditDialog";
 import PokerMenu from "./PokerMenu";
 
-const UserStory = ({ storyObject, deleteFunction, sprints, setSprints, sprintNumber, backlog, lockPage }) => {
+const UserStory = ({ storyObject, deleteFunction, sprints, setSprints, sprintNumber, backlog, setBacklogItems, lockPage }) => {
 	const ActionTypeEnum = {
 		BUG: 1,
 		SYSTEMFEATURE: 2,
@@ -48,8 +48,12 @@ const UserStory = ({ storyObject, deleteFunction, sprints, setSprints, sprintNum
 	const [tempFunctionality, setTempFunctionality] = useState(functionality);
 	const [tempReasoning, setTempReasoning] = useState(reasoning);
 	const [tempAcceptanceCriteria, setTempAcceptanceCriteria] = useState(acceptanceCriteria);
-	const [tempStoryPoints, setTempStoryPoints] = useState(storyPoints);
-	const [tempPriority, setTempPriority] = useState(priority)
+	const [tempStoryPoints, setTempStoryPoints] = useState(storyObject.size);
+	const [tempPriority, setTempPriority] = useState(priority);
+
+	useEffect(() => {
+		setStoryPoints(storyObject.size)
+	}, [sprints, backlog])
 
 	const handleMenuClick = (event) => {
 		setAnchorOpen(event.currentTarget);
@@ -238,6 +242,8 @@ const UserStory = ({ storyObject, deleteFunction, sprints, setSprints, sprintNum
 									handleMenuClose={handleMenuClose}
 									sprints={sprints}
 									backlog={backlog}
+									setSprints={setSprints}
+									setBacklog={setBacklogItems}
 
 									setTempBacklogItemType={setTempBacklogItemType}
 									setTempRole={setTempRole}
