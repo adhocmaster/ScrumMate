@@ -2,7 +2,8 @@ import React from 'react';
 import { AppBar, Toolbar, Typography } from '@mui/material';
 import { Link } from 'react-router-dom';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
-import { IconButton } from '@mui/material';
+import { IconButton, Box } from '@mui/material';
+import scrumChampionImage from '../../Images/scrum_champion.png';
 
 const Navbar = ({ isLoggedIn, onSignOut, projectName, setName }) => {
 	return (
@@ -10,6 +11,7 @@ const Navbar = ({ isLoggedIn, onSignOut, projectName, setName }) => {
 			<AppBar position="fixed" sx={{
 				backgroundColor: '#0a81ff',
 				padding: '8px 16px',
+				height: '11%'
 			}}>
 				<Toolbar
 					disableGutters
@@ -26,7 +28,14 @@ const Navbar = ({ isLoggedIn, onSignOut, projectName, setName }) => {
 						onClick={() => setName('')}
 					>
 						{/* ScrumMate Text when clicked, links to dashboard */}
-						<Link exact to="/" style={{ textDecoration: 'none', color: 'white' }}>ScrumMate</Link>
+						<Link exact to="/" style={{ textDecoration: 'none', color: 'white' }}>
+							<Box
+								component="img"
+								sx={{ height: 90, width: 90, paddingTop: 2 }}
+								src={scrumChampionImage}
+							/>
+
+						</Link>
 					</Typography>
 
 					<Typography>
