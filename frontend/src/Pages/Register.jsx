@@ -7,7 +7,7 @@ import Link from '@mui/material/Link';
 import { useNavigate } from 'react-router-dom';
 import AccountBoxIcon from '@mui/icons-material/AccountBox';
 import Alert from '@mui/material/Alert';
-import { registerAPI } from '../Components/common/API';
+import { registerAPI } from '../API/user';
 
 function Register() {
 	const [username, setUsername] = useState('');
