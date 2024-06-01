@@ -8,6 +8,8 @@ import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import { InputLabel, Select, MenuItem, FormControl } from '@mui/material';
 import NextPlanOutlinedIcon from '@mui/icons-material/NextPlanOutlined';
 import { getPokerInformationAPI, placePokerEstimateAPI, saveActionItemAPI, saveBacklogItemAPI } from "../../API/backlogItem";
+import StoryEditDialog from "./StoryEditDialog";
+import DeleteConfirmationDialog from "./DeleteConfirmationDialog";
 
 const UserStory = ({ storyObject, deleteFunction, sprints, setSprints, sprintNumber, backlog, lockPage }) => {
 	const ActionTypeEnum = {
@@ -46,6 +48,7 @@ const UserStory = ({ storyObject, deleteFunction, sprints, setSprints, sprintNum
 	const [tempReasoning, setTempReasoning] = useState(reasoning);
 	const [tempAcceptanceCriteria, setTempAcceptanceCriteria] = useState(acceptanceCriteria);
 	const [tempStoryPoints, setTempStoryPoints] = useState(storyPoints);
+	const [tempPriority, setTempPriority] = useState(priority)
 
 	const [pokerId, setPokerID] = useState(storyObject.id);
 	const [pokerIsOver, setPokerIsOver] = useState(false);
@@ -75,12 +78,13 @@ const UserStory = ({ storyObject, deleteFunction, sprints, setSprints, sprintNum
 	}
 
 	const handleEditDialogOpen = () => {
-		setTempBacklogItemType(backlogItemType)
-		setTempRole(role)
-		setTempFunctionality(functionality)
-		setTempReasoning(reasoning)
-		setTempAcceptanceCriteria(acceptanceCriteria)
-		setTempStoryPoints(storyPoints)
+		setTempBacklogItemType(backlogItemType);
+		setTempRole(role);
+		setTempFunctionality(functionality);
+		setTempReasoning(reasoning);
+		setTempAcceptanceCriteria(acceptanceCriteria);
+		setTempStoryPoints(storyPoints);
+		setTempPriority(priority);
 		setEditDialogOpen(true);
 		handleMenuClose();
 	};
@@ -117,6 +121,7 @@ const UserStory = ({ storyObject, deleteFunction, sprints, setSprints, sprintNum
 		setReasoning(tempReasoning);
 		setAcceptanceCriteria(tempAcceptanceCriteria);
 		setStoryPoints(tempStoryPoints);
+		setPriority(tempPriority);
 
 		saveEditedStory(storyObject.id);
 		handleEditDialogClose();
@@ -200,6 +205,7 @@ const UserStory = ({ storyObject, deleteFunction, sprints, setSprints, sprintNum
 			reasoning: tempReasoning,
 			acceptanceCriteria: tempAcceptanceCriteria,
 			storyPoints: tempStoryPoints,
+			priority: tempPriority,
 		}
 		const resultSuccessHandler = () => {
 			if (sprints) {
@@ -214,7 +220,7 @@ const UserStory = ({ storyObject, deleteFunction, sprints, setSprints, sprintNum
 			tempReasoning,
 			tempAcceptanceCriteria,
 			tempStoryPoints,
-			priority,
+			tempPriority,
 			resultSuccessHandler,
 		);
 	}
@@ -343,6 +349,12 @@ const UserStory = ({ storyObject, deleteFunction, sprints, setSprints, sprintNum
 						<MenuItem onClick={handleDeleteDialogOpen} style={{ color: "red" }}>
 							Delete
 						</MenuItem>
+						<DeleteConfirmationDialog
+							open={deleteDialogOpen}
+							handleClose={handleDeleteDialogClose}
+							handleDelete={handleDelete}
+							type={storyObject.name === 'ActionItem' ? 'Action Item' : 'Story'}
+						/>
 					</Menu>
 					<Typography
 						variant="body1"
@@ -404,94 +416,21 @@ const UserStory = ({ storyObject, deleteFunction, sprints, setSprints, sprintNum
 			>
 				<DialogTitle>Edit:</DialogTitle>
 				<DialogContent>
-					<Box display="flex" alignItems="center" gap={1} mb={2} mt={1}>
-						<Typography variant="body2" component="span">
-							As a(n)
-						</Typography>
-						<TextField
-							size="small"
-							label="Role"
-							value={tempRole}
-							onChange={(e) => setTempRole(e.target.value)}
-							sx={{
-								".MuiInputBase-input": {
-									fontSize: "0.875rem",
-									height: "auto",
-									padding: "5px 9px",
-								},
-								".MuiInputLabel-root": {
-									fontSize: "0.875rem",
-								},
-							}}
-						/>
-						<Typography variant="body2" component="span">
-							I want to be able to
-						</Typography>
-					</Box>
-
-					<TextField
-						autoFocus
-						margin="dense"
-						id="functionality-description"
-						label="Functionality Description"
-						type="text"
-						fullWidth
-						variant="outlined"
-						multiline
-						rows={4}
-						value={tempFunctionality}
-						onChange={(e) => setTempFunctionality(e.target.value)}
-						sx={{ marginBottom: 2 }}
+					<Box
+						sx={{ mt: 1 }}
 					/>
-
-					<Typography variant="body2" component="span" >
-						so that
-					</Typography>
-
-					<TextField
-						margin="dense"
-						id="reasoning"
-						label="Reasoning"
-						type="text"
-						fullWidth
-						variant="outlined"
-						multiline
-						rows={4}
-						value={tempReasoning}
-						onChange={(e) => setTempReasoning(e.target.value)}
-						sx={{ marginBottom: 2, marginTop: 2 }}
+					<StoryEditDialog
+						role={tempRole}
+						setRole={setTempRole}
+						functionality={tempFunctionality}
+						setFunctionality={setTempFunctionality}
+						reasoning={tempReasoning}
+						setReasoning={setTempReasoning}
+						acceptanceCriteria={tempAcceptanceCriteria}
+						setAcceptanceCriteria={setTempAcceptanceCriteria}
+						priority={tempPriority}
+						setPriority={setTempPriority}
 					/>
-
-					<TextField
-						margin="dense"
-						id="acceptance-criteria"
-						label="Acceptance Criteria"
-						type="text"
-						fullWidth
-						variant="outlined"
-						multiline
-						rows={4}
-						value={tempAcceptanceCriteria}
-						onChange={(e) => setTempAcceptanceCriteria(e.target.value)}
-						sx={{ marginBottom: 2 }}
-					/>
-
-					<FormControl fullWidth>
-						<InputLabel id="priority-select-label">Priority</InputLabel>
-						<Select
-							labelId="priority-select-label"
-							id="demo-simple-select"
-							value={priority}
-							label="Priority"
-							onChange={(event) => setPriority(event.target.value)}
-						>
-							<MenuItem value={4}>High</MenuItem>
-							<MenuItem value={3}>Medium</MenuItem>
-							<MenuItem value={2}>Low</MenuItem>
-							<MenuItem value={1}>None</MenuItem>
-						</Select>
-					</FormControl>
-
 				</DialogContent>
 				<DialogActions>
 					<Button onClick={handleEditDialogClose}>
@@ -505,7 +444,6 @@ const UserStory = ({ storyObject, deleteFunction, sprints, setSprints, sprintNum
 					</Button>
 				</DialogActions>
 			</Dialog>
-
 
 			<Dialog
 				open={editActionDialogOpen}
@@ -845,32 +783,9 @@ const UserStory = ({ storyObject, deleteFunction, sprints, setSprints, sprintNum
 									</>
 								}
 							</Box>
-
 						</Grid>
 					</Grid>
 				</DialogContent>
-			</Dialog>
-
-			<Dialog open={deleteDialogOpen} onClose={handleDeleteDialogClose}>
-				<DialogTitle>
-					Delete backlog item?
-				</DialogTitle>
-
-				<DialogContent>
-					<DialogContentText>
-						Are you sure you want to delete this backlog item?
-					</DialogContentText>
-				</DialogContent>
-
-				<DialogActions>
-					<Button onClick={handleDeleteDialogClose} color="primary">
-						Cancel
-					</Button>
-
-					<Button variant="contained" color="error" onClick={handleDelete} >
-						Delete
-					</Button>
-				</DialogActions>
 			</Dialog>
 		</>
 	);

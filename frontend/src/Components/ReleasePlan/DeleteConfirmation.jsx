@@ -1,9 +1,8 @@
 import { useState } from 'react';
-import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Typography } from '@mui/material';
-import IconButton from '@mui/material/IconButton';
-import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';    
+import { Button } from '@mui/material';
+import DeleteConfirmationDialog from './DeleteConfirmationDialog';
 
-const DeleteConfirmation = ({ onDelete }) => {
+const DeleteConfirmation = ({ onDelete, type = 'sprint' }) => {
 	const [open, setOpen] = useState(false);
 
 	const handleDelete = () => {
@@ -17,31 +16,11 @@ const DeleteConfirmation = ({ onDelete }) => {
 
 	return (
 		<>
-			<Button sx={{color: 'red'}} onClick={() => setOpen(true)}>
-        Delete     
-      </Button>	
+			<Button sx={{ color: 'red' }} onClick={() => setOpen(true)}>
+				Delete
+			</Button>
 
-			<Dialog open={open} onClose={handleClose}>
-				<DialogTitle>
-					Delete Sprint?
-				</DialogTitle>
-
-				<DialogContent>
-					<DialogContentText>
-						Are you sure you want to delete this sprint?
-					</DialogContentText>
-				</DialogContent>
-
-				<DialogActions>
-					<Button onClick={handleClose} color="primary">
-						Cancel
-					</Button>
-
-					<Button variant="contained" color="error" onClick={handleDelete} >
-						Delete
-					</Button>
-				</DialogActions>
-			</Dialog>
+			<DeleteConfirmationDialog open={open} handleClose={handleClose} handleDelete={handleDelete} type={type} />
 		</>
 	);
 }

@@ -125,10 +125,24 @@ export default function QuoteList(props) {
 				>
 					{internalScroll ? (
 						<ScrollContainer style={scrollContainerStyle}>
-							<InnerList quotes={quotes} title={title} dropProvided={dropProvided} lockPage={lockPage} backlog={backlog} deleteStory={deleteStory} />
+							<InnerList
+								quotes={quotes}
+								title={title}
+								dropProvided={dropProvided}
+								lockPage={lockPage}
+								backlog={backlog}
+								deleteStory={deleteStory}
+							/>
 						</ScrollContainer>
 					) : (
-						<InnerList quotes={quotes} title={title} dropProvided={dropProvided} lockPage={lockPage} backlog={backlog} deleteStory={deleteStory} />
+						<InnerList
+							quotes={quotes}
+							title={title}
+							dropProvided={dropProvided}
+							lockPage={lockPage}
+							backlog={backlog}
+							deleteStory={deleteStory}
+						/>
 					)}
 				</Wrapper>
 			)}
