@@ -10,6 +10,7 @@ import NextPlanOutlinedIcon from '@mui/icons-material/NextPlanOutlined';
 import { getPokerInformationAPI, placePokerEstimateAPI, saveActionItemAPI, saveBacklogItemAPI } from "../../API/backlogItem";
 import StoryEditDialog from "./StoryEditDialog";
 import DeleteConfirmationDialog from "./DeleteConfirmationDialog";
+import ActionEditDialog from "./ActionEditDialog";
 
 const UserStory = ({ storyObject, deleteFunction, sprints, setSprints, sprintNumber, backlog, lockPage }) => {
 	const ActionTypeEnum = {
@@ -30,11 +31,11 @@ const UserStory = ({ storyObject, deleteFunction, sprints, setSprints, sprintNum
 	const [actionDescription, setActionDescription] = useState(storyObject.description);
 	const [actionPriority, setActionPriority] = useState(storyObject.priority);
 
+	const [backlogItemType, setBacklogItemType] = useState("story");
 	const [tempActionType, setTempActionType] = useState(storyObject.actionType);
 	const [tempActionDescription, setTempActionDescription] = useState(storyObject.description);
 	const [tempActionPriority, setTempActionPriority] = useState(false);
 
-	const [backlogItemType, setBacklogItemType] = useState("story");
 	const [role, setRole] = useState(storyObject.userTypes);
 	const [functionality, setFunctionality] = useState(storyObject.functionalityDescription);
 	const [reasoning, setReasoning] = useState(storyObject.reasoning);
@@ -453,51 +454,18 @@ const UserStory = ({ storyObject, deleteFunction, sprints, setSprints, sprintNum
 			>
 				<DialogTitle>Edit:</DialogTitle>
 				<DialogContent>
-					<FormControl fullWidth margin="dense">
-						<InputLabel id="item-select-label">Item</InputLabel>
-						<Select
-							labelId="item-select-label"
-							id="item-select"
-							label="Item"
-							value={tempActionType}
-							onChange={(e) => setTempActionType(e.target.value)}
-							defaultValue=""
-						>
-							<MenuItem value={ActionTypeEnum.BUG}>Bug</MenuItem>
-							<MenuItem value={ActionTypeEnum.INFRASTRUCTURE}>Infrastructure</MenuItem>
-							<MenuItem value={ActionTypeEnum.SYSTEMFEATURE}>System Feature</MenuItem>
-							<MenuItem value={ActionTypeEnum.SPIKE}>Spike</MenuItem>
-						</Select>
-					</FormControl>
-					<TextField
-						fullWidth
-						margin="dense"
-						id="action-item-description"
-						label="Description"
-						type="text"
-						variant="outlined"
-						multiline
-						rows={4}
-						value={tempActionDescription}
-						onChange={(e) => setTempActionDescription(e.target.value)}
+					<ActionEditDialog
+						selectedItem={tempActionType}
+						setSelectedItem={setTempActionType}
+						description={tempActionDescription}
+						setDescription={setTempActionDescription}
+						actionPriority={tempActionPriority}
+						setActionPriority={setTempActionPriority}
+						selectedItemError={() => { }}
+						setSelectedItemError={() => { }}
+						actionPriorityError={() => { }}
+						setActionPriorityError={() => { }}
 					/>
-
-					<FormControl fullWidth sx={{ marginTop: 2 }}>
-						<InputLabel id="priority-select-label">Priority</InputLabel>
-						<Select
-							labelId="priority-select-label"
-							id="priority-select"
-							value={tempActionPriority}
-							label="Priority"
-							onChange={(event) => setTempActionPriority(event.target.value)}
-						>
-							<MenuItem value={4}>High</MenuItem>
-							<MenuItem value={3}>Medium</MenuItem>
-							<MenuItem value={2}>Low</MenuItem>
-							<MenuItem value={1}>None</MenuItem>
-						</Select>
-					</FormControl>
-
 				</DialogContent>
 				<DialogActions>
 					<Button onClick={handleEditActionDialogClose}>
@@ -511,7 +479,6 @@ const UserStory = ({ storyObject, deleteFunction, sprints, setSprints, sprintNum
 					</Button>
 				</DialogActions>
 			</Dialog>
-
 
 			<Dialog
 				open={pokerDialogOpen}
