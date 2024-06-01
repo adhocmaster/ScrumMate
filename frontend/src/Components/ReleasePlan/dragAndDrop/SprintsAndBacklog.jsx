@@ -16,6 +16,12 @@ const Container = styled.div`
   align-items: stretch;   // Ensure items take the full width
 `;
 
+const ScrollableContainer = styled.div`
+  max-height: 780px; // Set a fixed height for the scrolling container
+  overflow-y: auto; // Enable vertical scrolling
+  overflow-x: hidden;
+`;
+
 const Board = ({
 	isCombineEnabled,
 	sprints,
@@ -27,7 +33,7 @@ const Board = ({
 	releaseId,
 	projectId,
 }) => {
-	const [backlogItems, setBacklogItems] = useState([]); // copy this into the first index of columns and ordered
+	const [backlogItems, setBacklogItems] = useState([]);
 
 	function fetchBacklog() {
 		const resultSuccessHandler = (response) => {
@@ -73,7 +79,6 @@ const Board = ({
 	}
 
 	const onDragEnd = (result) => {
-		// dropped nowhere
 		if (!result.destination) {
 			return;
 		}
@@ -81,7 +86,6 @@ const Board = ({
 		const source = result.source;
 		const destination = result.destination;
 
-		// did not move anywhere - can bail early
 		if (
 			source.droppableId === destination.droppableId &&
 			source.index === destination.index
@@ -89,7 +93,6 @@ const Board = ({
 			return;
 		}
 
-		// reordering column
 		if (result.type === 'COLUMN') {
 			const reorderedSprints = reorder(sprints, source.index, destination.index);
 			setSprints(reorderedSprints);
@@ -113,7 +116,7 @@ const Board = ({
 					<Droppable
 						droppableId="BACKLOG"
 						type="BACKLOG"
-						direction="vertical" // Change to vertical
+						direction="vertical"
 						ignoreContainerClipping={Boolean(containerHeight)}
 						isCombineEnabled={isCombineEnabled}
 					>
@@ -137,58 +140,60 @@ const Board = ({
 							</div>
 						)}
 					</Droppable>
-					<Droppable
-						droppableId="board"
-						type="COLUMN"
-						direction="vertical" // Change to vertical
-						ignoreContainerClipping={Boolean(containerHeight)}
-						isCombineEnabled={isCombineEnabled}
-					>
-						{(provided) => (
-							<Container ref={provided.innerRef} {...provided.droppableProps} >
-								<Grid item xs={15}>
-									<Typography
-										marginLeft={1}
-										textAlign="left"
-										fontWeight="bold"
-										fontSize={14}
+					<Grid item xs={15}>
+						<Typography
+							marginLeft={1}
+							textAlign="left"
+							fontWeight="bold"
+							fontSize={14}
+						>
+							Sprints
+							{
+								lockPage ? <></> :
+									<IconButton
+										sx={{
+											marginBottom: "3px",
+										}}
+										onClick={createNewSprints}
 									>
-										Sprints
-										{
-											lockPage ? <></> :
-												<IconButton
-													sx={{
-														marginBottom: "3px",
-													}}
-													onClick={createNewSprints}
-												>
-													<AddCircleOutlineIcon fontSize="small" />
-												</IconButton>
-										}
-									</Typography>
-								</Grid>
-								{sprints.map((sprint, index) =>
-									<Row
-										key={`${sprint.sprintNumber}`}
-										index={index}
-										title={`${sprint.sprintNumber}`}
-										quotes={sprint.todos}
-										isScrollable={withScrollableColumns}
-										isCombineEnabled={isCombineEnabled}
-										useClone={useClone}
-										lockPage={lockPage}
-										sprints={sprints}
-										setSprints={setSprints}
-										setBacklogItems={setBacklogItems}
-										releaseId={releaseId}
-										projectId={projectId}
-										deleteStory={deleteStory}
-									/>
+										<AddCircleOutlineIcon fontSize="small" />
+									</IconButton>
+							}
+						</Typography>
+						<ScrollableContainer>
+							<Droppable
+								droppableId="board"
+								type="COLUMN"
+								direction="vertical"
+								ignoreContainerClipping={Boolean(containerHeight)}
+								isCombineEnabled={isCombineEnabled}
+							>
+								{(provided) => (
+									<Container ref={provided.innerRef} {...provided.droppableProps}>
+										{sprints.map((sprint, index) =>
+											<Row
+												key={`${sprint.sprintNumber}`}
+												index={index}
+												title={`${sprint.sprintNumber}`}
+												quotes={sprint.todos}
+												isScrollable={withScrollableColumns}
+												isCombineEnabled={isCombineEnabled}
+												useClone={useClone}
+												lockPage={lockPage}
+												sprints={sprints}
+												setSprints={setSprints}
+												setBacklogItems={setBacklogItems}
+												releaseId={releaseId}
+												projectId={projectId}
+												deleteStory={deleteStory}
+											/>
+										)}
+										{provided.placeholder}
+									</Container>
 								)}
-								{provided.placeholder}
-							</Container>
-						)}
-					</Droppable>
+							</Droppable>
+						</ScrollableContainer>
+					</Grid>
 				</Box>
 			</DragDropContext>
 		</>
