@@ -37,6 +37,7 @@ const Sidebar = ({ open, toggleDrawer, projectId, itemClick, setLockPage }) => {
 	}
 
 	function copyRelease(releaseId) {
+		setLockPage(false);
 		copyReleaseAPI(releaseId, addNewRevisionFromResponse);
 	}
 
