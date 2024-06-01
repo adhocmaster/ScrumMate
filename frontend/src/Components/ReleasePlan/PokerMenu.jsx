@@ -175,11 +175,15 @@ export default function PokerMenu({
 								As a(n)
 							</Typography>
 							<TextField
+								disabled
 								size="small"
 								label="Role"
 								value={tempRole}
 								onChange={(e) => setTempRole(e.target.value)}
 								sx={{
+									"& .MuiInputBase-input.Mui-disabled": {
+										WebkitTextFillColor: "#000000",
+									},
 									".MuiInputBase-input": {
 										fontSize: "0.875rem",
 										height: "auto",
@@ -196,6 +200,7 @@ export default function PokerMenu({
 						</Box>
 
 						<TextField
+							disabled
 							autoFocus
 							margin="dense"
 							id="functionality-description"
@@ -207,7 +212,12 @@ export default function PokerMenu({
 							rows={4}
 							value={tempFunctionality}
 							onChange={(e) => setTempFunctionality(e.target.value)}
-							sx={{ marginBottom: 2 }}
+							sx={{
+								marginBottom: 2,
+								"& .MuiInputBase-input.Mui-disabled": {
+									WebkitTextFillColor: "#000000",
+								},
+							}}
 						/>
 
 						<Typography variant="body2" component="span" >
@@ -215,6 +225,7 @@ export default function PokerMenu({
 						</Typography>
 
 						<TextField
+							disabled
 							margin="dense"
 							id="reasoning"
 							label="Reasoning"
@@ -225,10 +236,17 @@ export default function PokerMenu({
 							rows={4}
 							value={tempReasoning}
 							onChange={(e) => setTempReasoning(e.target.value)}
-							sx={{ marginBottom: 2, marginTop: 2 }}
+							sx={{
+								marginBottom: 2,
+								marginTop: 2,
+								"& .MuiInputBase-input.Mui-disabled": {
+									WebkitTextFillColor: "#000000",
+								},
+							}}
 						/>
 
 						<TextField
+							disabled
 							margin="dense"
 							id="acceptance-criteria"
 							label="Acceptance Criteria"
@@ -239,11 +257,20 @@ export default function PokerMenu({
 							rows={4}
 							value={tempAcceptanceCriteria}
 							onChange={(e) => setTempAcceptanceCriteria(e.target.value)}
-							sx={{ marginBottom: 2 }}
+							sx={{
+								marginBottom: 2,
+								"& .MuiInputBase-input.Mui-disabled": {
+									WebkitTextFillColor: "#000000",
+								},
+							}}
 						/>
 
 						<Box display="flex" alignItems="center" gap={1} mb={2}>
-							<FormControl fullWidth>
+							<FormControl fullWidth disabled sx={{
+								"& .MuiInputBase-input.Mui-disabled": {
+									WebkitTextFillColor: "#000000",
+								},
+							}}>
 								<InputLabel id="priority-select-label">Priority</InputLabel>
 								<Select
 									labelId="priority-select-label"
@@ -260,6 +287,7 @@ export default function PokerMenu({
 							</FormControl>
 
 							<TextField
+								disabled
 								margin="dense"
 								id="story-points"
 								label="Story Points"
@@ -269,6 +297,11 @@ export default function PokerMenu({
 								value={tempStoryPoints}
 								onChange={(e) => setTempStoryPoints(e.target.value)}
 								InputProps={{ inputProps: { min: 0 } }}
+								sx={{
+									"& .MuiInputBase-input.Mui-disabled": {
+										WebkitTextFillColor: "#000000",
+									},
+								}}
 							/>
 						</Box>
 					</Grid>
