@@ -22,6 +22,22 @@ export function newBacklogStoryAPI(
 	apiCallPost(`release/${releaseId}`, body, resultSuccessHandler, resultFailureHandler);
 }
 
+export function newBacklogActionAPI(
+	releaseId,
+	actionType,
+	description,
+	priority,
+	resultSuccessHandler,
+	resultFailureHandler
+) {
+	const body = {
+		actionType,
+		description,
+		priority,
+	}
+	apiCallPost(`release/${releaseId}/action`, body, resultSuccessHandler, resultFailureHandler);
+}
+
 export function getReleaseAPI(releaseId, resultSuccessHandler, resultFailureHandler) {
 	apiCallGet(`release/${releaseId}`, resultSuccessHandler, resultFailureHandler);
 }

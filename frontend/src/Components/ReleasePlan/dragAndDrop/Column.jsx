@@ -7,7 +7,7 @@ import Title from "../styles/title";
 import {
 	Typography,
 } from "@mui/material";
-import BacklogCreateButton from "../BacklogCreateButton";
+import BacklogItemCreateButton from "../BacklogItemCreateButton";
 
 const grid = 8;
 const borderRadius = 2;
@@ -57,7 +57,7 @@ const Column = (props) => {
 					lockPage ?
 						<></>
 						:
-						<BacklogCreateButton releaseId={releaseId} backlogItems={backlogItems} setBacklogItems={setBacklogItems} />
+						<BacklogItemCreateButton releaseId={releaseId} backlogItems={backlogItems} setBacklogItems={setBacklogItems} />
 				}
 			</Typography>
 

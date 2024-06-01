@@ -6,7 +6,7 @@ import QuoteList from '../styles/list';
 import Title from '../styles/title';
 import SprintOptions from '../SprintOptions'
 import { Box, Divider, Typography } from '@mui/material';
-import ReleaseCreateButton from '../ReleaseCreateButton';
+import BacklogItemCreateButton from '../BacklogItemCreateButton';
 
 const grid = 8;
 const borderRadius = 2;
@@ -82,7 +82,7 @@ const Row = (props) => {
 										{
 											lockPage ? <></> :
 												<>
-													<ReleaseCreateButton sprints={sprints} setSprints={setSprints} sprintIndex={index} />
+													<BacklogItemCreateButton sprints={sprints} setSprints={setSprints} sprintIndex={index} />
 													<SprintOptions
 														sprints={sprints}
 														setSprints={setSprints}
