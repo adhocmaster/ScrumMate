@@ -52,8 +52,21 @@ async function apiCall(endpoint, options, resultSuccessHandler = defaultSuccessH
 	}
 };
 
+async function apiCallWithoutReturn(endpoint, options, resultSuccessHandler = defaultSuccessHandler, resultFailureHandler = defaultFailureHandler) {
+	const response = await fetch(host + endpoint, options);
+	if (response.status === 200) {
+		resultSuccessHandler();
+	} else {
+		resultFailureHandler(response);
+	}
+};
+
 export async function apiCallPost(endpoint, body, resultSuccessHandler, resultFailureHandler) {
 	await apiCall(endpoint, postOptions(body), resultSuccessHandler, resultFailureHandler);
+}
+
+export async function apiCallPostWithoutReturn(endpoint, body, resultSuccessHandler, resultFailureHandler) {
+	await apiCallWithoutReturn(endpoint, postOptions(body), resultSuccessHandler, resultFailureHandler);
 }
 
 export async function apiCallGet(endpoint, resultSuccessHandler, resultFailureHandler) {
@@ -69,10 +82,5 @@ export async function apiCallDeleteWithReturn(endpoint, resultSuccessHandler, re
 }
 
 export async function apiCallDeleteWithoutReturn(endpoint, resultSuccessHandler = defaultSuccessHandler, resultFailureHandler = defaultFailureHandler) {
-	const response = await fetch(host + endpoint, deleteOptions());
-	if (response.status === 200) {
-		resultSuccessHandler();
-	} else {
-		resultFailureHandler(response);
-	}
+	await apiCallWithoutReturn(endpoint, deleteOptions(), resultSuccessHandler, resultFailureHandler)
 }
