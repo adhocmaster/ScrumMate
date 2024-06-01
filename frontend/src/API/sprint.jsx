@@ -1,4 +1,4 @@
-import { apiCallGet, apiCallPost } from "./Calls";
+import { apiCallPost, apiCallDelete, apiCallDeleteWithReturn } from "./Calls";
 
 export function newSprintActionAPI(
 	sprintId,
@@ -36,6 +36,23 @@ export function newSprintStoryAPI(
 	apiCallPost(`sprint/${sprintId}`, body, resultSuccessHandler, resultFailureHandler);
 }
 
-// export function projectRowDataAPI(resultSuccessHandler, resultFailureHandler) {
-// 	apiCallGet(``, resultSuccessHandler, resultFailureHandler);
-// }
+export function editSprintAPI(
+	sprintId,
+	startDate,
+	endDate,
+	scrumMasterId,
+	resultSuccessHandler,
+	resultFailureHandler
+) {
+	const body = {
+		startDate,
+		endDate,
+		scrumMasterId,
+	}
+	apiCallPost(`sprint/${sprintId}/edit`, body, resultSuccessHandler, resultFailureHandler);
+}
+
+export function deleteSprintAPI(sprintId, resultSuccessHandler, resultFailureHandler) {
+	apiCallDeleteWithReturn(`sprint/${sprintId}`, resultSuccessHandler, resultFailureHandler);
+}
+

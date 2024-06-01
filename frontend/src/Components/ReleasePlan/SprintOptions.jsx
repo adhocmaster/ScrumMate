@@ -9,6 +9,8 @@ import { Box } from '@mui/material';
 import DeleteConfirmation from './DeleteConfirmation'
 import { InputLabel, Select, MenuItem, FormControl } from '@mui/material';
 import dayjs from 'dayjs';
+import { projectUserListAPI } from '../../API/project';
+import { deleteSprintAPI, editSprintAPI } from '../../API/sprint';
 
 const SprintOptions = ({ sprints, setSprints, setBacklogItems, index, projectId }) => {
 	const sprint = sprints[index]
@@ -48,22 +50,10 @@ const SprintOptions = ({ sprints, setSprints, setBacklogItems, index, projectId 
 	};
 
 	function fetchProjectMembers() {
-		var options = {
-			method: 'get',
-			credentials: 'include'
+		const resultSuccessHandler = (response) => {
+			setTeamMembers(response[2]);
 		}
-		try {
-			fetch(`http://localhost:8080/api/project/${projectId}/getMembers`, options).then((result) => {
-				if (result.status === 200) {
-					result.json().then((response) => {
-						setTeamMembers(response[2]);
-					})
-				}
-			})
-		}
-		catch {
-			return;
-		}
+		projectUserListAPI(projectId, resultSuccessHandler);
 	};
 
 	useState(() => {
@@ -71,61 +61,28 @@ const SprintOptions = ({ sprints, setSprints, setBacklogItems, index, projectId 
 	}, [teamMembers])
 
 	function fetchSaveOptions() {
-		var options = {
-			method: "post",
-			credentials: "include",
-			headers: {
-				"Content-Type": "application/json",
-			},
-			body: JSON.stringify({
-				startDate: startDateTemp,
-				endDate: endDateTemp,
-				scrumMasterId: scrumMasterIdTemp,
-			}),
-		};
-
-		try {
-			fetch(
-				`http://localhost:8080/api/sprint/${sprint.id}/edit`,
-				options
-			).then((result) => {
-				if (result.status === 200) {
-					result.json().then(jsonResult => {
-						const sprintsCopy = [...sprints]
-						sprintsCopy[index].startDate = jsonResult.startDate
-						sprintsCopy[index].endDate = jsonResult.endDate
-						sprintsCopy[index].scrumMaster = jsonResult.scrumMaster ?? sprintsCopy[index].scrumMaster
-						setSprints(sprintsCopy)
-						setScrumMasterId(sprintsCopy[index].scrumMaster ? sprintsCopy[index].scrumMaster.id : '')
-						setScrumMasterIdTemp(sprintsCopy[index].scrumMaster ? sprintsCopy[index].scrumMaster.id : '')
-						setStartDate(jsonResult.startDate ? dayjs(jsonResult.startDate) : null)
-						setStartDateTemp(jsonResult.startDate ? dayjs(jsonResult.startDate) : null)
-						setEndDate(jsonResult.endDate ? dayjs(jsonResult.endDate) : null)
-						setEndDateTemp(jsonResult.endDate ? dayjs(jsonResult.endDate) : null)
-					})
-				} else {
-					console.log("error", result);
-				}
-			});
-		} catch {
-			return null;
+		const resultSuccessHandler = (response) => {
+			const sprintsCopy = [...sprints];
+			sprintsCopy[index].startDate = response.startDate;
+			sprintsCopy[index].endDate = response.endDate;
+			sprintsCopy[index].scrumMaster = response.scrumMaster ?? sprintsCopy[index].scrumMaster;
+			setSprints(sprintsCopy);
+			setScrumMasterId(sprintsCopy[index].scrumMaster ? sprintsCopy[index].scrumMaster.id : '');
+			setScrumMasterIdTemp(sprintsCopy[index].scrumMaster ? sprintsCopy[index].scrumMaster.id : '');
+			setStartDate(response.startDate ? dayjs(response.startDate) : null);
+			setStartDateTemp(response.startDate ? dayjs(response.startDate) : null);
+			setEndDate(response.endDate ? dayjs(response.endDate) : null);
+			setEndDateTemp(response.endDate ? dayjs(response.endDate) : null);
 		}
+		editSprintAPI(sprint.id, startDateTemp, endDateTemp, scrumMasterIdTemp, resultSuccessHandler);
 	}
 
 	function deleteSprint(sprintId, index) {
-		fetch(`http://localhost:8080/api/sprint/${sprintId}`, {
-			method: "DELETE",
-			credentials: "include",
-			headers: { "Content-Type": "application/json" },
-		})
-			.then((response) => {
-				response.json().then(jsonResult => {
-					console.log(jsonResult)
-					setSprints(jsonResult[0])
-					setBacklogItems(jsonResult[1])
-				})
-			})
-			.catch((error) => console.log("error deleting sprint:"));
+		const resultSuccessHandler = (response) => {
+			setSprints(response[0])
+			setBacklogItems(response[1])
+		}
+		deleteSprintAPI(sprintId, resultSuccessHandler);
 	};
 
 	return (

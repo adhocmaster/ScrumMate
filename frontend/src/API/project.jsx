@@ -1,4 +1,4 @@
-import { apiCallGet, apiCallPost, apiCallPatch, apiCallDelete } from "./Calls";
+import { apiCallGet, apiCallPost, apiCallPatch, apiCallDeleteWithoutReturn } from "./Calls";
 
 export function projectRowDataAPI(resultSuccessHandler, resultFailureHandler) {
 	apiCallGet('user/projectRowData', resultSuccessHandler, resultFailureHandler);
@@ -29,6 +29,6 @@ export function renameProjectAPI(projectId, name, resultSuccessHandler, resultFa
 }
 
 export function deleteProjectAPI(projectId, resultSuccessHandler, resultFailureHandler) {
-	apiCallDelete(`project/${projectId}`, resultSuccessHandler, resultFailureHandler);
+	apiCallDeleteWithoutReturn(`project/${projectId}`, resultSuccessHandler, resultFailureHandler);
 }
 

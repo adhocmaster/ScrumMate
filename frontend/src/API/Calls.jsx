@@ -64,7 +64,11 @@ export async function apiCallPatch(endpoint, body, resultSuccessHandler, resultF
 	await apiCall(endpoint, patchOptions(body), resultSuccessHandler, resultFailureHandler);
 }
 
-export async function apiCallDelete(endpoint, resultSuccessHandler = defaultSuccessHandler, resultFailureHandler = defaultFailureHandler) {
+export async function apiCallDeleteWithReturn(endpoint, resultSuccessHandler, resultFailureHandler) {
+	await apiCall(endpoint, deleteOptions(), resultSuccessHandler, resultFailureHandler);
+}
+
+export async function apiCallDeleteWithoutReturn(endpoint, resultSuccessHandler = defaultSuccessHandler, resultFailureHandler = defaultFailureHandler) {
 	const response = await fetch(host + endpoint, deleteOptions());
 	if (response.status === 200) {
 		resultSuccessHandler();
