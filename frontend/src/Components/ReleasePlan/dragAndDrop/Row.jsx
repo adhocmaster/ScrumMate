@@ -187,25 +187,21 @@ const Row = (props) => {
 		handleDialogClose();
 	}
 
-	function saveNewActionItem(actionItem, sprintId) {
-		const resultSuccessHandler = (response) => {
+	const updateSprintsWithAPIResult = (sprintId) => {
+		return (response) => {
 			const sprintsCopy = [...sprints];
 			const indexOfSprint = sprintsCopy.findIndex((sprint) => sprint.id === sprintId);
 			sprintsCopy[indexOfSprint].todos.push(response)
 			setSprints(sprintsCopy);
 		}
-		newSprintActionAPI(sprintId, actionItem.selectedItem, actionItem.description, actionItem.actionPriority, resultSuccessHandler);
+	}
+	function saveNewActionItem(actionItem, sprintId) {
+		newSprintActionAPI(sprintId, actionItem.selectedItem, actionItem.description, actionItem.actionPriority, updateSprintsWithAPIResult(sprintId));
 	}
 
 	function saveNewStory(newStory, sprintId) {
-		const resultSuccessHandler = (response) => {
-			const sprintsCopy = [...sprints];
-			const indexOfSprint = sprintsCopy.findIndex((sprint) => sprint.id === sprintId);
-			sprintsCopy[indexOfSprint].todos.push(response)
-			setSprints(sprintsCopy);
-		}
 		newSprintStoryAPI(sprintId, newStory.role, newStory.functionality, newStory.reasoning,
-			newStory.acceptanceCriteria, newStory.priority, resultSuccessHandler
+			newStory.acceptanceCriteria, newStory.priority, updateSprintsWithAPIResult(sprintId)
 		);
 	}
 

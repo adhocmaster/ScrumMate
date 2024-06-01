@@ -26,7 +26,6 @@ async function fetchReorderBacklogItem(
 	destinationSprintNumber,
 ) {
 	const resultSuccessHandler = (result) => {
-		console.log(result);
 		const newSourceList = result[0];
 		const newDestinationList = result[1];
 		const sprintsCopy = [...sprints];
