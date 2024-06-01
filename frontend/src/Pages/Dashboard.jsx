@@ -17,14 +17,13 @@ import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import ButtonBar from '../Components/ReleasePlan/ButtonBar';
 import { useState, useEffect } from 'react';
 import ListItemIcon from '@mui/material/ListItemIcon';
-import { Dialog, DialogTitle, DialogActions } from '@mui/material'
 import { projectRowDataAPI } from '../API/project';
 import { getUserIdAPI } from '../API/user'
-import ProjectCreateButton from '../Components/ReleasePlan/ProjectCreateButton';
-import ProjectNotificationsButton from '../Components/ReleasePlan/ProjectNotificationsButton';
-import ProjectShareButton from '../Components/ReleasePlan/ProjectShareButton';
-import ProjectRenameButton from '../Components/ReleasePlan/ProjectRenameButton';
-import ProjectDeleteButton from '../Components/ReleasePlan/ProjectDeleteButton';
+import ProjectCreateButton from '../Components/Dashboard/ProjectCreateButton';
+import ProjectNotificationsButton from '../Components/Dashboard/ProjectNotificationsButton';
+import ProjectShareButton from '../Components/Dashboard/ProjectShareButton';
+import ProjectRenameButton from '../Components/Dashboard/ProjectRenameButton';
+import ProjectDeleteButton from '../Components/Dashboard/ProjectDeleteButton';
 
 export default function Dashboard({ setName, setSelectedProjectId }) {
 	const [rows, setRows] = useState([]);
