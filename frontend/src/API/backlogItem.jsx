@@ -18,3 +18,7 @@ export function reorderBacklogItemAPI(
 	}
 	apiCallPost(`backlogItem/${sourceId}/${destinationId}/reorder`, body, resultSuccessHandler, resultFailureHandler);
 }
+
+export function deleteBacklogItemAPI(storyId, resultSuccessHandler, resultFailureHandler) {
+	apiCallPost(`backlogItem/${storyId}/delete`, {}, resultSuccessHandler, resultFailureHandler);
+}

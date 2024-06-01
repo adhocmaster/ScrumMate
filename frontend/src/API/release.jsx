@@ -29,3 +29,15 @@ export function copyReleaseAPI(releaseId, resultSuccessHandler, resultFailureHan
 export function getSignaturesAPI(releaseId, resultSuccessHandler, resultFailureHandler) {
 	apiCallGet(`release/${releaseId}/signatures`, resultSuccessHandler, resultFailureHandler);
 }
+
+export function getBacklogAPI(releaseId, resultSuccessHandler, resultFailureHandler) {
+	apiCallGet(`release/${releaseId}/backlog`, resultSuccessHandler, resultFailureHandler);
+}
+
+export function reorderSprintsAPI(releaseId, sprintStartIndex, sprintEndIndex, resultSuccessHandler, resultFailureHandler) {
+	apiCallPost(`release/${releaseId}/reorder`, { sprintStartIndex, sprintEndIndex }, resultSuccessHandler, resultFailureHandler);
+}
+
+export function newSprintAPI(releaseId, sprintNumber, resultSuccessHandler, resultFailureHandler) {
+	apiCallPost(`release/${releaseId}/sprint`, { sprintNumber }, resultSuccessHandler, resultFailureHandler);
+}
