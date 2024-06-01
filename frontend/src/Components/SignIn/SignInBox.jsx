@@ -7,6 +7,7 @@ import Link from '@mui/material/Link';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import Checkbox from '@mui/material/Checkbox';
 import Alert from '@mui/material/Alert';
+import { loginAPI } from '../../API/user';
 
 function SignInBox({ setIsLoggedIn, setColor }) {
 	const [email, setEmail] = useState('');
@@ -27,29 +28,15 @@ function SignInBox({ setIsLoggedIn, setColor }) {
 	};
 
 	const handleSignIn = async (email, password) => {
-		try {
-			var options = {
-				url: "https://localhost:8080/api/user/login/",
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json'
-				},
-				body: JSON.stringify({ email, password }),
-				credentials: 'include'
-			}
-
-			const response = await fetch('http://localhost:8080/api/user/login/', options);
-
-			if (response.status === 200) {
-				setIsLoggedIn(true);
-				setColor('#ffffff');
-				setPassword('');
-			} else {
-				setErrorAlert(true);
-			}
-		} catch (error) {
-			setErrorAlert(true)
+		const resultSuccessHandler = () => {
+			setIsLoggedIn(true);
+			setColor('#ffffff');
+			setPassword('');
 		}
+		const resultFailureHandler = () => {
+			setErrorAlert(true);
+		}
+		loginAPI(email, password, resultSuccessHandler, resultFailureHandler)
 	};
 
 	const handleEnterClick = (e) => {

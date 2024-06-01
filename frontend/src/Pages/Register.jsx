@@ -7,6 +7,7 @@ import Link from '@mui/material/Link';
 import { useNavigate } from 'react-router-dom';
 import AccountBoxIcon from '@mui/icons-material/AccountBox';
 import Alert from '@mui/material/Alert';
+import { registerAPI } from '../API/user';
 
 function Register() {
 	const [username, setUsername] = useState('');
@@ -67,24 +68,14 @@ function Register() {
 			return;
 		}
 
-		try {
-			const response = await fetch('http://localhost:8080/api/user/create', {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json',
-				},
-				body: JSON.stringify({ username, email, password }),
-			});
-
-			if (response.status === 200) {
-				navigate('/dashboard');
-			} else {
-				setUsernameOrEmailTakenAlert(true);
-			}
-		} catch (error) {
-			// Handle network or other errors
+		const resultSuccessHandler = () => {
+			navigate('/dashboard');
 		}
-	};
+		const resultFailureHandler = () => {
+			setUsernameOrEmailTakenAlert(true);
+		}
+		registerAPI(username, email, password, resultSuccessHandler, resultFailureHandler);
+	}
 
 	return (
 		<Box

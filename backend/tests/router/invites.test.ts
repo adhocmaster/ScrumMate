@@ -217,7 +217,7 @@ describe("Invite API tests", () => {
 				expect(res.body.pokerIsOver).toEqual(false);
 				expect(res.body.userEstimate).toEqual(["", false]);
 				expect(res.body.othersEstimates).toEqual([]);
-				expect(res.body.size).toEqual(10);
+				expect(res.body.size).toEqual(null);
 				expect(res.body.rank).toEqual(0);
 			});
 	});
@@ -232,7 +232,7 @@ describe("Invite API tests", () => {
 				expect(res.body.pokerIsOver).toEqual(false);
 				expect(res.body.userEstimate).toEqual(["", false]);
 				expect(res.body.othersEstimates).toEqual([]);
-				expect(res.body.size).toEqual(11);
+				expect(res.body.size).toEqual(null);
 				expect(res.body.rank).toEqual(0);
 			});
 	});

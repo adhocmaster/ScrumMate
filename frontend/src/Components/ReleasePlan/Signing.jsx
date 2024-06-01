@@ -12,6 +12,9 @@ import ReportProblemIcon from '@mui/icons-material/ReportProblem'
 
 import RestoreIcon from '@mui/icons-material/Restore';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import { getSignaturesAPI, getSigningConditionAPI, toggleSigningAPI } from '../../API/release';
+import { projectUserListAPI } from '../../API/project';
+import { getUserIdAPI } from '../../API/user';
 
 export const Signing = ({ releaseId, projectId, setLockPage, clickDetector }) => {
 	const [open, setOpen] = useState(false);
@@ -53,22 +56,7 @@ export const Signing = ({ releaseId, projectId, setLockPage, clickDetector }) =>
 	}
 
 	function fetchUserList() {
-		var options = {
-			method: 'get',
-			credentials: 'include'
-		}
-		try {
-			fetch(`http://localhost:8080/api/release/${releaseId}/signatures`, options).then((result) => {
-				if (result.status === 200) {
-					result.json().then((response) => {
-						setSignatures(response);
-					})
-				}
-			})
-		}
-		catch {
-			return;
-		}
+		getSignaturesAPI(releaseId, setSignatures);
 	};
 
 	useEffect(() => {
@@ -76,77 +64,26 @@ export const Signing = ({ releaseId, projectId, setLockPage, clickDetector }) =>
 	}, [releaseId])
 
 	function fetchProjectMembers() {
-		var options = {
-			method: 'get',
-			credentials: 'include'
+		const resultSuccessHandler = (response) => {
+			setProductOwnerId(response[1].id);
 		}
-		try {
-			fetch(`http://localhost:8080/api/project/${projectId}/getMembers`, options).then((result) => {
-				if (result.status === 200) {
-					result.json().then((response) => {
-						setProductOwnerId(response[1].id);
-					})
-				}
-			})
-		}
-		catch {
-			return;
-		}
+		projectUserListAPI(projectId, resultSuccessHandler);
 	};
 
 	function fetchUserId() {
-		var options = {
-			method: 'get',
-			credentials: 'include',
-		}
-		try {
-			fetch(`http://localhost:8080/api/user`, options).then((result) => {
-				if (result.status !== 200) {
-					console.log("error", result)
-					return
-				}
-				result.json().then((response) => {
-					setOwnUserId(response);
-				})
-			})
-		} catch {
-			return;
-		}
+		getUserIdAPI(setOwnUserId);
 	}
 
 	function fetchToggleSigning() {
-		var options = {
-			method: 'post',
-			credentials: 'include',
+		const resultSuccessHandler = (response) => {
+			setSignatures(response);
+			setLockPage(response[1].length > 0);
 		}
-		try {
-			fetch(`http://localhost:8080/api/release/${releaseId}/toggleSign`, options).then((result) => {
-				if (result.status === 200) {
-					result.json().then((response) => {
-						setSignatures(response);
-						setLockPage(response[1].length > 0);
-					})
-				}
-			})
-		} catch {
-			return;
-		}
+		toggleSigningAPI(releaseId, resultSuccessHandler);
 	}
 
 	async function fetchCanSign() {
-		var options = {
-			method: 'get',
-			credentials: 'include'
-		}
-		try {
-			const result = await fetch(`http://localhost:8080/api/release/${releaseId}/signingCondtion`, options);
-			if (result.status === 200) {
-				const response = await result.json();
-				setCanSign(response);
-			}
-		} catch {
-			return;
-		}
+		getSigningConditionAPI(releaseId, setCanSign);
 	};
 
 	useEffect(() => {

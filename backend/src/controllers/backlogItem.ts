@@ -11,11 +11,10 @@ export const createStory = async (req: express.Request, res: express.Response) =
 		functionalityDescription,
 		reasoning,
 		acceptanceCriteria,
-		storyPoints,
 		priority,
 	} = req.body;
 	verifyParameters(userTypes, functionalityDescription, reasoning, acceptanceCriteria, priority);
-	const newStory = await db.getBacklogItemRepository.createNewSprintStory(parseInt(sprintId), userTypes, functionalityDescription, reasoning, acceptanceCriteria, priority, storyPoints);
+	const newStory = await db.getBacklogItemRepository.createNewSprintStory(parseInt(sprintId), userTypes, functionalityDescription, reasoning, acceptanceCriteria, priority);
 	return res.json(newStory);
 }
 
@@ -27,11 +26,10 @@ export const createNewBacklogStory = async (req: express.Request, res: express.R
 		functionalityDescription,
 		reasoning,
 		acceptanceCriteria,
-		storyPoints,
 		priority,
 	} = req.body;
 	verifyParameters(userTypes, functionalityDescription, reasoning, acceptanceCriteria, priority);
-	const newStory = await db.getBacklogItemRepository.createNewBacklogStory(parseInt(releaseId), userTypes, functionalityDescription, reasoning, acceptanceCriteria, priority, storyPoints);
+	const newStory = await db.getBacklogItemRepository.createNewBacklogStory(parseInt(releaseId), userTypes, functionalityDescription, reasoning, acceptanceCriteria, priority);
 	return res.json(newStory);
 }
 
@@ -41,11 +39,13 @@ export const createAction = async (req: express.Request, res: express.Response) 
 	const {
 		actionType,
 		description,
-		storyPoints,
 		priority,
 	} = req.body;
+	console.log(actionType)
+	console.log(description)
+	console.log(priority)
 	verifyParameters(actionType, description, priority);
-	const newStory = await db.getBacklogItemRepository.createNewSprintAction(parseInt(sprintId), actionType, description, priority, storyPoints);
+	const newStory = await db.getBacklogItemRepository.createNewSprintAction(parseInt(sprintId), actionType, description, priority);
 	return res.json(newStory);
 }
 
@@ -55,11 +55,10 @@ export const createNewBacklogAction = async (req: express.Request, res: express.
 	const {
 		actionType,
 		description,
-		storyPoints,
 		priority,
 	} = req.body;
 	verifyParameters(actionType, description, priority);
-	const newStory = await db.getBacklogItemRepository.createNewBacklogAction(parseInt(releaseId), actionType, description, priority, storyPoints);
+	const newStory = await db.getBacklogItemRepository.createNewBacklogAction(parseInt(releaseId), actionType, description, priority);
 	return res.json(newStory);
 }
 

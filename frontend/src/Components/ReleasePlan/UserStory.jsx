@@ -7,6 +7,7 @@ import HistoryIcon from '@mui/icons-material/History';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import { InputLabel, Select, MenuItem, FormControl } from '@mui/material';
 import NextPlanOutlinedIcon from '@mui/icons-material/NextPlanOutlined';
+import { getPokerInformationAPI, placePokerEstimateAPI, saveActionItemAPI, saveBacklogItemAPI } from "../../API/backlogItem";
 
 const UserStory = ({ storyObject, deleteFunction, sprints, setSprints, sprintNumber, backlog, lockPage }) => {
 	const ActionTypeEnum = {
@@ -200,40 +201,22 @@ const UserStory = ({ storyObject, deleteFunction, sprints, setSprints, sprintNum
 			acceptanceCriteria: tempAcceptanceCriteria,
 			storyPoints: tempStoryPoints,
 		}
-
-		var options = {
-			method: "post",
-			credentials: "include",
-			headers: {
-				"Content-Type": "application/json",
-			},
-			body: JSON.stringify({
-				// change type?
-				userTypes: tempRole,
-				functionalityDescription: tempFunctionality,
-				reasoning: tempReasoning,
-				acceptanceCriteria: tempAcceptanceCriteria,
-				storyPoints: tempStoryPoints,
-				priority: priority
-			}),
-		};
-
-		try {
-			fetch(
-				`http://localhost:8080/api/story/${storyId}/edit`,
-				options
-			).then((result) => {
-				if (sprints) {
-					const sprintNumber = sprints.find(sprint => sprint.todos.some(todo => todo.id === storyId))?.sprintNumber;
-					setStoryWrapper(newStoryObj, sprintNumber, storyId)
-				}
-				if (result.status !== 200) {
-					console.log("error", result);
-				}
-			});
-		} catch {
-			return null;
+		const resultSuccessHandler = () => {
+			if (sprints) {
+				const sprintNumber = sprints.find(sprint => sprint.todos.some(todo => todo.id === storyId))?.sprintNumber;
+				setStoryWrapper(newStoryObj, sprintNumber, storyId)
+			}
 		}
+		saveBacklogItemAPI(
+			storyId,
+			tempRole,
+			tempFunctionality,
+			tempReasoning,
+			tempAcceptanceCriteria,
+			tempStoryPoints,
+			priority,
+			resultSuccessHandler,
+		);
 	}
 
 	function saveAction(storyId) {
@@ -242,37 +225,13 @@ const UserStory = ({ storyObject, deleteFunction, sprints, setSprints, sprintNum
 			description: tempActionDescription,
 			priority: tempActionPriority,
 		}
-
-		var options = {
-			method: "post",
-			credentials: "include",
-			headers: {
-				"Content-Type": "application/json",
-			},
-			body: JSON.stringify({
-				actionType: tempActionType,
-				description: tempActionDescription,
-				priority: tempActionPriority,
-				storyPoints: 0,
-			}),
-		};
-
-		try {
-			fetch(
-				`http://localhost:8080/api/action/${storyId}/edit`,
-				options
-			).then((result) => {
-				if (sprints) {
-					const sprintNumber = sprints.find(sprint => sprint.todos.some(todo => todo.id === storyId))?.sprintNumber;
-					setStoryWrapper(newStoryObj, sprintNumber, storyId)
-				}
-				if (result.status !== 200) {
-					console.log("error", result);
-				}
-			});
-		} catch {
-			return null;
+		const resultSuccessHandler = () => {
+			if (sprints) {
+				const sprintNumber = sprints.find(sprint => sprint.todos.some(todo => todo.id === storyId))?.sprintNumber;
+				setStoryWrapper(newStoryObj, sprintNumber, storyId)
+			}
 		}
+		saveActionItemAPI(storyId, tempActionType, tempActionDescription, tempActionPriority, resultSuccessHandler);
 	}
 
 	function setStoryWrapper(newStoryObj, sprintNumber, storyId) {
@@ -284,64 +243,29 @@ const UserStory = ({ storyObject, deleteFunction, sprints, setSprints, sprintNum
 	}
 
 	function fetchGetPokerInformation() {
-		var options = {
-			method: "get",
-			credentials: "include",
-		};
-		try {
-			fetch(
-				`http://localhost:8080/api/backlogItem/${pokerId}/poker`,
-				options
-			).then((result) => {
-				if (result.status === 200) {
-					result.json().then((resultJson) => {
-						const {
-							pokerIsOver,
-							userEstimate,
-							othersEstimates,
-							rank,
-							size,
-						} = resultJson;
-						setPokerIsOver(pokerIsOver);
-						setPokerIsOverBuffer(pokerIsOver);
-						setUserEstimate(userEstimate);
-						setSliderValue(userEstimate[0] ? userEstimate[0] : 0);
-						setTeamEstimates(othersEstimates);
-						setStoryNumberBuffer(rank + 1);
-						setSize(size);
-						setStoryPoints(size);
-						setTempStoryPoints(size);
-					})
-				}
-			});
-		} catch {
-			return null;
+		const resultSuccessHandler = (response) => {
+			const {
+				pokerIsOver,
+				userEstimate,
+				othersEstimates,
+				rank,
+				size,
+			} = response;
+			setPokerIsOver(pokerIsOver);
+			setPokerIsOverBuffer(pokerIsOver);
+			setUserEstimate(userEstimate);
+			setSliderValue(userEstimate[0] ? userEstimate[0] : 0);
+			setTeamEstimates(othersEstimates);
+			setStoryNumberBuffer(rank + 1);
+			setSize(size);
+			setStoryPoints(size);
+			setTempStoryPoints(size);
 		}
+		getPokerInformationAPI(pokerId, resultSuccessHandler);
 	}
 
 	function fetchPlacePosterEstimate() {
-		var options = {
-			method: "post",
-			credentials: "include",
-			headers: {
-				"Content-Type": "application/json",
-			},
-			body: JSON.stringify({
-				estimate: sliderValue,
-			}),
-		};
-		try {
-			fetch(
-				`http://localhost:8080/api/backlogItem/${pokerId}/poker`,
-				options
-			).then((result) => {
-				if (result.status === 200) {
-					fetchGetPokerInformation()
-				}
-			});
-		} catch {
-			return null;
-		}
+		placePokerEstimateAPI(pokerId, sliderValue, fetchGetPokerInformation);
 	}
 
 	useEffect(() => {

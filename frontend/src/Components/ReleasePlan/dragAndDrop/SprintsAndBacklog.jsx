@@ -8,6 +8,8 @@ import { Box, Grid, Typography, IconButton } from "@mui/material";
 import styled, { order, width } from "@xstyled/styled-components";
 import { colors } from "@atlaskit/theme";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
+import { getBacklogAPI, newSprintAPI, reorderSprintsAPI } from '../../../API/release';
+import { deleteBacklogItemAPI } from '../../../API/backlogItem';
 
 const Container = styled.div`
   min-width: 88%; // Ensure it takes the full width of the viewport
@@ -29,100 +31,46 @@ const Board = ({
 	const [backlogItems, setBacklogItems] = useState([]); // copy this into the first index of columns and ordered
 
 	function fetchBacklog() {
-		var options = {
-			method: "get",
-			credentials: "include",
-		};
-		try {
-			fetch(
-				`http://localhost:8080/api/release/${releaseId}/backlog`,
-				options
-			).then((result) => {
-				if (result.status === 200) {
-					result.json().then((response) => {
-						setBacklogItems(response.backlog);
-					});
-				} else {
-					setBacklogItems([]);
-				}
-			});
-		} catch { }
+		const resultSuccessHandler = (response) => {
+			setBacklogItems(response.backlog);
+		}
+		const resultFailureHandler = () => {
+			setBacklogItems([]);
+		}
+		getBacklogAPI(releaseId, resultSuccessHandler, resultFailureHandler);
 	}
 
 	useEffect(() => {
 		fetchBacklog();
 	}, [releaseId]);
 
-	async function fetchReorderSprints(
-		releaseId,
-		sprintStartIndex,
-		sprintEndIndex,
-		setItems
-	) {
-		fetch(`http://localhost:8080/api/release/${releaseId}/reorder`, {
-			method: "POST",
-			credentials: "include",
-			headers: {
-				"Content-Type": "application/json",
-			},
-			body: JSON.stringify({ sprintStartIndex, sprintEndIndex }),
-		})
-			.then((response) => response.json())
-			.then((data) => {
-				setItems(data);
-			})
-			.catch((error) => { });
+	async function fetchReorderSprints(releaseId, sprintStartIndex, sprintEndIndex, setItems) {
+		reorderSprintsAPI(releaseId, sprintStartIndex, sprintEndIndex, setItems);
 	}
 
-	// TODO: Kinda buggy with dnd...
-	// not updating correctly? duplicated id??? showing up in next sprint??
-	//	Is it because it was declared with a certain sprint number?
-	// also need to handle release... diff function? 
 	const deleteStory = (storyId) => {
-		fetch(`http://localhost:8080/api/backlogItem/${storyId}/delete`, {
-			method: "POST",
-			credentials: "include",
-			headers: { "Content-Type": "application/json" },
-		})
-			.then((response) => response.json())
-			.then((result) => {
-				if (result[0] === 0) {
-					setBacklogItems(result[1]);
-				} else {
-					const sprintsCopy = [...sprints];
-					const sprintIndex = result[0] - 1;
-					sprintsCopy[sprintIndex].todos = result[1];
-					setSprints(sprintsCopy);
-				}
-			}).catch((error) => console.log("error deleting story"));
+		const resultSuccessHandler = (response) => {
+			if (response[0] === 0) {
+				setBacklogItems(response[1]);
+			} else {
+				const sprintsCopy = [...sprints];
+				const sprintIndex = response[0] - 1;
+				sprintsCopy[sprintIndex].todos = response[1];
+				setSprints(sprintsCopy);
+			}
+		}
+		deleteBacklogItemAPI(storyId, resultSuccessHandler);
 	};
 
 	function createNewSprints() {
-		var options = {
-			method: "POST",
-			credentials: "include",
-			headers: {
-				"Content-Type": "application/json",
-			},
-			body: JSON.stringify({ sprintNumber: sprints.length + 1 }),
-		};
-
-		fetch(`http://localhost:8080/api/release/${releaseId}/sprint`, options)
-			.then((result) => {
-				if (result.status === 200) {
-					return result.json();
-				}
-			})
-			.then((response) => {
-				response = {
-					...response,
-					todos: [],
-				}
-				setSprints((prevSprints) => [...prevSprints, response]);
-			})
-			.catch((error) => {
-				console.error("Error:", error);
-			});
+		const resultSuccessHandler = (response) => {
+			response = {
+				...response,
+				todos: [],
+			}
+			setSprints((prevSprints) => [...prevSprints, response]);
+		}
+		newSprintAPI(releaseId, sprints.length + 1, resultSuccessHandler);
 	}
 
 	const onDragEnd = (result) => {

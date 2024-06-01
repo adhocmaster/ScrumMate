@@ -19,6 +19,7 @@ import {
 } from "@mui/material";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import { InputLabel, Select, MenuItem, FormControl } from '@mui/material';
+import { newBacklogStoryAPI } from "../../../API/release";
 
 const grid = 8;
 const borderRadius = 2;
@@ -96,43 +97,23 @@ const Column = (props) => {
 	};
 
 	function fetchCreateBacklogItem() {
-		var options = {
-			method: "post",
-			credentials: "include",
-			headers: {
-				"Content-Type": "application/json",
-			},
-			body: JSON.stringify({
-				// change type?
-				userTypes: role,
-				functionalityDescription: functionality,
-				reasoning: reasoning,
-				acceptanceCriteria: acceptanceCriteria,
-				storyPoints: storyPoints,
-				priority: priority,
-			}),
-		};
-		try {
-			fetch(`http://localhost:8080/api/release/${releaseId}`, options).then(
-				(result) => {
-					if (result.status === 200) {
-						result.json().then((response) => {
-							const newBacklogItem = [...backlogItems, response];
-							setBacklogItems(newBacklogItem);
-						});
-					} else {
-						setBacklogItems(backlogItems);
-					}
-					setBacklogItemType("story");
-					setRole("");
-					setFunctionality("");
-					setReasoning("");
-					setAcceptanceCriteria("");
-					setStoryPoints(0);
-					setPriority(1);
-				}
-			);
-		} catch { }
+		const resultSuccessHandler = (response) => {
+			const newBacklogItem = [...backlogItems, response];
+			setBacklogItems(newBacklogItem);
+		}
+		const resultFailureHandler = (response) => {
+			setBacklogItems(backlogItems);
+		}
+		newBacklogStoryAPI(releaseId, role, functionality, reasoning,
+			acceptanceCriteria, storyPoints, priority, resultSuccessHandler, resultFailureHandler
+		);
+		setBacklogItemType("story");
+		setRole("");
+		setFunctionality("");
+		setReasoning("");
+		setAcceptanceCriteria("");
+		setStoryPoints(0);
+		setPriority(1);
 	}
 
 	return (

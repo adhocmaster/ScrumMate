@@ -6,6 +6,8 @@ import { List, ListItem, ListItemButton } from "@mui/material";
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import { Signing } from './Signing';
+import { newReleaseAPI, projectReleasesAPI } from '../../API/project';
+import { copyReleaseAPI, getSignaturesAPI } from '../../API/release';
 
 const Sidebar = ({ open, toggleDrawer, projectId, itemClick, setLockPage }) => {
 	const [selected, setSelected] = useState(null);
@@ -19,84 +21,30 @@ const Sidebar = ({ open, toggleDrawer, projectId, itemClick, setLockPage }) => {
 	}
 
 	function fetchReleases() {
-		console.log("about to fetch")
-		var options = {
-			method: 'get',
-			credentials: 'include'
+		const resultSuccessHandler = (response) => {
+			setRevisions(response.releases.map((release) => convertRevisionAndDate(release)));
 		}
-		fetch(`http://localhost:8080/api/project/${projectId}/releases`, options).then((result) => {
-			if (result.status === 200) {
-				console.log(result)
-				result.json().then((response) => {
-					console.log(response)
-					console.log(projectId)
-					setRevisions(response.releases.map((release) => convertRevisionAndDate(release)))
-				})
-			}
-		})
+		projectReleasesAPI(projectId, resultSuccessHandler);
+	}
+
+	const addNewRevisionFromResponse = (response) => {
+		addRevisions(response);
+		itemClick(response.id);
 	}
 
 	function createNewRelease() {
-		try {
-			const options = {
-				method: 'POST',
-				credentials: 'include',
-			};
-			fetch(`http://localhost:8080/api/project/${projectId}/release`, options).then((result) => {
-				if (result.status === 200) {
-					console.log(result)
-				}
-				result.json().then((response) => {
-					addRevisions(response);
-					itemClick(response.id)
-				})
-			})
-		} catch (error) {
-			console.error(error);
-			return null; // Return null or handle the error as needed
-		}
+		newReleaseAPI(projectId, addNewRevisionFromResponse);
 	}
 
-	function copyRelease(releaseId, addRevisions) {
-		try {
-			console.log("about to copy");
-			const options = {
-				method: 'POST',
-				credentials: 'include',
-			};
-			fetch(`http://localhost:8080/api/release/${releaseId}/copy`, options).then((result) => {
-				if (result.status === 200) {
-					console.log(result)
-				}
-				result.json().then((response) => {
-					console.log(response)
-					addRevisions(response);
-					itemClick(response.id)
-				})
-			})
-		} catch (error) {
-			console.error(error);
-			return null; // Return null or handle the error as needed
-		}
+	function copyRelease(releaseId) {
+		copyReleaseAPI(releaseId, addNewRevisionFromResponse);
 	}
 
 	function fetchSetLock(releaseId) {
-		var options = {
-			method: 'get',
-			credentials: 'include'
+		const resultSuccessHandler = (response) => {
+			setLockPage(response[1].length > 0);
 		}
-		try {
-			fetch(`http://localhost:8080/api/release/${releaseId}/signatures`, options).then((result) => {
-				if (result.status === 200) {
-					result.json().then((response) => {
-						setLockPage(response[1].length > 0);
-					})
-				}
-			})
-		}
-		catch {
-			return;
-		}
+		getSignaturesAPI(releaseId, resultSuccessHandler);
 	};
 
 	useEffect(() => {
