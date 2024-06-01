@@ -39,3 +39,7 @@ export function projectReleasesAPI(projectId, resultSuccessHandler, resultFailur
 export function newReleaseAPI(projectId, resultSuccessHandler, resultFailureHandler) {
 	apiCallPost(`project/${projectId}/release`, {}, resultSuccessHandler, resultFailureHandler);
 }
+
+export function mostRecentReleaseAPI(projectId, resultSuccessHandler, resultFailureHandler) {
+	apiCallGet(`project/${projectId}/recentRelease`, resultSuccessHandler, resultFailureHandler);
+}

@@ -22,6 +22,14 @@ export function newBacklogStoryAPI(
 	apiCallPost(`release/${releaseId}`, body, resultSuccessHandler, resultFailureHandler);
 }
 
+export function getReleaseAPI(releaseId, resultSuccessHandler, resultFailureHandler) {
+	apiCallGet(`release/${releaseId}`, resultSuccessHandler, resultFailureHandler);
+}
+
+export function editReleaseAPI(releaseId, problemStatement, goalStatement, resultSuccessHandler, resultFailureHandler) {
+	apiCallPost(`release/${releaseId}/edit`, { problemStatement, goalStatement }, resultSuccessHandler, resultFailureHandler);
+}
+
 export function copyReleaseAPI(releaseId, resultSuccessHandler, resultFailureHandler) {
 	apiCallPost(`release/${releaseId}/copy`, {}, resultSuccessHandler, resultFailureHandler);
 }
@@ -36,6 +44,10 @@ export function getBacklogAPI(releaseId, resultSuccessHandler, resultFailureHand
 
 export function reorderSprintsAPI(releaseId, sprintStartIndex, sprintEndIndex, resultSuccessHandler, resultFailureHandler) {
 	apiCallPost(`release/${releaseId}/reorder`, { sprintStartIndex, sprintEndIndex }, resultSuccessHandler, resultFailureHandler);
+}
+
+export function getSprintsAPI(releaseId, resultSuccessHandler, resultFailureHandler) {
+	apiCallGet(`release/${releaseId}/sprints`, resultSuccessHandler, resultFailureHandler);
 }
 
 export function newSprintAPI(releaseId, sprintNumber, resultSuccessHandler, resultFailureHandler) {

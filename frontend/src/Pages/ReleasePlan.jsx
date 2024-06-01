@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import { Typography, Box, TextField } from "@mui/material";
 import { Grid, Divider } from "@mui/material";
 import Sidebar from "../Components/ReleasePlan/Sidebar";
@@ -7,9 +7,8 @@ import ContentBox from "../Components/common/ContentBox";
 import SanityCheckGraph from "../Components/ReleasePlan/SanityCheckGraph";
 import SanityCheckText from "../Components/ReleasePlan/SanityCheckText";
 import Board from "../Components/ReleasePlan/dragAndDrop/SprintsAndBacklog"
-import { TextareaAutosize } from '@mui/base/TextareaAutosize';
-import AddCircleOutlineIcon from '@mui/icons-material/Add';
-import { IconButton } from "@mui/material";
+import { mostRecentReleaseAPI } from "../API/project";
+import { editReleaseAPI, getReleaseAPI, getSprintsAPI } from "../API/release";
 
 const ReleasePlan = ({ projectId }) => {
 	const [sprints, setSprints] = useState([]);
@@ -20,104 +19,39 @@ const ReleasePlan = ({ projectId }) => {
 	const [lockPage, setLockPage] = useState(false);
 
 	function fetchMostRecentRelease() {
-		var options = {
-			method: "get",
-			credentials: "include",
-		};
-		try {
-			fetch(
-				`http://localhost:8080/api/project/${projectId}/recentRelease`,
-				options
-			).then((result) => {
-				if (result.status === 200) {
-					result.json().then((response) => {
-						setId(response.id);
-					});
-				}
-			});
-		} catch { }
+		const resultSuccessHandler = (response) => {
+			setId(response.id);
+		}
+		mostRecentReleaseAPI(projectId, resultSuccessHandler);
 	}
 
 	function fetchRelease(releaseId, setProblem, setGoals) {
-		console.log("about to fetch a release");
-		var options = {
-			method: "get",
-			credentials: "include",
-		};
-		try {
-			fetch(`http://localhost:8080/api/release/${releaseId}`, options).then(
-				(result) => {
-					if (result.status === 200) {
-						result.json().then((response) => {
-							setProblem(response.problemStatement);
-							setGoals(response.goalStatement);
-						});
-					}
-				}
-			);
-		} catch { }
+		const resultSuccessHandler = (response) => {
+			setProblem(response.problemStatement);
+			setGoals(response.goalStatement);
+		}
+		getReleaseAPI(releaseId, resultSuccessHandler);
 	}
 
 	function fetchSprints(releaseId) {
-		var options = {
-			method: "get",
-			credentials: "include",
-		};
-		try {
-			fetch(
-				`http://localhost:8080/api/release/${releaseId}/sprints`,
-				options
-			).then((result) => {
-				if (result.status === 200) {
-					result.json().then((response) => {
-						setSprints(response);
-					});
-				} else {
-					setSprints([]);
-				}
-			});
-		} catch { }
+		const resultFailureHandler = () => {
+			setSprints([]);
+		}
+		getSprintsAPI(releaseId, setSprints, resultFailureHandler);
 	}
 
-	// updates the problem statement
 	function editProblemStatement(e) {
-		var options = {
-			method: "POST",
-			credentials: "include",
-			headers: {
-				"Content-Type": "application/json",
-			},
-			body: JSON.stringify({ problemStatement: e.target.value },
-				{ goalStatement: e.target.value }),
-		};
-		fetch(`http://localhost:8080/api/release/${releaseId}/edit`, options)
-			.then((result) => {
-				if (result.status === 200) {
-					result.json().then((response) => {
-						setProblem(response.problemStatement);
-					});
-				}
-			})
+		const resultSuccessHandler = (response) => {
+			setProblem(response.problemStatement);
+		}
+		editReleaseAPI(releaseId, e.target.value, null, resultSuccessHandler);
 	}
 
-	// updates the HighLevelGoals
 	function editGoals(e) {
-		var options = {
-			method: "POST",
-			credentials: "include",
-			headers: {
-				"Content-Type": "application/json",
-			},
-			body: JSON.stringify({ goalStatement: e.target.value }),
-		};
-		fetch(`http://localhost:8080/api/release/${releaseId}/edit`, options)
-			.then((result) => {
-				if (result.status === 200) {
-					result.json().then((response) => {
-						setGoals(response.goalStatement);
-					});
-				}
-			})
+		const resultSuccessHandler = (response) => {
+			setGoals(response.goalStatement);
+		}
+		editReleaseAPI(releaseId, null, e.target.value, resultSuccessHandler);
 	}
 
 	useEffect(() => {
@@ -139,7 +73,6 @@ const ReleasePlan = ({ projectId }) => {
 
 	return (
 		< Grid container spacing={2} >
-			{/* Revision Sidebar */}
 			< Grid item xs={open ? 2 : "auto"} >
 				<Sidebar
 					open={open}
@@ -151,8 +84,6 @@ const ReleasePlan = ({ projectId }) => {
 				/>
 			</Grid >
 			<Grid item xs={open ? 10 : 11}>
-				{/* Current Sprint */}
-				{/* TODO: update Sprint Number */}
 				<Typography
 					variant="h6"
 					marginTop={8}
@@ -167,7 +98,6 @@ const ReleasePlan = ({ projectId }) => {
 				</Typography>
 
 				<Box display="flex" justifyContent={"flex-start"}>
-					{/* TODO: Handle Button Clicks */}
 					<ButtonBar />
 				</Box>
 
@@ -189,7 +119,6 @@ const ReleasePlan = ({ projectId }) => {
 					Release Plan:
 				</Typography>
 
-				{/* TODO: Change version number */}
 				<Typography
 					textAlign="left"
 					marginLeft={2}
@@ -199,7 +128,6 @@ const ReleasePlan = ({ projectId }) => {
 					v1.0.0
 				</Typography>
 
-				{/* Problem Statement */}
 				<Typography
 					variant='body1'
 					marginBottom={2}
@@ -254,7 +182,6 @@ const ReleasePlan = ({ projectId }) => {
 
 				<Board sprints={sprints} setSprints={setSprints} releaseId={releaseId} projectId={projectId} lockPage={lockPage} withScrollableColumns />
 
-				{/* Sanity Check */}
 				<Typography
 					variant="h5"
 					fontWeight="bold"
@@ -268,7 +195,6 @@ const ReleasePlan = ({ projectId }) => {
 				</Typography>
 
 				<Grid container spacing={2}>
-					{/* Sanity Check Graph */}
 					<Grid item xs={6}>
 						<SanityCheckGraph sprints={sprints} />
 					</Grid>

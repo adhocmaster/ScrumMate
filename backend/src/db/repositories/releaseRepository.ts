@@ -27,8 +27,6 @@ export class ReleaseRepository extends ModelRepository {
 
 	public async updateRelease(releaseId: number, revisionDate?: Date, problemStatement?: string, goalStatement?: string): Promise<Release> {
 		const release = await this.releaseSource.lookupReleaseById(releaseId)
-		// const releaseWithProject = await this.dataSource.fetchReleaseWithProject(releaseId)
-		// release.revision = revision ?? release.revision // shouldnt change
 		release.revisionDate = revisionDate ?? release.revisionDate
 		release.problemStatement = problemStatement ?? release.problemStatement
 		release.goalStatement = goalStatement ?? release.goalStatement
