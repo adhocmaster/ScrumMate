@@ -48,8 +48,8 @@ function populateRelease(release: Release, length = 10) {
 
 function populatateSprint(sprint: Sprint, length = 10) {
 	sprint.sprintNumber = getRandomInt()
-	sprint.startDate = getRandomDate()
-	sprint.endDate = getRandomDate()
+	sprint.startDate = null
+	sprint.endDate = null
 	sprint.goal = makeRandomId(length)
 }
 
@@ -203,6 +203,28 @@ describe('testing that everything can be saved and loaded from database', () => 
 	populatateSprint(sprint1)
 	populatateSprint(sprint2)
 	populateRoles(role)
+
+	test('sprint durations are calculated correctly', () => {
+		expect(sprint1.startDate).toBe(null);
+		expect(sprint1.endDate).toBe(null);
+		expect(sprint1.sprintDuration).toBe(null);
+		sprint1.startDate = new Date();
+		sprint1.endDate = new Date();
+		expect(sprint1.sprintDuration).toBe(0);
+	});
+
+	test('sprint sort works correctly when null todos', () => {
+		const sprint3 = new Sprint();
+		expect(sprint3.todos).toBe(undefined);
+		expect(sprint3.sortTODO()).toBe(undefined);
+		const tempFirstStory = new BacklogItem();
+		tempFirstStory.rank = 0;
+		const tempSecondStory = new BacklogItem();
+		tempSecondStory.rank = 1;
+		sprint3.addTODO(tempSecondStory);
+		sprint3.addTODO(tempFirstStory);
+		expect(sprint3.sortTODO()).toStrictEqual([tempFirstStory, tempSecondStory]);
+	});
 
 	test('Saving then loading everything from the database', async () => {
 		await AppDataSource.initialize().then(async () => {
