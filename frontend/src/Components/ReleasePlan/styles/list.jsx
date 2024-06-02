@@ -63,7 +63,6 @@ const Container = styled.div``;
 /* stylelint-enable */
 
 const InnerQuoteList = (props) => {
-	// console.log("innerquoteList", props.quotes)
 	return props.quotes.map((quote, index) => (
 		<Draggable key={"cardId" + quote.id} draggableId={"draggableId" + quote.id} index={index} isDragDisabled={props.lockPage}>
 			{(dragProvided, dragSnapshot) => (
@@ -87,8 +86,6 @@ const InnerQuoteList = (props) => {
 function InnerList(props) {
 	const { quotes, dropProvided, lockPage, sprints, setSprints, sprintIndex, deleteStory } = props;
 	const title = props.title ? <Title>{props.title}</Title> : null;
-
-	// console.log("innerlist", quotes)
 
 	return (
 		<Container>

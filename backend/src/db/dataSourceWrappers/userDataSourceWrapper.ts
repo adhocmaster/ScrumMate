@@ -4,28 +4,27 @@ import { ModelDataSourceWrapper } from "./modelDataSourceWrapper";
 
 export class UserDataSourceWrapper extends ModelDataSourceWrapper {
 
-	public async lookupUserById(id: number): Promise<User> {
-		const maybeUser = await this.dataSource.manager.findOneBy(User, { id: id });
+	private async safeLookup(lookupFunction: (arg0: string | number) => Promise<User>, parameter: string | number): Promise<User> {
+		const maybeUser = await lookupFunction(parameter);
 		if (!maybeUser) {
-			throw new NotFoundError(`User with id ${id} not found`)
+			throw new NotFoundError(`User ${parameter} not found`);
 		}
 		return maybeUser
+	}
+
+	public async lookupUserById(id: number): Promise<User> {
+		const lookupFunction = async (id: number) => await this.dataSource.manager.findOneBy(User, { id: id });
+		return this.safeLookup(lookupFunction, id);
 	}
 
 	public async lookupUserByEmail(email: string): Promise<User> {
-		const maybeUser = await this.dataSource.manager.findOneBy(User, { email: email });
-		if (!maybeUser) {
-			throw new NotFoundError(`User with email ${email} not found`)
-		}
-		return maybeUser
+		const lookupFunction = async (email: string) => await this.dataSource.manager.findOneBy(User, { email: email });
+		return this.safeLookup(lookupFunction, email);
 	}
 
 	public async lookupUserBySessionToken(sessionToken: string): Promise<User> {
-		const maybeUser = await this.dataSource.manager.findOneBy(User, { sessionToken: sessionToken });
-		if (!maybeUser) {
-			throw new NotFoundError(`User not found`)
-		}
-		return maybeUser;
+		const lookupFunction = async (sessionToken: string) => await this.dataSource.manager.findOneBy(User, { sessionToken: sessionToken });
+		return this.safeLookup(lookupFunction, sessionToken);
 	}
 
 	public async lookupUserByIdWithRelations(

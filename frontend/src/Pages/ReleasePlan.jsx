@@ -119,14 +119,14 @@ const ReleasePlan = ({ projectId }) => {
 					Release Plan:
 				</Typography>
 
-				<Typography
+				{/* <Typography
 					textAlign="left"
 					marginLeft={2}
 					marginBottom={2}
 					fontSize={14}
 				>
 					v1.0.0
-				</Typography>
+				</Typography> */}
 
 				<Typography
 					variant='body1'
@@ -201,13 +201,13 @@ const ReleasePlan = ({ projectId }) => {
 					<Grid item xs={6}>
 						<SanityCheckGraph sprints={sprints} />
 					</Grid>
-					<Grid item xs={6}>
+					{/* <Grid item xs={6}>
 						<SanityCheckText
 							text={
 								"Yes we can do it because no sprint looks like too much work. Lorem ipsum dolor sit amet …"
 							}
 						/>
-					</Grid>
+					</Grid> */}
 				</Grid>
 			</Grid>
 		</Grid >
