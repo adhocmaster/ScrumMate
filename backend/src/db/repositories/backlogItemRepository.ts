@@ -289,9 +289,11 @@ export class BacklogItemRepository extends ModelRepository {
 	}
 
 	public async placePokerEstimate(backlogItemId: number, estimate: number, userId: number): Promise<void> {
-		function nextRoundPoker(backlogItemWithPoker: BacklogItem): void {
+		function nextRoundPoker(backlogItemWithPoker: BacklogItem, projectWithUsers: Project): void {
 			const estimatedUserIds = Object.keys(backlogItemWithPoker.estimates);
-			for (const userIdWithEstimate of estimatedUserIds) {
+			const teamMembersIds = projectWithUsers.teamMembers.map(user => user.id).concat([projectWithUsers.productOwner.id]);
+			const estimatedTeamMemberIds = estimatedUserIds.filter(userId => teamMembersIds.includes(parseInt(userId))); // remove kicked team members
+			for (const userIdWithEstimate of estimatedTeamMemberIds) {
 				const userIdWithEstimateNumber = parseInt(userIdWithEstimate)
 				const [currentEstimate, previousEstimate, submitted] = backlogItemWithPoker.estimates[userIdWithEstimateNumber];
 				backlogItemWithPoker.estimates[userIdWithEstimateNumber] = [currentEstimate, currentEstimate, false]
@@ -313,22 +315,22 @@ export class BacklogItemRepository extends ModelRepository {
 		}
 
 		const backlogItemWithPoker = await this.backlogSource.lookupBacklogById(backlogItemId);
+		const projectWithUsers = await this.getProjectWithUsersFromBacklog(backlogItemId);
 
 		if (backlogItemWithPoker.pokerIsOver) {
-			nextRoundPoker(backlogItemWithPoker);
+			nextRoundPoker(backlogItemWithPoker, projectWithUsers);
 		}
 
 		const oldEstimate = getPreviousRoundEstimate(backlogItemWithPoker, userId)
 		backlogItemWithPoker.estimates[userId] = [String(estimate), oldEstimate, true];
 
-		const projectWithUsers = await this.getProjectWithUsersFromBacklog(backlogItemId);
 		if (roundComplete(projectWithUsers, backlogItemWithPoker)) {
 			const everyEstimateEqual = Object.values(backlogItemWithPoker.estimates).every((tuple) => tuple[0] === backlogItemWithPoker.estimates[userId][0])
 			if (everyEstimateEqual) {
 				backlogItemWithPoker.pokerIsOver = true;
 				backlogItemWithPoker.size = parseInt(backlogItemWithPoker.estimates[userId][0]);
 			} else {
-				nextRoundPoker(backlogItemWithPoker);
+				nextRoundPoker(backlogItemWithPoker, projectWithUsers);
 			}
 		}
 
