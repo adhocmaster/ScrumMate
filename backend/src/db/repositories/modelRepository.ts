@@ -1,5 +1,4 @@
 import { UserDataSourceWrapper } from "db/dataSourceWrappers/userDataSourceWrapper";
-import { Project } from "../../entity/project";
 import { ReleaseDataSourceWrapper } from "../dataSourceWrappers/releaseDataSourceWrapper";
 import { BacklogItemDataSourceWrapper } from "../dataSourceWrappers/backlogItemDataSourceWrapper";
 import { ProjectDataSourceWrapper } from "../dataSourceWrappers/projectDataSourceWrapper";
