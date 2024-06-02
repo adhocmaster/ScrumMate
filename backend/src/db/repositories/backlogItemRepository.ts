@@ -291,10 +291,13 @@ export class BacklogItemRepository extends ModelRepository {
 	public async placePokerEstimate(backlogItemId: number, estimate: number, userId: number): Promise<void> {
 		function nextRoundPoker(backlogItemWithPoker: BacklogItem, projectWithUsers: Project): void {
 			const estimatedUserIds = Object.keys(backlogItemWithPoker.estimates);
-			const teamMembersIds = projectWithUsers.teamMembers.map(user => user.id).concat([projectWithUsers.productOwner.id]);
-			const estimatedTeamMemberIds = estimatedUserIds.filter(userId => teamMembersIds.includes(parseInt(userId))); // remove kicked team members
-			for (const userIdWithEstimate of estimatedTeamMemberIds) {
+			const teamMemberIds = projectWithUsers.teamMembers.map(teamMember => teamMember.id).concat([projectWithUsers.productOwner.id]);
+			for (const userIdWithEstimate of estimatedUserIds) {
 				const userIdWithEstimateNumber = parseInt(userIdWithEstimate)
+				if (!teamMemberIds.includes(userIdWithEstimateNumber)) {
+					delete backlogItemWithPoker.estimates[userIdWithEstimateNumber];
+					continue;
+				}
 				const [currentEstimate, previousEstimate, submitted] = backlogItemWithPoker.estimates[userIdWithEstimateNumber];
 				backlogItemWithPoker.estimates[userIdWithEstimateNumber] = [currentEstimate, currentEstimate, false]
 			}
@@ -309,7 +312,7 @@ export class BacklogItemRepository extends ModelRepository {
 
 		function roundComplete(projectWithUsers: Project, backlogItemWithPoker: BacklogItem): boolean {
 			const estimatedUserIds = Object.keys(backlogItemWithPoker.estimates);
-			const wholeTeamCounted = projectWithUsers.getTeamMembers().length + 1 === estimatedUserIds.length;
+			const wholeTeamCounted = projectWithUsers.getTeamMembers().length + 1 <= estimatedUserIds.length;
 			const everyoneHasSubmitted = Object.values(backlogItemWithPoker.estimates).every((tuple) => tuple[2])
 			return wholeTeamCounted && everyoneHasSubmitted;
 		}
