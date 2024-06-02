@@ -2,17 +2,23 @@
 
 The crux of the frontend app is mainly run through the src folder. There are two folders, Components and Pages. The main file that runs the frontend is the App.js file in src. 
 
+API Folder:
+- The API folder contains API call functions for interacting with the backend. This includes functions for handling release plans, projects, and user notifications, as well as centralizing API requests for a clear separation and simplifying the application's request process.
+
 Components Folder:
-- The components folder contains some of the components such as the navbar and the menubar.
+- The components folder is organized into subfolders for better structure and maintainability. It contains UI elements and specific components used across different pages.
+    - Common: This subfolder contains components that are used universally across the application.
+    - ReleasePlan: Contains components specific to the Release Plan functionality.
+    - SignIn: Contains components related to the sign-in process, handles the user interface for signing in.
 
 Pages Folder:
 - The pages folder contains the differnet pages that are used in the application which includes:
     - Dashboard (Redesigning): The main dashboard with an overview of projects.
     - Register/Login (Redesigning) : The registed page contains the UI for registering a user account. 
-    - ReleasePlan (Redesigning): This page contains the release plan, including the proposed release date, high level goals, and user stories.
+    - Release Plan: This page contains the release plan, including the proposed release date, high-level goals, and user stories.
     - Sprint (Redesigning): Contains the sprints for the chosen project.
 
-The UI makes use of the MUI library to reduce development time and to ensure that the pages are all formatted in a proper way.
+The UI utilizes the MUI library to reduce development time and ensure consistent formatting across pages.
 
 # Getting Started with Create React App
 
