@@ -10,8 +10,8 @@ const Navbar = ({ isLoggedIn, onSignOut, projectName, setName }) => {
 		<div>
 			<AppBar position="fixed" sx={{
 				backgroundColor: '#0a81ff',
-				padding: '8px 16px',
-				height: '11%'
+				padding: '2px 8px',
+
 			}}>
 				<Toolbar
 					disableGutters
