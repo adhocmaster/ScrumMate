@@ -10,7 +10,6 @@ import { UserRole } from '../../src/entity/roles';
 import { Sprint } from '../../src/entity/sprint';
 import { BacklogItem, ActionType, Priority } from '../../src/entity/backlogItem';
 import cookieParser from 'cookie-parser';
-import { Codes } from '../../src/helpers/errors';
 let app = express();
 var appData: { app: any; server: any; destroy?: any; };
 let server: { close: () => any; };

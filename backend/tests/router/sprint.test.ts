@@ -4,15 +4,12 @@ import { Database } from '../../src/db/database';
 import { Release } from "../../src/entity/release"
 import request from 'supertest'
 import router from '../../src/router/index';
-// import { newReleaseRouter } from '../src/router/release';
-
 import { User } from '../../src/entity/User';
 import { Project } from '../../src/entity/project';
 import { UserRole } from '../../src/entity/roles';
 import { Sprint } from '../../src/entity/sprint';
 import { BacklogItem } from '../../src/entity/backlogItem';
 import cookieParser from 'cookie-parser';
-import { Codes } from '../../src/helpers/errors';
 let app = express();
 var appData: { app: any; server: any; destroy?: any; };
 let server: { close: () => any; };
