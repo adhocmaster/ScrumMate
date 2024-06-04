@@ -43,6 +43,7 @@ const Sidebar = ({ open, toggleDrawer, projectId, itemClick, setLockPage }) => {
 
 	function fetchSetLock(releaseId) {
 		const resultSuccessHandler = (response) => {
+			console.log('setting lockpage to', response[1].length > 0, "for", releaseId)
 			setLockPage(response[1].length > 0);
 		}
 		getSignaturesAPI(releaseId, resultSuccessHandler);

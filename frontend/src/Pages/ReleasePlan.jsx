@@ -41,17 +41,13 @@ const ReleasePlan = ({ projectId }) => {
 	}
 
 	function editProblemStatement(e) {
-		const resultSuccessHandler = (response) => {
-			setProblem(response.problemStatement);
-		}
-		editReleaseAPI(releaseId, e.target.value, null, resultSuccessHandler);
+		setProblem(e.target.value);
+		editReleaseAPI(releaseId, e.target.value, null);
 	}
 
 	function editGoals(e) {
-		const resultSuccessHandler = (response) => {
-			setGoals(response.goalStatement);
-		}
-		editReleaseAPI(releaseId, null, e.target.value, resultSuccessHandler);
+		setGoals(e.target.value);
+		editReleaseAPI(releaseId, null, e.target.value);
 	}
 
 	useEffect(() => {

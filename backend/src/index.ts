@@ -13,6 +13,10 @@ import { authentication } from './helpers';
 
 const app = express();
 
+function addDays(date: Date, numDays: number): Date {
+	return new Date(date.getDate() + numDays);
+}
+
 AppDataSource.initialize().then(async () => {
 	/// Initializing som basic information for the frontend
 	/// TEMPORARY CODE UNTIL THE SIGNIN AND PROJECT SELECTION PAGES ARE DONE
@@ -51,12 +55,21 @@ AppDataSource.initialize().then(async () => {
 		await db.save(unjoinedUser)
 
 		var project1 = new Project()
-		project1.name = "scrum tools"
+		project1.name = "Plannertarium"
 		project1.numRevisions = 2
 		project1.productOwner = productOwner1
 		project1.teamMembers = [joinedUser]
+		project1.invitedUsers = [unjoinedUser]
 		project1.id = 1
 		await db.save(project1)
+
+		var project2 = new Project()
+		project2.name = "Empty Project"
+		project2.numRevisions = 1
+		project2.productOwner = productOwner1
+		project2.teamMembers = []
+		project2.id = 2
+		await db.save(project2)
 
 		const release1 = new Release()
 		release1.revision = 1
@@ -82,27 +95,27 @@ AppDataSource.initialize().then(async () => {
 		sprint1.release = release2;
 		sprint1.sprintNumber = 1;
 		sprint1.startDate = new Date();
-		sprint1.endDate = new Date();
+		sprint1.endDate = addDays(sprint1.startDate, 7);
 		sprint1.goal = "Create the basic and foundational functionality and UI for the application. Establish infrastructure and get familiar with Flutter and Firebase."
 		sprint1.id = 1
 		sprint1.backlogItemCount = 3
+		sprint1.scrumMaster = productOwner1;
 		await db.save(sprint1);
 
 		const sprint2 = new Sprint()
 		sprint2.release = release2;
 		sprint2.sprintNumber = 2;
 		sprint2.startDate = new Date();
-		sprint2.endDate = new Date();
+		sprint2.endDate = addDays(sprint2.startDate, 7);
 		sprint2.goal = "Create the basic and foundational functionality and UI for the application. Establish infrastructure and get familiar with Flutter and Firebase."
 		sprint2.id = 2
 		sprint2.backlogItemCount = 2
+		sprint1.scrumMaster = joinedUser;
 		await db.save(sprint2);
 
 		const sprint3 = new Sprint()
 		sprint3.release = release2;
 		sprint3.sprintNumber = 3;
-		sprint3.startDate = new Date();
-		sprint3.endDate = new Date();
 		sprint3.goal = "Have complete user interfaces for essential parts of the application. Implement simple nonessential features into the task and event planner."
 		sprint3.id = 3
 		sprint3.backlogItemCount = 0
@@ -115,7 +128,6 @@ AppDataSource.initialize().then(async () => {
 		backlog_s1_1.functionalityDescription = "see my inputted information when I reopen the app"
 		backlog_s1_1.reasoning = "I do not need to keep it open"
 		backlog_s1_1.acceptanceCriteria = "Can log in and log out, and access user id within the app"
-		backlog_s1_1.size = 13;
 		backlog_s1_1.rank = 0
 		await db.save(backlog_s1_1);
 
@@ -126,7 +138,6 @@ AppDataSource.initialize().then(async () => {
 		backlog_s1_2.functionalityDescription = "create tasks."
 		backlog_s1_2.reasoning = "I can see what my tasks are"
 		backlog_s1_2.acceptanceCriteria = "Can create tasks in an interface and see it on the list"
-		backlog_s1_2.size = 5;
 		backlog_s1_2.rank = 1
 		await db.save(backlog_s1_2);
 
@@ -137,7 +148,6 @@ AppDataSource.initialize().then(async () => {
 		backlog_s1_3.functionalityDescription = "change properties of a task."
 		backlog_s1_3.reasoning = "I can mark them as completed, move to another date, etc"
 		backlog_s1_3.acceptanceCriteria = "Can edit tasks in an interface and see it reflected in the list"
-		backlog_s1_3.size = 1;
 		backlog_s1_3.rank = 2
 		await db.save(backlog_s1_3);
 
@@ -149,7 +159,6 @@ AppDataSource.initialize().then(async () => {
 		backlog_s2_1.functionalityDescription = "manage my tasks in various time frames"
 		backlog_s2_1.reasoning = "I can get the amount of detail I need to plan my schedule"
 		backlog_s2_1.acceptanceCriteria = "Be able to see names of tasks in all views and be able to add tasks, be able to edit the information in this view"
-		backlog_s2_1.size = 8;
 		backlog_s2_1.rank = 0
 		await db.save(backlog_s2_1);
 
@@ -160,7 +169,6 @@ AppDataSource.initialize().then(async () => {
 		backlog_s2_2.functionalityDescription = "move my tasks around the timeline"
 		backlog_s2_2.reasoning = "I can assign them to other days"
 		backlog_s2_2.acceptanceCriteria = "Successfully use gestures to modify/move a task, be able to see it on the new date after the gesture is done"
-		backlog_s2_2.size = 12;
 		backlog_s2_2.rank = 1
 		await db.save(backlog_s2_2);
 
@@ -171,7 +179,6 @@ AppDataSource.initialize().then(async () => {
 		backlog_r2_1.functionalityDescription = "manage my events in various time frames"
 		backlog_r2_1.reasoning = " I can get the amount of detail I need to plan my schedule"
 		backlog_r2_1.acceptanceCriteria = "Can switch from daily to weekly to monthly view and vis versa"
-		backlog_r2_1.size = 8;
 		backlog_r2_1.rank = 0
 		await db.save(backlog_r2_1);
 
@@ -182,7 +189,6 @@ AppDataSource.initialize().then(async () => {
 		backlog_r2_2.functionalityDescription = "edit an event"
 		backlog_r2_2.reasoning = "I can keep the planner up to date with changes to my schedule"
 		backlog_r2_2.acceptanceCriteria = "In the larger view of an event, be able to see and edit all fields of the event"
-		backlog_r2_2.size = 1;
 		backlog_r2_2.rank = 1
 		await db.save(backlog_r2_2);
 
@@ -193,7 +199,6 @@ AppDataSource.initialize().then(async () => {
 		backlog_r2_3.functionalityDescription = "Look at different time windows"
 		backlog_r2_3.reasoning = "I can plan for the short, medium and long term as needed"
 		backlog_r2_3.acceptanceCriteria = "Able to move from daily view to monthly view with UI and gestures"
-		backlog_r2_3.size = 1;
 		backlog_r2_3.rank = 2
 		await db.save(backlog_r2_3);
 	}

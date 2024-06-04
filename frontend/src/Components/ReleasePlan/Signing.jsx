@@ -51,7 +51,8 @@ export const Signing = ({ releaseId, projectId, setLockPage, clickDetector }) =>
 		}
 	}
 
-	const handleToggleSigningClick = () => {
+	const handleToggleSigningClick = (e) => {
+		e.stopPropagation();
 		fetchToggleSigning();
 	}
 
@@ -82,13 +83,16 @@ export const Signing = ({ releaseId, projectId, setLockPage, clickDetector }) =>
 		toggleSigningAPI(releaseId, resultSuccessHandler);
 	}
 
-	async function fetchCanSign() {
-		getSigningConditionAPI(releaseId, setCanSign);
+	function fetchCanSign() {
+		const resultSuccessHandler = (response) => {
+			setCanSign(response);
+		}
+		getSigningConditionAPI(releaseId, resultSuccessHandler);
 	};
 
 	useEffect(() => {
 		fetchCanSign();
-	}, [clickDetector])
+	}, [clickDetector, projectId])
 
 	return (
 		<>
