@@ -5,10 +5,10 @@ import Sidebar from "../Components/ReleasePlan/Sidebar";
 import ButtonBar from "../Components/ReleasePlan/ButtonBar";
 import ContentBox from "../Components/common/ContentBox";
 import SanityCheckGraph from "../Components/ReleasePlan/SanityCheckGraph";
-import SanityCheckText from "../Components/ReleasePlan/SanityCheckText";
 import Board from "../Components/ReleasePlan/dragAndDrop/SprintsAndBacklog"
 import { mostRecentReleaseAPI } from "../API/project";
 import { editReleaseAPI, getReleaseAPI, getSprintsAPI } from "../API/release";
+import LockableTextBox from "../Components/ReleasePlan/LockableTextBox";
 
 const ReleasePlan = ({ projectId }) => {
 	const [sprints, setSprints] = useState([]);
@@ -135,22 +135,11 @@ const ReleasePlan = ({ projectId }) => {
 					Problem Statement
 				</Typography>
 
-				{lockPage ?
-					< ContentBox title={"Problem Statement"} content={problemStatement} />
-					:
-					<TextField
-						sx={{
-							margin: '5px 10px',
-							height: "130px",
-						}}
-						minRows={4}
-						maxRows={4}
-						style={{ width: "98%" }}
-						value={problemStatement}
-						onChange={editProblemStatement}
-						multiline
-
-					/>}
+				<LockableTextBox 
+					lockPage={lockPage}
+					text={problemStatement} 
+					editText={editProblemStatement} 
+				/>
 
 				<Typography
 					variant='body1'
@@ -163,21 +152,11 @@ const ReleasePlan = ({ projectId }) => {
 					High Level Goals
 				</Typography>
 
-				{lockPage ?
-					<ContentBox content={highLevelGoals} />
-					:
-					<TextField
-						sx={{
-							margin: '5px 10px',
-							height: "130px",
-						}}
-						minRows={4}
-						maxRows={4}
-						style={{ width: "98%" }}
-						value={highLevelGoals}
-						onChange={editGoals}
-						multiline
-					/>}
+				<LockableTextBox 
+					lockPage={lockPage}
+					text={highLevelGoals} 
+					editText={editGoals} 
+				/>
 
 				<Board sprints={sprints} setSprints={setSprints} releaseId={releaseId} projectId={projectId} lockPage={lockPage} withScrollableColumns />
 
