@@ -263,37 +263,37 @@ const UserStory = ({ storyObject, deleteFunction, sprints, setSprints, sprintNum
 									storyPoints={storyPoints}
 								/>
 								<MenuItem onClick={handleEditDialogOpen}>Edit</MenuItem>
-								<CardEditDialog
-									editDialogOpen={editDialogOpen}
-									handleEditDialogClose={handleEditDialogClose}
-									tempRole={tempRole}
-									setTempRole={setTempRole}
-									tempFunctionality={tempFunctionality}
-									setTempFunctionality={setTempFunctionality}
-									tempReasoning={tempReasoning}
-									setTempReasoning={setTempReasoning}
-									tempAcceptanceCriteria={tempAcceptanceCriteria}
-									setTempAcceptanceCriteria={setTempAcceptanceCriteria}
-									tempPriority={tempPriority}
-									setTempPriority={setTempPriority}
-									handleDeleteDialogOpen={handleDeleteDialogOpen}
-									handleSave={handleSave}
-									editActionDialogOpen={editActionDialogOpen}
-									handleEditActionDialogClose={handleEditActionDialogClose}
-									tempActionType={tempActionType}
-									setTempActionType={setTempActionType}
-									tempActionDescription={tempActionDescription}
-									setTempActionDescription={setTempActionDescription}
-									tempActionPriority={tempActionPriority}
-									setTempActionPriority={setTempActionPriority}
-									handleActionSave={handleActionSave}
-								/>
 							</>
 						) : (
 							<>
 								<MenuItem onClick={handleEditActionDialogOpen}>Edit</MenuItem>
 							</>
 						)}
+						<CardEditDialog
+							editDialogOpen={editDialogOpen}
+							handleEditDialogClose={handleEditDialogClose}
+							tempRole={tempRole}
+							setTempRole={setTempRole}
+							tempFunctionality={tempFunctionality}
+							setTempFunctionality={setTempFunctionality}
+							tempReasoning={tempReasoning}
+							setTempReasoning={setTempReasoning}
+							tempAcceptanceCriteria={tempAcceptanceCriteria}
+							setTempAcceptanceCriteria={setTempAcceptanceCriteria}
+							tempPriority={tempPriority}
+							setTempPriority={setTempPriority}
+							handleDeleteDialogOpen={handleDeleteDialogOpen}
+							handleSave={handleSave}
+							editActionDialogOpen={editActionDialogOpen}
+							handleEditActionDialogClose={handleEditActionDialogClose}
+							tempActionType={tempActionType}
+							setTempActionType={setTempActionType}
+							tempActionDescription={tempActionDescription}
+							setTempActionDescription={setTempActionDescription}
+							tempActionPriority={tempActionPriority}
+							setTempActionPriority={setTempActionPriority}
+							handleActionSave={handleActionSave}
+						/>
 						<MenuItem onClick={handleDeleteDialogOpen} style={{ color: "red" }}>
 							Delete
 						</MenuItem>

@@ -134,11 +134,8 @@ const SprintOptions = ({ sprints, setSprints, setBacklogItems, index, projectId 
 					</Box>
 				</DialogContent>
 				<DialogActions>
-					<Button onClick={() => {
-						handleClose();
-						fetchSaveOptions()
-					}}>
-						Save
+					<Button onClick={handleClose} color="primary">
+						Cancel
 					</Button>
 					<DeleteConfirmation
 						onDelete={() => {
@@ -146,8 +143,11 @@ const SprintOptions = ({ sprints, setSprints, setBacklogItems, index, projectId 
 							handleClose();
 						}}
 					/>
-					<Button onClick={handleClose} color="primary">
-						Cancel
+					<Button variant="contained" onClick={() => {
+						handleClose();
+						fetchSaveOptions()
+					}}>
+						Save
 					</Button>
 				</DialogActions>
 			</Dialog >

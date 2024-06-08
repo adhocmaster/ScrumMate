@@ -55,7 +55,7 @@ export default function ProjectCreateButton({ rows, setRows }) {
 			</DialogContent>
 			<DialogActions>
 				<Button onClick={handleCreateDialogClose}>Cancel</Button>
-				<Button onClick={handleCreate} color="primary">Create</Button>
+				<Button onClick={handleCreate} variant="contained" color="primary">Create</Button>
 			</DialogActions>
 		</Dialog>
 	</>
