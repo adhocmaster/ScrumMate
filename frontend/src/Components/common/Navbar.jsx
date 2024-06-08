@@ -10,7 +10,7 @@ const Navbar = ({ isLoggedIn, onSignOut, projectName, setName }) => {
 		<div>
 			<AppBar position="fixed" sx={{
 				backgroundColor: '#0a81ff',
-				padding: '2px 8px',
+				padding: '8px 16px',
 
 			}}>
 				<Toolbar
@@ -24,6 +24,7 @@ const Navbar = ({ isLoggedIn, onSignOut, projectName, setName }) => {
 						sx={{
 							fontSize: '24px',
 							marginRight: '30px',
+							marginTop: '6px'
 						}}
 						onClick={() => setName('')}
 					>
@@ -38,7 +39,9 @@ const Navbar = ({ isLoggedIn, onSignOut, projectName, setName }) => {
 						</Link>
 					</Typography>
 
-					<Typography>
+					<Typography sx={{
+						marginTop: '6px'
+					}}>
 						{projectName}
 					</Typography>
 
