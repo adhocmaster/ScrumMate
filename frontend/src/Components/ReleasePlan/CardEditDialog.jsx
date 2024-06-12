@@ -62,7 +62,7 @@ export default function CardEditDialog({
 				<Button onClick={handleDeleteDialogOpen} color="error">
 					Delete
 				</Button>
-				<Button onClick={handleSave} color="primary">
+				<Button onClick={handleSave} variant="contained" color="primary">
 					Save
 				</Button>
 			</DialogActions>
@@ -83,9 +83,9 @@ export default function CardEditDialog({
 					setDescription={setTempActionDescription}
 					actionPriority={tempActionPriority}
 					setActionPriority={setTempActionPriority}
-					selectedItemError={() => { }}
+					selectedItemError={false}
 					setSelectedItemError={() => { }}
-					actionPriorityError={() => { }}
+					actionPriorityError={false}
 					setActionPriorityError={() => { }}
 				/>
 			</DialogContent>
@@ -96,7 +96,7 @@ export default function CardEditDialog({
 				<Button onClick={handleDeleteDialogOpen} color="error">
 					Delete
 				</Button>
-				<Button onClick={handleActionSave} color="primary">
+				<Button onClick={handleActionSave} variant="contained" color="primary">
 					Save
 				</Button>
 			</DialogActions>

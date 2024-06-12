@@ -203,7 +203,7 @@ export class ReleaseRepository extends ModelRepository {
 
 	private backlogItemListHasUnestimated(backlogItemList: BacklogItem[]) {
 		for (const backlogItem of backlogItemList) {
-			if (!backlogItem.size) {
+			if (backlogItem.name === "Story" && !backlogItem.size) {
 				return true;
 			}
 		}

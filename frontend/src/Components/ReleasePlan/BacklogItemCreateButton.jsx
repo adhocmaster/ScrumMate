@@ -207,6 +207,7 @@ export default function BacklogItemCreateButton({ releaseId, backlogItems, setBa
 							<Button onClick={handleDialogClose}>Cancel</Button>
 							<Button onClick={handleCreateStory}
 								color="primary"
+								variant="contained"
 							>
 								Create Story
 							</Button>
@@ -248,6 +249,7 @@ export default function BacklogItemCreateButton({ releaseId, backlogItems, setBa
 							<Button onClick={handleDialogClose}>Cancel</Button>
 							<Button onClick={handleCreateAction}
 								color="primary"
+								variant="contained"
 							>
 								Create Action Item
 							</Button>

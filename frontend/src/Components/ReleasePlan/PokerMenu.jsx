@@ -303,7 +303,7 @@ export default function PokerMenu({
 								type="number"
 								fullWidth
 								variant="outlined"
-								value={tempStoryPoints}
+								value={tempStoryPoints ?? '-'}
 								onChange={(e) => setTempStoryPoints(e.target.value)}
 								InputProps={{ inputProps: { min: 0 } }}
 								sx={{
